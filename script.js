@@ -8,11 +8,14 @@ let isAdmin = false;
 let savedApplications = [];
 let currentPosition = 'Vice President D1';
 let selectedTimeSlot = ''; 
-let isReservationOpen = true; // Status kendali default website
+let isReservationOpen = true; 
 
 document.addEventListener("DOMContentLoaded", () => {
     loadFooterInfo();
-    checkReservationStatus(); // Memastikan status database dicek saat web dibuka pertama kali
+    checkReservationStatus(); 
+    startLiveClock();
+    loadRecentAccepts();
+    setInterval(loadRecentAccepts, 30000); // Polling otomatis tiap 30 detik
 });
 
 function getSupabase() {
@@ -26,7 +29,6 @@ function getSupabase() {
     return supabaseClient;
 }
 
-// Fungsi untuk mengambil status terbaru dari Supabase berdasarkan posisi kementerian yang aktif
 async function checkReservationStatus() {
     const client = getSupabase();
     if (!client) return;
@@ -40,7 +42,6 @@ async function checkReservationStatus() {
         if (data) {
             isReservationOpen = data.is_open;
         } else {
-            // Jika posisi belum terdaftar di database, buat default-nya terbuka (true)
             isReservationOpen = true; 
         }
         updateReservationButtonUI();
@@ -49,21 +50,19 @@ async function checkReservationStatus() {
     }
 }
 
-// Perbarui tampilan tombol kendali President
 function updateReservationButtonUI() {
     const toggleBtn = document.getElementById('toggle-reservation-btn');
     if (!toggleBtn) return;
 
     if (isReservationOpen) {
         toggleBtn.innerText = "Close Reservation";
-        toggleBtn.style.background = "#dc2626"; // Merah jika status aktif (siap ditutup)
+        toggleBtn.style.background = "#dc2626"; 
     } else {
         toggleBtn.innerText = "Open Reservation";
-        toggleBtn.style.background = "#22c55e"; // Hijau jika status nonaktif (siap dibuka)
+        toggleBtn.style.background = "#22c55e"; 
     }
 }
 
-// Aksi Klik Tombol Kendali Buka/Tutup Reservasi secara mandiri per kementerian
 async function handleToggleReservation() {
     if (!isAdmin) return;
     
@@ -77,7 +76,7 @@ async function handleToggleReservation() {
         const { error } = await client
             .from('system_settings')
             .update({ is_open: newStatus })
-            .eq('id', currentPosition); // BERHASIL DIPERBAIKI: Mengunci nama kementerian aktif, bukan 'reservation_status'
+            .eq('id', currentPosition); 
             
         if (!error) {
             isReservationOpen = newStatus;
@@ -89,7 +88,6 @@ async function handleToggleReservation() {
     }
 }
 
-// FUNGSI POP-UP NOTIFIKASI KECIL MELAYANG (MENGGANTIKAN ALERT)
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -112,7 +110,6 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// FUNGSI POP-UP KONFIRMASI KUSTOM (MENGGANTIKAN CONFIRM)
 function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
     const modal = document.getElementById('confirm-modal');
     const msgEl = document.getElementById('confirm-message');
@@ -165,7 +162,7 @@ function handleEditFooter() {
 function handleAdminLogin() {
     const editFooterBtn = document.getElementById('edit-footer-btn');
     const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
-    const finishSvsBtn = document.getElementById('finish-svs-btn'); // Ambil element tombol baru
+    const finishSvsBtn = document.getElementById('finish-svs-btn'); 
 
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
@@ -175,7 +172,7 @@ function handleAdminLogin() {
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
             if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
-            if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; // Tampilkan saat login
+            if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; 
             showToast("Welcome back President!", "success");
         } else {
             showToast("Incorrect password!", "error");
@@ -187,14 +184,12 @@ function handleAdminLogin() {
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
         if (toggleResBtn) toggleResBtn.style.display = "none"; 
-        if (finishSvsBtn) finishSvsBtn.style.display = "none"; // Sembunyikan saat logout
+        if (finishSvsBtn) finishSvsBtn.style.display = "none"; 
         showToast("Logged out from President Mode.", "info");
     }
     loadApplications();
 }
 
-
-// Menampilkan Halaman Jadwal Posisi Tertentu
 function showSchedule(positionName) {
     currentPosition = positionName;
     document.getElementById('positions-page').classList.add('hidden');
@@ -202,7 +197,6 @@ function showSchedule(positionName) {
     document.getElementById('selected-title').innerText = positionName;
     detectAndSetTimezone();
     
-    // BERHASIL SINKRON: Tarik status kementerian terkait dari database dulu, baru tampilkan tabel data pendaftar
     checkReservationStatus().then(() => {
         loadApplications();
     });
@@ -373,9 +367,7 @@ function closeModal() {
     document.getElementById('waiting-modal').classList.add('hidden');
 }
 
-// FUNGSI UTAMA KETIKA USER KLIK TOMBOL APPLY DI TABEL JADWAL
 function applySlot(time) {
-    // PROTEKSI UTAMA: Jika status reservasi kementerian terkait ditutup, gagalkan pendaftaran
     if (!isReservationOpen) {
         showToast("This day reservation still locked for now", "error");
         return; 
@@ -401,7 +393,6 @@ function closeApplyModal() {
 }
 
 async function submitApplication() {
-    // KEAMANAN GANDA: Validasi status sesaat sebelum melakukan kueri penambahan ke tabel database
     if (!isReservationOpen) {
         showToast("This day reservation still locked for now", "error");
         return;
@@ -449,6 +440,7 @@ async function acceptApp(id) {
         if (!error) {
             showToast("Application Approved!", "success");
             loadApplications();
+            loadRecentAccepts(); // UPDATE INSTAN LOG TERBARU
         } else {
             showToast("Failed to approve.", "error");
         }
@@ -466,135 +458,7 @@ async function removeApp(id) {
         if (!error) {
             showToast("Record dropped successfully.", "success");
             loadApplications();
-        } else {
-            showToast("Failed executing delete request.", "error");
-        }
-    }, '#ef4444');
-}
-
-function exportToCSV() {
-    if (savedApplications.length === 0) {
-        showToast("No data available to export!", "warning");
-        return;
-    }
-
-    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
-    const rows = savedApplications.map(app => [
-        `"${app.position}"`, `"${app.time_slot}"`, `"${app.status}"`,
-        `"${app.nickname || '-'}"`, `"${app.game_id || '-'}"`, `"${app.fire_crystal || '0'}"`,
-        `"${app.general_speedup || '0'}"`, `"${app.construction_speedup || '0'}"`,
-        `"${app.research_speedup || '0'}"`, `"${app.training_speedup || '0'}"`
-    ]);
-
-    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    
-    link.setAttribute("href", url);
-    link.setAttribute("download", `SVS_Ministry_Export_${currentPosition.replace(/\s+/g, '_')}.csv`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast("CSV File downloaded successfully!", "success");
-}
-// Fungsi untuk mereset/menghapus seluruh record pendaftaran di database
-async function handleFinishSVS() {
-    if (!isAdmin) return;
-
-    const client = getSupabase();
-    if (!client) return;
-
-    // Memanfaatkan custom confirm box bawaan website Anda agar aman
-    showCustomConfirm("Caution to finish SVS!\n Are you sure ?, this will be reset all applied data", async () => {
-        try {
-            // Melakukan kueri DELETE tanpa filter .eq() untuk membersihkan seluruh isi tabel
-            const { error } = await client
-                .from('reservation_slots')
-                .delete()
-                .neq('id', 0); // Trik kueri untuk menghapus semua baris yang ID-nya bukan 0
-
-            if (!error) {
-                showToast("All record has been cleared.", "success");
-                
-                // Jika sedang membuka halaman jadwal kementerian, segarkan tampilannya
-                if (typeof loadApplications === "function") {
-                    loadApplications();
-                }
-            } else {
-                throw error;
-            }
-        } catch (err) {
-            console.error("Fail to reset database:", err);
-            showToast("Fail to clear data: " + err.message, "error");
-        }
-    }, '#dc2626'); // Warna merah pekat untuk tombol konfirmasi eksekusi
-}
-// ==================== LIVE REAL-TIME CLOCK DIKUNCI KE SELECTION TIMEZONE ====================
-function startLiveClock() {
-    const localClockEl = document.getElementById('local-clock');
-    const localLabelEl = document.getElementById('local-clock-label');
-    const utcClockEl = document.getElementById('utc-clock');
-    const timezoneSelect = document.getElementById('timezone');
-
-    if (!localClockEl || !utcClockEl || !localLabelEl) return;
-
-    setInterval(() => {
-        const now = new Date();
-
-        // 1. FORMAT UTC-0 (Selalu Tetap)
-        const utcHours = String(now.getUTCHours()).padStart(2, '0');
-        const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
-        const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
-        utcClockEl.innerText = `${utcHours}:${utcMinutes}:${utcSeconds}`;
-
-        // 2. FORMAT LOCAL / DISPLAY TIME ZONE (Dinamis & Terkonversi)
-        const schedulePage = document.getElementById('schedule-page');
-        const isScheduleVisible = schedulePage && !schedulePage.classList.contains('hidden');
-
-        if (isScheduleVisible && timezoneSelect && timezoneSelect.value !== "") {
-            const offset = parseFloat(timezoneSelect.value); 
-            
-            // Hitung waktu berdasarkan offset timezone yang dipilih
-            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const targetTime = new Date(utcTime + (3600000 * offset));
-
-            const displayHours = String(targetTime.getHours()).padStart(2, '0');
-            const displayMinutes = String(targetTime.getMinutes()).padStart(2, '0');
-            const displaySeconds = String(targetTime.getSeconds()).padStart(2, '0');
-async function acceptApp(id) {
-    showCustomConfirm("Accept this application? This will lock this time slot.", async () => {
-        const client = getSupabase();
-        if (!client) return;
-        
-        closeModal(); 
-        
-        const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
-        if (!error) {
-            showToast("Application Approved!", "success");
-            loadApplications();
-            loadRecentAccepts(); // FIX: Langsung perbarui log aktivitas di bawah
-        } else {
-            showToast("Failed to approve.", "error");
-        }
-    }, '#22c55e');
-}
-
-async function removeApp(id) {
-    showCustomConfirm("Delete this application record permanently?", async () => {
-        const client = getSupabase();
-        if (!client) return;
-        
-        closeModal(); 
-        
-        const { error } = await client.from('reservation_slots').delete().eq('id', id);
-        if (!error) {
-            showToast("Record dropped successfully.", "success");
-            loadApplications();
-            loadRecentAccepts(); // Opsional: ikut segarkan log jika data yang dihapus kebetulan ada di log
+            loadRecentAccepts(); // UPDATE INSTAN LOG TERBARU
         } else {
             showToast("Failed executing delete request.", "error");
         }
@@ -647,7 +511,7 @@ async function handleFinishSVS() {
             if (!error) {
                 showToast("All record has been cleared.", "success");
                 if (typeof loadApplications === "function") loadApplications();
-                if (typeof loadRecentAccepts === "function") loadRecentAccepts(); // Kosongkan log kembali
+                if (typeof loadRecentAccepts === "function") loadRecentAccepts(); 
             } else {
                 throw error;
             }
@@ -721,8 +585,8 @@ async function loadRecentAccepts() {
     try {
         const { data, error } = await client
             .from('reservation_slots')
-            .select('nickname, position, updated_at') // FIX: position_name -> position
-            .eq('status', 'Accepted')               // FIX: Hanya yang disetujui admin
+            .select('nickname, position, updated_at') // FIX: Diubah ke 'position' sesuai skema insert
+            .eq('status', 'Accepted')
             .not('nickname', 'is', null)
             .neq('nickname', '')
             .order('updated_at', { ascending: false })
@@ -738,6 +602,7 @@ async function loadRecentAccepts() {
         logListEl.innerHTML = ''; 
 
         data.forEach(item => {
+            // FIX: Menggunakan item.position
             let shortPos = item.position ? item.position.replace('Vice President', 'VP').replace('Minister of Education', 'Edu') : 'Unknown';
 
             const logRow = document.createElement('div');
@@ -748,15 +613,8 @@ async function loadRecentAccepts() {
             `;
             logListEl.appendChild(logRow);
         });
+
     } catch (err) {
         console.error("Gagal memuat log aktivitas:", err);
     }
 }
-
-// Inisialisasi awal saat halaman selesai dimuat sepenuhnya
-document.addEventListener("DOMContentLoaded", () => {
-    startLiveClock();
-    loadRecentAccepts();
-    setInterval(loadRecentAccepts, 30000); // Polling otomatis tiap 30 detik
-});
-
