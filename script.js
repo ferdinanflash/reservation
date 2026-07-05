@@ -211,11 +211,11 @@ function renderTimeSlots() {
                 <td><span style="color:#22c55e; font-weight:bold;">Accepted</span></td>
                 <td>${acceptedApp.nickname}</td>
                 <td>${acceptedApp.game_id}</td>
-                <td>${acceptedApp.fire_crystal || '-'}</td>
-                <td>${acceptedApp.general_speedup || '-'}</td>
-                <td>${acceptedApp.construction_speedup || '-'}</td>
-                <td>${acceptedApp.research_speedup || '-'}</td>
-                <td>${acceptedApp.training_speedup || '-'}</td>
+                <td>${acceptedApp.fire_crystal || ''}</td>
+                <td>${acceptedApp.general_speedup || ''}</td>
+                <td>${acceptedApp.construction_speedup || ''}</td>
+                <td>${acceptedApp.research_speedup || ''}</td>
+                <td>${acceptedApp.training_speedup || ''}</td>
             `;
         } else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
