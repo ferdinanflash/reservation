@@ -565,27 +565,142 @@ function startLiveClock() {
             const displayHours = String(targetTime.getHours()).padStart(2, '0');
             const displayMinutes = String(targetTime.getMinutes()).padStart(2, '0');
             const displaySeconds = String(targetTime.getSeconds()).padStart(2, '0');
+async function acceptApp(id) {
+    showCustomConfirm("Accept this application? This will lock this time slot.", async () => {
+        const client = getSupabase();
+        if (!client) return;
+        
+        closeModal(); 
+        
+        const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
+        if (!error) {
+            showToast("Application Approved!", "success");
+            loadApplications();
+            loadRecentAccepts(); // FIX: Langsung perbarui log aktivitas di bawah
+        } else {
+            showToast("Failed to approve.", "error");
+        }
+    }, '#22c55e');
+}
+
+async function removeApp(id) {
+    showCustomConfirm("Delete this application record permanently?", async () => {
+        const client = getSupabase();
+        if (!client) return;
+        
+        closeModal(); 
+        
+        const { error } = await client.from('reservation_slots').delete().eq('id', id);
+        if (!error) {
+            showToast("Record dropped successfully.", "success");
+            loadApplications();
+            loadRecentAccepts(); // Opsional: ikut segarkan log jika data yang dihapus kebetulan ada di log
+        } else {
+            showToast("Failed executing delete request.", "error");
+        }
+    }, '#ef4444');
+}
+
+function exportToCSV() {
+    if (savedApplications.length === 0) {
+        showToast("No data available to export!", "warning");
+        return;
+    }
+
+    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
+    const rows = savedApplications.map(app => [
+        `"${app.position}"`, `"${app.time_slot}"`, `"${app.status}"`,
+        `"${app.nickname || '-'}"`, `"${app.game_id || '-'}"`, `"${app.fire_crystal || '0'}"`,
+        `"${app.general_speedup || '0'}"`, `"${app.construction_speedup || '0'}"`,
+        `"${app.research_speedup || '0'}"`, `"${app.training_speedup || '0'}"`
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `SVS_Ministry_Export_${currentPosition.replace(/\s+/g, '_')}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast("CSV File downloaded successfully!", "success");
+}
+
+async function handleFinishSVS() {
+    if (!isAdmin) return;
+
+    const client = getSupabase();
+    if (!client) return;
+
+    showCustomConfirm("Caution to finish SVS!\n Are you sure ?, this will be reset all applied data", async () => {
+        try {
+            const { error } = await client
+                .from('reservation_slots')
+                .delete()
+                .neq('id', 0); 
+
+            if (!error) {
+                showToast("All record has been cleared.", "success");
+                if (typeof loadApplications === "function") loadApplications();
+                if (typeof loadRecentAccepts === "function") loadRecentAccepts(); // Kosongkan log kembali
+            } else {
+                throw error;
+            }
+        } catch (err) {
+            console.error("Fail to reset database:", err);
+            showToast("Fail to clear data: " + err.message, "error");
+        }
+    }, '#dc2626'); 
+}
+
+function startLiveClock() {
+    const localClockEl = document.getElementById('local-clock');
+    const localLabelEl = document.getElementById('local-clock-label');
+    const utcClockEl = document.getElementById('utc-clock');
+    const timezoneSelect = document.getElementById('timezone');
+
+    if (!localClockEl || !utcClockEl || !localLabelEl) return;
+
+    setInterval(() => {
+        const now = new Date();
+
+        const utcHours = String(now.getUTCHours()).padStart(2, '0');
+        const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
+        const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
+        utcClockEl.innerText = `${utcHours}:${utcMinutes}:${utcSeconds}`;
+
+        const schedulePage = document.getElementById('schedule-page');
+        const isScheduleVisible = schedulePage && !schedulePage.classList.contains('hidden');
+
+        if (isScheduleVisible && timezoneSelect && timezoneSelect.value !== "") {
+            const offset = parseFloat(timezoneSelect.value); 
+            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const targetTime = new Date(utcTime + (3600000 * offset));
+
+            const displayHours = String(targetTime.getHours()).padStart(2, '0');
+            const displayMinutes = String(targetTime.getMinutes()).padStart(2, '0');
+            const displaySeconds = String(targetTime.getSeconds()).padStart(2, '0');
             
-            // --- LOGIKA PERBAIKAN FORMAT DESIMAL TIMEZONE ---
             const sign = offset >= 0 ? "+" : "-";
             const absOffset = Math.abs(offset);
-            const hours = Math.floor(absOffset); // Mengambil angka jam bulat (misal: 11 dari 11.75)
-            const minutes = Math.round((absOffset - hours) * 60); // Mengonversi desimal ke menit (misal: 0.75 * 60 = 45)
+            const hours = Math.floor(absOffset); 
+            const minutes = Math.round((absOffset - hours) * 60); 
             
-            // Format jam menjadi 2 digit (misal: 07), format menit menjadi 2 digit (misal: 30 atau 45)
             const formattedHours = String(hours).padStart(2, '0');
             const formattedMinutes = String(minutes).padStart(2, '0');
             
-            // Jika menitnya 0, tampilkan jamnya saja (contoh: UTC+07), jika ada menit tampilkan lengkap (contoh: UTC+11:45)
             if (minutes > 0) {
                 localLabelEl.innerText = `UTC${sign}${formattedHours}:${formattedMinutes}:`;
             } else {
                 localLabelEl.innerText = `UTC${sign}${formattedHours}:`;
             }
-            
             localClockEl.innerText = `${displayHours}:${displayMinutes}:${displaySeconds}`;
         } else {
-            // Jika di halaman utama, kembali ke waktu lokal asli perangkat
             const localHours = String(now.getHours()).padStart(2, '0');
             const localMinutes = String(now.getMinutes()).padStart(2, '0');
             const localSeconds = String(now.getSeconds()).padStart(2, '0');
@@ -596,11 +711,6 @@ function startLiveClock() {
     }, 1000);
 }
 
-// Jalankan fungsi jam live seketika saat DOM selesai dimuat
-document.addEventListener("DOMContentLoaded", () => {
-    startLiveClock();
-});
-// ==================== REAL-TIME LOG ACCEPTS PENGGUNA ====================
 async function loadRecentAccepts() {
     const logListEl = document.getElementById('recent-log-list');
     if (!logListEl) return;
@@ -609,11 +719,10 @@ async function loadRecentAccepts() {
     if (!client) return;
 
     try {
-        // Mengambil 3 data terbaru yang kolom in-game nickname-nya tidak kosong (sudah di-accept admin)
-        // Disesuaikan dengan struktur database Anda (asumsi kolom nama: 'nickname', kolom waktu update: 'updated_at')
         const { data, error } = await client
             .from('reservation_slots')
-            .select('nickname, position_name, updated_at')
+            .select('nickname, position, updated_at') // FIX: position_name -> position
+            .eq('status', 'Accepted')               // FIX: Hanya yang disetujui admin
             .not('nickname', 'is', null)
             .neq('nickname', '')
             .order('updated_at', { ascending: false })
@@ -626,13 +735,10 @@ async function loadRecentAccepts() {
             return;
         }
 
-        logListEl.innerHTML = ''; // Bersihkan kontainer lama
+        logListEl.innerHTML = ''; 
 
         data.forEach(item => {
-            // Mempersingkat nama posisi jika terlalu panjang (Contoh: Minister of Education D4 -> Edu D4)
-            let shortPos = item.position_name
-                .replace('Vice President', 'VP')
-                .replace('Minister of Education', 'Edu');
+            let shortPos = item.position ? item.position.replace('Vice President', 'VP').replace('Minister of Education', 'Edu') : 'Unknown';
 
             const logRow = document.createElement('div');
             logRow.className = 'log-entry';
@@ -642,16 +748,15 @@ async function loadRecentAccepts() {
             `;
             logListEl.appendChild(logRow);
         });
-
     } catch (err) {
         console.error("Gagal memuat log aktivitas:", err);
     }
 }
 
-// Panggil fungsi ini tepat di dalam DOMContentLoaded agar jalan otomatis saat web dibuka
+// Inisialisasi awal saat halaman selesai dimuat sepenuhnya
 document.addEventListener("DOMContentLoaded", () => {
+    startLiveClock();
     loadRecentAccepts();
-    
-    // Opsional: Refresh log otomatis setiap 30 detik agar selalu real-time
-    setInterval(loadRecentAccepts, 30000);
+    setInterval(loadRecentAccepts, 30000); // Polling otomatis tiap 30 detik
 });
+
