@@ -462,15 +462,15 @@ th, td {
     text-transform: uppercase;
     letter-spacing: 2px;
     
-    /* Trik Clip Background ke dalam Teks */
-    background: url('https://media.giphy.com/media/3o72FfM5HJydzaMqmY/giphy.gif') center center;
+    /* Menggunakan animasi kobaran api dengan tone warna merah pekat */
+    background: url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Z0cmh6bDR5NThmYTM5ZXp0cjZ0cmNwaWdzbWNxcmZjdXNnd3RxayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Lopx9eUi34LYA/giphy.gif') center center;
     background-size: cover;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     
-    /* Efek Neon Glow Merah/Oranye di sekeliling Huruf agar kontras di latar gelap */
-    filter: drop-shadow(0px 2px 4px rgba(255, 69, 0, 0.6)) 
-            drop-shadow(0px 4px 10px rgba(255, 140, 0, 0.4));
+    /* Mengubah efek cahaya/neon di sekitar huruf menjadi merah membara */
+    filter: drop-shadow(0px 2px 4px rgba(220, 38, 38, 0.8)) 
+            drop-shadow(0px 4px 12px rgba(185, 28, 28, 0.6));
             
     display: inline-block;
 }
