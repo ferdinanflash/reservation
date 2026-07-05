@@ -8,6 +8,11 @@ let isAdmin = false;
 let savedApplications = [];
 let currentPosition = 'Vice President D1';
 
+// Jalankan fungsi memuat informasi footer saat halaman pertama kali dibuka
+document.addEventListener("DOMContentLoaded", () => {
+    loadFooterInfo();
+});
+
 function getSupabase() {
     if (!supabaseClient) {
         if (typeof window.supabase !== 'undefined') {
@@ -19,14 +24,51 @@ function getSupabase() {
     return supabaseClient;
 }
 
+// Fungsi memuat info nama president & guild dari localStorage
+function loadFooterInfo() {
+    const savedName = localStorage.getItem('president_name');
+    const savedGuild = localStorage.getItem('guild_name');
+    
+    if (savedName) document.getElementById('display-president-name').innerText = savedName;
+    if (savedGuild) document.getElementById('display-guild-name').innerText = savedGuild;
+}
+
+// Fungsi untuk admin mengubah informasi nama & guild di footer
+function handleEditFooter() {
+    if (!isAdmin) return;
+
+    const currentName = document.getElementById('display-president-name').innerText;
+    const currentGuild = document.getElementById('display-guild-name').innerText;
+
+    const newName = prompt("Enter New President Name:", currentName);
+    if (newName === null) return; // batalkan jika menekan cancel
+    
+    const newGuild = prompt("Enter New Guild Name:", currentGuild);
+    if (newGuild === null) return; // batalkan jika menekan cancel
+
+    // Simpan ke local storage browser agar permanen saat direfresh
+    if (newName.trim() !== "") localStorage.setItem('president_name', newName.trim());
+    if (newGuild.trim() !== "") localStorage.setItem('guild_name', newGuild.trim());
+
+    // Perbarui tampilan langsung di layar
+    loadFooterInfo();
+    alert("President information updated successfully!");
+}
+
 function handleAdminLogin() {
+    const editFooterBtn = document.getElementById('edit-footer-btn');
+
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
         if (password === "idn") {
             isAdmin = true;
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
-            alert(Welcome back President!");
+            
+            // TAMPILKAN tombol edit footer saat sukses login admin
+            if (editFooterBtn) editFooterBtn.style.display = "inline-block";
+            
+            alert("Welcome back President!");
         } else {
             alert("Incorrect password!");
             return;
@@ -35,6 +77,10 @@ function handleAdminLogin() {
         isAdmin = false;
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
+        
+        // SEMBUNYIKAN tombol edit footer saat logout admin
+        if (editFooterBtn) editFooterBtn.style.display = "none";
+        
         alert("Logged out from President Mode.");
     }
     loadApplications();
