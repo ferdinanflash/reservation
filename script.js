@@ -279,6 +279,7 @@ function closeModal() {
 }
 
 // 1. Membuka Custom Apply Modal
+// 1. Membuka Custom Apply Modal
 function applySlot(time) {
     selectedTimeSlot = time;
     
@@ -286,18 +287,30 @@ function applySlot(time) {
     document.getElementById('form-position-title').innerText = currentPosition;
     document.getElementById('form-time-title').innerText = time + " UTC";
     
-    // Reset isi semua field form sebelum diisi baru
-    document.getElementById('input-nickname').value = "";
-    document.getElementById('input-gameid').value = "";
-    document.getElementById('input-fc').value = "0";
+    // ================= UBAH DI BAGIAN INI =================
+    document.getElementById('input-nickname').value = ""; // Dikosongkan
+    document.getElementById('input-gameid').value = "";   // Dikosongkan
+    document.getElementById('input-fc').value = "0";       // Diisi angka 0
+    
+    // Jika ingin dibuat ANGKA 0, gunakan kode ini:
+    document.getElementById('input-gensp').value = "0";
+    document.getElementById('input-constsp').value = "0";
+    document.getElementById('input-ressp').value = "0";
+    document.getElementById('input-trainsp').value = "0";
+    
+    /* // ALTERNATIF: Jika Anda lebih suka BENAR-BENAR KOSONG, 
+    // hapus tanda komentar (//) pada kode di bawah ini dan hapus kode angka 0 di atas:
     document.getElementById('input-gensp').value = "";
     document.getElementById('input-constsp').value = "";
     document.getElementById('input-ressp').value = "";
     document.getElementById('input-trainsp').value = "";
+    */
+    // =======================================================
     
     // Munculkan Modal ke layar
     document.getElementById('apply-modal').classList.remove('hidden');
 }
+
 
 // 2. Menutup Custom Apply Modal
 function closeApplyModal() {
