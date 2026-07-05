@@ -494,4 +494,16 @@ async function handleToggleReservation() {
         }
     }
 }
+function applySlot(time) {
+    // KENDALI: Jika reservasi ditutup oleh President, blokir pendaftaran baru
+    if (!isReservationOpen) {
+        showToast("SvS Preparation Phase doesnt begin this week", "error");
+        return; // Menghentikan fungsi agar modal input tidak terbuka
+    }
+    
+    // ... sisa kode fungsi applySlot Anda yang sudah ada ...
+    selectedTimeSlot = time;
+    document.getElementById('form-position-title').innerText = currentPosition;
+    // ... dan seterusnya ...
+}
 
