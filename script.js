@@ -51,16 +51,15 @@ function showSchedule(positionName) {
     loadApplications();
 }
 
-function detectAndSetTimezone() {
-// Fungsi Baru: Membuat semua daftar zona waktu dunia dan mendeteksi lokasi user
+// Fungsi Deteksi Zona Waktu Dunia yang Stabil untuk iPhone & Android
 function detectAndSetTimezone() {
     const selector = document.getElementById('timezone');
     if (!selector) return;
 
-    // Bersihkan isi selector terlebih dahulu
+    // Bersihkan opsi lama agar tidak duplikat
     selector.innerHTML = "";
 
-    // Daftar nama wilayah populer berdasarkan offset jam untuk mempermudah user
+    // Daftar label wilayah populer dunia
     const tzLabels = {
         "-12": "Kwajalein", "-11": "Midway Island", "-10": "Hawaii", "-9": "Alaska", 
         "-8": "Pacific Time (US/Canada)", "-7": "Mountain Time (US/Canada)", "-6": "Central Time (US/Canada)", 
@@ -73,42 +72,57 @@ function detectAndSetTimezone() {
         "7": "Jakarta, Bangkok, WIB", "8": "Singapore, Manila, Beijing, WITA", "9": "Tokyo, Seoul, WIT", 
         "9.5": "Darwin, Adelaide", "10": "Sydney, Melbourne, Vladivostok", "10.5": "Lord Howe Island",
         "11": "Solomon Islands", "11.5": "Norfolk Island", "12": "Auckland, Fiji", 
-        "12.75": "Chatham Islands", "13": "Nuku'alofa (Tonga)", "14": "Kiritimati (Christmas Island)"
+        "12.75": "Chatham Islands", "13": "Nuku'alofa (Tonga)", "14": "Kiritimati"
     };
 
-    // Loop untuk membuat opsi zona waktu dari UTC-12 sampai UTC+14 (termasuk setengah jam .5 dan .75)
     const offsets = [
         -12, -11, -10, -9, -8, -7, -6, -5, -4, -3.5, -3, -2, -1, 0, 
         1, 2, 3, 3.5, 4, 4.5, 5, 5.5, 5.75, 6, 6.5, 7, 8, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.75, 13, 14
     ];
 
-    // Dapatkan offset otomatis dari perangkat user saat ini
+    // Menggunakan pembulatan presisi 2 desimal agar kompatibel dengan iPhone iOS
     const userOffsetMinutes = new Date().getTimezoneOffset();
-    const userOffsetHours = -(userOffsetMinutes / 60);
+    const userOffsetHours = parseFloat((-(userOffsetMinutes / 60)).toFixed(2));
+
+    let exactMatchFound = false;
 
     offsets.forEach(offset => {
         const option = document.createElement('option');
         option.value = offset;
 
-        // Format tampilan teks UTC (+/-)
         const sign = offset >= 0 ? "+" : "-";
         const absOffset = Math.abs(offset);
         const hours = Math.floor(absOffset);
-        const minutes = (absOffset % 1) * 60;
+        const minutes = Math.round((absOffset % 1) * 60);
         const timeString = `UTC ${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
         
-        // Gabungkan dengan label nama kota jika ada
         const label = tzLabels[String(offset)] ? ` (${tzLabels[String(offset)]})` : "";
         option.text = `${timeString}${label}`;
 
-        // Jika offset ini cocok dengan zona waktu HP pengguna, otomatis pilih (selected)
-        if (offset === userOffsetHours || (offset === Math.round(userOffsetHours) && !offsets.includes(userOffsetHours))) {
+        // COCOKKAN PRESISI: bandingkan nilai offset dengan toleransi angka tipis agar tidak crash di Safari
+        if (Math.abs(offset - userOffsetHours) < 0.1) {
             option.selected = true;
+            exactMatchFound = true;
         }
 
         selector.add(option);
     });
+
+    // JIKA TIDAK MENEMUKAN COCOKAN (Zona waktu sangat langka), BUAT OPSI SECARA AMAN
+    if (!exactMatchFound) {
+        const sign = userOffsetHours >= 0 ? "+" : "-";
+        const absOffset = Math.abs(userOffsetHours);
+        const hours = Math.floor(absOffset);
+        const minutes = Math.round((absOffset % 1) * 60);
+        
+        const customOption = document.createElement('option');
+        customOption.value = userOffsetHours;
+        customOption.text = `UTC ${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} (Your Location)`;
+        customOption.selected = true;
+        selector.insertBefore(customOption, selector.firstChild);
+    }
 }
+
 
 
 function showPositions() {
