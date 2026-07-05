@@ -458,19 +458,38 @@ th, td {
 }
 .fire-text {
     font-weight: 900;
-    font-size: 1.5rem; /* Sesuaikan ukuran font sesuai selera */
+    font-size: 1.6rem; /* Sedikit dinaikkan agar efek emasnya makin terlihat mewah */
     text-transform: uppercase;
     letter-spacing: 2px;
+    display: inline-block;
     
-    /* Menggunakan animasi kobaran api dengan tone warna merah pekat */
-    background: url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Z0cmh6bDR5NThmYTM5ZXp0cjZ0cmNwaWdzbWNxcmZjdXNnd3RxayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Lopx9eUi34LYA/giphy.gif') center center;
-    background-size: cover;
+    /* Membuat warna dasar emas gradasi dengan kilauan putih di tengahnya */
+    background: linear-gradient(
+        to right, 
+        #bf953f 0%, 
+        #fcf6ba 25%, 
+        #b38728 50%, 
+        #fcf6ba 75%, 
+        #bf953f 100%
+    );
+    background-size: 200% auto; /* Memperlebar background agar efek kilau bisa digeser */
+    
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     
-    /* Mengubah efek cahaya/neon di sekitar huruf menjadi merah membara */
-    filter: drop-shadow(0px 2px 4px rgba(220, 38, 38, 0.8)) 
-            drop-shadow(0px 4px 12px rgba(185, 28, 28, 0.6));
-            
-    display: inline-block;
+    /* Efek bayangan tipis di belakang huruf agar teks tegas dibaca di latar gelap */
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.7));
+    
+    /* Menjalankan animasi bernama 'goldShine' selama 3 detik secara terus-menerus */
+    animation: goldShine 3s linear infinite;
+}
+
+/* LOGIKA ANIMASI: Menggeser posisi background gradasi dari kiri ke kanan */
+@keyframes goldShine {
+    0% {
+        background-position: 0% center;
+    }
+    100% {
+        background-position: -200% center;
+    }
 }
