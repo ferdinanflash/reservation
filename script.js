@@ -126,6 +126,7 @@ function handleAdminLogin() {
 }
 
 
+
 function showSchedule(positionName) {
     currentPosition = positionName;
     document.getElementById('positions-page').classList.add('hidden');
