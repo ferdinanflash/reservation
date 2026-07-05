@@ -483,7 +483,6 @@ th, td {
     /* Menjalankan animasi bernama 'goldShine' selama 3 detik secara terus-menerus */
     animation: goldShine 3s linear infinite;
 }
-
 /* LOGIKA ANIMASI: Menggeser posisi background gradasi dari kiri ke kanan */
 @keyframes goldShine {
     0% {
