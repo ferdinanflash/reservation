@@ -143,17 +143,21 @@
         <footer class="site-footer">
     <div class="footer-section">
         <p style="color: #8a8d98; margin-bottom: 6px;">Current President</p>
-        
         <div class="footer-row">
             <div id="display-president-name" class="fire-text">RARA</div>
         </div>
-        
         <div class="footer-row" style="margin-top: 4px;">
             <p id="display-guild-name" class="guild-name fire-text">IDN - GLORIOÛS</p>
         </div>
     </div>
     
-    <button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:4px 8px; margin-top:12px; display:none;" onclick="handleEditFooter()">Edit President Info</button>
+    <!-- Wadah Tombol Panel Admin -->
+    <div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
+        <button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="handleEditFooter()">Edit President Info</button>
+        
+        <!-- TOMBOL BARU: FINISH SVS -->
+        <button id="finish-svs-btn" class="btn-apply" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); font-size:0.75rem; padding:6px 12px; display:none; margin: 0; font-weight: bold;" onclick="handleFinishSVS()">FINISH SVS</button>
+    </div>
 </footer>
 
 
