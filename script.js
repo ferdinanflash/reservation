@@ -1,9 +1,10 @@
 // ================= SUPABASE PUBLIC CONFIGURATION =================
 const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co'; 
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODg'; 
 // =================================================================
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize database connection
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let isAdmin = false;
 let savedApplications = [];
@@ -27,14 +28,17 @@ function showPositions() {
     document.getElementById('positions-page').classList.remove('hidden');
 }
 
-// Fetch applications straight from database
+// Fetch reservations straight from the database table
 async function loadApplications() {
     try {
-        const { data, error } = await supabase.from('reservation_slots').select('*');
+        const { data, error } = await supabase
+            .from('reservation_slots')
+            .select('*');
+
         if (error) throw error;
         savedApplications = data || [];
     } catch (e) {
-        console.error("Database error:", e);
+        console.error("Database connection failure:", e);
         savedApplications = [];
     }
     renderTimeSlots();
@@ -96,10 +100,10 @@ async function applySlot(time) {
         .upsert({ time_slot: time, nickname, game_id: gameId, status: 'Accepted' }, { onConflict: 'time_slot' });
 
     if (!error) {
-        alert("Application saved!");
+        alert("Application saved successfully!");
         loadApplications();
     } else {
-        alert("Error saving: " + error.message);
+        alert("Database execution error: " + error.message);
     }
 }
 
@@ -112,9 +116,9 @@ async function removeApp(time) {
         .eq('time_slot', time);
 
     if (!error) {
-        alert("Application removed!");
+        alert("Application dropped successfully!");
         loadApplications();
     } else {
-        alert("Error deleting record.");
+        alert("Failed clearing row record.");
     }
 }
