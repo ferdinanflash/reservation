@@ -1,6 +1,17 @@
 let isAdmin = false;
 let savedApplications = [];
 
+// ================= GITHUB CONFIGURATION =================
+const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN'; // Set your token here
+const OWNER = 'ferdinanflash';                 
+const REPO = 'reservation';                     
+const FILE_PATH = 'application.xml';            
+const BRANCH = 'main';                          
+// ========================================================
+
+const GITHUB_API_URL = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
+let fileSHA = null; // Track file state for updates
+
 function toggleAdminMode() {
     isAdmin = !isAdmin;
     document.getElementById('admin-toggle-btn').innerText = isAdmin ? "Logout Admin" : "Admin Login";
@@ -20,12 +31,43 @@ function showPositions() {
     document.getElementById('positions-page').classList.remove('hidden');
 }
 
+// Fetch XML straight from GitHub tree
 async function loadApplications() {
     try {
-        const response = await fetch('/api/applications');
-        savedApplications = await response.json();
+        const response = await fetch(`${GITHUB_API_URL}?ref=${BRANCH}`, {
+            headers: {
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github+json',
+                'User-Agent': 'SVS-App'
+            }
+        });
+
+        if (response.status === 404) {
+            savedApplications = [];
+            renderTimeSlots();
+            return;
+        }
+
+        const data = await response.json();
+        fileSHA = data.sha; // Save the SHA identifier for updating later
+        const rawXml = atob(data.content); // Decode Base64 from GitHub
+        
+        // Parse basic XML properties manually to get rid of xml2js dependency on frontend
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(rawXml, "text/xml");
+        const slots = xmlDoc.getElementsByTagName("slot");
+        
+        savedApplications = [];
+        for (let i = 0; i < slots.length; i++) {
+            savedApplications.push({
+                time: slots[i].getElementsByTagName("time")[0]?.textContent,
+                nickname: slots[i].getElementsByTagName("nickname")[0]?.textContent,
+                gameId: slots[i].getElementsByTagName("gameId")[0]?.textContent,
+                status: slots[i].getElementsByTagName("status")[0]?.textContent
+            });
+        }
     } catch (e) {
-        console.log("Backend not running? Using local memory empty array.");
+        console.error("Error connecting directly to GitHub:", e);
         savedApplications = [];
     }
     renderTimeSlots();
@@ -36,20 +78,17 @@ function renderTimeSlots() {
     const offset = parseInt(document.getElementById('timezone').value, 10);
     tbody.innerHTML = "";
 
-    // 48 slots = 24 hours * 2 (every 30 mins)
     for (let i = 0; i < 48; i++) {
         let totalMinutes = i * 30;
         let utcH = Math.floor(totalMinutes / 60);
         let utcM = totalMinutes % 60;
         let utcTimeStr = `${String(utcH).padStart(2, '0')}:${String(utcM).padStart(2, '0')}`;
 
-        // Accurate Timezone Math
         let localH = (utcH + offset) % 24;
         if (localH < 0) localH += 24; 
         let localTimeStr = `${String(localH).padStart(2, '0')}:${String(utcM).padStart(2, '0')}`;
 
-        // Check if an entry exists inside the application state
-        let app = savedApplications.find(a => a.time === utcTimeStr);
+        let app = savedApplications.find(a => String(a.time).trim() === utcTimeStr);
 
         let actionBtn = '';
         let appStatus = '<span class="no-apps">No Applications</span>';
@@ -80,60 +119,70 @@ function renderTimeSlots() {
     }
 }
 
+// Convert JavaScript Array back to String XML structure
+function buildXMLString(slotsArray) {
+    let xml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<applications>\n`;
+    slotsArray.forEach(s => {
+        xml += `  <slot>\n    <time>${s.time}</time>\n    <nickname>${s.nickname}</nickname>\n    <gameId>${s.gameId}</gameId>\n    <status>${s.status}</status>\n  </slot>\n`;
+    });
+    xml += `</applications>`;
+    return xml;
+}
+
+async function saveToGitHub(updatedXML, commitMessage) {
+    const base64Content = btoa(unescape(encodeURIComponent(updatedXML))); // Safely turn text into base64
+    
+    const body = {
+        message: commitMessage,
+        content: base64Content,
+        branch: BRANCH
+    };
+    if (fileSHA) body.sha = fileSHA;
+
+    const response = await fetch(GITHUB_API_URL, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json',
+            'User-Agent': 'SVS-App'
+        },
+        body: JSON.stringify(body)
+    });
+
+    return response.ok;
+}
+
 async function applySlot(time) {
     const nickname = prompt("Enter In-Game Nickname:");
     const gameId = prompt("Enter In-Game ID:");
     if (!nickname || !gameId) return;
 
-    try {
-        const response = await fetch('/api/applications', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ time, nickname, gameId, status: 'Accepted' })
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-            alert("Application submitted successfully!");
-            loadApplications(); // Refresh the table layout
-        } else {
-            alert("Failed to submit: " + (result.error || "Unknown server error"));
-        }
-    } catch (error) {
-        console.error("Network Error:", error);
-        alert("Could not connect to the backend server. Make sure server.js is running.");
+    // Add new application to our local array state
+    const targetList = savedApplications.filter(a => a.time !== time);
+    targetList.push({ time, nickname, gameId, status: 'Accepted' });
+
+    const updatedXML = buildXMLString(targetList);
+    const success = await saveToGitHub(updatedXML, `Apply slot for ${time}`);
+
+    if (success) {
+        alert("Application updated directly on GitHub!");
+        loadApplications();
+    } else {
+        alert("Failed pushing update to GitHub tree. Check token permissions.");
     }
 }
 
 async function removeApp(time) {
-    if (!confirm(`Are you sure you want to remove the application for ${time}?`)) return;
-    
-    try {
-        const response = await fetch('/api/applications/remove', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ time })
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-            alert("Application removed successfully!");
-            loadApplications(); // Refresh the table layout
-        } else {
-            alert("Failed to remove: " + (result.error || "Unknown server error"));
-        }
-    } catch (error) {
-        console.error("Network Error:", error);
-        alert("Could not connect to the backend server.");
+    if (!confirm(`Remove reservation for ${time}?`)) return;
+
+    const targetList = savedApplications.filter(a => a.time !== time);
+    const updatedXML = buildXMLString(targetList);
+    const success = await saveToGitHub(updatedXML, `Remove slot for ${time}`);
+
+    if (success) {
+        alert("Application removed!");
+        loadApplications();
+    } else {
+        alert("Failed to remove data from GitHub.");
     }
 }
-
-// Replace the old .find line with this safer check:
-let app = savedApplications.find(a => {
-    let t = (typeof a.time === 'object' && a.time._) ? a.time._ : a.time;
-    return String(t).trim() === utcTimeStr;
-});
-
-
