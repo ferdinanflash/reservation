@@ -141,20 +141,15 @@
     </div>
 
         <footer class="site-footer">
-        <div class="footer-section">
-            <p style="color: #8a8d98; margin-bottom: 4px;">Current President</p>
-            
-            <!-- Elemen tunggal nama President dengan efek kobaran api -->
-            <div id="display-president-name" class="fire-text">RARA</div>
-            
-            <!-- Elemen tunggal nama Guild/Aliansi -->
-            <p id="display-guild-name" class="guild-name" style="color: #8a8d98; margin-top: 4px;">IDN - GLORIOÛS</p>
-        </div>
+    <div class="footer-section">
+        <p style="color: #8a8d98; margin-bottom: 4px;">Current President</p>
+        <div id="display-president-name" class="fire-text">RARA</div>
         
-        <!-- Tombol kontrol edit untuk admin -->
-        <button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:4px 8px; margin-top:8px; display:none;" onclick="handleEditFooter()">Edit President Info</button>
-    </footer>
-
+        <!-- Cukup tambahkan kelas fire-text di sini dan hapus style warna abu-abunya -->
+        <p id="display-guild-name" class="guild-name fire-text" style="margin-top: 4px;">IDN - GLORIOÛS</p>
+    </div>
+    <button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:4px 8px; margin-top:8px; display:none;" onclick="handleEditFooter()">Edit President Info</button>
+</footer>
 
     <div id="confirm-modal" class="modal hidden">
         <div class="modal-content custom-confirm-box">
