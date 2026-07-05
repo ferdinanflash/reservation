@@ -3,7 +3,6 @@ const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
 // =================================================================
 
-
 let supabaseClient = null;
 let isAdmin = false;
 let savedApplications = [];
@@ -13,7 +12,7 @@ let isReservationOpen = true; // Status kendali default website
 
 document.addEventListener("DOMContentLoaded", () => {
     loadFooterInfo();
-    checkReservationStatus(); // MEMASTIKAN STATUS DATABASE DICEK SAAT WEB DIBUKA
+    checkReservationStatus(); // Memastikan status database dicek saat web dibuka pertama kali
 });
 
 function getSupabase() {
@@ -27,12 +26,11 @@ function getSupabase() {
     return supabaseClient;
 }
 
-// Fungsi untuk mengambil status terbaru dari Supabase saat halaman dimuat
+// Fungsi untuk mengambil status terbaru dari Supabase berdasarkan posisi kementerian yang aktif
 async function checkReservationStatus() {
     const client = getSupabase();
     if (!client) return;
     try {
-        // Mengambil status berdasarkan kementerian yang aktif saat ini (currentPosition)
         const { data, error } = await client
             .from('system_settings')
             .select('is_open')
@@ -42,7 +40,7 @@ async function checkReservationStatus() {
         if (data) {
             isReservationOpen = data.is_open;
         } else {
-            // Jika posisi baru belum terdaftar di database, buat default-nya true
+            // Jika posisi belum terdaftar di database, buat default-nya terbuka (true)
             isReservationOpen = true; 
         }
         updateReservationButtonUI();
@@ -50,7 +48,6 @@ async function checkReservationStatus() {
         console.error("Error checking status:", err);
     }
 }
-
 
 // Perbarui tampilan tombol kendali President
 function updateReservationButtonUI() {
@@ -66,7 +63,7 @@ function updateReservationButtonUI() {
     }
 }
 
-// Aksi Klik Tombol Kendali Buka/Tutup Reservasi oleh President
+// Aksi Klik Tombol Kendali Buka/Tutup Reservasi secara mandiri per kementerian
 async function handleToggleReservation() {
     if (!isAdmin) return;
     
@@ -76,16 +73,16 @@ async function handleToggleReservation() {
     const newStatus = !isReservationOpen;
     const actionText = newStatus ? "membuka" : "menutup";
     
-    if (confirm(`Apakah Anda yakin ingin ${actionText} reservasi untuk minggu ini?`)) {
+    if (confirm(`Apakah Anda yakin ingin ${actionText} reservasi khusus untuk ${currentPosition}?`)) {
         const { error } = await client
             .from('system_settings')
             .update({ is_open: newStatus })
-            .eq('id', 'reservation_status');
+            .eq('id', currentPosition);
             
         if (!error) {
             isReservationOpen = newStatus;
             updateReservationButtonUI();
-            showToast(`Reservasi berhasil di-${newStatus ? 'buka' : 'tutup'}!`, "success");
+            showToast(`Reservasi ${currentPosition} berhasil di-${newStatus ? 'buka' : 'tutup'}!`, "success");
         } else {
             showToast("Gagal memperbarui status ke database.", "error");
         }
@@ -199,8 +196,11 @@ function showSchedule(positionName) {
     document.getElementById('schedule-page').classList.remove('hidden');
     document.getElementById('selected-title').innerText = positionName;
     detectAndSetTimezone();
-    loadApplications();
-    checkReservationStatus(); // Segarkan status UI tombol saat pindah posisi kementerian
+    
+    // Tarik status dari database dulu, setelah ter-update baru load data tabelnya
+    checkReservationStatus().then(() => {
+        loadApplications();
+    });
 }
 
 function detectAndSetTimezone() {
@@ -370,7 +370,7 @@ function closeModal() {
 
 // FUNGSI UTAMA KETIKA USER KLIK TOMBOL APPLY DI TABEL JADWAL
 function applySlot(time) {
-    // PROTEKSI UTAMA: Jika status reservasi di database ditutup, cegah pendaftaran baru seketika!
+    // PROTEKSI UTAMA: Jika status reservasi kementerian terkait ditutup, gagalkan pendaftaran
     if (!isReservationOpen) {
         showToast("SvS Preparation Phase doesnt begin this week", "error");
         return; 
@@ -396,7 +396,7 @@ function closeApplyModal() {
 }
 
 async function submitApplication() {
-    // KEAMANAN GANDA: Cek kembali status sesaat sebelum data dikirim ke server Supabase
+    // KEAMANAN GANDA: Validasi status sesaat sebelum melakukan kueri penambahan ke tabel database
     if (!isReservationOpen) {
         showToast("SvS Preparation Phase doesnt begin this week", "error");
         return;
