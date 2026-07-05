@@ -1,3 +1,51 @@
+/* Styling Formulir Input Kustom (Apply Modal) */
+.custom-form-modal {
+    max-width: 420px;
+    background: #151821;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 24px;
+    text-align: left;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.form-group input {
+    background: #1e2230;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 11px 14px;
+    border-radius: 8px;
+    color: #f1f5f9;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.form-group input::placeholder {
+    color: #4b5563;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
 
 /* ==================== STYLE UTK SETIAP TOMBOL POSISI (LIST ITEM) ==================== */
 .list-container {
