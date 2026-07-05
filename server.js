@@ -147,3 +147,13 @@ let slots = result.applications.slot || [];
 if (!Array.isArray(slots)) slots = [slots];
 // ... slots.findIndex is called here ...
 result.applications.slot = slots; 
+// This is what the 'result' variable looks like inside your app.get() or app.post() endpoints:
+{ 
+  applications: { 
+    slot: { 
+      time: "00:00", 
+      nickname: "Player1" 
+    } 
+  } 
+}
+
