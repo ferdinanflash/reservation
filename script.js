@@ -1,9 +1,37 @@
-let isReservationOpen = true; // Status default website
+// ================= SUPABASE PUBLIC CONFIGURATION =================
+const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
+// =================================================================
+
+let supabaseClient = null;
+let isAdmin = false;
+let savedApplications = [];
+let currentPosition = 'Vice President D1';
+let selectedTimeSlot = ''; 
+let isReservationOpen = true; // Status kendali default website
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadFooterInfo();
+    checkReservationStatus(); // MEMASTIKAN STATUS DATABASE DICEK SAAT WEB DIBUKA
+});
+
+function getSupabase() {
+    if (!supabaseClient) {
+        if (typeof window.supabase !== 'undefined') {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+            console.error("Supabase CDN library failed to load");
+        }
+    }
+    return supabaseClient;
+}
 
 // Fungsi untuk mengambil status terbaru dari Supabase saat halaman dimuat
 async function checkReservationStatus() {
+    const client = getSupabase();
+    if (!client) return;
     try {
-        const { data, error } = await _supabase
+        const { data, error } = await client
             .from('system_settings')
             .select('is_open')
             .eq('id', 'reservation_status')
@@ -25,37 +53,37 @@ function updateReservationButtonUI() {
 
     if (isReservationOpen) {
         toggleBtn.innerText = "Close Reservation";
-        toggleBtn.style.background = "#dc2626"; // Merah jika ingin menutup
+        toggleBtn.style.background = "#dc2626"; // Merah jika status aktif (siap ditutup)
     } else {
         toggleBtn.innerText = "Open Reservation";
-        toggleBtn.style.background = "#22c55e"; // Hijau jika ingin membuka
+        toggleBtn.style.background = "#22c55e"; // Hijau jika status nonaktif (siap dibuka)
     }
 }
 
-// ================= SUPABASE PUBLIC CONFIGURATION =================
-const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co'; 
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
-// =================================================================
+// Aksi Klik Tombol Kendali Buka/Tutup Reservasi oleh President
+async function handleToggleReservation() {
+    if (!isAdmin) return;
+    
+    const client = getSupabase();
+    if (!client) return;
 
-let supabaseClient = null;
-let isAdmin = false;
-let savedApplications = [];
-let currentPosition = 'Vice President D1';
-let selectedTimeSlot = ''; 
-
-document.addEventListener("DOMContentLoaded", () => {
-    loadFooterInfo();
-});
-
-function getSupabase() {
-    if (!supabaseClient) {
-        if (typeof window.supabase !== 'undefined') {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const newStatus = !isReservationOpen;
+    const actionText = newStatus ? "membuka" : "menutup";
+    
+    if (confirm(`Apakah Anda yakin ingin ${actionText} reservasi untuk minggu ini?`)) {
+        const { error } = await client
+            .from('system_settings')
+            .update({ is_open: newStatus })
+            .eq('id', 'reservation_status');
+            
+        if (!error) {
+            isReservationOpen = newStatus;
+            updateReservationButtonUI();
+            showToast(`Reservasi berhasil di-${newStatus ? 'buka' : 'tutup'}!`, "success");
         } else {
-            console.error("Supabase CDN library failed to load");
+            showToast("Gagal memperbarui status ke database.", "error");
         }
     }
-    return supabaseClient;
 }
 
 // FUNGSI POP-UP NOTIFIKASI KECIL MELAYANG (MENGGANTIKAN ALERT)
@@ -67,14 +95,12 @@ function showToast(message, type = 'info') {
     toast.className = 'toast-notification';
     toast.innerText = message;
 
-    // Bedakan warna border berdasarkan tipe pesan
     if (type === 'success') toast.style.borderLeftColor = '#22c55e';
     if (type === 'error') toast.style.borderLeftColor = '#ef4444';
     if (type === 'warning') toast.style.borderLeftColor = '#f59e0b';
 
     container.appendChild(toast);
 
-    // Otomatis hapus notifikasi setelah 3 detik
     setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateY(-10px)';
@@ -94,7 +120,6 @@ function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
     okBtn.style.background = buttonColor;
     modal.classList.remove('hidden');
 
-    // Bersihkan event listener sebelumnya agar tidak menumpuk
     const newOkBtn = okBtn.cloneNode(true);
     const newCancelBtn = cancelBtn.cloneNode(true);
     okBtn.parentNode.replaceChild(newOkBtn, okBtn);
@@ -136,7 +161,7 @@ function handleEditFooter() {
 
 function handleAdminLogin() {
     const editFooterBtn = document.getElementById('edit-footer-btn');
-    const toggleResBtn = document.getElementById('toggle-reservation-btn'); // Ambil element tombol baru
+    const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
 
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
@@ -145,7 +170,7 @@ function handleAdminLogin() {
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
-            if (toggleResBtn) toggleResBtn.style.display = "inline-block"; // Tampilkan tombol kendali
+            if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
             showToast("Welcome back President!", "success");
         } else {
             showToast("Incorrect password!", "error");
@@ -156,14 +181,11 @@ function handleAdminLogin() {
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
-        if (toggleResBtn) toggleResBtn.style.display = "none"; // Sembunyikan tombol kendali
+        if (toggleResBtn) toggleResBtn.style.display = "none"; 
         showToast("Logged out from President Mode.", "info");
     }
     loadApplications();
 }
-
-
-
 
 function showSchedule(positionName) {
     currentPosition = positionName;
@@ -172,6 +194,7 @@ function showSchedule(positionName) {
     document.getElementById('selected-title').innerText = positionName;
     detectAndSetTimezone();
     loadApplications();
+    checkReservationStatus(); // Segarkan status UI tombol saat pindah posisi kementerian
 }
 
 function detectAndSetTimezone() {
@@ -303,16 +326,6 @@ function renderTimeSlots() {
         tbody.appendChild(row);
     }
 }
-// Contoh jika dipasang saat user klik tombol "Apply" pertama kali
-function openApplyModal(timeSlot) {
-    // PROTEKSI: Jika reservasi ditutup, langsung cegah dan munculkan notifikasi
-    if (!isReservationOpen) {
-        alert("SvS Preparation Phase doesnt begin this week");
-        return; // Menghentikan fungsi agar modal input tidak terbuka
-    }
-    
-    // ... sisa kode fungsi openApplyModal Anda yang sudah ada sebelumnya ...
-}
 
 function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
@@ -349,7 +362,14 @@ function closeModal() {
     document.getElementById('waiting-modal').classList.add('hidden');
 }
 
+// FUNGSI UTAMA KETIKA USER KLIK TOMBOL APPLY DI TABEL JADWAL
 function applySlot(time) {
+    // PROTEKSI UTAMA: Jika status reservasi di database ditutup, cegah pendaftaran baru seketika!
+    if (!isReservationOpen) {
+        showToast("SvS Preparation Phase doesnt begin this week", "error");
+        return; 
+    }
+
     selectedTimeSlot = time;
     document.getElementById('form-position-title').innerText = currentPosition;
     document.getElementById('form-time-title').innerText = time + " UTC";
@@ -370,6 +390,12 @@ function closeApplyModal() {
 }
 
 async function submitApplication() {
+    // KEAMANAN GANDA: Cek kembali status sesaat sebelum data dikirim ke server Supabase
+    if (!isReservationOpen) {
+        showToast("SvS Preparation Phase doesnt begin this week", "error");
+        return;
+    }
+
     const client = getSupabase();
     if (!client) return;
 
@@ -406,7 +432,7 @@ async function acceptApp(id) {
         const client = getSupabase();
         if (!client) return;
         
-        closeModal(); // Tutup window waiting list terlebih dahulu
+        closeModal(); 
         
         const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
         if (!error) {
@@ -423,7 +449,7 @@ async function removeApp(id) {
         const client = getSupabase();
         if (!client) return;
         
-        closeModal(); // Tutup window waiting list terlebih dahulu
+        closeModal(); 
         
         const { error } = await client.from('reservation_slots').delete().eq('id', id);
         if (!error) {
@@ -435,7 +461,6 @@ async function removeApp(id) {
     }, '#ef4444');
 }
 
-// FUNGSI UNTUK MENGUNDUH DATA MENJADI FILE CSV
 function exportToCSV() {
     if (savedApplications.length === 0) {
         showToast("No data available to export!", "warning");
@@ -443,22 +468,14 @@ function exportToCSV() {
     }
 
     const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
-    
     const rows = savedApplications.map(app => [
-        `"${app.position}"`,
-        `"${app.time_slot}"`,
-        `"${app.status}"`,
-        `"${app.nickname || '-'}"`,
-        `"${app.game_id || '-'}"`,
-        `"${app.fire_crystal || '0'}"`,
-        `"${app.general_speedup || '0'}"`,
-        `"${app.construction_speedup || '0'}"`,
-        `"${app.research_speedup || '0'}"`,
-        `"${app.training_speedup || '0'}"`
+        `"${app.position}"`, `"${app.time_slot}"`, `"${app.status}"`,
+        `"${app.nickname || '-'}"`, `"${app.game_id || '-'}"`, `"${app.fire_crystal || '0'}"`,
+        `"${app.general_speedup || '0'}"`, `"${app.construction_speedup || '0'}"`,
+        `"${app.research_speedup || '0'}"`, `"${app.training_speedup || '0'}"`
     ]);
 
     const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -473,37 +490,3 @@ function exportToCSV() {
     
     showToast("CSV File downloaded successfully!", "success");
 }
-async function handleToggleReservation() {
-    if (!isAdmin) return;
-    
-    const newStatus = !isReservationOpen;
-    const actionText = newStatus ? "membuka" : "menutup";
-    
-    if (confirm(`Apakah Anda yakin ingin ${actionText} reservasi untuk minggu ini?`)) {
-        const { error } = await _supabase
-            .from('system_settings')
-            .update({ is_open: newStatus })
-            .eq('id', 'reservation_status');
-            
-        if (!error) {
-            isReservationOpen = newStatus;
-            updateReservationButtonUI();
-            showToast(`Reservasi berhasil di-${newStatus ? 'buka' : 'tutup'}!`, "success");
-        } else {
-            showToast("Gagal memperbarui status ke database.", "error");
-        }
-    }
-}
-function applySlot(time) {
-    // KENDALI: Jika reservasi ditutup oleh President, blokir pendaftaran baru
-    if (!isReservationOpen) {
-        showToast("SvS Preparation Phase doesnt begin this week", "error");
-        return; // Menghentikan fungsi agar modal input tidak terbuka
-    }
-    
-    // ... sisa kode fungsi applySlot Anda yang sudah ada ...
-    selectedTimeSlot = time;
-    document.getElementById('form-position-title').innerText = currentPosition;
-    // ... dan seterusnya ...
-}
-
