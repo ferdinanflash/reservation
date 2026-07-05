@@ -32,20 +32,25 @@ async function checkReservationStatus() {
     const client = getSupabase();
     if (!client) return;
     try {
+        // Mengambil status berdasarkan kementerian yang aktif saat ini (currentPosition)
         const { data, error } = await client
             .from('system_settings')
             .select('is_open')
-            .eq('id', 'reservation_status')
+            .eq('id', currentPosition)
             .single();
         
         if (data) {
             isReservationOpen = data.is_open;
-            updateReservationButtonUI();
+        } else {
+            // Jika posisi baru belum terdaftar di database, buat default-nya true
+            isReservationOpen = true; 
         }
+        updateReservationButtonUI();
     } catch (err) {
         console.error("Error checking status:", err);
     }
 }
+
 
 // Perbarui tampilan tombol kendali President
 function updateReservationButtonUI() {
