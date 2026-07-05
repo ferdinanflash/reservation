@@ -46,8 +46,44 @@ function showSchedule(positionName) {
     document.getElementById('positions-page').classList.add('hidden');
     document.getElementById('schedule-page').classList.remove('hidden');
     document.getElementById('selected-title').innerText = positionName;
+    
+    // DETEKSI OTOMATIS ZONA WAKTU SEBELUM MERENDER TABEL
+    detectAndSetTimezone();
+    
     loadApplications();
 }
+
+// Fungsi Baru: Mendeteksi zona waktu otomatis pengguna
+function detectAndSetTimezone() {
+    const selector = document.getElementById('timezone');
+    if (!selector) return;
+
+    // Mendapatkan offset menit dari UTC (Contoh: Jakarta UTC+7 adalah -420 menit)
+    const offsetMinutes = new Date().getTimezoneOffset();
+    // Mengubah menit menjadi jam (Contoh: -420 / 60 = -7, lalu kita balik tandanya menjadi 7)
+    const offsetHours = -(offsetMinutes / 60);
+
+    // Cari apakah nilai jam ini ada di dalam daftar <option> kita
+    // Nilai offsetHours bisa berupa desimal atau integer (e.g., 7, 8, -5)
+    const matchedOption = Array.from(selector.options).find(option => parseInt(option.value, 10) === Math.round(offsetHours));
+
+    if (matchedOption) {
+        selector.value = matchedOption.value;
+    } else {
+        // Jika zona waktu user sangat unik dan tidak ada di list dasar kita,
+        // kita buatkan opsi baru secara dinamis agar waktu lokal mereka tetap akurat!
+        const sign = offsetHours >= 0 ? "+" : "";
+        const formattedHours = String(Math.abs(Math.floor(offsetHours))).padStart(2, '0');
+        const formattedMinutes = String(Math.abs(offsetMinutes % 60)).padStart(2, '0');
+        
+        const newOption = document.createElement('option');
+        newOption.value = Math.round(offsetHours);
+        newOption.text = `Auto: UTC ${sign}${formattedHours}:${formattedMinutes}`;
+        newOption.selected = true;
+        selector.add(newOption);
+    }
+}
+
 
 function showPositions() {
     document.getElementById('schedule-page').classList.add('hidden');
