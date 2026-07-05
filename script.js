@@ -1,3 +1,37 @@
+let isReservationOpen = true; // Status default website
+
+// Fungsi untuk mengambil status terbaru dari Supabase saat halaman dimuat
+async function checkReservationStatus() {
+    try {
+        const { data, error } = await _supabase
+            .from('system_settings')
+            .select('is_open')
+            .eq('id', 'reservation_status')
+            .single();
+        
+        if (data) {
+            isReservationOpen = data.is_open;
+            updateReservationButtonUI();
+        }
+    } catch (err) {
+        console.error("Error checking status:", err);
+    }
+}
+
+// Perbarui tampilan tombol kendali President
+function updateReservationButtonUI() {
+    const toggleBtn = document.getElementById('toggle-reservation-btn');
+    if (!toggleBtn) return;
+
+    if (isReservationOpen) {
+        toggleBtn.innerText = "Close Reservation";
+        toggleBtn.style.background = "#dc2626"; // Merah jika ingin menutup
+    } else {
+        toggleBtn.innerText = "Open Reservation";
+        toggleBtn.style.background = "#22c55e"; // Hijau jika ingin membuka
+    }
+}
+
 // ================= SUPABASE PUBLIC CONFIGURATION =================
 const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
