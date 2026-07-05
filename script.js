@@ -71,9 +71,9 @@ async function handleToggleReservation() {
     if (!client) return;
 
     const newStatus = !isReservationOpen;
-    const actionText = newStatus ? "membuka" : "menutup";
+    const actionText = newStatus ? "open" : "close";
     
-    if (confirm(`Apakah Anda yakin ingin ${actionText} reservasi khusus untuk ${currentPosition}?`)) {
+    if (confirm(`Are you sure to ${actionText} reservation for ${currentPosition}?`)) {
         const { error } = await client
             .from('system_settings')
             .update({ is_open: newStatus })
@@ -82,7 +82,7 @@ async function handleToggleReservation() {
         if (!error) {
             isReservationOpen = newStatus;
             updateReservationButtonUI();
-            showToast(`Reservasi ${currentPosition} berhasil di-${newStatus ? 'buka' : 'tutup'}!`, "success");
+            showToast(`Reservation of ${currentPosition} now-${newStatus ? 'open' : 'close'}!`, "success");
         } else {
             showToast("Gagal memperbarui status ke database.", "error");
         }
@@ -373,7 +373,7 @@ function closeModal() {
 function applySlot(time) {
     // PROTEKSI UTAMA: Jika status reservasi kementerian terkait ditutup, gagalkan pendaftaran
     if (!isReservationOpen) {
-        showToast("SvS Preparation Phase doesnt begin this week", "error");
+        showToast("This day reservation still locked for now", "error");
         return; 
     }
 
@@ -399,7 +399,7 @@ function closeApplyModal() {
 async function submitApplication() {
     // KEAMANAN GANDA: Validasi status sesaat sebelum melakukan kueri penambahan ke tabel database
     if (!isReservationOpen) {
-        showToast("SvS Preparation Phase doesnt begin this week", "error");
+        showToast("This day reservation still locked for now", "error");
         return;
     }
 
