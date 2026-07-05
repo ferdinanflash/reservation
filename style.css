@@ -1,218 +1,4 @@
-/* Styling Pop-up Konfirmasi Kustom */
-.custom-confirm-box {
-    max-width: 320px;
-    background: #151821;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
-}
-
-/* Styling Notifikasi Melayang (Toast) */
-.toast-notification {
-    background: #1e2230;
-    color: #f1f5f9;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border-left: 4px solid #3b82f6;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-    animation: slideInToast 0.3s ease forwards;
-    min-width: 200px;
-}
-
-@keyframes slideInToast {
-    from { transform: translateX(120%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-/* Styling Formulir Input Kustom (Apply Modal) */
-.custom-form-modal {
-    max-width: 420px;
-    background: #151821;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 24px;
-    text-align: left;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-}
-
-.form-group {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.form-group label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #94a3b8;
-}
-
-.form-group input {
-    background: #1e2230;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 11px 14px;
-    border-radius: 8px;
-    color: #f1f5f9;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-group input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-.form-group input::placeholder {
-    color: #4b5563;
-}
-
-.form-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-}
-
-/* ==================== STYLE UTK SETIAP TOMBOL POSISI (LIST ITEM) ==================== */
-.list-container {
-    display: flex;
-    flex-direction: column;
-    gap: 14px; /* Memberikan jarak antar tombol agar rapi */
-    margin-top: 15px;
-}
-
-.list-item {
-    background: linear-gradient(135deg, #1e2230 0%, #151821 100%); /* Gradasi latar belakang gelap elegan */
-    padding: 16px 20px;
-    border-radius: 12px; /* Sudut tombol melengkung modern */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    font-weight: 600;
-    color: #f1f5f9;
-    
-    /* FRAME UTAMA: Membuat bingkai tipis semi-transparan */
-    border: 1px solid rgba(255, 255, 255, 0.08); 
-    
-    /* Efek Bayangan Mendalam */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.14);
-    transition: all 0.25s ease; /* Transisi animasi halus */
-}
-
-/* Efek saat tombol posisi disentuh/hover */
-.list-item:hover {
-    transform: translateY(-2px); /* Tombol sedikit terangkat */
-    background: linear-gradient(135deg, #252a3a 0%, #1a1e2a 100%);
-    
-    /* Warna Frame berubah menjadi sedikit menyala biru-silver saat disentuh */
-    border-color: rgba(99, 102, 241, 0.4); 
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-}
-
-/* Efek saat tombol posisi diklik/ditekan */
-.list-item:active {
-    transform: translateY(1px); /* Tombol terasa membal ke bawah */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-
-/* ==================== STYLE UTK TOMBOL PRESIDENT LOGIN / LOGOUT ==================== */
-.btn-admin {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); /* Gradasi Biru */
-    color: white;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    
-    /* Frame tipis menyala tipis */
-    border: 1px solid rgba(255, 255, 255, 0.2); 
-    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
-    transition: all 0.2s ease;
-}
-
-.btn-admin:hover {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
-    transform: scale(1.02); /* Sedikit membesar */
-}
-
-
-/* ==================== STYLE UTK TOMBOL APPLY & TOMBOL UMUM LAINNYA ==================== */
-.btn-apply {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    color: white;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    
-    /* Frame elegan */
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    transition: all 0.2s ease;
-}
-
-.btn-apply:hover {
-    filter: brightness(1.1); /* Membuat warna tombol sedikit lebih cerah */
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
-    transform: translateY(-1px);
-}
-
-
-/* ==================== STYLE UTK TOMBOL BACK (< BACK TO POSITIONS) ==================== */
-.btn-back {
-    background: transparent;
-    color: #94a3b8;
-    border: 1px solid rgba(148, 163, 184, 0.3); /* Frame abu-abu transparan */
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    margin-bottom: 15px;
-}
-
-.btn-back:hover {
-    color: #f1f5f9;
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(241, 245, 249, 0.6);
-}
-
-/* 1. Kontainer Banner: Memangkas jarak vertikal secara agresif */
-.banner-container {
-    margin-top: 5px;       /* Jarak dari judul atas dibuat sangat tipis */
-    margin-bottom: 2px;    /* Hampir menempel dengan teks subtitle di bawahnya */
-    padding: 0;
-    line-height: 0;        /* Menghilangkan sisa celah kosong di bawah gambar */
-}
-
-/* 2. Gambar Banner: Mengunci ukuran agar tidak melebar terlalu besar */
-.position-banner {
-    display: block;
-    margin: 0 auto;
-    width: 65%;           /* Mengurangi lebar gambar menjadi 65% dari lebar layar HP */
-    max-width: 260px;     /* Batas maksimal lebar dalam pixel agar tidak melar di HP besar */
-    height: auto;
-    border-radius: 8px;   /* Menjaga sudut gambar tetap melengkung rapi */
-}
-
-/* 3. Teks Subtitle: Rapatkan ke list menu di bawahnya */
-.page-subtitle {
-    margin-top: 2px;       /* Jarak tipis dengan gambar di atas */
-    margin-bottom: 10px;   /* Memangkas jarak menuju tombol kementerian */
-    font-size: 0.85rem;    /* Ukuran teks proposional */
-}
-
-
-/* Reset and Base Styles */
+/* ==================== RESET AND BASE STYLES ==================== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -223,9 +9,10 @@
 body {
     background-color: #121316;
     color: #ffffff;
+    overflow-x: hidden;
 }
 
-/* Navbar */
+/* ==================== NAVBAR & LIVE CLOCK ==================== */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -235,289 +22,15 @@ body {
     border-bottom: 1px solid #24262b;
 }
 
-.logo {
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.btn-admin {
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-/* Main Layout Container */
-.container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-.page-title {
-    text-align: center;
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.page-subtitle {
-    text-align: center;
-    color: #8a8d98;
-    margin-bottom: 30px;
-}
-
-/* Positions List View */
-.list-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.list-item {
-    background-color: #1c1d22;
-    border: 1px solid #2d3039;
-    padding: 20px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-size: 1.1rem;
-}
-
-.list-item:hover {
-    background-color: #24262e;
-}
-
-.arrow {
-    color: #626773;
-}
-
-/* Schedule View */
-.hidden {
-    display: none !important;
-}
-
-.btn-back {
-    background: none;
-    border: none;
-    color: #8a8d98;
-    cursor: pointer;
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-}
-
-.section-title {
-    margin-top: 20px;
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-}
-
-.timezone-selector {
-    background-color: #1c1d22;
-    padding: 12px;
-    border-radius: 6px 6px 0 0;
-    border: 1px solid #2d3039;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-}
-
-.timezone-selector select {
-    background-color: #121316;
-    color: white;
-    border: 1px solid #444;
-    padding: 4px 8px;
-    border-radius: 4px;
-}
-
-/* Responsive Table */
-.table-container {
-    overflow-x: auto;
-    border: 1px solid #2d3039;
-    border-top: none;
-    background-color: #1c1d22;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 500px; /* Allows horizontal scroll on tight mobile screens */
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    font-size: 0.85rem;
-    border-bottom: 1px solid #2d3039;
-}
-
-th {
-    background-color: #24262e;
-    color: #8a8d98;
-    font-weight: 600;
-}
-
-.btn-apply {
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.no-apps {
-    color: #eab308; /* Yellow text for "No Applications" */
-}
-/* STYLING UNTUK JENDELA POP-UP MODAL ANTRIAN */
-.modal {
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: #1e2026;
-    color: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 750px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    position: relative;
-}
-
-.close-modal {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #8a8d98;
-}
-
-.close-modal:hover {
-    color: #ffffff;
-}
-
-.modal-table-container {
-    width: 100%;
-    overflow-x: auto;
-    margin-top: 15px;
-    border-radius: 6px;
-    background: #14151a;
-}
-
-.hidden {
-    display: none !important;
-}
-/* Membuat tabel bisa digeser ke kanan pada layar HP */
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin-top: 15px;
-}
-
-table {
-    min-width: 800px; /* Memastikan kolom tidak gepeng */
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 10px 8px;
-    text-align: center;
-    font-size: 0.9rem;
-}
-
-/* ================= FOOTER COMPONENT ================= */
-.site-footer {
-    margin-top: 60px;
-    padding: 20px 10px;
-    text-align: center;
-    border-top: 1px solid #2b2f3a;
-    color: #8a8d98;
-    font-size: 0.9rem;
-    line-height: 1.6;
-}
-
-.site-footer .president-name {
-    color: #eab308; /* Memberikan warna emas pada nama RARA */
-    font-weight: bold;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-    margin: 2px 0;
-}
-
-.site-footer .guild-name {
-    color: #ffffff;
-    font-size: 0.85rem;
-    opacity: 0.8;
-}
-.fire-text {
-    font-weight: 900;
-    font-size: 1.6rem; /* Sedikit dinaikkan agar efek emasnya makin terlihat mewah */
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    display: inline-block;
-    
-    /* Membuat warna dasar emas gradasi dengan kilauan putih di tengahnya */
-    background: linear-gradient(
-        to right, 
-        #bf953f 0%, 
-        #fcf6ba 25%, 
-        #b38728 50%, 
-        #fcf6ba 75%, 
-        #bf953f 100%
-    );
-    background-size: 200% auto; /* Memperlebar background agar efek kilau bisa digeser */
-    
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    
-    /* Efek bayangan tipis di belakang huruf agar teks tegas dibaca di latar gelap */
-    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.7));
-    
-    /* Menjalankan animasi bernama 'goldShine' selama 3 detik secara terus-menerus */
-    animation: goldShine 3s linear infinite;
-}
-/* LOGIKA ANIMASI: Menggeser posisi background gradasi dari kiri ke kanan */
-@keyframes goldShine {
-    0% {
-        background-position: 0% center;
-    }
-    100% {
-        background-position: -200% center;
-    }
-}
-/* Mengatur ukuran teks guild emas agar sedikit lebih kecil dan elegan dibanding nama President */
-.footer-section .guild-name.fire-text {
-    font-size: 1.1rem; /* Ukuran teks guild dibuat lebih kecil */
-    font-weight: 700;   /* Ketebalan font sedikit dikurangi agar seimbang */
-}
-/* Container Jam di Bawah Navbar */
 #live-clock-container {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 15px;
-    background-color: #111827; /* Senada dengan warna gelap background utama */
+    background-color: #111827;
     padding: 8px 16px;
     border-bottom: 1px solid #1f2937;
-    font-family: 'Courier New', Courier, monospace; /* Font monospace agar angka jam tidak bergeser saat berganti */
+    font-family: 'Courier New', Courier, monospace;
     font-size: 0.85rem;
 }
 
@@ -540,4 +53,244 @@ th, td {
 .clock-divider {
     color: #374151;
     font-weight: bold;
+}
+
+/* ==================== MAIN LAYOUT CONTAINER ==================== */
+.container {
+    max-width: 600px;
+    margin: 20px auto; /* Mengecilkan margin atas-bawah container utama */
+    padding: 0 20px;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 1.8rem; /* Sedikit dikecilkan agar hemat ruang di HP */
+    margin-bottom: 5px;
+}
+
+/* ==================== BANNER & SUBTITLE (COMPACT MODE) ==================== */
+.banner-container {
+    margin-top: 5px;       
+    margin-bottom: 2px;    
+    padding: 0;
+    line-height: 0;        
+}
+
+.position-banner {
+    display: block;
+    margin: 0 auto;
+    width: 62%;           /* Ukuran banner ideal (tidak memenuhi layar) */
+    max-width: 250px;     
+    height: auto;
+    border-radius: 8px;   
+}
+
+.page-subtitle {
+    text-align: center;
+    margin-top: 6px;       
+    margin-bottom: 12px;   /* Memangkas jarak kosong sebelum tombol kementerian */
+    font-size: 0.85rem;    
+    color: #8a8d98;
+}
+
+/* ==================== LIST ITEM / BUTTON POSISI ==================== */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Merapatkan jarak antar tombol kementerian */
+}
+
+.list-item {
+    background: linear-gradient(135deg, #1e2230 0%, #151821 100%);
+    padding: 14px 18px; /* Memperkecil padding dalam agar lebih hemat space */
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    transition: all 0.25s ease;
+    font-size: 1rem;
+}
+
+.list-item:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #252a3a 0%, #1a1e2a 100%);
+    border-color: rgba(99, 102, 241, 0.4); 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.list-item:active {
+    transform: translateY(1px);
+}
+
+.arrow {
+    color: #626773;
+}
+
+/* ==================== BUTTONS STYLE ==================== */
+.btn-admin {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.2); 
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    transition: all 0.2s ease;
+}
+
+.btn-admin:hover {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.02);
+}
+
+.btn-apply {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.2s ease;
+}
+
+.btn-apply:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btn-back {
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-bottom: 15px;
+}
+
+/* ==================== GLOWING GOLD TEXT EFFECT ==================== */
+.fire-text {
+    font-weight: 900;
+    font-size: 1.5rem; 
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: inline-block;
+    background: linear-gradient(
+        to right, 
+        #bf953f 0%, 
+        #fcf6ba 25%, 
+        #b38728 50%, 
+        #fcf6ba 75%, 
+        #bf953f 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.7));
+    animation: goldShine 3s linear infinite;
+}
+
+@keyframes goldShine {
+    0% { background-position: 0% center; }
+    100% { background-position: -200% center; }
+}
+
+/* ==================== FOOTER COMPONENT ==================== */
+.site-footer {
+    margin-top: 35px; /* Mengurangi jarak kosong menuju footer */
+    padding: 15px 10px;
+    text-align: center;
+    border-top: 1px solid #2b2f3a;
+    color: #8a8d98;
+    font-size: 0.9rem;
+}
+
+.footer-section .guild-name.fire-text {
+    font-size: 1.05rem; /* Menyeimbangkan ukuran nama guild emas */
+    font-weight: 700;   
+}
+
+/* ==================== MODAL & TABLES & TOAST ==================== */
+.hidden { display: none !important; }
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 15px;
+    border: 1px solid #2d3039;
+    background-color: #1c1d22;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+th, td {
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #2d3039;
+}
+
+th {
+    background-color: #24262e;
+    color: #8a8d98;
+}
+
+.modal {
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #1e2026;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 750px;
+    position: relative;
+}
+
+.custom-form-modal { max-width: 420px; background: #151821; padding: 24px; }
+.custom-confirm-box { max-width: 320px; background: #151821; padding: 20px; text-align: center; }
+
+.close-modal {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #8a8d98;
+}
+
+.form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.form-group label { font-size: 0.85rem; color: #94a3b8; }
+.form-group input { background: #1e2230; border: 1px solid rgba(255, 255, 255, 0.1); padding: 11px 14px; border-radius: 8px; color: #f1f5f9; outline: none; }
+.form-group input:focus { border-color: #2563eb; }
+
+.toast-notification {
+    background: #1e2230; color: #f1f5f9; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem;
+    border-left: 4px solid #3b82f6; animation: slideInToast 0.3s ease forwards; min-width: 200px;
 }
