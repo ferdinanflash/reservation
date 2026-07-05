@@ -26,7 +26,7 @@ function handleAdminLogin() {
             isAdmin = true;
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
-            alert("Logged in as President successfully!");
+            alert(Welcome back President!");
         } else {
             alert("Incorrect password!");
             return;
