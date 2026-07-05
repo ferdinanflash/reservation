@@ -533,4 +533,32 @@ async function handleFinishSVS() {
         }
     }, '#dc2626'); // Warna merah pekat untuk tombol konfirmasi eksekusi
 }
+// ==================== LIVE REAL-TIME CLOCK INDIKATOR ====================
+function startLiveClock() {
+    const localClockEl = document.getElementById('local-clock');
+    const utcClockEl = document.getElementById('utc-clock');
+
+    if (!localClockEl || !utcClockEl) return;
+
+    setInterval(() => {
+        const now = new Date();
+
+        // 1. Format Waktu Lokal Pengguna (Jam:Menit:Detik)
+        const localHours = String(now.getHours()).padStart(2, '0');
+        const localMinutes = String(now.getMinutes()).padStart(2, '0');
+        const localSeconds = String(now.getSeconds()).padStart(2, '0');
+        localClockEl.innerText = `${localHours}:${localMinutes}:${localSeconds}`;
+
+        // 2. Format Waktu UTC-0 (Jam:Menit:Detik)
+        const utcHours = String(now.getUTCHours()).padStart(2, '0');
+        const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
+        const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
+        utcClockEl.innerText = `${utcHours}:${utcMinutes}:${utcSeconds}`;
+    }, 1000); // Diperbarui setiap 1000 milidetik (1 detik)
+}
+
+// Jalankan fungsi jam live seketika saat DOM selesai dimuat
+document.addEventListener("DOMContentLoaded", () => {
+    startLiveClock();
+});
 
