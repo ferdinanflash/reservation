@@ -388,3 +388,45 @@ async function removeApp(id) {
         }
     }, '#ef4444');
 }
+// FUNGSI UNTUK MENGUNDUH DATA MENJADI FILE CSV
+function exportToCSV() {
+    if (savedApplications.length === 0) {
+        showToast("No data available to export!", "warning");
+        return;
+    }
+
+    // 1. Tentukan Header/Judul Kolom CSV
+    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
+    
+    // 2. Susun baris data
+    const rows = savedApplications.map(app => [
+        `"${app.position}"`,
+        `"${app.time_slot}"`,
+        `"${app.status}"`,
+        `"${app.nickname || '-'}"`,
+        `"${app.game_id || '-'}"`,
+        `"${app.fire_crystal || '0'}"`,
+        `"${app.general_speedup || '0'}"`,
+        `"${app.construction_speedup || '0'}"`,
+        `"${app.research_speedup || '0'}"`,
+        `"${app.training_speedup || '0'}"`
+    ]);
+
+    // 3. Gabungkan Header dan Baris menggunakan koma (,) dan baris baru (\n)
+    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+    // 4. Proses download file di browser
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `SVS_Ministry_Export_${currentPosition.replace(/\s+/g, '_')}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast("CSV File downloaded successfully!", "success");
+}
