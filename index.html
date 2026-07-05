@@ -90,6 +90,50 @@
             </div>
         </div>
     </div>
+    <div id="apply-modal" class="modal hidden">
+        <div class="modal-content custom-form-modal">
+            <span class="close-modal" onclick="closeApplyModal()">&times;</span>
+            <h2 style="margin-bottom: 4px; font-size: 1.4rem;">Apply for Time Slot</h2>
+            <p style="color: #8a8d98; font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">
+                Position: <span id="form-position-title" style="color: #f1f5f9; font-weight: bold;">-</span><br>
+                Time: <span id="form-time-title" style="color: #3b82f6; font-weight: bold;">-</span>
+            </p>
+            
+            <div class="form-group">
+                <label>In-Game Nickname</label>
+                <input type="text" id="input-nickname" placeholder="Enter your nickname">
+            </div>
+            <div class="form-group">
+                <label>In-Game ID</label>
+                <input type="text" id="input-gameid" placeholder="Enter your game ID">
+            </div>
+            <div class="form-group">
+                <label>Fire Crystals Amount</label>
+                <input type="text" id="input-fc" placeholder="0">
+            </div>
+            <div class="form-group">
+                <label>General Speedups (Days)</label>
+                <input type="text" id="input-gensp" placeholder="-">
+            </div>
+            <div class="form-group">
+                <label>Construction Speedups (Days)</label>
+                <input type="text" id="input-constsp" placeholder="-">
+            </div>
+            <div class="form-group">
+                <label>Research Speedups (Days)</label>
+                <input type="text" id="input-ressp" placeholder="-">
+            </div>
+            <div class="form-group">
+                <label>Troops Training Speedups (Days)</label>
+                <input type="text" id="input-trainsp" placeholder="-">
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeApplyModal()">Cancel</button>
+                <button class="btn-apply" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);" onclick="submitApplication()">Submit Application</button>
+            </div>
+        </div>
+    </div>
 
         <footer class="site-footer">
         <p>Current President</p>
