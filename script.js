@@ -85,20 +85,47 @@ async function applySlot(time) {
     const gameId = prompt("Enter In-Game ID:");
     if (!nickname || !gameId) return;
 
-    await fetch('/api/applications', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ time, nickname, gameId, status: 'Accepted' })
-    });
-    loadApplications();
+    try {
+        const response = await fetch('/api/applications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ time, nickname, gameId, status: 'Accepted' })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            alert("Application submitted successfully!");
+            loadApplications(); // Refresh the table layout
+        } else {
+            alert("Failed to submit: " + (result.error || "Unknown server error"));
+        }
+    } catch (error) {
+        console.error("Network Error:", error);
+        alert("Could not connect to the backend server. Make sure server.js is running.");
+    }
 }
 
 async function removeApp(time) {
     if (!confirm(`Are you sure you want to remove the application for ${time}?`)) return;
-    await fetch('/api/applications/remove', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ time })
-    });
-    loadApplications();
+    
+    try {
+        const response = await fetch('/api/applications/remove', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ time })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            alert("Application removed successfully!");
+            loadApplications(); // Refresh the table layout
+        } else {
+            alert("Failed to remove: " + (result.error || "Unknown server error"));
+        }
+    } catch (error) {
+        console.error("Network Error:", error);
+        alert("Could not connect to the backend server.");
+    }
 }
