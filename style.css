@@ -1,3 +1,33 @@
+/* Styling Pop-up Konfirmasi Kustom */
+.custom-confirm-box {
+    max-width: 320px;
+    background: #151821;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+/* Styling Notifikasi Melayang (Toast) */
+.toast-notification {
+    background: #1e2230;
+    color: #f1f5f9;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-left: 4px solid #3b82f6;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    animation: slideInToast 0.3s ease forwards;
+    min-width: 200px;
+}
+
+@keyframes slideInToast {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
 /* Styling Formulir Input Kustom (Apply Modal) */
 .custom-form-modal {
     max-width: 420px;
