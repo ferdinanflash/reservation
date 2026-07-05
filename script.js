@@ -102,7 +102,10 @@ function handleEditFooter() {
 }
 
 function handleAdminLogin() {
+function handleAdminLogin() {
     const editFooterBtn = document.getElementById('edit-footer-btn');
+    const exportCsvBtn = document.getElementById('export-csv-btn'); // Ambil elemen tombol CSV
+
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
         if (password === "3475") { 
@@ -110,6 +113,7 @@ function handleAdminLogin() {
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
+            if (exportCsvBtn) exportCsvBtn.style.display = "inline-block"; // TAMPILKAN TOMBOL CSV
             showToast("Welcome back President!", "success");
         } else {
             showToast("Incorrect password!", "error");
@@ -120,10 +124,12 @@ function handleAdminLogin() {
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
+        if (exportCsvBtn) exportCsvBtn.style.display = "none"; // SEMBUNYIKAN TOMBOL CSV
         showToast("Logged out from President Mode.", "info");
     }
     loadApplications();
 }
+
 
 function showSchedule(positionName) {
     currentPosition = positionName;
