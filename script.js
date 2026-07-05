@@ -19,7 +19,6 @@ function getSupabase() {
     return supabaseClient;
 }
 
-// Mengubah logika teks login menggunakan istilah President
 function handleAdminLogin() {
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
@@ -51,15 +50,12 @@ function showSchedule(positionName) {
     loadApplications();
 }
 
-// Fungsi Deteksi Zona Waktu Dunia yang Stabil untuk iPhone & Android
 function detectAndSetTimezone() {
     const selector = document.getElementById('timezone');
     if (!selector) return;
 
-    // Bersihkan opsi lama agar tidak duplikat
     selector.innerHTML = "";
 
-    // Daftar label wilayah populer dunia
     const tzLabels = {
         "-12": "Kwajalein", "-11": "Midway Island", "-10": "Hawaii", "-9": "Alaska", 
         "-8": "Pacific Time (US/Canada)", "-7": "Mountain Time (US/Canada)", "-6": "Central Time (US/Canada)", 
@@ -80,7 +76,6 @@ function detectAndSetTimezone() {
         1, 2, 3, 3.5, 4, 4.5, 5, 5.5, 5.75, 6, 6.5, 7, 8, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.75, 13, 14
     ];
 
-    // Menggunakan pembulatan presisi 2 desimal agar kompatibel dengan iPhone iOS
     const userOffsetMinutes = new Date().getTimezoneOffset();
     const userOffsetHours = parseFloat((-(userOffsetMinutes / 60)).toFixed(2));
 
@@ -99,7 +94,6 @@ function detectAndSetTimezone() {
         const label = tzLabels[String(offset)] ? ` (${tzLabels[String(offset)]})` : "";
         option.text = `${timeString}${label}`;
 
-        // COCOKKAN PRESISI: bandingkan nilai offset dengan toleransi angka tipis agar tidak crash di Safari
         if (Math.abs(offset - userOffsetHours) < 0.1) {
             option.selected = true;
             exactMatchFound = true;
@@ -108,7 +102,6 @@ function detectAndSetTimezone() {
         selector.add(option);
     });
 
-    // JIKA TIDAK MENEMUKAN COCOKAN (Zona waktu sangat langka), BUAT OPSI SECARA AMAN
     if (!exactMatchFound) {
         const sign = userOffsetHours >= 0 ? "+" : "-";
         const absOffset = Math.abs(userOffsetHours);
@@ -151,7 +144,6 @@ function renderTimeSlots() {
     const tbody = document.getElementById('schedule-table-body');
     if (!tbody) return;
     
-    // PERBAIKAN: Menggunakan parseFloat agar mendukung desimal zona waktu pecahan (.5 atau .75)
     const offset = parseFloat(document.getElementById('timezone').value);
     tbody.innerHTML = "";
 
@@ -161,7 +153,6 @@ function renderTimeSlots() {
         let utcM = totalMinutes % 60;
         let utcTimeStr = `${String(utcH).padStart(2, '0')}:${String(utcM).padStart(2, '0')}`;
 
-        // PERBAIKAN LOGIKA: Konversi total menit UTC ke menit Lokal agar akurat di semua zona waktu pecahan
         let totalLocalMinutes = totalMinutes + Math.round(offset * 60);
         let localH = Math.floor(totalLocalMinutes / 60) % 24;
         if (localH < 0) localH += 24;
@@ -185,6 +176,7 @@ function renderTimeSlots() {
                 <td>${acceptedApp.nickname}</td>
                 <td>${acceptedApp.game_id}</td>
                 <td>${acceptedApp.fire_crystal || '-'}</td>
+                <td>${acceptedApp.general_speedup || '-'}</td>
                 <td>${acceptedApp.construction_speedup || '-'}</td>
                 <td>${acceptedApp.research_speedup || '-'}</td>
                 <td>${acceptedApp.training_speedup || '-'}</td>
@@ -201,7 +193,7 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
                 <td>${statusText}</td>
-                <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+                <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
             `;
         }
         tbody.appendChild(row);
@@ -235,6 +227,7 @@ function openWaitingModal(timeStr) {
             <td>${app.nickname}</td>
             <td>${app.game_id}</td>
             <td>${app.fire_crystal || '-'}</td>
+            <td>${app.general_speedup || '-'}</td>
             <td>${app.construction_speedup || '-'}</td>
             <td>${app.research_speedup || '-'}</td>
             <td>${app.training_speedup || '-'}</td>
@@ -259,6 +252,7 @@ async function applySlot(time) {
     if (!gameId) return;
     
     const fc = prompt("Enter Fire Crystal Amount:", "0");
+    const genSp = prompt("Enter General Speedup:", "-");
     const constSp = prompt("Enter Construction Speedup:", "-");
     const resSp = prompt("Enter Research Speedup:", "-");
     const trainSp = prompt("Enter Training Speedup:", "-");
@@ -271,6 +265,7 @@ async function applySlot(time) {
             nickname: nickname, 
             game_id: gameId, 
             fire_crystal: fc,
+            general_speedup: genSp,
             construction_speedup: constSp,
             research_speedup: resSp,
             training_speedup: trainSp,
