@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.static(__dirname));
 
 // ================= GITHUB CONFIGURATION =================
-const GITHUB_TOKEN = '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'; // Replace with your token
+const GITHUB_TOKEN = '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'; // Replace with your token
 const OWNER = 'ferdinanflash';                    // Replace with your GitHub username
 const REPO = 'reservation';                     // Replace with your repository name
 const FILE_PATH = 'application.xml';                      // Path to the file in your repo
