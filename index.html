@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=13" defer></script>
+    <script src="script.js?v=12" defer></script>
 </head>
 <body>
 
     <header class="navbar">
         <span class="logo">SVS Ministry</span>
-        <button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()">Admin Login</button>
+        <button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()">President Login</button>
     </header>
 
     <main class="container">
@@ -31,7 +31,7 @@
         <section id="schedule-page" class="hidden">
             <button class="btn-back" onclick="showPositions()">&lt; Back to positions</button>
             <h1 class="page-title" id="selected-title">Position Title</h1>
-            <h3 class="section-title">Time Slot Schedule <span id="admin-indicator" style="color:#ef4444; font-size:0.8rem; display:none;">(ADMIN MODE)</span></h3>
+            <h3 class="section-title">Time Slot Schedule <span id="admin-indicator" style="color:#ef4444; font-size:0.8rem; display:none;">(PRESIDENT MODE)</span></h3>
             
             <div class="timezone-selector">
                 <label for="timezone">Display Time Zone:</label>
@@ -86,6 +86,12 @@
             </div>
         </div>
     </div>
+
+    <footer class="site-footer">
+        <p>Current President</p>
+        <p class="president-name">RARA</p>
+        <p class="guild-name">IDN - GLORIOÛS</p>
+    </footer>
 
 </body>
 </html>
