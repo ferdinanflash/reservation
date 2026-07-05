@@ -1,3 +1,18 @@
+/* Pengaturan Gambar Banner di Halaman Utama */
+.banner-container {
+    text-align: center;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.position-banner {
+    max-width: 250px; /* Batasi lebar maksimal gambar agar tidak terlalu besar */
+    width: 80%;       /* Di layar HP yang sangat kecil, gambar otomatis mengecil sesuai layar */
+    height: auto;     /* Menjaga proporsi gambar agar tidak gepeng */
+    border-radius: 8px; /* Membuat sudut gambar sedikit melengkung agar terlihat modern */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Memberi efek bayangan halus */
+}
+
 /* Reset and Base Styles */
 * {
     box-sizing: border-box;
