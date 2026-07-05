@@ -1,4 +1,177 @@
-/* STYLING UNTUK JENDELA POP-UP MODAL ANTRIAN */
+/* ================= MAIN LAYOUT ================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #14151a;
+    color: #ffffff;
+    padding-bottom: 50px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1e2026;
+    padding: 15px 20px;
+    border-bottom: 1px solid #2b2f3a;
+}
+
+.logo {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.page-subtitle {
+    text-align: center;
+    color: #8a8d98;
+    margin-bottom: 30px;
+}
+
+/* ================= POSITION SELECTION ================= */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.list-item {
+    background-color: #1e2026;
+    padding: 18px 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border: 1px solid #2b2f3a;
+    transition: background 0.2s;
+}
+
+.list-item:hover {
+    background-color: #252830;
+}
+
+.arrow {
+    color: #8a8d98;
+    font-weight: bold;
+}
+
+/* ================= BUTTONS & UTILITIES ================= */
+.btn-admin {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    color: #8a8d98;
+    cursor: pointer;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.btn-back:hover {
+    color: #ffffff;
+}
+
+.btn-apply {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-apply:hover {
+    opacity: 0.9;
+}
+
+.timezone-selector {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #8a8d98;
+}
+
+.timezone-selector select {
+    background: #1e2026;
+    color: white;
+    border: 1px solid #2b2f3a;
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+/* ================= TABLES ================= */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #2b2f3a;
+    border-radius: 8px;
+    background-color: #1e2026;
+}
+
+table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: #181a20;
+    color: #8a8d98;
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    padding: 12px 10px;
+    border-bottom: 1px solid #2b2f3a;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #2b2f3a;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.no-apps {
+    color: #eab308;
+    opacity: 0.8;
+}
+
+/* ================= MODAL POP-UP ANTRIAN ================= */
 .modal {
     position: fixed;
     z-index: 2000;
@@ -6,7 +179,7 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,19 +188,20 @@
 .modal-content {
     background-color: #1e2026;
     color: #ffffff;
-    padding: 20px;
+    padding: 25px;
     border-radius: 12px;
-    width: 90%;
-    max-width: 750px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    width: 92%;
+    max-width: 800px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.6);
     position: relative;
+    border: 1px solid #2b2f3a;
 }
 
 .close-modal {
     position: absolute;
-    right: 15px;
-    top: 10px;
-    font-size: 1.8rem;
+    right: 20px;
+    top: 15px;
+    font-size: 2rem;
     cursor: pointer;
     color: #8a8d98;
 }
@@ -39,9 +213,10 @@
 .modal-table-container {
     width: 100%;
     overflow-x: auto;
-    margin-top: 15px;
-    border-radius: 6px;
+    margin-top: 20px;
+    border-radius: 8px;
     background: #14151a;
+    border: 1px solid #2b2f3a;
 }
 
 .hidden {
