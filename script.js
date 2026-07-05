@@ -533,29 +533,62 @@ async function handleFinishSVS() {
         }
     }, '#dc2626'); // Warna merah pekat untuk tombol konfirmasi eksekusi
 }
-// ==================== LIVE REAL-TIME CLOCK INDIKATOR ====================
+// ==================== LIVE REAL-TIME CLOCK DIKUNCI KE SELECTION TIMEZONE ====================
 function startLiveClock() {
     const localClockEl = document.getElementById('local-clock');
+    const localLabelEl = document.getElementById('local-clock-label');
     const utcClockEl = document.getElementById('utc-clock');
+    const timezoneSelect = document.getElementById('timezone'); // Mengambil element dropdown timezone bawaan web
 
-    if (!localClockEl || !utcClockEl) return;
+    if (!localClockEl || !utcClockEl || !localLabelEl) return;
 
     setInterval(() => {
         const now = new Date();
 
-        // 1. Format Waktu Lokal Pengguna (Jam:Menit:Detik)
-        const localHours = String(now.getHours()).padStart(2, '0');
-        const localMinutes = String(now.getMinutes()).padStart(2, '0');
-        const localSeconds = String(now.getSeconds()).padStart(2, '0');
-        localClockEl.innerText = `${localHours}:${localMinutes}:${localSeconds}`;
-
-        // 2. Format Waktu UTC-0 (Jam:Menit:Detik)
+        // 1. FORMAT UTC-0 (Selalu Tetap)
         const utcHours = String(now.getUTCHours()).padStart(2, '0');
         const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
         const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
         utcClockEl.innerText = `${utcHours}:${utcMinutes}:${utcSeconds}`;
-    }, 1000); // Diperbarui setiap 1000 milidetik (1 detik)
+
+        // 2. FORMAT LOCAL / DISPLAY TIME ZONE (Dinamis)
+        // Cek apakah dropdown timezone ada dan sedang tidak tersembunyi (berada di halaman jadwal)
+        const schedulePage = document.getElementById('schedule-page');
+        const isScheduleVisible = schedulePage && !schedulePage.classList.contains('hidden');
+
+        if (isScheduleVisible && timezoneSelect && timezoneSelect.value) {
+            // Jika user di halaman jadwal, ikuti nilai dropdown timezone (contoh value: "7" untuk UTC+7, "-5" untuk UTC-5)
+            const offset = parseFloat(timezoneSelect.value); 
+            
+            // Hitung waktu berdasarkan offset timezone yang dipilih
+            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const targetTime = new Date(utcTime + (3600000 * offset));
+
+            const displayHours = String(targetTime.getHours()).padStart(2, '0');
+            const displayMinutes = String(targetTime.getMinutes()).padStart(2, '0');
+            const displaySeconds = String(targetTime.getSeconds()).padStart(2, '0');
+            
+            // Ubah text label sesuai dengan zona waktu yang dipilih (Misal: UTC+7 atau UTC-5)
+            const sign = offset >= 0 ? "+" : "";
+            localLabelEl.innerText = `UTC${sign}${offset}:`;
+            localClockEl.innerText = `${displayHours}:${displayMinutes}:${displaySeconds}`;
+        } else {
+            // Jika di halaman utama (atau dropdown belum dimuat), gunakan waktu lokal asli HP user
+            const localHours = String(now.getHours()).padStart(2, '0');
+            const localMinutes = String(now.getMinutes()).padStart(2, '0');
+            const localSeconds = String(now.getSeconds()).padStart(2, '0');
+            
+            localLabelEl.innerText = "LOCAL:";
+            localClockEl.innerText = `${localHours}:${localMinutes}:${localSeconds}`;
+        }
+    }, 1000);
 }
+
+// Jalankan fungsi jam live seketika saat DOM selesai dimuat
+document.addEventListener("DOMContentLoaded", () => {
+    startLiveClock();
+});
+
 
 // Jalankan fungsi jam live seketika saat DOM selesai dimuat
 document.addEventListener("DOMContentLoaded", () => {
