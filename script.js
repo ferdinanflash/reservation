@@ -52,27 +52,64 @@ function showSchedule(positionName) {
 }
 
 function detectAndSetTimezone() {
+// Fungsi Baru: Membuat semua daftar zona waktu dunia dan mendeteksi lokasi user
+function detectAndSetTimezone() {
     const selector = document.getElementById('timezone');
     if (!selector) return;
 
-    const offsetMinutes = new Date().getTimezoneOffset();
-    const offsetHours = -(offsetMinutes / 60);
-    const matchedOption = Array.from(selector.options).find(option => parseInt(option.value, 10) === Math.round(offsetHours));
+    // Bersihkan isi selector terlebih dahulu
+    selector.innerHTML = "";
 
-    if (matchedOption) {
-        selector.value = matchedOption.value;
-    } else {
-        const sign = offsetHours >= 0 ? "+" : "";
-        const formattedHours = String(Math.abs(Math.floor(offsetHours))).padStart(2, '0');
-        const formattedMinutes = String(Math.abs(offsetMinutes % 60)).padStart(2, '0');
+    // Daftar nama wilayah populer berdasarkan offset jam untuk mempermudah user
+    const tzLabels = {
+        "-12": "Kwajalein", "-11": "Midway Island", "-10": "Hawaii", "-9": "Alaska", 
+        "-8": "Pacific Time (US/Canada)", "-7": "Mountain Time (US/Canada)", "-6": "Central Time (US/Canada)", 
+        "-5": "Eastern Time (US/Canada)", "-4": "Atlantic Time", "-3.5": "Newfoundland", 
+        "-3": "Buenos Aires, Sao Paulo", "-2": "Mid-Atlantic", "-1": "Azores", 
+        "0": "London, GMT, UTC", "1": "Berlin, Paris, Rome", "2": "Cairo, Johannesburg", 
+        "3": "Moscow, Baghdad, Nairobi", "3.5": "Tehran", "4": "Dubai, Baku", 
+        "4.5": "Kabul", "5": "Karachi, Tashkent", "5.5": "Mumbai, New Delhi", 
+        "5.75": "Kathmandu", "6": "Dhaka, Almaty", "6.5": "Yangon (Myanmar)", 
+        "7": "Jakarta, Bangkok, WIB", "8": "Singapore, Manila, Beijing, WITA", "9": "Tokyo, Seoul, WIT", 
+        "9.5": "Darwin, Adelaide", "10": "Sydney, Melbourne, Vladivostok", "10.5": "Lord Howe Island",
+        "11": "Solomon Islands", "11.5": "Norfolk Island", "12": "Auckland, Fiji", 
+        "12.75": "Chatham Islands", "13": "Nuku'alofa (Tonga)", "14": "Kiritimati (Christmas Island)"
+    };
+
+    // Loop untuk membuat opsi zona waktu dari UTC-12 sampai UTC+14 (termasuk setengah jam .5 dan .75)
+    const offsets = [
+        -12, -11, -10, -9, -8, -7, -6, -5, -4, -3.5, -3, -2, -1, 0, 
+        1, 2, 3, 3.5, 4, 4.5, 5, 5.5, 5.75, 6, 6.5, 7, 8, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.75, 13, 14
+    ];
+
+    // Dapatkan offset otomatis dari perangkat user saat ini
+    const userOffsetMinutes = new Date().getTimezoneOffset();
+    const userOffsetHours = -(userOffsetMinutes / 60);
+
+    offsets.forEach(offset => {
+        const option = document.createElement('option');
+        option.value = offset;
+
+        // Format tampilan teks UTC (+/-)
+        const sign = offset >= 0 ? "+" : "-";
+        const absOffset = Math.abs(offset);
+        const hours = Math.floor(absOffset);
+        const minutes = (absOffset % 1) * 60;
+        const timeString = `UTC ${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
         
-        const newOption = document.createElement('option');
-        newOption.value = Math.round(offsetHours);
-        newOption.text = `Auto: UTC ${sign}${formattedHours}:${formattedMinutes}`;
-        newOption.selected = true;
-        selector.add(newOption);
-    }
+        // Gabungkan dengan label nama kota jika ada
+        const label = tzLabels[String(offset)] ? ` (${tzLabels[String(offset)]})` : "";
+        option.text = `${timeString}${label}`;
+
+        // Jika offset ini cocok dengan zona waktu HP pengguna, otomatis pilih (selected)
+        if (offset === userOffsetHours || (offset === Math.round(userOffsetHours) && !offsets.includes(userOffsetHours))) {
+            option.selected = true;
+        }
+
+        selector.add(option);
+    });
 }
+
 
 function showPositions() {
     document.getElementById('schedule-page').classList.add('hidden');
