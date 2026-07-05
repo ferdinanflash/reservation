@@ -1,6 +1,6 @@
 // ================= SUPABASE PUBLIC CONFIGURATION =================
 const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co'; 
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODg'; 
 // =================================================================
 
 let supabaseClient = null;
@@ -19,24 +19,24 @@ function getSupabase() {
     return supabaseClient;
 }
 
-// Sistem login dengan password pengaman
+// Mengubah logika teks login menggunakan istilah President
 function handleAdminLogin() {
     if (!isAdmin) {
-        const password = prompt("Enter Admin Password:");
+        const password = prompt("Enter President Password:");
         if (password === "idn") {
             isAdmin = true;
-            document.getElementById('admin-toggle-btn').innerText = "Logout Admin";
+            document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
-            alert("Logged in as Admin successfully!");
+            alert("Logged in as President successfully!");
         } else {
             alert("Incorrect password!");
             return;
         }
     } else {
         isAdmin = false;
-        document.getElementById('admin-toggle-btn').innerText = "Admin Login";
+        document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
-        alert("Logged out from Admin Mode.");
+        alert("Logged out from President Mode.");
     }
     loadApplications();
 }
@@ -47,31 +47,21 @@ function showSchedule(positionName) {
     document.getElementById('schedule-page').classList.remove('hidden');
     document.getElementById('selected-title').innerText = positionName;
     
-    // DETEKSI OTOMATIS ZONA WAKTU SEBELUM MERENDER TABEL
     detectAndSetTimezone();
-    
     loadApplications();
 }
 
-// Fungsi Baru: Mendeteksi zona waktu otomatis pengguna
 function detectAndSetTimezone() {
     const selector = document.getElementById('timezone');
     if (!selector) return;
 
-    // Mendapatkan offset menit dari UTC (Contoh: Jakarta UTC+7 adalah -420 menit)
     const offsetMinutes = new Date().getTimezoneOffset();
-    // Mengubah menit menjadi jam (Contoh: -420 / 60 = -7, lalu kita balik tandanya menjadi 7)
     const offsetHours = -(offsetMinutes / 60);
-
-    // Cari apakah nilai jam ini ada di dalam daftar <option> kita
-    // Nilai offsetHours bisa berupa desimal atau integer (e.g., 7, 8, -5)
     const matchedOption = Array.from(selector.options).find(option => parseInt(option.value, 10) === Math.round(offsetHours));
 
     if (matchedOption) {
         selector.value = matchedOption.value;
     } else {
-        // Jika zona waktu user sangat unik dan tidak ada di list dasar kita,
-        // kita buatkan opsi baru secara dinamis agar waktu lokal mereka tetap akurat!
         const sign = offsetHours >= 0 ? "+" : "";
         const formattedHours = String(Math.abs(Math.floor(offsetHours))).padStart(2, '0');
         const formattedMinutes = String(Math.abs(offsetMinutes % 60)).padStart(2, '0');
@@ -83,7 +73,6 @@ function detectAndSetTimezone() {
         selector.add(newOption);
     }
 }
-
 
 function showPositions() {
     document.getElementById('schedule-page').classList.add('hidden');
@@ -126,14 +115,12 @@ function renderTimeSlots() {
         if (localH < 0) localH += 24; 
         let localTimeStr = `${String(localH).padStart(2, '0')}:${String(utcM).padStart(2, '0')}`;
 
-        // Mengelompokkan seluruh pendaftar di jam yang sama
         let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === utcTimeStr);
         let acceptedApp = appsInSlot.find(a => a.status === 'Accepted');
         let countWaiting = appsInSlot.filter(a => a.status === 'Waiting').length;
 
         const row = document.createElement('tr');
         
-        // JIKA SUDAH DI-ACCEPT ADMIN: Kunci baris, tampilkan data lengkap pelamar tersebut
         if (acceptedApp) {
             let actionBtn = isAdmin ? `<button class="btn-apply" style="background:#ef4444;" onclick="removeApp(${acceptedApp.id})">Remove</button>` : '-';
             row.innerHTML = `
@@ -147,14 +134,11 @@ function renderTimeSlots() {
                 <td>${acceptedApp.research_speedup || '-'}</td>
                 <td>${acceptedApp.training_speedup || '-'}</td>
             `;
-        } 
-        // JIKA BELUM DI-ACCEPT (KOSONG / MENUNGGU): Pertahankan 1 baris waktu yang kokoh
-        else {
+        } else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
             let statusText = '<span class="no-apps">No Applications</span>';
             
             if (countWaiting > 0) {
-                // Teks "Waiting (X)" diubah menjadi tombol link klik untuk melihat semua antrean pendaftar
                 statusText = `<span style="color:#f59e0b; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openWaitingModal('${utcTimeStr}')">Waiting (${countWaiting})</span>`;
             }
 
@@ -169,18 +153,16 @@ function renderTimeSlots() {
     }
 }
 
-// Membuka modal pop-up dan merender list data antrean pendaftar
 function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
     const modalTitle = document.getElementById('modal-title');
-    const modalTbody = document.getElementById('modal-body-table') || document.getElementById('modal-table-body');
+    const modalTbody = document.getElementById('modal-table-body');
     
     modalTitle.innerText = `Waiting List - ${timeStr} UTC`;
     modalTbody.innerHTML = "";
 
     let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
 
-    // Sembunyikan atau tampilkan kolom aksi admin di dalam modal tergantung login status
     const actionHeaders = document.querySelectorAll('.admin-action-col');
     actionHeaders.forEach(el => el.style.display = isAdmin ? 'table-cell' : 'none');
 
