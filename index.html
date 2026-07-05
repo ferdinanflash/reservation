@@ -10,6 +10,17 @@
     <script src="script.js?v=17" defer></script>
 </head>
 <body>
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content custom-confirm-box">
+            <h3 id="confirm-message" style="margin-bottom: 20px; font-size: 1.1rem; line-height: 1.5; color: #f1f5f9;">Are you sure?</h3>
+            <div class="form-actions" style="margin-top: 0;">
+                <button id="confirm-cancel-btn" class="btn-back" style="margin-bottom:0; flex: 1; padding: 10px;">Cancel</button>
+                <button id="confirm-ok-btn" class="btn-apply" style="flex: 1; padding: 10px; background: #ef4444;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;"></div>
 
     <header class="navbar">
         <span class="logo">SVS Ministry</span>
