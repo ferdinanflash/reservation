@@ -16,31 +16,16 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [18.x, 20.x, 22.x, 24.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
-# Inside your custom pipeline text file under .github/workflows/
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v6         # Upgrade from @v4 to @v6 to support Node 24
-
-  - name: Setup Node environment
-    uses: actions/setup-node@v6       # Upgrade from @v4 to @v6 to support Node 24
-    with:
-      node-version: '24'              # Explicitly declare Node 24 here
-
-  - name: Upload Pages Artifact
-    uses: actions/upload-pages-artifact@v3 
-
-  - name: Deploy to GitHub Pages
-    uses: actions/deploy-pages@v5     # Upgrade from @v4 to @v5 to support Node 24
