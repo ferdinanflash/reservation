@@ -157,3 +157,19 @@ result.applications.slot = slots;
   } 
 }
 
+// Inside fetchFromGitHub():
+headers: {
+    'Authorization': `Bearer ${GITHUB_TOKEN}`,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    'User-Agent': 'SVS-Ministry-App' // <-- ADD THIS LINE
+}
+
+// Inside pushToGitHub():
+headers: {
+    'Authorization': `Bearer ${GITHUB_TOKEN}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    'User-Agent': 'SVS-Ministry-App' // <-- ADD THIS LINE
+}
