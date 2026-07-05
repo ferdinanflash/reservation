@@ -136,6 +136,7 @@ function handleEditFooter() {
 
 function handleAdminLogin() {
     const editFooterBtn = document.getElementById('edit-footer-btn');
+    const toggleResBtn = document.getElementById('toggle-reservation-btn'); // Ambil element tombol baru
 
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
@@ -144,6 +145,7 @@ function handleAdminLogin() {
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
+            if (toggleResBtn) toggleResBtn.style.display = "inline-block"; // Tampilkan tombol kendali
             showToast("Welcome back President!", "success");
         } else {
             showToast("Incorrect password!", "error");
@@ -154,10 +156,12 @@ function handleAdminLogin() {
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
+        if (toggleResBtn) toggleResBtn.style.display = "none"; // Sembunyikan tombol kendali
         showToast("Logged out from President Mode.", "info");
     }
     loadApplications();
 }
+
 
 
 
@@ -298,6 +302,16 @@ function renderTimeSlots() {
         }
         tbody.appendChild(row);
     }
+}
+// Contoh jika dipasang saat user klik tombol "Apply" pertama kali
+function openApplyModal(timeSlot) {
+    // PROTEKSI: Jika reservasi ditutup, langsung cegah dan munculkan notifikasi
+    if (!isReservationOpen) {
+        alert("SvS Preparation Phase doesnt begin this week");
+        return; // Menghentikan fungsi agar modal input tidak terbuka
+    }
+    
+    // ... sisa kode fungsi openApplyModal Anda yang sudah ada sebelumnya ...
 }
 
 function openWaitingModal(timeStr) {
@@ -459,3 +473,25 @@ function exportToCSV() {
     
     showToast("CSV File downloaded successfully!", "success");
 }
+async function handleToggleReservation() {
+    if (!isAdmin) return;
+    
+    const newStatus = !isReservationOpen;
+    const actionText = newStatus ? "membuka" : "menutup";
+    
+    if (confirm(`Apakah Anda yakin ingin ${actionText} reservasi untuk minggu ini?`)) {
+        const { error } = await _supabase
+            .from('system_settings')
+            .update({ is_open: newStatus })
+            .eq('id', 'reservation_status');
+            
+        if (!error) {
+            isReservationOpen = newStatus;
+            updateReservationButtonUI();
+            showToast(`Reservasi berhasil di-${newStatus ? 'buka' : 'tutup'}!`, "success");
+        } else {
+            showToast("Gagal memperbarui status ke database.", "error");
+        }
+    }
+}
+
