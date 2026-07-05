@@ -294,3 +294,60 @@ th {
     background: #1e2230; color: #f1f5f9; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem;
     border-left: 4px solid #3b82f6; animation: slideInToast 0.3s ease forwards; min-width: 200px;
 }
+/* ==================== RECENTLY ACCEPTED LOG STYLE ==================== */
+#recent-log-container {
+    max-width: 340px;
+    margin: 15px auto 0 auto;
+    background: rgba(24, 25, 29, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: left;
+}
+
+.log-title {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #8a8d98;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 4px;
+    text-align: center;
+}
+
+#recent-log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    font-family: monospace;
+    display: flex;
+    justify-content: space-between;
+    background: rgba(30, 34, 48, 0.4);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.log-user {
+    color: #3b82f6; /* Warna biru untuk nama user */
+    font-weight: bold;
+}
+
+.log-pos {
+    color: #eab308; /* Warna emas untuk posisi kementerian */
+}
+
+.log-item-empty {
+    font-size: 0.75rem;
+    color: #4b5563;
+    text-align: center;
+    padding: 10px 0;
+    font-style: italic;
+}
