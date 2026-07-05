@@ -10,56 +10,33 @@
 
     <header class="navbar">
         <span class="logo">SVS Ministry</span>
-        <button class="btn-admin">Admin Login</button>
+        <button id="admin-toggle-btn" class="btn-admin" onclick="toggleAdminMode()">Admin Login</button>
     </header>
 
     <main class="container">
-        
         <section id="positions-page">
             <h1 class="page-title">SVS Ministry Position</h1>
             <p class="page-subtitle">Select a position to learn more</p>
-            
             <div class="list-container">
-                <div class="list-item" onclick="showSchedule('Vice President D1')">
-                    <span>Vice President D1</span>
-                    <span class="arrow">&gt;</span>
-                </div>
-                <div class="list-item" onclick="showSchedule('Vice President D2')">
-                    <span>Vice President D2</span>
-                    <span class="arrow">&gt;</span>
-                </div>
-                <div class="list-item" onclick="showSchedule('Minister of Education D4')">
-                    <span>Minister of Education D4</span>
-                    <span class="arrow">&gt;</span>
-                </div>
-                <div class="list-item" onclick="showSchedule('Vice President D5')">
-                    <span>Vice President D5</span>
-                    <span class="arrow">&gt;</span>
-                </div>
+                <div class="list-item" onclick="showSchedule('Vice President D1')"><span>Vice President D1</span><span class="arrow">&gt;</span></div>
+                <div class="list-item" onclick="showSchedule('Vice President D2')"><span>Vice President D2</span><span class="arrow">&gt;</span></div>
             </div>
         </section>
 
         <section id="schedule-page" class="hidden">
             <button class="btn-back" onclick="showPositions()">&lt; Back to positions</button>
-            <h1 class="page-title" id="selected-title">Vice President D1</h1>
-            
-            <h3 class="section-title">Time Slot Schedule</h3>
+            <h1 class="page-title" id="selected-title">Position Title</h1>
+            <h3 class="section-title">Time Slot Schedule <span id="admin-indicator" style="color:#ef4444; font-size:0.8rem; display:none;">(ADMIN MODE)</span></h3>
             
             <div class="timezone-selector">
-    <label for="timezone">Display Time Zone:</label>
-    <select id="timezone" onchange="generateTimeSlots()">
-        <option value="0">UTC / GMT +00:00</option>
-        <option value="1">GMT +01:00</option>
-        <option value="2">GMT +02:00</option>
-        <option value="3">GMT +03:00</option>
-        <option value="7" selected>GMT +07:00 (Jakarta/WIB)</option>
-        <option value="8">GMT +08:00 (Singapore/SGT)</option>
-        <option value="9">GMT +09:00 (Tokyo/JST)</option>
-        <option value="-5">GMT -05:00 (EST)</option>
-        <option value="-8">GMT -08:00 (PST)</option>
-        </select>
-</div>
-
+                <label for="timezone">Display Time Zone:</label>
+                <select id="timezone" onchange="renderTimeSlots()">
+                    <option value="0">UTC +00:00</option>
+                    <option value="7" selected>UTC +07:00 (Jakarta)</option>
+                    <option value="8">UTC +08:00 (Singapore)</option>
+                    <option value="-5">UTC -05:00 (EST)</option>
+                </select>
+            </div>
 
             <div class="table-container">
                 <table>
@@ -67,17 +44,15 @@
                         <tr>
                             <th>ACTION</th>
                             <th>PREFERRED TIME (UTC)</th>
-                            <th>NUMBER OF APPLICATIONS</th>
+                            <th>STATUS / APPLICATIONS</th>
                             <th>IN-GAME NICKNAME</th>
                             <th>IN-GAME ID</th>
                         </tr>
                     </thead>
-                    <tbody id="schedule-table-body">
-                        </tbody>
+                    <tbody id="schedule-table-body"></tbody>
                 </table>
             </div>
         </section>
-
     </main>
 
     <script src="script.js"></script>
