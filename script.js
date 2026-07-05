@@ -290,10 +290,10 @@ function applySlot(time) {
     document.getElementById('input-nickname').value = "";
     document.getElementById('input-gameid').value = "";
     document.getElementById('input-fc').value = "0";
-    document.getElementById('input-gensp').value = "-";
-    document.getElementById('input-constsp').value = "-";
-    document.getElementById('input-ressp').value = "-";
-    document.getElementById('input-trainsp').value = "-";
+    document.getElementById('input-gensp').value = "";
+    document.getElementById('input-constsp').value = "";
+    document.getElementById('input-ressp').value = "";
+    document.getElementById('input-trainsp').value = "";
     
     // Munculkan Modal ke layar
     document.getElementById('apply-modal').classList.remove('hidden');
