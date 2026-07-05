@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=8" defer></script>
+    <script src="script.js?v=9" defer></script>
 </head>
 <body>
 
@@ -17,15 +17,19 @@
     </header>
 
     <main class="container">
+        <!-- POSITIONS VIEW -->
         <section id="positions-page">
             <h1 class="page-title">SVS Ministry Position</h1>
             <p class="page-subtitle">Select a position to learn more</p>
             <div class="list-container">
                 <div class="list-item" onclick="showSchedule('Vice President D1')"><span>Vice President D1</span><span class="arrow">&gt;</span></div>
                 <div class="list-item" onclick="showSchedule('Vice President D2')"><span>Vice President D2</span><span class="arrow">&gt;</span></div>
+                <div class="list-item" onclick="showSchedule('Minister of Education D4')"><span>Minister of Education D4</span><span class="arrow">&gt;</span></div>
+                <div class="list-item" onclick="showSchedule('Vice President D5')"><span>Vice President D5</span><span class="arrow">&gt;</span></div>
             </div>
         </section>
 
+        <!-- SCHEDULE VIEW -->
         <section id="schedule-page" class="hidden">
             <button class="btn-back" onclick="showPositions()">&lt; Back to positions</button>
             <h1 class="page-title" id="selected-title">Position Title</h1>
@@ -47,9 +51,13 @@
                         <tr>
                             <th>ACTION</th>
                             <th>PREFERRED TIME (UTC)</th>
-                            <th>STATUS / APPLICATIONS</th>
+                            <th>STATUS (APPLICANTS)</th>
                             <th>IN-GAME NICKNAME</th>
                             <th>IN-GAME ID</th>
+                            <th>FC</th>
+                            <th>CONST SP</th>
+                            <th>RES SP</th>
+                            <th>TRAIN SP</th>
                         </tr>
                     </thead>
                     <tbody id="schedule-table-body"></tbody>
