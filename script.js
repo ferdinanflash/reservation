@@ -101,9 +101,8 @@ function handleEditFooter() {
 }
 
 function handleAdminLogin() {
-function handleAdminLogin() {
     const editFooterBtn = document.getElementById('edit-footer-btn');
-    const exportCsvBtn = document.getElementById('export-csv-btn'); // Ambil elemen tombol CSV
+    const exportCsvBtn = document.getElementById('export-csv-btn'); 
 
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
@@ -112,7 +111,7 @@ function handleAdminLogin() {
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
-            if (exportCsvBtn) exportCsvBtn.style.display = "inline-block"; // TAMPILKAN TOMBOL CSV
+            if (exportCsvBtn) exportCsvBtn.style.display = "inline-block"; 
             showToast("Welcome back President!", "success");
         } else {
             showToast("Incorrect password!", "error");
@@ -123,12 +122,11 @@ function handleAdminLogin() {
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
-        if (exportCsvBtn) exportCsvBtn.style.display = "none"; // SEMBUNYIKAN TOMBOL CSV
+        if (exportCsvBtn) exportCsvBtn.style.display = "none"; 
         showToast("Logged out from President Mode.", "info");
     }
     loadApplications();
 }
-
 
 function showSchedule(positionName) {
     currentPosition = positionName;
@@ -357,14 +355,15 @@ async function submitApplication() {
 }
 
 async function acceptApp(id) {
-    // MENGGUNAKAN POPUP KONFIRMASI KUSTOM KITA SENDIRI
     showCustomConfirm("Accept this application? This will lock this time slot.", async () => {
         const client = getSupabase();
         if (!client) return;
+        
+        closeModal(); // Tutup window waiting list terlebih dahulu
+        
         const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
         if (!error) {
             showToast("Application Approved!", "success");
-            closeModal();
             loadApplications();
         } else {
             showToast("Failed to approve.", "error");
@@ -373,20 +372,22 @@ async function acceptApp(id) {
 }
 
 async function removeApp(id) {
-    // MENGGUNAKAN POPUP KONFIRMASI KUSTOM KITA SENDIRI
     showCustomConfirm("Delete this application record permanently?", async () => {
         const client = getSupabase();
         if (!client) return;
+        
+        closeModal(); // Tutup window waiting list terlebih dahulu
+        
         const { error } = await client.from('reservation_slots').delete().eq('id', id);
         if (!error) {
             showToast("Record dropped successfully.", "success");
-            closeModal();
             loadApplications();
         } else {
             showToast("Failed executing delete request.", "error");
         }
     }, '#ef4444');
 }
+
 // FUNGSI UNTUK MENGUNDUH DATA MENJADI FILE CSV
 function exportToCSV() {
     if (savedApplications.length === 0) {
@@ -394,10 +395,8 @@ function exportToCSV() {
         return;
     }
 
-    // 1. Tentukan Header/Judul Kolom CSV
     const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
     
-    // 2. Susun baris data
     const rows = savedApplications.map(app => [
         `"${app.position}"`,
         `"${app.time_slot}"`,
@@ -411,10 +410,8 @@ function exportToCSV() {
         `"${app.training_speedup || '0'}"`
     ]);
 
-    // 3. Gabungkan Header dan Baris menggunakan koma (,) dan baris baru (\n)
     const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
 
-    // 4. Proses download file di browser
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
