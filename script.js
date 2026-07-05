@@ -12,30 +12,44 @@ function showPositions() {
     document.getElementById('positions-page').classList.remove('hidden');
 }
 
-// Generate Time Rows Programmatically
+// Generate Time Rows Programmatically based on GMT option
 function generateTimeSlots() {
     const tbody = document.getElementById('schedule-table-body');
-    tbody.innerHTML = ""; // Clear old contents
+    const tzSelect = document.getElementById('timezone');
+    
+    // Get the selected integer offset (e.g., 7, 0, -5)
+    const offset = parseInt(tzSelect.value, 10);
+    const selectedText = tzSelect.options[tzSelect.selectedIndex].text.split(' ')[0]; // Gets "GMT" or "UTC"
+    
+    tbody.innerHTML = ""; // Reset table
 
     let currentHour = 0;
     let currentMinute = 0;
 
-    // Generates the first few rows matching your app layout
-    for (let i = 0; i < 8; i++) {
-        // Format time display values strings (e.g., 01:30)
-        let hh = String(currentHour).padStart(2, '0');
-        let mm = String(currentMinute).padStart(2, '0');
+    // Loop 48 times to cover all 30-minute intervals in a 24-hour window
+    for (let i = 0; i < 48; i++) {
+        // Format Base UTC string
+        let utcHH = String(currentHour).padStart(2, '0');
+        let utcMM = String(currentMinute).padStart(2, '0');
         
-        // Calculate placeholder WIB timezone offset (+7 hours manually for visual decoration)
-        let wibHour = (currentHour + 7) % 24;
-        let wibHh = String(wibHour).padStart(2, '0');
+        // Calculate Target GMT/Offset Time
+        let targetHour = currentHour + offset;
+        
+        // Handle negative offsets (e.g., -5) and wrapping past midnight (> 24)
+        if (targetHour < 0) {
+            targetHour = 24 + (targetHour % 24);
+        }
+        targetHour = targetHour % 24;
+
+        let targetHH = String(targetHour).padStart(2, '0');
+        let targetMM = String(currentMinute).padStart(2, '0');
 
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><button class="btn-apply" onclick="alert('Applying for ${hh}:${mm} UTC')">Apply</button></td>
+            <td><button class="btn-apply" onclick="alert('Applying for ${utcHH}:${utcMM} UTC')">Apply</button></td>
             <td>
-                <strong>${hh}:${mm} UTC</strong><br>
-                <small style="color: #626773;">WIB: ${wibHh}:${mm}</small>
+                <strong>${utcHH}:${utcMM} UTC</strong><br>
+                <small style="color: #8a8d98;">${selectedText}: ${targetHH}:${targetMM}</small>
             </td>
             <td class="no-apps">No Applications</td>
             <td>-</td>
@@ -43,7 +57,7 @@ function generateTimeSlots() {
         `;
         tbody.appendChild(row);
 
-        // Advance slot by 30 minutes increments
+        // Step forward by 30 minutes
         currentMinute += 30;
         if (currentMinute >= 60) {
             currentMinute = 0;
