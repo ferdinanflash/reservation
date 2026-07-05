@@ -186,27 +186,29 @@
     border-color: rgba(241, 245, 249, 0.6);
 }
 
-/* Pengaturan Gambar Banner di Halaman Utama */
-/* 1. Perkecil ruang kosong di sekitar wadah gambar */
+/* 1. Kontainer Banner: Memangkas jarak vertikal secara agresif */
 .banner-container {
-    margin-top: 10px;    /* Mengurangi jarak atas banner dari judul */
-    margin-bottom: 5px;  /* Memangkas jarak bawah banner menuju teks subtitle */
-    padding: 0;          /* Memastikan tidak ada padding tambahan */
+    margin-top: 5px;       /* Jarak dari judul atas dibuat sangat tipis */
+    margin-bottom: 2px;    /* Hampir menempel dengan teks subtitle di bawahnya */
+    padding: 0;
+    line-height: 0;        /* Menghilangkan sisa celah kosong di bawah gambar */
 }
 
-/* 2. Pastikan gambar banner tidak memberikan celah margin tambahan */
+/* 2. Gambar Banner: Mengunci ukuran agar tidak melebar terlalu besar */
 .position-banner {
     display: block;
     margin: 0 auto;
-    max-width: 100%;
+    width: 65%;           /* Mengurangi lebar gambar menjadi 65% dari lebar layar HP */
+    max-width: 260px;     /* Batas maksimal lebar dalam pixel agar tidak melar di HP besar */
     height: auto;
+    border-radius: 8px;   /* Menjaga sudut gambar tetap melengkung rapi */
 }
 
-/* 3. Rapatkan teks sub-judul langsung ke arah gambar di atasnya */
+/* 3. Teks Subtitle: Rapatkan ke list menu di bawahnya */
 .page-subtitle {
-    margin-top: 0px;     /* Menghilangkan jarak atas teks */
-    margin-bottom: 15px; /* Mengurangi jarak bawah teks menuju list kementerian */
-    font-size: 0.9rem;   /* Sedikit menyesuaikan ukuran agar ideal di layar HP */
+    margin-top: 2px;       /* Jarak tipis dengan gambar di atas */
+    margin-bottom: 10px;   /* Memangkas jarak menuju tombol kementerian */
+    font-size: 0.85rem;    /* Ukuran teks proposional */
 }
 
 
