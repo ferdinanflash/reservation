@@ -77,7 +77,7 @@ async function handleToggleReservation() {
         const { error } = await client
             .from('system_settings')
             .update({ is_open: newStatus })
-            .eq('id', currentPosition);
+            .eq('id', currentPosition); // BERHASIL DIPERBAIKI: Mengunci nama kementerian aktif, bukan 'reservation_status'
             
         if (!error) {
             isReservationOpen = newStatus;
@@ -190,6 +190,7 @@ function handleAdminLogin() {
     loadApplications();
 }
 
+// Menampilkan Halaman Jadwal Posisi Tertentu
 function showSchedule(positionName) {
     currentPosition = positionName;
     document.getElementById('positions-page').classList.add('hidden');
@@ -197,7 +198,7 @@ function showSchedule(positionName) {
     document.getElementById('selected-title').innerText = positionName;
     detectAndSetTimezone();
     
-    // Tarik status dari database dulu, setelah ter-update baru load data tabelnya
+    // BERHASIL SINKRON: Tarik status kementerian terkait dari database dulu, baru tampilkan tabel data pendaftar
     checkReservationStatus().then(() => {
         loadApplications();
     });
