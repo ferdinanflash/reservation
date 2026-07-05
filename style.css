@@ -1,3 +1,113 @@
+
+/* ==================== STYLE UTK SETIAP TOMBOL POSISI (LIST ITEM) ==================== */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px; /* Memberikan jarak antar tombol agar rapi */
+    margin-top: 15px;
+}
+
+.list-item {
+    background: linear-gradient(135deg, #1e2230 0%, #151821 100%); /* Gradasi latar belakang gelap elegan */
+    padding: 16px 20px;
+    border-radius: 12px; /* Sudut tombol melengkung modern */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: #f1f5f9;
+    
+    /* FRAME UTAMA: Membuat bingkai tipis semi-transparan */
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    
+    /* Efek Bayangan Mendalam */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.14);
+    transition: all 0.25s ease; /* Transisi animasi halus */
+}
+
+/* Efek saat tombol posisi disentuh/hover */
+.list-item:hover {
+    transform: translateY(-2px); /* Tombol sedikit terangkat */
+    background: linear-gradient(135deg, #252a3a 0%, #1a1e2a 100%);
+    
+    /* Warna Frame berubah menjadi sedikit menyala biru-silver saat disentuh */
+    border-color: rgba(99, 102, 241, 0.4); 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* Efek saat tombol posisi diklik/ditekan */
+.list-item:active {
+    transform: translateY(1px); /* Tombol terasa membal ke bawah */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ==================== STYLE UTK TOMBOL PRESIDENT LOGIN / LOGOUT ==================== */
+.btn-admin {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); /* Gradasi Biru */
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    
+    /* Frame tipis menyala tipis */
+    border: 1px solid rgba(255, 255, 255, 0.2); 
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    transition: all 0.2s ease;
+}
+
+.btn-admin:hover {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    transform: scale(1.02); /* Sedikit membesar */
+}
+
+
+/* ==================== STYLE UTK TOMBOL APPLY & TOMBOL UMUM LAINNYA ==================== */
+.btn-apply {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    
+    /* Frame elegan */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.btn-apply:hover {
+    filter: brightness(1.1); /* Membuat warna tombol sedikit lebih cerah */
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+    transform: translateY(-1px);
+}
+
+
+/* ==================== STYLE UTK TOMBOL BACK (< BACK TO POSITIONS) ==================== */
+.btn-back {
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.3); /* Frame abu-abu transparan */
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-bottom: 15px;
+}
+
+.btn-back:hover {
+    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(241, 245, 249, 0.6);
+}
+
 /* Pengaturan Gambar Banner di Halaman Utama */
 .banner-container {
     text-align: center;
