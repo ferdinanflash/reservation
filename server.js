@@ -137,3 +137,13 @@ app.post('/api/applications/remove', async (req, res) => {
 });
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000 - Connected to GitHub tree'));
+
+let slots = (result && result.applications && result.applications.slot) || [];
+if (!Array.isArray(slots)) slots = [slots];
+
+
+if (!result || !result.applications) result = { applications: { slot: [] } };
+let slots = result.applications.slot || [];
+if (!Array.isArray(slots)) slots = [slots];
+// ... slots.findIndex is called here ...
+result.applications.slot = slots; 
