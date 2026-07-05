@@ -229,3 +229,27 @@ th, td {
     font-size: 0.9rem;
 }
 
+/* ================= FOOTER COMPONENT ================= */
+.site-footer {
+    margin-top: 60px;
+    padding: 20px 10px;
+    text-align: center;
+    border-top: 1px solid #2b2f3a;
+    color: #8a8d98;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.site-footer .president-name {
+    color: #eab308; /* Memberikan warna emas pada nama RARA */
+    font-weight: bold;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    margin: 2px 0;
+}
+
+.site-footer .guild-name {
+    color: #ffffff;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
