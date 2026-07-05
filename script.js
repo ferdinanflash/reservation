@@ -509,7 +509,7 @@ async function handleFinishSVS() {
     if (!client) return;
 
     // Memanfaatkan custom confirm box bawaan website Anda agar aman
-    showCustomConfirm("Caution to finish SVS!\nAre you sure ?, this will be reset all applied data", async () => {
+    showCustomConfirm("Caution to finish SVS!\n Are you sure ?, this will be reset all applied data", async () => {
         try {
             // Melakukan kueri DELETE tanpa filter .eq() untuk membersihkan seluruh isi tabel
             const { error } = await client
