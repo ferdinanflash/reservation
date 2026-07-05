@@ -2,7 +2,7 @@ let isAdmin = false;
 let savedApplications = [];
 
 // ================= GITHUB CONFIGURATION =================
-const GITHUB_TOKEN = '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'; // Set your token here
+const GITHUB_TOKEN = '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'; // Set your token here
 const OWNER = 'ferdinanflash';                 
 const REPO = 'reservation';                     
 const FILE_PATH = 'application.xml';            
