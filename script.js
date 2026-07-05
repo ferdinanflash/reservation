@@ -509,7 +509,7 @@ async function handleFinishSVS() {
     if (!client) return;
 
     // Memanfaatkan custom confirm box bawaan website Anda agar aman
-    showCustomConfirm("Caution to finish SVS!\nApakah Anda yakin ingin mengakhiri fase SvS dan MENGHAPUS SEMUA data pendaftar dari semua kementerian?", async () => {
+    showCustomConfirm("Caution to finish SVS!\nAre you sure ?, this will be reset all applied data", async () => {
         try {
             // Melakukan kueri DELETE tanpa filter .eq() untuk membersihkan seluruh isi tabel
             const { error } = await client
@@ -518,7 +518,7 @@ async function handleFinishSVS() {
                 .neq('id', 0); // Trik kueri untuk menghapus semua baris yang ID-nya bukan 0
 
             if (!error) {
-                showToast("Semua record pendaftaran berhasil dihapus! Database bersih.", "success");
+                showToast("All record has been cleared.", "success");
                 
                 // Jika sedang membuka halaman jadwal kementerian, segarkan tampilannya
                 if (typeof loadApplications === "function") {
@@ -528,8 +528,8 @@ async function handleFinishSVS() {
                 throw error;
             }
         } catch (err) {
-            console.error("Gagal membersihkan database:", err);
-            showToast("Gagal menghapus data: " + err.message, "error");
+            console.error("Fail to reset database:", err);
+            showToast("Fail to clear data: " + err.message, "error");
         }
     }, '#dc2626'); // Warna merah pekat untuk tombol konfirmasi eksekusi
 }
