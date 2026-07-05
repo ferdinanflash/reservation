@@ -600,3 +600,58 @@ function startLiveClock() {
 document.addEventListener("DOMContentLoaded", () => {
     startLiveClock();
 });
+// ==================== REAL-TIME LOG ACCEPTS PENGGUNA ====================
+async function loadRecentAccepts() {
+    const logListEl = document.getElementById('recent-log-list');
+    if (!logListEl) return;
+
+    const client = getSupabase();
+    if (!client) return;
+
+    try {
+        // Mengambil 3 data terbaru yang kolom in-game nickname-nya tidak kosong (sudah di-accept admin)
+        // Disesuaikan dengan struktur database Anda (asumsi kolom nama: 'nickname', kolom waktu update: 'updated_at')
+        const { data, error } = await client
+            .from('reservation_slots')
+            .select('nickname, position_name, updated_at')
+            .not('nickname', 'is', null)
+            .neq('nickname', '')
+            .order('updated_at', { ascending: false })
+            .limit(3);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            logListEl.innerHTML = `<div class="log-item-empty">No recent activity</div>`;
+            return;
+        }
+
+        logListEl.innerHTML = ''; // Bersihkan kontainer lama
+
+        data.forEach(item => {
+            // Mempersingkat nama posisi jika terlalu panjang (Contoh: Minister of Education D4 -> Edu D4)
+            let shortPos = item.position_name
+                .replace('Vice President', 'VP')
+                .replace('Minister of Education', 'Edu');
+
+            const logRow = document.createElement('div');
+            logRow.className = 'log-entry';
+            logRow.innerHTML = `
+                <span>✅ <span class="log-user">${item.nickname}</span></span>
+                <span class="log-pos">[${shortPos}]</span>
+            `;
+            logListEl.appendChild(logRow);
+        });
+
+    } catch (err) {
+        console.error("Gagal memuat log aktivitas:", err);
+    }
+}
+
+// Panggil fungsi ini tepat di dalam DOMContentLoaded agar jalan otomatis saat web dibuka
+document.addEventListener("DOMContentLoaded", () => {
+    loadRecentAccepts();
+    
+    // Opsional: Refresh log otomatis setiap 30 detik agar selalu real-time
+    setInterval(loadRecentAccepts, 30000);
+});
