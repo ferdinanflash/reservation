@@ -129,3 +129,11 @@ async function removeApp(time) {
         alert("Could not connect to the backend server.");
     }
 }
+
+// Replace the old .find line with this safer check:
+let app = savedApplications.find(a => {
+    let t = (typeof a.time === 'object' && a.time._) ? a.time._ : a.time;
+    return String(t).trim() === utcTimeStr;
+});
+
+
