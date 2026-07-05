@@ -165,6 +165,7 @@ function handleEditFooter() {
 function handleAdminLogin() {
     const editFooterBtn = document.getElementById('edit-footer-btn');
     const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
+    const finishSvsBtn = document.getElementById('finish-svs-btn'); // Ambil element tombol baru
 
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
@@ -174,6 +175,7 @@ function handleAdminLogin() {
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
             if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
+            if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; // Tampilkan saat login
             showToast("Welcome back President!", "success");
         } else {
             showToast("Incorrect password!", "error");
@@ -185,10 +187,12 @@ function handleAdminLogin() {
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
         if (toggleResBtn) toggleResBtn.style.display = "none"; 
+        if (finishSvsBtn) finishSvsBtn.style.display = "none"; // Sembunyikan saat logout
         showToast("Logged out from President Mode.", "info");
     }
     loadApplications();
 }
+
 
 // Menampilkan Halaman Jadwal Posisi Tertentu
 function showSchedule(positionName) {
@@ -497,3 +501,36 @@ function exportToCSV() {
     
     showToast("CSV File downloaded successfully!", "success");
 }
+// Fungsi untuk mereset/menghapus seluruh record pendaftaran di database
+async function handleFinishSVS() {
+    if (!isAdmin) return;
+
+    const client = getSupabase();
+    if (!client) return;
+
+    // Memanfaatkan custom confirm box bawaan website Anda agar aman
+    showCustomConfirm("Caution to finish SVS!\nApakah Anda yakin ingin mengakhiri fase SvS dan MENGHAPUS SEMUA data pendaftar dari semua kementerian?", async () => {
+        try {
+            // Melakukan kueri DELETE tanpa filter .eq() untuk membersihkan seluruh isi tabel
+            const { error } = await client
+                .from('reservation_slots')
+                .delete()
+                .neq('id', 0); // Trik kueri untuk menghapus semua baris yang ID-nya bukan 0
+
+            if (!error) {
+                showToast("Semua record pendaftaran berhasil dihapus! Database bersih.", "success");
+                
+                // Jika sedang membuka halaman jadwal kementerian, segarkan tampilannya
+                if (typeof loadApplications === "function") {
+                    loadApplications();
+                }
+            } else {
+                throw error;
+            }
+        } catch (err) {
+            console.error("Gagal membersihkan database:", err);
+            showToast("Gagal menghapus data: " + err.message, "error");
+        }
+    }, '#dc2626'); // Warna merah pekat untuk tombol konfirmasi eksekusi
+}
+
