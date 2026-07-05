@@ -102,7 +102,6 @@ function handleEditFooter() {
 
 function handleAdminLogin() {
     const editFooterBtn = document.getElementById('edit-footer-btn');
-    const exportCsvBtn = document.getElementById('export-csv-btn'); 
 
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
@@ -111,7 +110,6 @@ function handleAdminLogin() {
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
-            if (exportCsvBtn) exportCsvBtn.style.display = "inline-block"; 
             showToast("Welcome back President!", "success");
         } else {
             showToast("Incorrect password!", "error");
@@ -122,11 +120,11 @@ function handleAdminLogin() {
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
-        if (exportCsvBtn) exportCsvBtn.style.display = "none"; 
         showToast("Logged out from President Mode.", "info");
     }
     loadApplications();
 }
+
 
 function showSchedule(positionName) {
     currentPosition = positionName;
