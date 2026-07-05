@@ -7,17 +7,16 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=10" defer></script>
+    <script src="script.js?v=11" defer></script>
 </head>
 <body>
 
     <header class="navbar">
         <span class="logo">SVS Ministry</span>
-        <button id="admin-toggle-btn" class="btn-admin" onclick="toggleAdminMode()">Admin Login</button>
+        <button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()">Admin Login</button>
     </header>
 
     <main class="container">
-        <!-- POSITIONS VIEW -->
         <section id="positions-page">
             <h1 class="page-title">SVS Ministry Position</h1>
             <p class="page-subtitle">Select a position to learn more</p>
@@ -29,7 +28,6 @@
             </div>
         </section>
 
-        <!-- SCHEDULE VIEW -->
         <section id="schedule-page" class="hidden">
             <button class="btn-back" onclick="showPositions()">&lt; Back to positions</button>
             <h1 class="page-title" id="selected-title">Position Title</h1>
@@ -65,6 +63,29 @@
             </div>
         </section>
     </main>
+
+    <div id="waiting-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Applicants List</h2>
+            <div class="modal-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="admin-action-col">ACTION</th>
+                            <th>NICKNAME</th>
+                            <th>GAME ID</th>
+                            <th>FC</th>
+                            <th>CONST SP</th>
+                            <th>RES SP</th>
+                            <th>TRAIN SP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
