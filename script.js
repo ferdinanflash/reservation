@@ -3,11 +3,22 @@ const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODg'; 
 // =================================================================
 
-// Initialize database connection
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+let supabaseClient = null;
 let isAdmin = false;
 let savedApplications = [];
+
+// Secure connection initializer
+function getSupabase() {
+    if (!supabaseClient) {
+        if (typeof window.supabase !== 'undefined') {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+            console.error("Supabase CDN library failed to load in index.html");
+        }
+    }
+    return supabaseClient;
+}
 
 function toggleAdminMode() {
     isAdmin = !isAdmin;
@@ -30,8 +41,11 @@ function showPositions() {
 
 // Fetch reservations straight from the database table
 async function loadApplications() {
+    const client = getSupabase();
+    if (!client) return;
+
     try {
-        const { data, error } = await supabase
+        const { data, error } = await client
             .from('reservation_slots')
             .select('*');
 
@@ -46,6 +60,8 @@ async function loadApplications() {
 
 function renderTimeSlots() {
     const tbody = document.getElementById('schedule-table-body');
+    if (!tbody) return;
+    
     const offset = parseInt(document.getElementById('timezone').value, 10);
     tbody.innerHTML = "";
 
@@ -91,11 +107,14 @@ function renderTimeSlots() {
 }
 
 async function applySlot(time) {
+    const client = getSupabase();
+    if (!client) return;
+
     const nickname = prompt("Enter In-Game Nickname:");
     const gameId = prompt("Enter In-Game ID:");
     if (!nickname || !gameId) return;
 
-    const { error } = await supabase
+    const { error } = await client
         .from('reservation_slots')
         .upsert({ time_slot: time, nickname, game_id: gameId, status: 'Accepted' }, { onConflict: 'time_slot' });
 
@@ -108,9 +127,12 @@ async function applySlot(time) {
 }
 
 async function removeApp(time) {
+    const client = getSupabase();
+    if (!client) return;
+
     if (!confirm(`Delete reservation for ${time}?`)) return;
 
-    const { error } = await supabase
+    const { error } = await client
         .from('reservation_slots')
         .delete()
         .eq('time_slot', time);
