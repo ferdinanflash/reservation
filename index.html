@@ -34,9 +34,11 @@
 
         <section id="schedule-page" class="hidden">
             <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center; justify-content: flex-start;">
+    <div class="schedule-actions" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
     <button class="btn-back" onclick="showPositions()" style="margin-bottom: 0;">&lt; Back to positions</button>
-    
     <button id="export-csv-btn" class="btn-apply" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem;" onclick="exportToCSV()">Export CSV</button>
+    <button id="toggle-reservation-btn" class="btn-apply" style="background: #dc2626; margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem; display: none;" onclick="handleToggleReservation()">Close Reservation</button>
+</div>
 </div>
 
             <h1 class="page-title" id="selected-title">Position Title</h1>
