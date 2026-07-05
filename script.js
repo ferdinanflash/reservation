@@ -7,8 +7,8 @@ let supabaseClient = null;
 let isAdmin = false;
 let savedApplications = [];
 let currentPosition = 'Vice President D1';
+let selectedTimeSlot = ''; // Menyimpan slot waktu yang sedang dipilih
 
-// Jalankan fungsi memuat informasi footer saat halaman pertama kali dibuka
 document.addEventListener("DOMContentLoaded", () => {
     loadFooterInfo();
 });
@@ -24,7 +24,6 @@ function getSupabase() {
     return supabaseClient;
 }
 
-// Fungsi memuat info nama president & guild dari localStorage
 function loadFooterInfo() {
     const savedName = localStorage.getItem('president_name');
     const savedGuild = localStorage.getItem('guild_name');
@@ -33,7 +32,6 @@ function loadFooterInfo() {
     if (savedGuild) document.getElementById('display-guild-name').innerText = savedGuild;
 }
 
-// Fungsi untuk admin mengubah informasi nama & guild di footer
 function handleEditFooter() {
     if (!isAdmin) return;
 
@@ -41,16 +39,14 @@ function handleEditFooter() {
     const currentGuild = document.getElementById('display-guild-name').innerText;
 
     const newName = prompt("Enter New President Name:", currentName);
-    if (newName === null) return; // batalkan jika menekan cancel
+    if (newName === null) return;
     
     const newGuild = prompt("Enter New Guild Name:", currentGuild);
-    if (newGuild === null) return; // batalkan jika menekan cancel
+    if (newGuild === null) return;
 
-    // Simpan ke local storage browser agar permanen saat direfresh
     if (newName.trim() !== "") localStorage.setItem('president_name', newName.trim());
     if (newGuild.trim() !== "") localStorage.setItem('guild_name', newGuild.trim());
 
-    // Perbarui tampilan langsung di layar
     loadFooterInfo();
     alert("President information updated successfully!");
 }
@@ -60,14 +56,11 @@ function handleAdminLogin() {
 
     if (!isAdmin) {
         const password = prompt("Enter President Password:");
-        if (password === "idn") {
+        if (password === "3475") { 
             isAdmin = true;
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
-            
-            // TAMPILKAN tombol edit footer saat sukses login admin
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
-            
             alert("Welcome back President!");
         } else {
             alert("Incorrect password!");
@@ -77,10 +70,7 @@ function handleAdminLogin() {
         isAdmin = false;
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
-        
-        // SEMBUNYIKAN tombol edit footer saat logout admin
         if (editFooterBtn) editFooterBtn.style.display = "none";
-        
         alert("Logged out from President Mode.");
     }
     loadApplications();
@@ -288,25 +278,54 @@ function closeModal() {
     document.getElementById('waiting-modal').classList.add('hidden');
 }
 
-async function applySlot(time) {
+// 1. Membuka Custom Apply Modal
+function applySlot(time) {
+    selectedTimeSlot = time;
+    
+    // Tampilkan informasi text di dalam form info
+    document.getElementById('form-position-title').innerText = currentPosition;
+    document.getElementById('form-time-title').innerText = time + " UTC";
+    
+    // Reset isi semua field form sebelum diisi baru
+    document.getElementById('input-nickname').value = "";
+    document.getElementById('input-gameid').value = "";
+    document.getElementById('input-fc').value = "0";
+    document.getElementById('input-gensp').value = "-";
+    document.getElementById('input-constsp').value = "-";
+    document.getElementById('input-ressp').value = "-";
+    document.getElementById('input-trainsp').value = "-";
+    
+    // Munculkan Modal ke layar
+    document.getElementById('apply-modal').classList.remove('hidden');
+}
+
+// 2. Menutup Custom Apply Modal
+function closeApplyModal() {
+    document.getElementById('apply-modal').classList.add('hidden');
+}
+
+// 3. Mengirim Data Form Kustom ke Supabase
+async function submitApplication() {
     const client = getSupabase();
     if (!client) return;
 
-    const nickname = prompt("Enter In-Game Nickname:");
-    if (!nickname) return;
-    const gameId = prompt("Enter In-Game ID:");
-    if (!gameId) return;
-    
-    const fc = prompt("Enter Fire Crystal Amount:", "0");
-    const genSp = prompt("Enter General Speedup:", "-");
-    const constSp = prompt("Enter Construction Speedup:", "-");
-    const resSp = prompt("Enter Research Speedup:", "-");
-    const trainSp = prompt("Enter Training Speedup:", "-");
+    // Ambil nilai data dari setiap elemen input form kustom
+    const nickname = document.getElementById('input-nickname').value.trim();
+    const gameId = document.getElementById('input-gameid').value.trim();
+    const fc = document.getElementById('input-fc').value.trim() || "0";
+    const genSp = document.getElementById('input-gensp').value.trim() || "-";
+    const constSp = document.getElementById('input-constsp').value.trim() || "-";
+    const resSp = document.getElementById('input-ressp').value.trim() || "-";
+    const trainSp = document.getElementById('input-trainsp').value.trim() || "-";
+
+    // Validasi data penting wajib diisi
+    if (!nickname) { alert("Please enter In-Game Nickname!"); return; }
+    if (!gameId) { alert("Please enter In-Game ID!"); return; }
 
     const { error } = await client
         .from('reservation_slots')
         .insert({ 
-            time_slot: time, 
+            time_slot: selectedTimeSlot, 
             position: currentPosition,
             nickname: nickname, 
             game_id: gameId, 
@@ -320,7 +339,8 @@ async function applySlot(time) {
 
     if (!error) {
         alert("Application submitted successfully! Status: Waiting.");
-        loadApplications();
+        closeApplyModal(); // Tutup modal setelah berhasil
+        loadApplications(); // Refresh tabel data jadwal
     } else {
         alert("Database error: " + error.message);
     }
