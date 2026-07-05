@@ -497,3 +497,36 @@ th, td {
     font-size: 1.1rem; /* Ukuran teks guild dibuat lebih kecil */
     font-weight: 700;   /* Ketebalan font sedikit dikurangi agar seimbang */
 }
+/* Container Jam di Bawah Navbar */
+#live-clock-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    background-color: #111827; /* Senada dengan warna gelap background utama */
+    padding: 8px 16px;
+    border-bottom: 1px solid #1f2937;
+    font-family: 'Courier New', Courier, monospace; /* Font monospace agar angka jam tidak bergeser saat berganti */
+    font-size: 0.85rem;
+}
+
+.clock-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.clock-label {
+    color: #8a8d98;
+    font-weight: bold;
+}
+
+.clock-time {
+    color: #f1f5f9;
+    font-weight: bold;
+}
+
+.clock-divider {
+    color: #374151;
+    font-weight: bold;
+}
