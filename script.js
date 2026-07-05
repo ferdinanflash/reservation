@@ -263,10 +263,10 @@ function openWaitingModal(timeStr) {
             <td>${app.nickname}</td>
             <td>${app.game_id}</td>
             <td>${app.fire_crystal || '-'}</td>
-            <td>${app.general_speedup || '-'}</td>
-            <td>${app.construction_speedup || '-'}</td>
-            <td>${app.research_speedup || '-'}</td>
-            <td>${app.training_speedup || '-'}</td>
+            <td>${app.general_speedup || '0'}</td>
+            <td>${app.construction_speedup || '0'}</td>
+            <td>${app.research_speedup || '0'}</td>
+            <td>${app.training_speedup || '0'}</td>
         `;
         modalTbody.appendChild(row);
     });
