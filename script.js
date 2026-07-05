@@ -2,7 +2,7 @@ let isAdmin = false;
 let savedApplications = [];
 
 // ================= GITHUB CONFIGURATION =================
-const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN'; // Set your token here
+const GITHUB_TOKEN = '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'; // Set your token here
 const OWNER = 'ferdinanflash';                 
 const REPO = 'reservation';                     
 const FILE_PATH = 'application.xml';            
