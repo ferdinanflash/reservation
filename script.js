@@ -1,6 +1,6 @@
 // ================= SUPABASE PUBLIC CONFIGURATION =================
 const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co'; 
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODg'; 
 // =================================================================
 
 let supabaseClient = null;
@@ -19,10 +19,25 @@ function getSupabase() {
     return supabaseClient;
 }
 
-function toggleAdminMode() {
-    isAdmin = !isAdmin;
-    document.getElementById('admin-toggle-btn').innerText = isAdmin ? "Logout Admin" : "Admin Login";
-    document.getElementById('admin-indicator').style.display = isAdmin ? "inline" : "none";
+// Sistem login dengan password pengaman
+function handleAdminLogin() {
+    if (!isAdmin) {
+        const password = prompt("Enter Admin Password:");
+        if (password === "idn") {
+            isAdmin = true;
+            document.getElementById('admin-toggle-btn').innerText = "Logout Admin";
+            document.getElementById('admin-indicator').style.display = "inline";
+            alert("Logged in as Admin successfully!");
+        } else {
+            alert("Incorrect password!");
+            return;
+        }
+    } else {
+        isAdmin = false;
+        document.getElementById('admin-toggle-btn').innerText = "Admin Login";
+        document.getElementById('admin-indicator').style.display = "none";
+        alert("Logged out from Admin Mode.");
+    }
     loadApplications();
 }
 
@@ -44,7 +59,6 @@ async function loadApplications() {
     if (!client) return;
 
     try {
-        // Ambil data yang sesuai dengan posisi yang dipilih saat ini
         const { data, error } = await client
             .from('reservation_slots')
             .select('*')
@@ -53,7 +67,7 @@ async function loadApplications() {
         if (error) throw error;
         savedApplications = data || [];
     } catch (e) {
-        console.error("Database connection failure:", e);
+        console.error("Database failure:", e);
         savedApplications = [];
     }
     renderTimeSlots();
@@ -76,15 +90,16 @@ function renderTimeSlots() {
         if (localH < 0) localH += 24; 
         let localTimeStr = `${String(localH).padStart(2, '0')}:${String(utcM).padStart(2, '0')}`;
 
-        // Cari semua pendaftar di slot waktu ini
+        // Mengelompokkan seluruh pendaftar di jam yang sama
         let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === utcTimeStr);
         let acceptedApp = appsInSlot.find(a => a.status === 'Accepted');
         let countWaiting = appsInSlot.filter(a => a.status === 'Waiting').length;
 
-        // Jika sudah ada yang di-Accept, slot dikunci untuk pendaftar baru
+        const row = document.createElement('tr');
+        
+        // JIKA SUDAH DI-ACCEPT ADMIN: Kunci baris, tampilkan data lengkap pelamar tersebut
         if (acceptedApp) {
-            let row = document.createElement('tr');
-            let actionBtn = isAdmin ? `<button class="btn-apply" style="background:#ef4444;" onclick="removeApp(${acceptedApp.id})">Remove</button>` : '';
+            let actionBtn = isAdmin ? `<button class="btn-apply" style="background:#ef4444;" onclick="removeApp(${acceptedApp.id})">Remove</button>` : '-';
             row.innerHTML = `
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
@@ -96,50 +111,69 @@ function renderTimeSlots() {
                 <td>${acceptedApp.research_speedup || '-'}</td>
                 <td>${acceptedApp.training_speedup || '-'}</td>
             `;
-            tbody.appendChild(row);
         } 
-        // Jika belum ada yang di-Accept, tampilkan daftar pendaftar Waiting (atau baris kosong jika tidak ada)
+        // JIKA BELUM DI-ACCEPT (KOSONG / MENUNGGU): Pertahankan 1 baris waktu yang kokoh
         else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
-            let statusText = countWaiting > 0 ? `<span style="color:#f59e0b;">Waiting (${countWaiting})</span>` : '<span class="no-apps">No Applications</span>';
-
-            if (appsInSlot.length === 0) {
-                // Tampilkan baris kosong default jika belum ada yang mendaftar
-                let row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${actionBtn}</td>
-                    <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
-                    <td>${statusText}</td>
-                    <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
-                `;
-                tbody.appendChild(row);
-            } else {
-                // Jika ada pendaftar berstatus Waiting, tampilkan list-nya (Admin bisa klik Accept)
-                appsInSlot.forEach(app => {
-                    let row = document.createElement('tr');
-                    let currentAction = actionBtn;
-                    if (isAdmin) {
-                        currentAction = `
-                            <button class="btn-apply" style="background:#22c55e; margin-bottom:4px;" onclick="acceptApp(${app.id})">Accept</button>
-                            <button class="btn-apply" style="background:#ef4444;" onclick="removeApp(${app.id})">Drop</button>
-                        `;
-                    }
-                    row.innerHTML = `
-                        <td>${currentAction}</td>
-                        <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
-                        <td>${statusText}</td>
-                        <td>${app.nickname}</td>
-                        <td>${app.game_id}</td>
-                        <td>${app.fire_crystal || '-'}</td>
-                        <td>${app.construction_speedup || '-'}</td>
-                        <td>${app.research_speedup || '-'}</td>
-                        <td>${app.training_speedup || '-'}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
+            let statusText = '<span class="no-apps">No Applications</span>';
+            
+            if (countWaiting > 0) {
+                // Teks "Waiting (X)" diubah menjadi tombol link klik untuk melihat semua antrean pendaftar
+                statusText = `<span style="color:#f59e0b; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openWaitingModal('${utcTimeStr}')">Waiting (${countWaiting})</span>`;
             }
+
+            row.innerHTML = `
+                <td>${actionBtn}</td>
+                <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
+                <td>${statusText}</td>
+                <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+            `;
         }
+        tbody.appendChild(row);
     }
+}
+
+// Membuka modal pop-up dan merender list data antrean pendaftar
+function openWaitingModal(timeStr) {
+    const modal = document.getElementById('waiting-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalTbody = document.getElementById('modal-body-table') || document.getElementById('modal-table-body');
+    
+    modalTitle.innerText = `Waiting List - ${timeStr} UTC`;
+    modalTbody.innerHTML = "";
+
+    let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
+
+    // Sembunyikan atau tampilkan kolom aksi admin di dalam modal tergantung login status
+    const actionHeaders = document.querySelectorAll('.admin-action-col');
+    actionHeaders.forEach(el => el.style.display = isAdmin ? 'table-cell' : 'none');
+
+    appsInSlot.forEach(app => {
+        const row = document.createElement('tr');
+        let actionCell = isAdmin ? `
+            <td class="admin-action-col">
+                <button class="btn-apply" style="background:#22c55e; margin-bottom:4px; font-size:0.75rem; padding:4px 8px;" onclick="acceptApp(${app.id})">Accept</button>
+                <button class="btn-apply" style="background:#ef4444; font-size:0.75rem; padding:4px 8px;" onclick="removeApp(${app.id})">Drop</button>
+            </td>
+        ` : '';
+
+        row.innerHTML = `
+            ${actionCell}
+            <td>${app.nickname}</td>
+            <td>${app.game_id}</td>
+            <td>${app.fire_crystal || '-'}</td>
+            <td>${app.construction_speedup || '-'}</td>
+            <td>${app.research_speedup || '-'}</td>
+            <td>${app.training_speedup || '-'}</td>
+        `;
+        modalTbody.appendChild(row);
+    });
+
+    modal.classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('waiting-modal').classList.add('hidden');
 }
 
 async function applySlot(time) {
@@ -151,9 +185,8 @@ async function applySlot(time) {
     const gameId = prompt("Enter In-Game ID:");
     if (!gameId) return;
     
-    // Input tambahan baru sesuai permintaan Anda
     const fc = prompt("Enter Fire Crystal Amount:", "0");
-    const constSp = prompt("Enter Construction Speedup (e.g., 10d 5h):", "-");
+    const constSp = prompt("Enter Construction Speedup:", "-");
     const resSp = prompt("Enter Research Speedup:", "-");
     const trainSp = prompt("Enter Training Speedup:", "-");
 
@@ -168,23 +201,22 @@ async function applySlot(time) {
             construction_speedup: constSp,
             research_speedup: resSp,
             training_speedup: trainSp,
-            status: 'Waiting' // Default masuk antrean persetujuan
+            status: 'Waiting'
         });
 
     if (!error) {
-        alert("Application submitted! Waiting for Admin approval.");
+        alert("Application submitted successfully! Status: Waiting.");
         loadApplications();
     } else {
         alert("Database error: " + error.message);
     }
 }
 
-// Fitur Admin untuk menyetujui pelamar tertentu
 async function acceptApp(id) {
     const client = getSupabase();
     if (!client) return;
 
-    if (!confirm("Accept this application? This will lock the slot.")) return;
+    if (!confirm("Accept this application? This action will overwrite and lock this time slot.")) return;
 
     const { error } = await client
         .from('reservation_slots')
@@ -192,10 +224,11 @@ async function acceptApp(id) {
         .eq('id', id);
 
     if (!error) {
-        alert("Application Accepted!");
+        alert("Application Accepted and Slot Locked!");
+        closeModal();
         loadApplications();
     } else {
-        alert("Failed to accept application.");
+        alert("Failed approving target application.");
     }
 }
 
@@ -203,7 +236,7 @@ async function removeApp(id) {
     const client = getSupabase();
     if (!client) return;
 
-    if (!confirm("Delete this record?")) return;
+    if (!confirm("Delete this application record?")) return;
 
     const { error } = await client
         .from('reservation_slots')
@@ -211,9 +244,10 @@ async function removeApp(id) {
         .eq('id', id);
 
     if (!error) {
-        alert("Record cleared!");
+        alert("Record permanently dropped.");
+        closeModal();
         loadApplications();
     } else {
-        alert("Failed clearing row record.");
+        alert("Failed executing delete request.");
     }
 }
