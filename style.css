@@ -161,3 +161,21 @@ th {
 .no-apps {
     color: #eab308; /* Yellow text for "No Applications" */
 }
+/* Membuat tabel bisa digeser ke kanan pada layar HP */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 15px;
+}
+
+table {
+    min-width: 800px; /* Memastikan kolom tidak gepeng */
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 0.9rem;
+}
