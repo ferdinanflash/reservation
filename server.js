@@ -6,9 +6,9 @@ app.use(express.json());
 app.use(express.static(__dirname));
 
 // ================= GITHUB CONFIGURATION =================
-const GITHUB_TOKEN = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN'; // Replace with your token
-const OWNER = 'YOUR_GITHUB_USERNAME';                    // Replace with your GitHub username
-const REPO = 'YOUR_REPOSITORY_NAME';                     // Replace with your repository name
+const GITHUB_TOKEN = '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'; // Replace with your token
+const OWNER = 'fetdinanflash';                    // Replace with your GitHub username
+const REPO = 'reservation';                     // Replace with your repository name
 const FILE_PATH = 'application.xml';                      // Path to the file in your repo
 const BRANCH = 'main';                                    // Your default branch (e.g., main or master)
 // ========================================================
