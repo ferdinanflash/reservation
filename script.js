@@ -1,6 +1,6 @@
 // ================= SUPABASE PUBLIC CONFIGURATION =================
 const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co'; 
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEYxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
 // =================================================================
 
 let supabaseClient = null;
@@ -123,8 +123,6 @@ function detectAndSetTimezone() {
     }
 }
 
-
-
 function showPositions() {
     document.getElementById('schedule-page').classList.add('hidden');
     document.getElementById('positions-page').classList.remove('hidden');
@@ -153,7 +151,8 @@ function renderTimeSlots() {
     const tbody = document.getElementById('schedule-table-body');
     if (!tbody) return;
     
-    const offset = parseInt(document.getElementById('timezone').value, 10);
+    // PERBAIKAN: Menggunakan parseFloat agar mendukung desimal zona waktu pecahan (.5 atau .75)
+    const offset = parseFloat(document.getElementById('timezone').value);
     tbody.innerHTML = "";
 
     for (let i = 0; i < 48; i++) {
@@ -162,9 +161,14 @@ function renderTimeSlots() {
         let utcM = totalMinutes % 60;
         let utcTimeStr = `${String(utcH).padStart(2, '0')}:${String(utcM).padStart(2, '0')}`;
 
-        let localH = (utcH + offset) % 24;
-        if (localH < 0) localH += 24; 
-        let localTimeStr = `${String(localH).padStart(2, '0')}:${String(utcM).padStart(2, '0')}`;
+        // PERBAIKAN LOGIKA: Konversi total menit UTC ke menit Lokal agar akurat di semua zona waktu pecahan
+        let totalLocalMinutes = totalMinutes + Math.round(offset * 60);
+        let localH = Math.floor(totalLocalMinutes / 60) % 24;
+        if (localH < 0) localH += 24;
+        let localM = totalLocalMinutes % 60;
+        if (localM < 0) localM += 60;
+
+        let localTimeStr = `${String(localH).padStart(2, '0')}:${String(localM).padStart(2, '0')}`;
 
         let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === utcTimeStr);
         let acceptedApp = appsInSlot.find(a => a.status === 'Accepted');
