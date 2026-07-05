@@ -492,3 +492,8 @@ th, td {
         background-position: -200% center;
     }
 }
+/* Mengatur ukuran teks guild emas agar sedikit lebih kecil dan elegan dibanding nama President */
+.footer-section .guild-name.fire-text {
+    font-size: 1.1rem; /* Ukuran teks guild dibuat lebih kecil */
+    font-weight: 700;   /* Ketebalan font sedikit dikurangi agar seimbang */
+}
