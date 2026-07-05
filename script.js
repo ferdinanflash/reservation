@@ -538,7 +538,7 @@ function startLiveClock() {
     const localClockEl = document.getElementById('local-clock');
     const localLabelEl = document.getElementById('local-clock-label');
     const utcClockEl = document.getElementById('utc-clock');
-    const timezoneSelect = document.getElementById('timezone'); // Mengambil element dropdown timezone bawaan web
+    const timezoneSelect = document.getElementById('timezone');
 
     if (!localClockEl || !utcClockEl || !localLabelEl) return;
 
@@ -551,13 +551,11 @@ function startLiveClock() {
         const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
         utcClockEl.innerText = `${utcHours}:${utcMinutes}:${utcSeconds}`;
 
-        // 2. FORMAT LOCAL / DISPLAY TIME ZONE (Dinamis)
-        // Cek apakah dropdown timezone ada dan sedang tidak tersembunyi (berada di halaman jadwal)
+        // 2. FORMAT LOCAL / DISPLAY TIME ZONE (Dinamis & Terkonversi)
         const schedulePage = document.getElementById('schedule-page');
         const isScheduleVisible = schedulePage && !schedulePage.classList.contains('hidden');
 
-        if (isScheduleVisible && timezoneSelect && timezoneSelect.value) {
-            // Jika user di halaman jadwal, ikuti nilai dropdown timezone (contoh value: "7" untuk UTC+7, "-5" untuk UTC-5)
+        if (isScheduleVisible && timezoneSelect && timezoneSelect.value !== "") {
             const offset = parseFloat(timezoneSelect.value); 
             
             // Hitung waktu berdasarkan offset timezone yang dipilih
@@ -568,12 +566,26 @@ function startLiveClock() {
             const displayMinutes = String(targetTime.getMinutes()).padStart(2, '0');
             const displaySeconds = String(targetTime.getSeconds()).padStart(2, '0');
             
-            // Ubah text label sesuai dengan zona waktu yang dipilih (Misal: UTC+7 atau UTC-5)
-            const sign = offset >= 0 ? "+" : "";
-            localLabelEl.innerText = `UTC${sign}${offset}:`;
+            // --- LOGIKA PERBAIKAN FORMAT DESIMAL TIMEZONE ---
+            const sign = offset >= 0 ? "+" : "-";
+            const absOffset = Math.abs(offset);
+            const hours = Math.floor(absOffset); // Mengambil angka jam bulat (misal: 11 dari 11.75)
+            const minutes = Math.round((absOffset - hours) * 60); // Mengonversi desimal ke menit (misal: 0.75 * 60 = 45)
+            
+            // Format jam menjadi 2 digit (misal: 07), format menit menjadi 2 digit (misal: 30 atau 45)
+            const formattedHours = String(hours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            
+            // Jika menitnya 0, tampilkan jamnya saja (contoh: UTC+07), jika ada menit tampilkan lengkap (contoh: UTC+11:45)
+            if (minutes > 0) {
+                localLabelEl.innerText = `UTC${sign}${formattedHours}:${formattedMinutes}:`;
+            } else {
+                localLabelEl.innerText = `UTC${sign}${formattedHours}:`;
+            }
+            
             localClockEl.innerText = `${displayHours}:${displayMinutes}:${displaySeconds}`;
         } else {
-            // Jika di halaman utama (atau dropdown belum dimuat), gunakan waktu lokal asli HP user
+            // Jika di halaman utama, kembali ke waktu lokal asli perangkat
             const localHours = String(now.getHours()).padStart(2, '0');
             const localMinutes = String(now.getMinutes()).padStart(2, '0');
             const localSeconds = String(now.getSeconds()).padStart(2, '0');
@@ -588,10 +600,3 @@ function startLiveClock() {
 document.addEventListener("DOMContentLoaded", () => {
     startLiveClock();
 });
-
-
-// Jalankan fungsi jam live seketika saat DOM selesai dimuat
-document.addEventListener("DOMContentLoaded", () => {
-    startLiveClock();
-});
-
