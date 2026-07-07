@@ -140,8 +140,22 @@ function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
     });
 }
 
-// UPDATE: Memuat info footer secara langsung dari tabel database Supabase
+// SOLUSI 2 DIKEMBANGKAN DI SINI: Memuat info dari localStorage (instan) lalu sinkronisasi dengan Supabase
 async function loadFooterInfo() {
+    // 1. Ambil data dari cache lokal (localStorage) terlebih dahulu agar langsung tampil tanpa jeda/kedip
+    const cachedPresident = localStorage.getItem('cached_president_name');
+    const cachedGuild = localStorage.getItem('cached_guild_name');
+    
+    if (cachedPresident) {
+        const elPres = document.getElementById('display-president-name');
+        if (elPres) elPres.innerText = cachedPresident;
+    }
+    if (cachedGuild) {
+        const elGuild = document.getElementById('display-guild-name');
+        if (elGuild) elGuild.innerText = cachedGuild;
+    }
+
+    // 2. Tetap jalankan request ke database Supabase di latar belakang untuk sinkronisasi data terbaru
     const client = getSupabase();
     if (!client) return;
     try {
@@ -152,15 +166,24 @@ async function loadFooterInfo() {
             .single();
         
         if (data) {
-            if (data.president_name) document.getElementById('display-president-name').innerText = data.president_name;
-            if (data.guild_name) document.getElementById('display-guild-name').innerText = data.guild_name;
+            // Jika data dari database tersedia, perbarui UI dan perbarui juga cache lokalnya
+            if (data.president_name) {
+                const elPres = document.getElementById('display-president-name');
+                if (elPres) elPres.innerText = data.president_name;
+                localStorage.setItem('cached_president_name', data.president_name);
+            }
+            if (data.guild_name) {
+                const elGuild = document.getElementById('display-guild-name');
+                if (elGuild) elGuild.innerText = data.guild_name;
+                localStorage.setItem('cached_guild_name', data.guild_name);
+            }
         }
     } catch (err) {
         console.error("Error loading footer info from database:", err);
     }
 }
 
-// UPDATE: Menyimpan info footer langsung ke database pusat (Supabase) agar sinkron ke perangkat lain
+// SOLUSI 2 DIKEMBANGKAN DI SINI: Menyimpan data ke database dan ikut memperbarui cache lokal
 async function handleEditFooter() {
     if (!isAdmin) return;
     const currentName = document.getElementById('display-president-name').innerText;
@@ -190,6 +213,10 @@ async function handleEditFooter() {
         });
 
     if (!error) {
+        // Update cache lokal segera setelah database berhasil diperbarui agar saat reload langsung fresh
+        localStorage.setItem('cached_president_name', newName.trim());
+        localStorage.setItem('cached_guild_name', newGuild.trim());
+        
         loadFooterInfo();
         showToast("President info updated globally!", "success");
     } else {
