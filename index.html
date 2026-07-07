@@ -7,14 +7,15 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=11" defer></script>
+    <script src="script.js?v=12" defer></script>
 </head>
 <body>
-        <header class="navbar">
+    <header class="navbar">
         <span class="logo fire-text">SVS Ministry</span>
         <button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()">President Login</button>
     </header>
-        <div id="live-clock-container">
+
+    <div id="live-clock-container">
         <div class="clock-item">
             <span id="local-clock-label" class="clock-label">LOCAL:</span>
             <span id="local-clock" class="clock-time">00:00:00</span>
@@ -68,11 +69,11 @@
                             <th>STATUS (APPLICANTS)</th>
                             <th>IN-GAME NICKNAME</th>
                             <th>IN-GAME ID</th>
-                            <th>FC</th>
+                            <th class="col-fc">FC</th>
                             <th>GENERAL SP</th>
-                            <th>CONST SP</th>
-                            <th>RES SP</th>
-                            <th>TRAIN SP</th>
+                            <th class="col-const">CONST SP</th>
+                            <th class="col-res">RES SP</th>
+                            <th class="col-train">TRAIN SP</th>
                         </tr>
                     </thead>
                     <tbody id="schedule-table-body"></tbody>
@@ -92,11 +93,11 @@
                             <th class="admin-action-col">ACTION</th>
                             <th>NICKNAME</th>
                             <th>GAME ID</th>
-                            <th>FC</th>
+                            <th class="col-fc">FC</th>
                             <th>GENERAL SP</th>
-                            <th>CONST SP</th>
-                            <th>RES SP</th>
-                            <th>TRAIN SP</th>
+                            <th class="col-const">CONST SP</th>
+                            <th class="col-res">RES SP</th>
+                            <th class="col-train">TRAIN SP</th>
                         </tr>
                     </thead>
                     <tbody id="modal-table-body"></tbody>
@@ -150,40 +151,29 @@
         </div>
     </div>
 
-        <footer class="site-footer">
-    <div class="footer-section">
-        <p style="color: #8a8d98; margin-bottom: 6px;">Current President</p>
-        <div class="footer-row">
-            <div id="display-president-name" class="fire-text">RARA</div>
+    <footer class="site-footer">
+        <div class="footer-section">
+            <p style="color: #8a8d98; margin-bottom: 6px;">Current President</p>
+            <div class="footer-row">
+                <div id="display-president-name" class="fire-text">RARA</div>
+            </div>
+            <div class="footer-row" style="margin-top: 4px;">
+                <p id="display-guild-name" class="guild-name fire-text">IDN - GLORIOÛS</p>
+            </div>
         </div>
-        <div class="footer-row" style="margin-top: 4px;">
-            <p id="display-guild-name" class="guild-name fire-text">IDN - GLORIOÛS</p>
-        </div>
-    </div>
 
-    <div id="recent-log-container">
-        <div class="log-title">📢 RECENTLY ACCEPTED APPLICANTS</div>
-        <div id="recent-log-list">
-            <div class="log-item-empty">No recent activity</div>
+        <div id="recent-log-container">
+            <div class="log-title">📢 RECENTLY ACCEPTED APPLICANTS</div>
+            <div id="recent-log-list">
+                <div class="log-item-empty">No recent activity</div>
+            </div>
         </div>
-    </div>
-    
-    <div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
-        <button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="handleEditFooter()">Edit President Info</button>
-        <button id="finish-svs-btn" class="btn-apply" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); font-size:0.75rem; padding:6px 12px; display:none; margin: 0; font-weight: bold;" onclick="handleFinishSVS()">FINISH SVS</button>
-    </div>
-</footer>
-
-    
-    <!-- Wadah Tombol Panel Admin -->
-    <div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
-        <button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="handleEditFooter()">Edit President Info</button>
         
-        <!-- TOMBOL BARU: FINISH SVS -->
-        <button id="finish-svs-btn" class="btn-apply" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); font-size:0.75rem; padding:6px 12px; display:none; margin: 0; font-weight: bold;" onclick="handleFinishSVS()">FINISH SVS</button>
-    </div>
-</footer>
-
+        <div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
+            <button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="handleEditFooter()">Edit President Info</button>
+            <button id="finish-svs-btn" class="btn-apply" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); font-size:0.75rem; padding:6px 12px; display:none; margin: 0; font-weight: bold;" onclick="handleFinishSVS()">FINISH SVS</button>
+        </div>
+    </footer>
 
     <div id="confirm-modal" class="modal hidden">
         <div class="modal-content custom-confirm-box">
