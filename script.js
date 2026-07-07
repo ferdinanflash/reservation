@@ -509,15 +509,23 @@ async function submitApplication() {
 
     const nickname = document.getElementById('input-nickname').value.trim();
     const gameId = document.getElementById('input-gameid').value.trim();
-    const fc = document.getElementById('input-fc').value.trim() || "0";
-    const genSp = document.getElementById('input-gensp').value.trim() || "0";
-    const constSp = document.getElementById('input-constsp').value.trim() || "0";
-    const resSp = document.getElementById('input-ressp').value.trim() || "0";
-    const trainSp = document.getElementById('input-trainsp').value.trim() || "0";
+    const fc = parseInt(document.getElementById('input-fc').value.trim()) || 0;
+const genSp = parseInt(document.getElementById('input-gensp').value.trim()) || 0;
+const constSp = parseInt(document.getElementById('input-constsp').value.trim()) || 0;
+const resSp = parseInt(document.getElementById('input-ressp').value.trim()) || 0;
+const trainSp = parseInt(document.getElementById('input-trainsp').value.trim()) || 0;
+
 
     if (!nickname) { showToast("Please enter In-Game Nickname!", "warning"); return; }
     if (!gameId) { showToast("Please enter In-Game ID!", "warning"); return; }
+    // VALIDASI: Mencegah input angka minus/negatif
+if (fc < 0) { showToast("Fire Crystals amount cannot be less than 0!", "warning"); return; }
+if (genSp < 0) { showToast("General Speedups cannot be less than 0!", "warning"); return; }
+if (constSp < 0) { showToast("Construction Speedups cannot be less than 0!", "warning"); return; }
+if (resSp < 0) { showToast("Research Speedups cannot be less than 0!", "warning"); return; }
+if (trainSp < 0) { showToast("Training Speedups cannot be less than 0!", "warning"); return; }
 
+    
     const { error } = await client
         .from('reservation_slots')
         .insert({ 
