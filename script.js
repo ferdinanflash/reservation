@@ -311,9 +311,12 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">Accepted</span></td>
-                <td>${acceptedApp.nickname}</td><td>${acceptedApp.game_id}</td><td>${acceptedApp.fire_crystal || '0'}</td>
-                <td>${acceptedApp.general_speedup || '0'}</td><td>${acceptedApp.construction_speedup || '0'}</td>
-                <td>${acceptedApp.research_speedup || '0'}</td><td>${acceptedApp.training_speedup || '0'}</td>
+                <td>${acceptedApp.nickname}</td><td>${acceptedApp.game_id}</td>
+                <td class="col-fc">${acceptedApp.fire_crystal || '0'}</td>
+                <td>${acceptedApp.general_speedup || '0'}</td>
+                <td class="col-const">${acceptedApp.construction_speedup || '0'}</td>
+                <td class="col-res">${acceptedApp.research_speedup || '0'}</td>
+                <td class="col-train">${acceptedApp.training_speedup || '0'}</td>
             `;
         } else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
@@ -325,11 +328,19 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
                 <td>${statusText}</td>
-                <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+                <td>-</td><td>-</td>
+                <td class="col-fc">-</td>
+                <td>-</td>
+                <td class="col-const">-</td>
+                <td class="col-res">-</td>
+                <td class="col-train">-</td>
             `;
         }
         tbody.appendChild(row);
     }
+    
+    // Jalankan pemfilteran kolom tabel utama setelah selesai render data
+    updateTableColumns();
 }
 
 function openWaitingModal(timeStr) {
@@ -354,13 +365,19 @@ function openWaitingModal(timeStr) {
 
         row.innerHTML = `
             ${actionCell}
-            <td>${app.nickname}</td><td>${app.game_id}</td><td>${app.fire_crystal || '0'}</td>
-            <td>${app.general_speedup || '0'}</td><td>${app.construction_speedup || '0'}</td>
-            <td>${app.research_speedup || '0'}</td><td>${app.training_speedup || '0'}</td>
+            <td>${app.nickname}</td><td>${app.game_id}</td>
+            <td class="col-fc">${app.fire_crystal || '0'}</td>
+            <td>${app.general_speedup || '0'}</td>
+            <td class="col-const">${app.construction_speedup || '0'}</td>
+            <td class="col-res">${app.research_speedup || '0'}</td>
+            <td class="col-train">${app.training_speedup || '0'}</td>
         `;
         modalTbody.appendChild(row);
     });
     modal.classList.remove('hidden');
+
+    // Jalankan pemfilteran kolom tabel modal waiting list
+    updateTableColumns();
 }
 
 function closeModal() {
@@ -420,7 +437,6 @@ function applySlot(time) {
     document.getElementById('apply-modal').classList.remove('hidden');
 }
 
-
 function closeApplyModal() {
     document.getElementById('apply-modal').classList.add('hidden');
 }
@@ -473,7 +489,7 @@ async function acceptApp(id) {
         if (!error) {
             showToast("Application Approved!", "success");
             loadApplications();
-            loadRecentAccepts(); // UPDATE INSTAN LOG TERBARU
+            loadRecentAccepts(); 
         } else {
             showToast("Failed to approve.", "error");
         }
@@ -491,7 +507,7 @@ async function removeApp(id) {
         if (!error) {
             showToast("Record dropped successfully.", "success");
             loadApplications();
-            loadRecentAccepts(); // UPDATE INSTAN LOG TERBARU
+            loadRecentAccepts(); 
         } else {
             showToast("Failed executing delete request.", "error");
         }
@@ -618,7 +634,7 @@ async function loadRecentAccepts() {
     try {
         const { data, error } = await client
             .from('reservation_slots')
-            .select('nickname, position, updated_at') // FIX: Diubah ke 'position' sesuai skema insert
+            .select('nickname, position, updated_at') 
             .eq('status', 'Accepted')
             .not('nickname', 'is', null)
             .neq('nickname', '')
@@ -628,21 +644,20 @@ async function loadRecentAccepts() {
         if (error) throw error;
 
         if (!data || data.length === 0) {
-            logListEl.innerHTML = `<div class="log-item-empty">No recent activity</div>`;
+            logListEl.innerHTML = `<div class=\"log-item-empty\">No recent activity</div>`;
             return;
         }
 
         logListEl.innerHTML = ''; 
 
         data.forEach(item => {
-            // FIX: Menggunakan item.position
             let shortPos = item.position ? item.position.replace('Vice President', 'VP').replace('Minister of Education', 'Edu') : 'Unknown';
 
             const logRow = document.createElement('div');
             logRow.className = 'log-entry';
             logRow.innerHTML = `
-                <span>✅ <span class="log-user">${item.nickname}</span></span>
-                <span class="log-pos">[${shortPos}]</span>
+                <span>✅ <span class=\"log-user\">${item.nickname}</span></span>
+                <span class=\"log-pos\">[${shortPos}]</span>
             `;
             logListEl.appendChild(logRow);
         });
@@ -651,6 +666,7 @@ async function loadRecentAccepts() {
         console.error("Gagal memuat log aktivitas:", err);
     }
 }
+
 function updateTableColumns() {
     // Ambil semua elemen berdasarkan class kolom masing-masing (Header & Cell Data)
     const colFc = document.querySelectorAll('.col-fc');
