@@ -377,6 +377,7 @@ function applySlot(time) {
     document.getElementById('form-position-title').innerText = currentPosition;
     document.getElementById('form-time-title').innerText = time + " UTC";
     
+    // Reset nilai input ke kondisi awal
     document.getElementById('input-nickname').value = "";
     document.getElementById('input-gameid').value = "";
     document.getElementById('input-fc').value = "0";
@@ -385,8 +386,40 @@ function applySlot(time) {
     document.getElementById('input-ressp').value = "0";
     document.getElementById('input-trainsp').value = "0";
     
+    // Ambil elemen pembungkus (form-group) dari masing-masing input
+    const groupFc = document.getElementById('input-fc').closest('.form-group');
+    const groupConst = document.getElementById('input-constsp').closest('.form-group');
+    const groupRes = document.getElementById('input-ressp').closest('.form-group');
+    const groupTrain = document.getElementById('input-trainsp').closest('.form-group');
+
+    // Tampilkan semua form terlebih dahulu (Reset State)
+    groupFc.classList.remove('hidden');
+    groupConst.classList.remove('hidden');
+    groupRes.classList.remove('hidden');
+    groupTrain.classList.remove('hidden');
+
+    // Logika Kondisional: Sembunyikan form sesuai posisi kementerian
+    if (currentPosition === 'Vice President D1' || currentPosition === 'Vice President D5') {
+        // Hapus/Sembunyikan: Research Speedups, Troops Training Speedups
+        groupRes.classList.add('hidden');
+        groupTrain.classList.add('hidden');
+    } 
+    else if (currentPosition === 'Vice President D2') {
+        // Hapus/Sembunyikan: Fire Crystals Amount, Construction Speedups, Troops Training Speedups
+        groupFc.classList.add('hidden');
+        groupConst.classList.add('hidden');
+        groupTrain.classList.add('hidden');
+    } 
+    else if (currentPosition === 'Minister of Education D4') {
+        // Hapus/Sembunyikan: Fire Crystals Amount, Construction Speedups, Research Speedups
+        groupFc.classList.add('hidden');
+        groupConst.classList.add('hidden');
+        groupRes.classList.add('hidden');
+    }
+    
     document.getElementById('apply-modal').classList.remove('hidden');
 }
+
 
 function closeApplyModal() {
     document.getElementById('apply-modal').classList.add('hidden');
