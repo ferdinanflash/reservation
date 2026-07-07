@@ -15,7 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
     checkReservationStatus(); 
     startLiveClock();
     loadRecentAccepts();
-    setInterval(loadRecentAccepts, 30000); // Polling otomatis tiap 30 detik
+    
+    // Polling otomatis tiap 30 detik untuk log aktivitas dan info footer terbaru
+    setInterval(() => {
+        loadRecentAccepts();
+        loadFooterInfo(); 
+    }, 30000);
 });
 
 function getSupabase() {
@@ -135,14 +140,28 @@ function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
     });
 }
 
-function loadFooterInfo() {
-    const savedName = localStorage.getItem('president_name');
-    const savedGuild = localStorage.getItem('guild_name');
-    if (savedName) document.getElementById('display-president-name').innerText = savedName;
-    if (savedGuild) document.getElementById('display-guild-name').innerText = savedGuild;
+// UPDATE: Memuat info footer secara langsung dari tabel database Supabase
+async function loadFooterInfo() {
+    const client = getSupabase();
+    if (!client) return;
+    try {
+        const { data, error } = await client
+            .from('footer_settings')
+            .select('president_name, guild_name')
+            .eq('id', 'main')
+            .single();
+        
+        if (data) {
+            if (data.president_name) document.getElementById('display-president-name').innerText = data.president_name;
+            if (data.guild_name) document.getElementById('display-guild-name').innerText = data.guild_name;
+        }
+    } catch (err) {
+        console.error("Error loading footer info from database:", err);
+    }
 }
 
-function handleEditFooter() {
+// UPDATE: Menyimpan info footer langsung ke database pusat (Supabase) agar sinkron ke perangkat lain
+async function handleEditFooter() {
     if (!isAdmin) return;
     const currentName = document.getElementById('display-president-name').innerText;
     const currentGuild = document.getElementById('display-guild-name').innerText;
@@ -152,11 +171,31 @@ function handleEditFooter() {
     const newGuild = prompt("Enter New Guild Name:", currentGuild);
     if (newGuild === null) return;
 
-    if (newName.trim() !== "") localStorage.setItem('president_name', newName.trim());
-    if (newGuild.trim() !== "") localStorage.setItem('guild_name', newGuild.trim());
+    if (newName.trim() === "" || newGuild.trim() === "") {
+        showToast("Name and Guild cannot be empty!", "warning");
+        return;
+    }
 
-    loadFooterInfo();
-    showToast("President info updated!", "success");
+    const client = getSupabase();
+    if (!client) return;
+
+    // Menggunakan fungsi upsert untuk menyimpan/memperbarui data berdasarkan id 'main'
+    const { error } = await client
+        .from('footer_settings')
+        .upsert({ 
+            id: 'main', 
+            president_name: newName.trim(), 
+            guild_name: newGuild.trim(),
+            updated_at: new Date().toISOString()
+        });
+
+    if (!error) {
+        loadFooterInfo();
+        showToast("President info updated globally!", "success");
+    } else {
+        showToast("Failed to update database.", "error");
+        console.error("Database error:", error.message);
+    }
 }
 
 function handleAdminLogin() {
@@ -339,7 +378,6 @@ function renderTimeSlots() {
         tbody.appendChild(row);
     }
     
-    // Jalankan pemfilteran kolom tabel utama setelah selesai render data
     updateTableColumns();
 }
 
@@ -376,7 +414,6 @@ function openWaitingModal(timeStr) {
     });
     modal.classList.remove('hidden');
 
-    // Jalankan pemfilteran kolom tabel modal waiting list
     updateTableColumns();
 }
 
@@ -394,7 +431,6 @@ function applySlot(time) {
     document.getElementById('form-position-title').innerText = currentPosition;
     document.getElementById('form-time-title').innerText = time + " UTC";
     
-    // Reset nilai input ke kondisi awal
     document.getElementById('input-nickname').value = "";
     document.getElementById('input-gameid').value = "";
     document.getElementById('input-fc').value = "0";
@@ -403,32 +439,26 @@ function applySlot(time) {
     document.getElementById('input-ressp').value = "0";
     document.getElementById('input-trainsp').value = "0";
     
-    // Ambil elemen pembungkus (form-group) dari masing-masing input
     const groupFc = document.getElementById('input-fc').closest('.form-group');
     const groupConst = document.getElementById('input-constsp').closest('.form-group');
     const groupRes = document.getElementById('input-ressp').closest('.form-group');
     const groupTrain = document.getElementById('input-trainsp').closest('.form-group');
 
-    // Tampilkan semua form terlebih dahulu (Reset State)
     groupFc.classList.remove('hidden');
     groupConst.classList.remove('hidden');
     groupRes.classList.remove('hidden');
     groupTrain.classList.remove('hidden');
 
-    // Logika Kondisional: Sembunyikan form sesuai posisi kementerian
     if (currentPosition === 'Vice President D1' || currentPosition === 'Vice President D5') {
-        // Hapus/Sembunyikan: Research Speedups, Troops Training Speedups
         groupRes.classList.add('hidden');
         groupTrain.classList.add('hidden');
     } 
     else if (currentPosition === 'Vice President D2') {
-        // Hapus/Sembunyikan: Fire Crystals Amount, Construction Speedups, Troops Training Speedups
         groupFc.classList.add('hidden');
         groupConst.classList.add('hidden');
         groupTrain.classList.add('hidden');
     } 
     else if (currentPosition === 'Minister of Education D4') {
-        // Hapus/Sembunyikan: Fire Crystals Amount, Construction Speedups, Research Speedups
         groupFc.classList.add('hidden');
         groupConst.classList.add('hidden');
         groupRes.classList.add('hidden');
@@ -668,30 +698,24 @@ async function loadRecentAccepts() {
 }
 
 function updateTableColumns() {
-    // Ambil semua elemen berdasarkan class kolom masing-masing (Header & Cell Data)
     const colFc = document.querySelectorAll('.col-fc');
     const colConst = document.querySelectorAll('.col-const');
     const colRes = document.querySelectorAll('.col-res');
     const colTrain = document.querySelectorAll('.col-train');
 
-    // Tampilkan semua kolom terlebih dahulu (Reset State)
     const allCols = [...colFc, ...colConst, ...colRes, ...colTrain];
     allCols.forEach(el => el.classList.remove('hidden'));
 
-    // Logika Kondisional: Sembunyikan kolom sesuai posisi kementerian
     if (currentPosition === 'Vice President D1' || currentPosition === 'Vice President D5') {
-        // Sembunyikan: RES SP, TRAIN SP
         colRes.forEach(el => el.classList.add('hidden'));
         colTrain.forEach(el => el.classList.add('hidden'));
     } 
     else if (currentPosition === 'Vice President D2') {
-        // Sembunyikan: FC, CONST SP, TRAIN SP
         colFc.forEach(el => el.classList.add('hidden'));
         colConst.forEach(el => el.classList.add('hidden'));
         colTrain.forEach(el => el.classList.add('hidden'));
     } 
     else if (currentPosition === 'Minister of Education D4') {
-        // Sembunyikan: FC, CONST SP, RES SP
         colFc.forEach(el => el.classList.add('hidden'));
         colConst.forEach(el => el.classList.add('hidden'));
         colRes.forEach(el => el.classList.add('hidden'));
