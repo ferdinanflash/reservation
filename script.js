@@ -651,3 +651,33 @@ async function loadRecentAccepts() {
         console.error("Gagal memuat log aktivitas:", err);
     }
 }
+function updateTableColumns() {
+    // Ambil semua elemen berdasarkan class kolom masing-masing (Header & Cell Data)
+    const colFc = document.querySelectorAll('.col-fc');
+    const colConst = document.querySelectorAll('.col-const');
+    const colRes = document.querySelectorAll('.col-res');
+    const colTrain = document.querySelectorAll('.col-train');
+
+    // Tampilkan semua kolom terlebih dahulu (Reset State)
+    const allCols = [...colFc, ...colConst, ...colRes, ...colTrain];
+    allCols.forEach(el => el.classList.remove('hidden'));
+
+    // Logika Kondisional: Sembunyikan kolom sesuai posisi kementerian
+    if (currentPosition === 'Vice President D1' || currentPosition === 'Vice President D5') {
+        // Sembunyikan: RES SP, TRAIN SP
+        colRes.forEach(el => el.classList.add('hidden'));
+        colTrain.forEach(el => el.classList.add('hidden'));
+    } 
+    else if (currentPosition === 'Vice President D2') {
+        // Sembunyikan: FC, CONST SP, TRAIN SP
+        colFc.forEach(el => el.classList.add('hidden'));
+        colConst.forEach(el => el.classList.add('hidden'));
+        colTrain.forEach(el => el.classList.add('hidden'));
+    } 
+    else if (currentPosition === 'Minister of Education D4') {
+        // Sembunyikan: FC, CONST SP, RES SP
+        colFc.forEach(el => el.classList.add('hidden'));
+        colConst.forEach(el => el.classList.add('hidden'));
+        colRes.forEach(el => el.classList.add('hidden'));
+    }
+}
