@@ -351,3 +351,19 @@ th {
     padding: 10px 0;
     font-style: italic;
 }
+/* 1. Mengaktifkan fungsi geser (scroll) kanan-kiri khusus untuk wadah tabel di dalam modal */
+.modal-table-container {
+    width: 100%;
+    overflow-x: auto;                  /* Membuat tabel bisa di-scroll horizontal */
+    -webkit-overflow-scrolling: touch; /* Membikin scroll terasa halus di layar HP/iOS */
+    margin-top: 15px;
+    border: 1px solid #334155;         /* Opsional: memberi border tipis agar rapi */
+    border-radius: 6px;
+}
+
+/* 2. Mengunci teks kolom agar tidak turun ke bawah berantakan saat dipaksa menyempit */
+.modal-table-container table th,
+.modal-table-container table td {
+    white-space: nowrap;               /* Memaksa teks tetap memanjang kesamping */
+    padding: 10px 14px;                /* Memberi jarak empuk antar kolom */
+}
