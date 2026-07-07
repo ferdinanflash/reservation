@@ -723,10 +723,12 @@ async function loadRecentAccepts() {
             logRow.className = 'log-entry';
             
             // 2. KITA SISIPKAN SLOT WAKTU (warna abu-abu tipis) TEPAT DI BELAKANG NICKNAME
-            logRow.innerHTML = `
-                <span>✅ <span class="log-user">${item.nickname}</span> <span style="color: #8a8d98; font-size: 0.85em; margin-left: 5px;">(${item.time_slot})</span>UTC</span>
-                <span class="log-pos">[${shortPos}]</span>
-            `;
+            // GANTI BAGIAN logRow.innerHTML DENGAN KODE DI BAWAH INI:
+logRow.innerHTML = `
+    <span>✅ <span class="log-user">${item.nickname}</span> <span style="color: #8a8d98; font-size: 0.85em; margin-left: 5px;">(${item.time_slot}) UTC</span></span>
+    <span class="log-pos">[${shortPos}]</span>
+`;
+
             logListEl.appendChild(logRow);
         });
 
