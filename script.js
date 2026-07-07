@@ -699,7 +699,8 @@ async function loadRecentAccepts() {
     try {
         const { data, error } = await client
             .from('reservation_slots')
-            .select('nickname, position, updated_at') 
+            // 1. KITA TAMBAHKAN 'time_slot' DI SINI
+            .select('nickname, position, time_slot, updated_at') 
             .eq('status', 'Accepted')
             .not('nickname', 'is', null)
             .neq('nickname', '')
@@ -709,7 +710,7 @@ async function loadRecentAccepts() {
         if (error) throw error;
 
         if (!data || data.length === 0) {
-            logListEl.innerHTML = `<div class=\"log-item-empty\">No recent activity</div>`;
+            logListEl.innerHTML = `<div class="log-item-empty">No recent activity</div>`;
             return;
         }
 
@@ -720,9 +721,11 @@ async function loadRecentAccepts() {
 
             const logRow = document.createElement('div');
             logRow.className = 'log-entry';
+            
+            // 2. KITA SISIPKAN SLOT WAKTU (warna abu-abu tipis) TEPAT DI BELAKANG NICKNAME
             logRow.innerHTML = `
-                <span>✅ <span class=\"log-user\">${item.nickname}</span></span>
-                <span class=\"log-pos\">[${shortPos}]</span>
+                <span>✅ <span class="log-user">${item.nickname}</span> <span style="color: #8a8d98; font-size: 0.85em; margin-left: 5px;">(${item.time_slot})</span></span>
+                <span class="log-pos">[${shortPos}]</span>
             `;
             logListEl.appendChild(logRow);
         });
@@ -731,6 +734,7 @@ async function loadRecentAccepts() {
         console.error("Gagal memuat log aktivitas:", err);
     }
 }
+
 
 function updateTableColumns() {
     const colFc = document.querySelectorAll('.col-fc');
