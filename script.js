@@ -459,13 +459,13 @@ function applySlot(time) {
     document.getElementById('form-time-title').innerText = time + " UTC";
     
     document.getElementById('input-nickname').value = "";
-    document.getElementById('input-gameid').value = "";
-    document.getElementById('input-fc').value = "0";
-    document.getElementById('input-gensp').value = "0";
-    document.getElementById('input-constsp').value = "0";
-    document.getElementById('input-ressp').value = "0";
-    document.getElementById('input-trainsp').value = "0";
-    
+document.getElementById('input-gameid').value = "";
+document.getElementById('input-fc').value = "";
+document.getElementById('input-gensp').value = "";
+document.getElementById('input-constsp').value = "";
+document.getElementById('input-ressp').value = "";
+document.getElementById('input-trainsp').value = "";
+
     const groupFc = document.getElementById('input-fc').closest('.form-group');
     const groupConst = document.getElementById('input-constsp').closest('.form-group');
     const groupRes = document.getElementById('input-ressp').closest('.form-group');
