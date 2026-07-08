@@ -516,16 +516,20 @@ const resSp = parseInt(document.getElementById('input-ressp').value.trim()) || 0
 const trainSp = parseInt(document.getElementById('input-trainsp').value.trim()) || 0;
 
 
-    if (!nickname) { showToast("Please enter In-Game Nickname!", "warning"); return; }
-    if (!gameId) { showToast("Please enter In-Game ID!", "warning"); return; }
-    // VALIDASI: Mencegah input angka minus/negatif
-if (fc < 1) { showToast("Fire Crystals amount cannot be less than 0!", "warning"); return; }
-if (genSp < 1) { showToast("General Speedups cannot be less than 0!", "warning"); return; }
-if (constSp < 1) { showToast("Construction Speedups cannot be less than 0!", "warning"); return; }
-if (resSp < 1) { showToast("Research Speedups cannot be less than 0!", "warning"); return; }
-if (trainSp < 1) { showToast("Training Speedups cannot be less than 0!", "warning"); return; }
+    // ==================== KODE YANG SUDAH DIPERBAIKI ====================
 
-    
+if (!nickname) { showToast("Please enter In-Game Nickname!", "warning"); return; }
+if (!gameId) { showToast("Please enter In-Game ID!", "warning"); return; }
+
+// VALIDASI: Mencegah input angka minus/negatif (Ubah < 1 menjadi < 0)
+if (fc < 0) { showToast("Fire Crystals amount cannot be less than 0!", "warning"); return; }
+if (genSp < 0) { showToast("General Speedups cannot be less than 0!", "warning"); return; }
+if (constSp < 0) { showToast("Construction Speedups cannot be less than 0!", "warning"); return; }
+if (resSp < 0) { showToast("Research Speedups cannot be less than 0!", "warning"); return; }
+if (trainSp < 0) { showToast("Training Speedups cannot be less than 0!", "warning"); return; }
+
+// =====================================================================
+
     const { error } = await client
         .from('reservation_slots')
         .insert({ 
