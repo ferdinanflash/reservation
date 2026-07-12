@@ -16,12 +16,21 @@ document.addEventListener("DOMContentLoaded", () => {
     startLiveClock();
     loadRecentAccepts();
     
-    // Polling otomatis tiap 30 detik untuk log aktivitas dan info footer terbaru
     setInterval(() => {
         loadRecentAccepts();
         loadFooterInfo(); 
     }, 30000);
 });
+
+// --- FUNGSI BARU: COPY TO CLIPBOARD ---
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(`ID ${text} copied to clipboard!`, "success");
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        showToast("Failed to copy", "error");
+    });
+}
 
 function getSupabase() {
     if (!supabaseClient) {
@@ -140,9 +149,7 @@ function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
     });
 }
 
-// SOLUSI 2 DIKEMBANGKAN DI SINI: Memuat info dari localStorage (instan) lalu sinkronisasi dengan Supabase
 async function loadFooterInfo() {
-    // 1. Ambil data dari cache lokal (localStorage) terlebih dahulu agar langsung tampil tanpa jeda/kedip
     const cachedPresident = localStorage.getItem('cached_president_name');
     const cachedGuild = localStorage.getItem('cached_guild_name');
     
@@ -155,7 +162,6 @@ async function loadFooterInfo() {
         if (elGuild) elGuild.innerText = cachedGuild;
     }
 
-    // 2. Tetap jalankan request ke database Supabase di latar belakang untuk sinkronisasi data terbaru
     const client = getSupabase();
     if (!client) return;
     try {
@@ -166,7 +172,6 @@ async function loadFooterInfo() {
             .single();
         
         if (data) {
-            // Jika data dari database tersedia, perbarui UI dan perbarui juga cache lokalnya
             if (data.president_name) {
                 const elPres = document.getElementById('display-president-name');
                 if (elPres) elPres.innerText = data.president_name;
@@ -183,7 +188,6 @@ async function loadFooterInfo() {
     }
 }
 
-// SOLUSI 2 DIKEMBANGKAN DI SINI: Menyimpan data ke database dan ikut memperbarui cache lokal
 async function handleEditFooter() {
     if (!isAdmin) return;
     const currentName = document.getElementById('display-president-name').innerText;
@@ -202,7 +206,6 @@ async function handleEditFooter() {
     const client = getSupabase();
     if (!client) return;
 
-    // Menggunakan fungsi upsert untuk menyimpan/memperbarui data berdasarkan id 'main'
     const { error } = await client
         .from('footer_settings')
         .upsert({ 
@@ -213,15 +216,12 @@ async function handleEditFooter() {
         });
 
     if (!error) {
-        // Update cache lokal segera setelah database berhasil diperbarui agar saat reload langsung fresh
         localStorage.setItem('cached_president_name', newName.trim());
         localStorage.setItem('cached_guild_name', newGuild.trim());
-        
         loadFooterInfo();
         showToast("President info updated globally!", "success");
     } else {
         showToast("Failed to update database.", "error");
-        console.error("Database error:", error.message);
     }
 }
 
@@ -377,7 +377,8 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">Accepted</span></td>
-                <td>${acceptedApp.nickname}</td><td>${acceptedApp.game_id}</td>
+                <td>${acceptedApp.nickname}</td>
+                <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${acceptedApp.game_id}')">${acceptedApp.game_id}</span></td>
                 <td class="col-fc">${acceptedApp.fire_crystal || '0'}</td>
                 <td>${acceptedApp.general_speedup || '0'}</td>
                 <td class="col-const">${acceptedApp.construction_speedup || '0'}</td>
@@ -430,7 +431,8 @@ function openWaitingModal(timeStr) {
 
         row.innerHTML = `
             ${actionCell}
-            <td>${app.nickname}</td><td>${app.game_id}</td>
+            <td>${app.nickname}</td>
+            <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span></td>
             <td class="col-fc">${app.fire_crystal || '0'}</td>
             <td>${app.general_speedup || '0'}</td>
             <td class="col-const">${app.construction_speedup || '0'}</td>
@@ -459,12 +461,12 @@ function applySlot(time) {
     document.getElementById('form-time-title').innerText = time + " UTC";
     
     document.getElementById('input-nickname').value = "";
-document.getElementById('input-gameid').value = "";
-document.getElementById('input-fc').value = "";
-document.getElementById('input-gensp').value = "";
-document.getElementById('input-constsp').value = "";
-document.getElementById('input-ressp').value = "";
-document.getElementById('input-trainsp').value = "";
+    document.getElementById('input-gameid').value = "";
+    document.getElementById('input-fc').value = "";
+    document.getElementById('input-gensp').value = "";
+    document.getElementById('input-constsp').value = "";
+    document.getElementById('input-ressp').value = "";
+    document.getElementById('input-trainsp').value = "";
 
     const groupFc = document.getElementById('input-fc').closest('.form-group');
     const groupConst = document.getElementById('input-constsp').closest('.form-group');
@@ -510,25 +512,19 @@ async function submitApplication() {
     const nickname = document.getElementById('input-nickname').value.trim();
     const gameId = document.getElementById('input-gameid').value.trim();
     const fc = parseInt(document.getElementById('input-fc').value.trim()) || 0;
-const genSp = parseInt(document.getElementById('input-gensp').value.trim()) || 0;
-const constSp = parseInt(document.getElementById('input-constsp').value.trim()) || 0;
-const resSp = parseInt(document.getElementById('input-ressp').value.trim()) || 0;
-const trainSp = parseInt(document.getElementById('input-trainsp').value.trim()) || 0;
+    const genSp = parseInt(document.getElementById('input-gensp').value.trim()) || 0;
+    const constSp = parseInt(document.getElementById('input-constsp').value.trim()) || 0;
+    const resSp = parseInt(document.getElementById('input-ressp').value.trim()) || 0;
+    const trainSp = parseInt(document.getElementById('input-trainsp').value.trim()) || 0;
 
+    if (!nickname) { showToast("Please enter In-Game Nickname!", "warning"); return; }
+    if (!gameId) { showToast("Please enter In-Game ID!", "warning"); return; }
 
-    // ==================== KODE YANG SUDAH DIPERBAIKI ====================
-
-if (!nickname) { showToast("Please enter In-Game Nickname!", "warning"); return; }
-if (!gameId) { showToast("Please enter In-Game ID!", "warning"); return; }
-
-// VALIDASI: Mencegah input angka minus/negatif (Ubah < 1 menjadi < 0)
-if (fc < 0) { showToast("Fire Crystals amount cannot be less than 0!", "warning"); return; }
-if (genSp < 0) { showToast("General Speedups cannot be less than 0!", "warning"); return; }
-if (constSp < 0) { showToast("Construction Speedups cannot be less than 0!", "warning"); return; }
-if (resSp < 0) { showToast("Research Speedups cannot be less than 0!", "warning"); return; }
-if (trainSp < 0) { showToast("Training Speedups cannot be less than 0!", "warning"); return; }
-
-// =====================================================================
+    if (fc < 0) { showToast("Fire Crystals amount cannot be less than 0!", "warning"); return; }
+    if (genSp < 0) { showToast("General Speedups cannot be less than 0!", "warning"); return; }
+    if (constSp < 0) { showToast("Construction Speedups cannot be less than 0!", "warning"); return; }
+    if (resSp < 0) { showToast("Research Speedups cannot be less than 0!", "warning"); return; }
+    if (trainSp < 0) { showToast("Training Speedups cannot be less than 0!", "warning"); return; }
 
     const { error } = await client
         .from('reservation_slots')
@@ -703,7 +699,6 @@ async function loadRecentAccepts() {
     try {
         const { data, error } = await client
             .from('reservation_slots')
-            // 1. KITA TAMBAHKAN 'time_slot' DI SINI
             .select('nickname, position, time_slot, updated_at') 
             .eq('status', 'Accepted')
             .not('nickname', 'is', null)
@@ -722,17 +717,12 @@ async function loadRecentAccepts() {
 
         data.forEach(item => {
             let shortPos = item.position ? item.position.replace('Vice President', 'VP').replace('Minister of Education', 'Edu') : 'Unknown';
-
             const logRow = document.createElement('div');
             logRow.className = 'log-entry';
-            
-            // 2. KITA SISIPKAN SLOT WAKTU (warna abu-abu tipis) TEPAT DI BELAKANG NICKNAME
-            // GANTI BAGIAN logRow.innerHTML DENGAN KODE DI BAWAH INI:
-logRow.innerHTML = `
-    <span>✅ <span class="log-user">${item.nickname}</span> <span style="color: #8a8d98; font-size: 0.95em; margin-left: 5px;">${item.time_slot} UTC</span></span>
-    <span class="log-pos">[${shortPos}]</span>
-`;
-
+            logRow.innerHTML = `
+                <span>✅ <span class="log-user">${item.nickname}</span> <span style="color: #8a8d98; font-size: 0.95em; margin-left: 5px;">${item.time_slot} UTC</span></span>
+                <span class="log-pos">[${shortPos}]</span>
+            `;
             logListEl.appendChild(logRow);
         });
 
@@ -740,7 +730,6 @@ logRow.innerHTML = `
         console.error("Gagal memuat log aktivitas:", err);
     }
 }
-
 
 function updateTableColumns() {
     const colFc = document.querySelectorAll('.col-fc');
