@@ -433,7 +433,6 @@ function renderTimeSlots() {
 }
 
 function openWaitingModal(timeStr) {
-function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
     const modalTitle = document.getElementById('modal-title');
     const modalTbody = document.getElementById('modal-table-body');
@@ -445,7 +444,7 @@ function openWaitingModal(timeStr) {
     actionHeaders.forEach(el => el.style.display = isAdmin ? 'table-cell' : 'none');
 
     appsInSlot.forEach(app => {
-        // Baris Utama
+        // Baris Utama (Nickname & Game ID)
         const mainRow = document.createElement('tr');
         let actionCell = isAdmin ? `
             <td class="admin-action-col">
@@ -454,39 +453,39 @@ function openWaitingModal(timeStr) {
             </td>
         ` : '';
 
-        // Ikon 🔍 diganti di sini
         mainRow.innerHTML = `
             ${actionCell}
-            <td style="cursor:pointer; font-size: 1.1rem; padding: 5px 2px;" onclick="toggleDetails(${app.id})">🔍</td>
-            <td style="font-weight: 500; padding: 5px 2px;">${app.nickname}</td>
-            <td style="padding: 5px 2px;"><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span></td>
+            <td style="cursor:pointer; font-size: 1.1rem; filter: grayscale(100%);" onclick="toggleDetails(${app.id})">🔍</td>
+            <td style="font-weight: 500;">${app.nickname}</td>
+            <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span></td>
         `;
         modalTbody.appendChild(mainRow);
 
-        // Baris Detail dengan jarak lebih rapat
+        // Baris Detail (Disembunyikan secara default)
         const detailsRow = document.createElement('tr');
         detailsRow.id = `details-${app.id}`;
-        detailsRow.style.display = 'none'; 
+        detailsRow.style.display = 'none'; // Sembunyikan saat pertama dibuka
         
+        // Sesuaikan colspan berdasarkan status admin agar rata
         const colspan = isAdmin ? 4 : 3; 
         
         detailsRow.innerHTML = `
             <td colspan="${colspan}" style="padding: 0; border: none;">
-                <div style="background: #151821; padding: 8px; margin: 2px 10px 8px 10px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
-                    <div class="col-fc" style="display: flex; justify-content: space-between; gap: 10px;">
-                        <span style="color:#8a8d98;">FC:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong>
+                <div style="background: #151821; padding: 12px; margin: 4px 10px 10px 10px; border-radius: 8px; font-size: 0.85rem; text-align: left; border: 1px solid #334155;">
+                    <div class="col-fc" style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #2d3039; padding-bottom: 4px;">
+                        <span style="color:#8a8d98;">Fire Crystal:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; gap: 10px;">
-                        <span style="color:#8a8d98;">Gen:</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #2d3039; padding-bottom: 4px;">
+                        <span style="color:#8a8d98;">General SP (Days):</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong>
                     </div>
-                    <div class="col-const" style="display: flex; justify-content: space-between; gap: 10px;">
-                        <span style="color:#8a8d98;">Const:</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong>
+                    <div class="col-const" style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #2d3039; padding-bottom: 4px;">
+                        <span style="color:#8a8d98;">Construction SP (Days):</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong>
                     </div>
-                    <div class="col-res" style="display: flex; justify-content: space-between; gap: 10px;">
-                        <span style="color:#8a8d98;">Res:</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong>
+                    <div class="col-res" style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #2d3039; padding-bottom: 4px;">
+                        <span style="color:#8a8d98;">Research SP (Days):</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong>
                     </div>
-                    <div class="col-train" style="display: flex; justify-content: space-between; gap: 10px;">
-                        <span style="color:#8a8d98;">Train:</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong>
+                    <div class="col-train" style="display: flex; justify-content: space-between;">
+                        <span style="color:#8a8d98;">Training SP (Days):</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong>
                     </div>
                 </div>
             </td>
