@@ -434,7 +434,7 @@ function renderTimeSlots() {
 
 function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
-    modal.querySelector('table').style.tableLayout = 'fixed';
+    modal.querySelector('table').style.tableLayout = 'auto';
     modal.querySelector('table').style.width = '100%';
     
     document.getElementById('modal-title').innerText = `Waiting List - ${timeStr} UTC`;
@@ -444,8 +444,8 @@ function openWaitingModal(timeStr) {
     // Header dengan 2 kolom utama
     const thead = modal.querySelector('thead tr');
     thead.innerHTML = `
-        <th style="width: 60%; padding: 5px; text-align: left;">NICKNAME</th>
-        <th style="width: 40%; padding: 5px; text-align: left;">ID</th>
+        <th style="padding: 5px 10px; text-align: left;">NICKNAME</th>
+        <th style="padding: 5px 10px; text-align: left;">ID</th>
     `;
 
     let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
@@ -460,16 +460,15 @@ function openWaitingModal(timeStr) {
             <button class="btn-apply" style="background:#ef4444; font-size:0.7rem; padding:2px 4px;" onclick="removeApp(${app.id})">Drop</button>
         </div>
     ` : '';
-
-    mainRow.innerHTML = `
-        <td style="width: 60%; padding: 5px; text-align: left; font-weight: 500;">
-            <span style="cursor:pointer; margin-right: 8px;" onclick="toggleDetails(${app.id})">🔍</span>${app.nickname}
-        </td>
-        <td style="width: 40%; padding: 5px; text-align: left;">
-            <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span>
-            ${adminButtons}
-        </td>
-    `;
+        
+mainRow.innerHTML = `
+     <td style="padding: 5px 10px; text-align: left; font-weight: 500; white-space: nowrap;">
+                <span style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${app.nickname}
+            </td>
+            <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
+                <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span>
+                ${adminButtons}
+            </td>
     modalTbody.appendChild(mainRow);
         // Baris Detail
         const detailsRow = document.createElement('tr');
