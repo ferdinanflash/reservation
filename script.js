@@ -11,6 +11,12 @@ let selectedTimeSlot = '';
 let isReservationOpen = true; 
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Cek status login dari session storage[span_1](start_span)[span_1](end_span)
+    if (sessionStorage.getItem('isPresidentMode') === 'true') {
+        isAdmin = true;
+        updateAdminUI(); 
+    }
+    
     loadFooterInfo();
     checkReservationStatus(); 
     startLiveClock();
@@ -22,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 30000);
 });
 
-// --- FUNGSI BARU: COPY TO CLIPBOARD ---
+// Fungsi untuk menyalin ID ke clipboard[span_2](start_span)[span_2](end_span)
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         showToast(`ID ${text} copied to clipboard!`, "success");
@@ -30,6 +36,21 @@ function copyToClipboard(text) {
         console.error('Failed to copy: ', err);
         showToast("Failed to copy", "error");
     });
+}
+
+// Fungsi untuk sinkronisasi UI Admin[span_3](start_span)[span_3](end_span)
+function updateAdminUI() {
+    const adminBtn = document.getElementById('admin-toggle-btn');
+    const adminInd = document.getElementById('admin-indicator');
+    const editFooterBtn = document.getElementById('edit-footer-btn');
+    const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
+    const finishSvsBtn = document.getElementById('finish-svs-btn'); 
+
+    if (adminBtn) adminBtn.innerText = "Logout President";
+    if (adminInd) adminInd.style.display = "inline";
+    if (editFooterBtn) editFooterBtn.style.display = "inline-block";
+    if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
+    if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; 
 }
 
 function getSupabase() {
@@ -234,6 +255,7 @@ function handleAdminLogin() {
         const password = prompt("Enter President Password:");
         if (password === "3475") { 
             isAdmin = true;
+            sessionStorage.setItem('isPresidentMode', 'true'); // Simpan status[span_4](start_span)[span_4](end_span)
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
@@ -246,6 +268,7 @@ function handleAdminLogin() {
         }
     } else {
         isAdmin = false;
+        sessionStorage.removeItem('isPresidentMode'); // Hapus status[span_5](start_span)[span_5](end_span)
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
