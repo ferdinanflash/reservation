@@ -434,54 +434,9 @@ function renderTimeSlots() {
 
 function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
-    modal.querySelector('table').style.tableLayout = 'auto';
-    modal.querySelector('table').style.width = '100%';
+    // Pastikan modal ditemukan
+    if (!modal) return;
     
-    document.getElementById('modal-title').innerText = `Waiting List - ${timeStr} UTC`;
-    const modalTbody = document.getElementById('modal-table-body');
-    modalTbody.innerHTML = "";
-
-    // Header dengan 2 kolom utama
-    const thead = modal.querySelector('thead tr');
-    thead.innerHTML = `
-        <th style="padding: 5px 10px; text-align: left;">NICKNAME</th>
-        <th style="padding: 5px 10px; text-align: left;">ID</th>
-    `;
-
-    let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
-
-    appsInSlot.forEach(app => {
-    const mainRow = document.createElement('tr');
-    
-    // Logika tombol hanya untuk Admin/Presiden
-    let adminButtons = isAdmin ? `
-        <div style="margin-top: 5px;">
-            <button class="btn-apply" style="background:#22c55e; font-size:0.7rem; padding:2px 4px; margin-right:4px;" onclick="acceptApp(${app.id})">Accept</button>
-            <button class="btn-apply" style="background:#ef4444; font-size:0.7rem; padding:2px 4px;" onclick="removeApp(${app.id})">Drop</button>
-        </div>
-    ` : '';
-        
-mainRow.innerHTML = `
-     <td style="padding: 5px 10px; text-align: left; font-weight: 500; white-space: nowrap;">
-                <span style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${app.nickname}
-            </td>
-            <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
-                <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span>
-                ${adminButtons}
-            </td>
-    modalTbody.appendChild(mainRow);
-        // Baris Detail
-        const detailsRow = document.createElement('tr');
-        detailsRow.id = `details-${app.id}`;
-        detailsRow.style.display = 'none'; 
-        
-        const colspan = isAdmin ? 4 : 3; 
-        
-        detailsRow.innerHTML = `
-            <td colspan="${colspan}" style="padding: 0; border: none;">
-                <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
-function openWaitingModal(timeStr) {
-    const modal = document.getElementById('waiting-modal');
     modal.querySelector('table').style.tableLayout = 'auto';
     modal.querySelector('table').style.width = '100%';
     
@@ -507,7 +462,6 @@ function openWaitingModal(timeStr) {
             </div>
         ` : '';
 
-        // Pastikan tag TD ditutup dengan benar dan adminButtons berada di dalam TD kedua
         mainRow.innerHTML = `
             <td style="padding: 5px 10px; text-align: left; font-weight: 500; white-space: nowrap;">
                 <span style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${app.nickname}
@@ -519,45 +473,28 @@ function openWaitingModal(timeStr) {
         `;
         modalTbody.appendChild(mainRow);
 
-        // Baris Detail (Tetap sama)
+        // Baris Detail
         const detailsRow = document.createElement('tr');
         detailsRow.id = `details-${app.id}`;
         detailsRow.style.display = 'none'; 
         
-        const colspan = 2; // Karena kita sekarang hanya punya 2 kolom utama
-        
         detailsRow.innerHTML = `
-            <td colspan="${colspan}" style="padding: 0; border: none;">
+            <td colspan="2" style="padding: 0; border: none;">
                 <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
-                    <div class="col-fc" style="display: flex; justify-content: flex-start; margin-bottom: 2px;">
-                        <span style="color:#8a8d98; margin-right: 10px; min-width: 65px;">FC:</span> 
-                        <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: flex-start; margin-bottom: 2px;">
-                        <span style="color:#8a8d98; margin-right: 10px; min-width: 65px;">General:</span> 
-                        <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong>
-                    </div>
-                    <div class="col-const" style="display: flex; justify-content: flex-start; margin-bottom: 2px;">
-                        <span style="color:#8a8d98; margin-right: 10px; min-width: 65px;">Const:</span> 
-                        <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong>
-                    </div>
-                    <div class="col-res" style="display: flex; justify-content: flex-start; margin-bottom: 2px;">
-                        <span style="color:#8a8d98; margin-right: 10px; min-width: 65px;">Research:</span> 
-                        <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong>
-                    </div>
-                    <div class="col-train" style="display: flex; justify-content: flex-start;">
-                        <span style="color:#8a8d98; margin-right: 10px; min-width: 65px;">Train:</span> 
-                        <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong>
-                    </div>
+                    <div class="col-fc"><span style="color:#8a8d98; margin-right: 10px;">FC:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong></div>
+                    <div><span style="color:#8a8d98; margin-right: 10px;">General:</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong></div>
+                    <div class="col-const"><span style="color:#8a8d98; margin-right: 10px;">Const:</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong></div>
+                    <div class="col-res"><span style="color:#8a8d98; margin-right: 10px;">Research:</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong></div>
+                    <div class="col-train"><span style="color:#8a8d98; margin-right: 10px;">Train:</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong></div>
                 </div>
             </td>
         `;
         modalTbody.appendChild(detailsRow);
     });
+    
     modal.classList.remove('hidden');
     updateTableColumns();
 }
-
 
 // Fungsi baru untuk membuka/tutup rincian (expand/collapse)
 function toggleDetails(id) {
