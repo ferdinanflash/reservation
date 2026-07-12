@@ -433,7 +433,6 @@ function renderTimeSlots() {
 }
 
 function openWaitingModal(timeStr) {
-function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
     modal.querySelector('table').style.tableLayout = 'fixed';
     modal.querySelector('table').style.width = '100%';
