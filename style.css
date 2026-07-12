@@ -268,10 +268,14 @@ th {
     color: #ffffff;
     padding: 20px;
     border-radius: 12px;
-    width: 90%;
-    max-width: 750px;
+    width: 95%;          /* Ubah dari 90% menjadi 95% agar lebih lebar di HP */
+    max-width: 450px;    /* Batasi agar tidak terlalu lebar */
+    max-height: 85vh;    /* Tambahkan ini agar tidak melampaui tinggi layar */
+    display: flex;       /* Tambahkan display flex */
+    flex-direction: column; 
     position: relative;
 }
+
 
 .custom-form-modal { max-width: 420px; background: #151821; padding: 24px; }
 .custom-confirm-box { max-width: 320px; background: #151821; padding: 20px; text-align: center; }
@@ -354,16 +358,28 @@ th {
 /* 1. Mengaktifkan fungsi geser (scroll) kanan-kiri khusus untuk wadah tabel di dalam modal */
 .modal-table-container {
     width: 100%;
-    overflow-x: auto;                  /* Membuat tabel bisa di-scroll horizontal */
-    -webkit-overflow-scrolling: touch; /* Membikin scroll terasa halus di layar HP/iOS */
-    margin-top: 15px;
-    border: 1px solid #334155;         /* Opsional: memberi border tipis agar rapi */
+    overflow-y: auto;    /* Scroll vertikal jika list banyak */
+    overflow-x: hidden;  /* MATIKAN horizontal scroll */
+    max-height: 60vh;    /* Batasi tinggi container agar tidak memakan seluruh layar */
+    border: 1px solid #334155;
     border-radius: 6px;
+    margin-top: 15px;
 }
+
+#waiting-modal table {
+    width: 100%;
+    min-width: 0;        /* Penting: hapus min-width 800px agar tabel mengikuti lebar container */
+    table-layout: auto;
+}
+
 
 /* 2. Mengunci teks kolom agar tidak turun ke bawah berantakan saat dipaksa menyempit */
 .modal-table-container table th,
-.modal-table-container table td {
-    white-space: nowrap;               /* Memaksa teks tetap memanjang kesamping */
-    padding: 10px 14px;                /* Memberi jarak empuk antar kolom */
+#waiting-modal td {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    white-space: normal; /* Biarkan teks membungkus (wrap) ke bawah */
+    word-break: break-all; /* Memotong kata jika terlalu panjang agar tidak merusak layout */
+    text-align: left;
 }
+
