@@ -440,34 +440,55 @@ function openWaitingModal(timeStr) {
     modalTbody.innerHTML = "";
 
     let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
-    const actionHeaders = document.querySelectorAll('.admin-action-col');
-    actionHeaders.forEach(el => el.style.display = isAdmin ? 'table-cell' : 'none');
+
+    if (appsInSlot.length === 0) {
+        modalTbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No waiting applications</td></tr>';
+    }
 
     appsInSlot.forEach(app => {
         const row = document.createElement('tr');
-        let actionCell = isAdmin ? `
-            <td class="admin-action-col">
-                <button class="btn-apply" style="background:#22c55e; margin-bottom:4px; font-size:0.75rem; padding:4px 8px;" onclick="acceptApp(${app.id})">Accept</button>
-                <button class="btn-apply" style="background:#ef4444; font-size:0.75rem; padding:4px 8px;" onclick="removeApp(${app.id})">Drop</button>
-            </td>
-        ` : '';
-
+        // Baris utama: Nickname & Game ID
         row.innerHTML = `
-            ${actionCell}
+            <td style="text-align:center; width:40px;">
+                <button onclick="toggleDetails(${app.id})" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">👁️</button>
+            </td>
             <td>${app.nickname}</td>
-            <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span></td>
-            <td class="col-fc">${app.fire_crystal || '0'}</td>
-            <td>${app.general_speedup || '0'}</td>
-            <td class="col-const">${app.construction_speedup || '0'}</td>
-            <td class="col-res">${app.research_speedup || '0'}</td>
-            <td class="col-train">${app.training_speedup || '0'}</td>
+            <td style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</td>
         `;
         modalTbody.appendChild(row);
+
+        // Baris detail (disembunyikan secara default)
+        const detailRow = document.createElement('tr');
+        detailRow.id = `detail-${app.id}`;
+        detailRow.style.display = 'none';
+        detailRow.innerHTML = `
+            <td colspan="3" style="background:#1a1a1a; padding:10px; font-size:0.85rem;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                    <div>FC: ${app.fire_crystal || '0'}</div>
+                    <div>Gen: ${app.general_speedup || '0'}</div>
+                    <div>Const: ${app.construction_speedup || '0'}</div>
+                    <div>Res: ${app.research_speedup || '0'}</div>
+                    <div>Train: ${app.training_speedup || '0'}</div>
+                </div>
+                ${isAdmin ? `
+                    <div style="margin-top:10px; display:flex; gap:10px;">
+                        <button class="btn-apply" style="background:#22c55e; flex:1;" onclick="acceptApp(${app.id})">Accept</button>
+                        <button class="btn-apply" style="background:#ef4444; flex:1;" onclick="removeApp(${app.id})">Drop</button>
+                    </div>
+                ` : ''}
+            </td>
+        `;
+        modalTbody.appendChild(detailRow);
     });
     modal.classList.remove('hidden');
-
-    updateTableColumns();
 }
+
+// Fungsi untuk membuka/menutup detail
+function toggleDetails(id) {
+    const row = document.getElementById(`detail-${id}`);
+    row.style.display = (row.style.display === 'none') ? 'table-row' : 'none';
+}
+
 
 function closeModal() {
     document.getElementById('waiting-modal').classList.add('hidden');
