@@ -451,18 +451,26 @@ function openWaitingModal(timeStr) {
     let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
 
     appsInSlot.forEach(app => {
-        const mainRow = document.createElement('tr');
-        // Ikon 🔍 digabung ke kolom Nickname agar lebih rapat
-        mainRow.innerHTML = `
-            <td style="width: 60%; padding: 5px; text-align: left; font-weight: 500;">
-                <span style="cursor:pointer; margin-right: 8px;" onclick="toggleDetails(${app.id})">🔍</span>${app.nickname}
-            </td>
-            <td style="width: 40%; padding: 5px; text-align: left;">
-                <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span>
-            </td>
-        `;
-        modalTbody.appendChild(mainRow);
+    const mainRow = document.createElement('tr');
+    
+    // Logika tombol hanya untuk Admin/Presiden
+    let adminButtons = isAdmin ? `
+        <div style="margin-top: 5px;">
+            <button class="btn-apply" style="background:#22c55e; font-size:0.7rem; padding:2px 4px; margin-right:4px;" onclick="acceptApp(${app.id})">Accept</button>
+            <button class="btn-apply" style="background:#ef4444; font-size:0.7rem; padding:2px 4px;" onclick="removeApp(${app.id})">Drop</button>
+        </div>
+    ` : '';
 
+    mainRow.innerHTML = `
+        <td style="width: 60%; padding: 5px; text-align: left; font-weight: 500;">
+            <span style="cursor:pointer; margin-right: 8px;" onclick="toggleDetails(${app.id})">🔍</span>${app.nickname}
+        </td>
+        <td style="width: 40%; padding: 5px; text-align: left;">
+            <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span>
+            ${adminButtons}
+        </td>
+    `;
+    modalTbody.appendChild(mainRow);
         // Baris Detail
         const detailsRow = document.createElement('tr');
         detailsRow.id = `details-${app.id}`;
