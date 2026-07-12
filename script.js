@@ -11,7 +11,7 @@ let selectedTimeSlot = '';
 let isReservationOpen = true; 
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Cek status login dari session storage
+    // Cek status login dari session storage[span_1](start_span)[span_1](end_span)
     if (sessionStorage.getItem('isPresidentMode') === 'true') {
         isAdmin = true;
         updateAdminUI(); 
@@ -28,7 +28,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 30000);
 });
 
-// === FUNGSI INISIALISASI SUPABASE ===
+// Fungsi untuk menyalin ID ke clipboard[span_2](start_span)[span_2](end_span)
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(`ID ${text} copied to clipboard!`, "success");
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        showToast("Failed to copy", "error");
+    });
+}
+
+// Fungsi untuk sinkronisasi UI Admin[span_3](start_span)[span_3](end_span)
+function updateAdminUI() {
+    const adminBtn = document.getElementById('admin-toggle-btn');
+    const adminInd = document.getElementById('admin-indicator');
+    const editFooterBtn = document.getElementById('edit-footer-btn');
+    const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
+    const finishSvsBtn = document.getElementById('finish-svs-btn'); 
+
+    if (adminBtn) adminBtn.innerText = "Logout President";
+    if (adminInd) adminInd.style.display = "inline";
+    if (editFooterBtn) editFooterBtn.style.display = "inline-block";
+    if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
+    if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; 
+}
+
 function getSupabase() {
     if (!supabaseClient) {
         if (typeof window.supabase !== 'undefined') {
@@ -40,7 +64,65 @@ function getSupabase() {
     return supabaseClient;
 }
 
-// === FUNGSI UTILITAS UI ===
+async function checkReservationStatus() {
+    const client = getSupabase();
+    if (!client) return;
+    try {
+        const { data, error } = await client
+            .from('system_settings')
+            .select('is_open')
+            .eq('id', currentPosition)
+            .single();
+        
+        if (data) {
+            isReservationOpen = data.is_open;
+        } else {
+            isReservationOpen = true; 
+        }
+        updateReservationButtonUI();
+    } catch (err) {
+        console.error("Error checking status:", err);
+    }
+}
+
+function updateReservationButtonUI() {
+    const toggleBtn = document.getElementById('toggle-reservation-btn');
+    if (!toggleBtn) return;
+
+    if (isReservationOpen) {
+        toggleBtn.innerText = "Close Reservation";
+        toggleBtn.style.background = "#dc2626"; 
+    } else {
+        toggleBtn.innerText = "Open Reservation";
+        toggleBtn.style.background = "#22c55e"; 
+    }
+}
+
+async function handleToggleReservation() {
+    if (!isAdmin) return;
+    
+    const client = getSupabase();
+    if (!client) return;
+
+    const newStatus = !isReservationOpen;
+    const actionText = newStatus ? "open" : "close";
+    
+    if (confirm(`Are you sure to ${actionText} reservation for ${currentPosition}?`)) {
+        const { error } = await client
+            .from('system_settings')
+            .update({ is_open: newStatus })
+            .eq('id', currentPosition); 
+            
+        if (!error) {
+            isReservationOpen = newStatus;
+            updateReservationButtonUI();
+            showToast(`Reservation of ${currentPosition} now-${newStatus ? 'open' : 'close'}!`, "success");
+        } else {
+            showToast("Gagal memperbarui status ke database.", "error");
+        }
+    }
+}
+
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -61,15 +143,6 @@ function showToast(message, type = 'info') {
         toast.style.transition = 'all 0.3s ease';
         setTimeout(() => toast.remove(), 300);
     }, 3000);
-}
-
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        showToast(`ID ${text} copied to clipboard!`, "success");
-    }).catch(err => {
-        console.error('Failed to copy: ', err);
-        showToast("Failed to copy", "error");
-    });
 }
 
 function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
@@ -97,19 +170,80 @@ function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
     });
 }
 
-// === FUNGSI LOGIN & ADMIN UI ===
-function updateAdminUI() {
-    const adminBtn = document.getElementById('admin-toggle-btn');
-    const adminInd = document.getElementById('admin-indicator');
-    const editFooterBtn = document.getElementById('edit-footer-btn');
-    const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
-    const finishSvsBtn = document.getElementById('finish-svs-btn'); 
+async function loadFooterInfo() {
+    const cachedPresident = localStorage.getItem('cached_president_name');
+    const cachedGuild = localStorage.getItem('cached_guild_name');
+    
+    if (cachedPresident) {
+        const elPres = document.getElementById('display-president-name');
+        if (elPres) elPres.innerText = cachedPresident;
+    }
+    if (cachedGuild) {
+        const elGuild = document.getElementById('display-guild-name');
+        if (elGuild) elGuild.innerText = cachedGuild;
+    }
 
-    if (adminBtn) adminBtn.innerText = "Logout President";
-    if (adminInd) adminInd.style.display = "inline";
-    if (editFooterBtn) editFooterBtn.style.display = "inline-block";
-    if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
-    if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; 
+    const client = getSupabase();
+    if (!client) return;
+    try {
+        const { data, error } = await client
+            .from('footer_settings')
+            .select('president_name, guild_name')
+            .eq('id', 'main')
+            .single();
+        
+        if (data) {
+            if (data.president_name) {
+                const elPres = document.getElementById('display-president-name');
+                if (elPres) elPres.innerText = data.president_name;
+                localStorage.setItem('cached_president_name', data.president_name);
+            }
+            if (data.guild_name) {
+                const elGuild = document.getElementById('display-guild-name');
+                if (elGuild) elGuild.innerText = data.guild_name;
+                localStorage.setItem('cached_guild_name', data.guild_name);
+            }
+        }
+    } catch (err) {
+        console.error("Error loading footer info from database:", err);
+    }
+}
+
+async function handleEditFooter() {
+    if (!isAdmin) return;
+    const currentName = document.getElementById('display-president-name').innerText;
+    const currentGuild = document.getElementById('display-guild-name').innerText;
+
+    const newName = prompt("Enter New President Name:", currentName);
+    if (newName === null) return;
+    const newGuild = prompt("Enter New Guild Name:", currentGuild);
+    if (newGuild === null) return;
+
+    if (newName.trim() === "" || newGuild.trim() === "") {
+        showToast("Name and Guild cannot be empty!", "warning");
+        return;
+    }
+
+    const client = getSupabase();
+    if (!client) return;
+
+    const { error } = await client
+        .from('footer_settings')
+        .upsert({ 
+            id: 'main', 
+            president_name: newName.trim(), 
+            guild_name: newGuild.trim(),
+            updated_at: new Date().toISOString()
+        });
+
+    if (!error) {
+        localStorage.setItem('cached_president_name', newName.trim());
+        localStorage.setItem('cached_guild_name', newGuild.trim());
+        loadFooterInfo();
+        showToast("President info updated globally!", "success");
+    } else {
+        showToast("Failed to update database.", "error");
+    }
 }
 
 function handleAdminLogin() {
@@ -121,7 +255,7 @@ function handleAdminLogin() {
         const password = prompt("Enter President Password:");
         if (password === "3475") { 
             isAdmin = true;
-            sessionStorage.setItem('isPresidentMode', 'true'); 
+            sessionStorage.setItem('isPresidentMode', 'true'); // Simpan status[span_4](start_span)[span_4](end_span)
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
@@ -134,7 +268,7 @@ function handleAdminLogin() {
         }
     } else {
         isAdmin = false;
-        sessionStorage.removeItem('isPresidentMode'); 
+        sessionStorage.removeItem('isPresidentMode'); // Hapus status[span_5](start_span)[span_5](end_span)
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
@@ -145,7 +279,6 @@ function handleAdminLogin() {
     loadApplications();
 }
 
-// === FUNGSI NAVIGASI & JADWAL ===
 function showSchedule(positionName) {
     currentPosition = positionName;
     document.getElementById('positions-page').classList.add('hidden');
@@ -156,11 +289,6 @@ function showSchedule(positionName) {
     checkReservationStatus().then(() => {
         loadApplications();
     });
-}
-
-function showPositions() {
-    document.getElementById('schedule-page').classList.add('hidden');
-    document.getElementById('positions-page').classList.remove('hidden');
 }
 
 function detectAndSetTimezone() {
@@ -223,183 +351,11 @@ function detectAndSetTimezone() {
     }
 }
 
-function startLiveClock() {
-    const localClockEl = document.getElementById('local-clock');
-    const localLabelEl = document.getElementById('local-clock-label');
-    const utcClockEl = document.getElementById('utc-clock');
-    const timezoneSelect = document.getElementById('timezone');
-
-    if (!localClockEl || !utcClockEl || !localLabelEl) return;
-
-    setInterval(() => {
-        const now = new Date();
-
-        const utcHours = String(now.getUTCHours()).padStart(2, '0');
-        const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
-        const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
-        utcClockEl.innerText = `${utcHours}:${utcMinutes}:${utcSeconds}`;
-
-        const schedulePage = document.getElementById('schedule-page');
-        const isScheduleVisible = schedulePage && !schedulePage.classList.contains('hidden');
-
-        if (isScheduleVisible && timezoneSelect && timezoneSelect.value !== "") {
-            const offset = parseFloat(timezoneSelect.value); 
-            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const targetTime = new Date(utcTime + (3600000 * offset));
-
-            const displayHours = String(targetTime.getHours()).padStart(2, '0');
-            const displayMinutes = String(targetTime.getMinutes()).padStart(2, '0');
-            const displaySeconds = String(targetTime.getSeconds()).padStart(2, '0');
-            
-            const sign = offset >= 0 ? "+" : "-";
-            const absOffset = Math.abs(offset);
-            const hours = Math.floor(absOffset); 
-            const minutes = Math.round((absOffset - hours) * 60); 
-            
-            const formattedHours = String(hours).padStart(2, '0');
-            const formattedMinutes = String(minutes).padStart(2, '0');
-            
-            if (minutes > 0) {
-                localLabelEl.innerText = `UTC${sign}${formattedHours}:${formattedMinutes}:`;
-            } else {
-                localLabelEl.innerText = `UTC${sign}${formattedHours}:`;
-            }
-            localClockEl.innerText = `${displayHours}:${displayMinutes}:${displaySeconds}`;
-        } else {
-            const localHours = String(now.getHours()).padStart(2, '0');
-            const localMinutes = String(now.getMinutes()).padStart(2, '0');
-            const localSeconds = String(now.getSeconds()).padStart(2, '0');
-            
-            localLabelEl.innerText = "LOCAL:";
-            localClockEl.innerText = `${localHours}:${localMinutes}:${localSeconds}`;
-        }
-    }, 1000);
+function showPositions() {
+    document.getElementById('schedule-page').classList.add('hidden');
+    document.getElementById('positions-page').classList.remove('hidden');
 }
 
-// === FUNGSI MANAJEMEN RESERVASI (ADMIN) ===
-async function checkReservationStatus() {
-    const client = getSupabase();
-    if (!client) return;
-    try {
-        const { data, error } = await client
-            .from('system_settings')
-            .select('is_open')
-            .eq('id', currentPosition)
-            .single();
-        
-        if (data) {
-            isReservationOpen = data.is_open;
-        } else {
-            isReservationOpen = true; 
-        }
-        updateReservationButtonUI();
-    } catch (err) {
-        console.error("Error checking status:", err);
-    }
-}
-
-function updateReservationButtonUI() {
-    const toggleBtn = document.getElementById('toggle-reservation-btn');
-    if (!toggleBtn) return;
-
-    if (isReservationOpen) {
-        toggleBtn.innerText = "Close Reservation";
-        toggleBtn.style.background = "#dc2626"; 
-    } else {
-        toggleBtn.innerText = "Open Reservation";
-        toggleBtn.style.background = "#22c55e"; 
-    }
-}
-
-async function handleToggleReservation() {
-    if (!isAdmin) return;
-    
-    const client = getSupabase();
-    if (!client) return;
-
-    const newStatus = !isReservationOpen;
-    const actionText = newStatus ? "open" : "close";
-    
-    if (confirm(`Are you sure to ${actionText} reservation for ${currentPosition}?`)) {
-        const { error } = await client
-            .from('system_settings')
-            .update({ is_open: newStatus })
-            .eq('id', currentPosition); 
-            
-        if (!error) {
-            isReservationOpen = newStatus;
-            updateReservationButtonUI();
-            showToast(`Reservation of ${currentPosition} now-${newStatus ? 'open' : 'close'}!`, "success");
-        } else {
-            showToast("Gagal memperbarui status ke database.", "error");
-        }
-    }
-}
-
-async function acceptApp(id) {
-    showCustomConfirm("Accept this application? This will lock this time slot.", async () => {
-        const client = getSupabase();
-        if (!client) return;
-        
-        closeModal(); 
-        
-        const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
-        if (!error) {
-            showToast("Application Approved!", "success");
-            loadApplications();
-            loadRecentAccepts(); 
-        } else {
-            showToast("Failed to approve.", "error");
-        }
-    }, '#22c55e');
-}
-
-async function removeApp(id) {
-    showCustomConfirm("Delete this application record permanently?", async () => {
-        const client = getSupabase();
-        if (!client) return;
-        
-        closeModal(); 
-        
-        const { error } = await client.from('reservation_slots').delete().eq('id', id);
-        if (!error) {
-            showToast("Record dropped successfully.", "success");
-            loadApplications();
-            loadRecentAccepts(); 
-        } else {
-            showToast("Failed executing delete request.", "error");
-        }
-    }, '#ef4444');
-}
-
-async function handleFinishSVS() {
-    if (!isAdmin) return;
-
-    const client = getSupabase();
-    if (!client) return;
-
-    showCustomConfirm("Caution to finish SVS!\n Are you sure ?, this will be reset all applied data", async () => {
-        try {
-            const { error } = await client
-                .from('reservation_slots')
-                .delete()
-                .neq('id', 0); 
-
-            if (!error) {
-                showToast("All record has been cleared.", "success");
-                if (typeof loadApplications === "function") loadApplications();
-                if (typeof loadRecentAccepts === "function") loadRecentAccepts(); 
-            } else {
-                throw error;
-            }
-        } catch (err) {
-            console.error("Fail to reset database:", err);
-            showToast("Fail to clear data: " + err.message, "error");
-        }
-    }, '#dc2626'); 
-}
-
-// === FUNGSI DATA APLIKASI (READ/WRITE) ===
 async function loadApplications() {
     const client = getSupabase();
     if (!client) return;
@@ -476,32 +432,6 @@ function renderTimeSlots() {
     updateTableColumns();
 }
 
-function updateTableColumns() {
-    const colFc = document.querySelectorAll('.col-fc');
-    const colConst = document.querySelectorAll('.col-const');
-    const colRes = document.querySelectorAll('.col-res');
-    const colTrain = document.querySelectorAll('.col-train');
-
-    const allCols = [...colFc, ...colConst, ...colRes, ...colTrain];
-    allCols.forEach(el => el.classList.remove('hidden'));
-
-    if (currentPosition === 'Vice President D1' || currentPosition === 'Vice President D5') {
-        colRes.forEach(el => el.classList.add('hidden'));
-        colTrain.forEach(el => el.classList.add('hidden'));
-    } 
-    else if (currentPosition === 'Vice President D2') {
-        colFc.forEach(el => el.classList.add('hidden'));
-        colConst.forEach(el => el.classList.add('hidden'));
-        colTrain.forEach(el => el.classList.add('hidden'));
-    } 
-    else if (currentPosition === 'Minister of Education D4') {
-        colFc.forEach(el => el.classList.add('hidden'));
-        colConst.forEach(el => el.classList.add('hidden'));
-        colRes.forEach(el => el.classList.add('hidden'));
-    }
-}
-
-// === FUNGSI MODAL (WAITING LIST & APPLY) ===
 function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
     const modalTitle = document.getElementById('modal-title');
@@ -636,7 +566,152 @@ async function submitApplication() {
     }
 }
 
-// === FUNGSI RECENT LOG ===
+async function acceptApp(id) {
+    showCustomConfirm("Accept this application? This will lock this time slot.", async () => {
+        const client = getSupabase();
+        if (!client) return;
+        
+        closeModal(); 
+        
+        const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
+        if (!error) {
+            showToast("Application Approved!", "success");
+            loadApplications();
+            loadRecentAccepts(); 
+        } else {
+            showToast("Failed to approve.", "error");
+        }
+    }, '#22c55e');
+}
+
+async function removeApp(id) {
+    showCustomConfirm("Delete this application record permanently?", async () => {
+        const client = getSupabase();
+        if (!client) return;
+        
+        closeModal(); 
+        
+        const { error } = await client.from('reservation_slots').delete().eq('id', id);
+        if (!error) {
+            showToast("Record dropped successfully.", "success");
+            loadApplications();
+            loadRecentAccepts(); 
+        } else {
+            showToast("Failed executing delete request.", "error");
+        }
+    }, '#ef4444');
+}
+
+function exportToCSV() {
+    if (savedApplications.length === 0) {
+        showToast("No data available to export!", "warning");
+        return;
+    }
+
+    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
+    const rows = savedApplications.map(app => [
+        `"${app.position}"`, `"${app.time_slot}"`, `"${app.status}"`,
+        `"${app.nickname || '-'}"`, `"${app.game_id || '-'}"`, `"${app.fire_crystal || '0'}"`,
+        `"${app.general_speedup || '0'}"`, `"${app.construction_speedup || '0'}"`,
+        `"${app.research_speedup || '0'}"`, `"${app.training_speedup || '0'}"`
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `SVS_Ministry_Export_${currentPosition.replace(/\s+/g, '_')}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast("CSV File downloaded successfully!", "success");
+}
+
+async function handleFinishSVS() {
+    if (!isAdmin) return;
+
+    const client = getSupabase();
+    if (!client) return;
+
+    showCustomConfirm("Caution to finish SVS!\n Are you sure ?, this will be reset all applied data", async () => {
+        try {
+            const { error } = await client
+                .from('reservation_slots')
+                .delete()
+                .neq('id', 0); 
+
+            if (!error) {
+                showToast("All record has been cleared.", "success");
+                if (typeof loadApplications === "function") loadApplications();
+                if (typeof loadRecentAccepts === "function") loadRecentAccepts(); 
+            } else {
+                throw error;
+            }
+        } catch (err) {
+            console.error("Fail to reset database:", err);
+            showToast("Fail to clear data: " + err.message, "error");
+        }
+    }, '#dc2626'); 
+}
+
+function startLiveClock() {
+    const localClockEl = document.getElementById('local-clock');
+    const localLabelEl = document.getElementById('local-clock-label');
+    const utcClockEl = document.getElementById('utc-clock');
+    const timezoneSelect = document.getElementById('timezone');
+
+    if (!localClockEl || !utcClockEl || !localLabelEl) return;
+
+    setInterval(() => {
+        const now = new Date();
+
+        const utcHours = String(now.getUTCHours()).padStart(2, '0');
+        const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
+        const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
+        utcClockEl.innerText = `${utcHours}:${utcMinutes}:${utcSeconds}`;
+
+        const schedulePage = document.getElementById('schedule-page');
+        const isScheduleVisible = schedulePage && !schedulePage.classList.contains('hidden');
+
+        if (isScheduleVisible && timezoneSelect && timezoneSelect.value !== "") {
+            const offset = parseFloat(timezoneSelect.value); 
+            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const targetTime = new Date(utcTime + (3600000 * offset));
+
+            const displayHours = String(targetTime.getHours()).padStart(2, '0');
+            const displayMinutes = String(targetTime.getMinutes()).padStart(2, '0');
+            const displaySeconds = String(targetTime.getSeconds()).padStart(2, '0');
+            
+            const sign = offset >= 0 ? "+" : "-";
+            const absOffset = Math.abs(offset);
+            const hours = Math.floor(absOffset); 
+            const minutes = Math.round((absOffset - hours) * 60); 
+            
+            const formattedHours = String(hours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            
+            if (minutes > 0) {
+                localLabelEl.innerText = `UTC${sign}${formattedHours}:${formattedMinutes}:`;
+            } else {
+                localLabelEl.innerText = `UTC${sign}${formattedHours}:`;
+            }
+            localClockEl.innerText = `${displayHours}:${displayMinutes}:${displaySeconds}`;
+        } else {
+            const localHours = String(now.getHours()).padStart(2, '0');
+            const localMinutes = String(now.getMinutes()).padStart(2, '0');
+            const localSeconds = String(now.getSeconds()).padStart(2, '0');
+            
+            localLabelEl.innerText = "LOCAL:";
+            localClockEl.innerText = `${localHours}:${localMinutes}:${localSeconds}`;
+        }
+    }, 1000);
+}
+
 async function loadRecentAccepts() {
     const logListEl = document.getElementById('recent-log-list');
     if (!logListEl) return;
@@ -679,110 +754,28 @@ async function loadRecentAccepts() {
     }
 }
 
-// === FUNGSI FOOTER INFO ===
-async function loadFooterInfo() {
-    const cachedPresident = localStorage.getItem('cached_president_name');
-    const cachedGuild = localStorage.getItem('cached_guild_name');
-    
-    if (cachedPresident) {
-        const elPres = document.getElementById('display-president-name');
-        if (elPres) elPres.innerText = cachedPresident;
-    }
-    if (cachedGuild) {
-        const elGuild = document.getElementById('display-guild-name');
-        if (elGuild) elGuild.innerText = cachedGuild;
-    }
+function updateTableColumns() {
+    const colFc = document.querySelectorAll('.col-fc');
+    const colConst = document.querySelectorAll('.col-const');
+    const colRes = document.querySelectorAll('.col-res');
+    const colTrain = document.querySelectorAll('.col-train');
 
-    const client = getSupabase();
-    if (!client) return;
-    try {
-        const { data, error } = await client
-            .from('footer_settings')
-            .select('president_name, guild_name')
-            .eq('id', 'main')
-            .single();
-        
-        if (data) {
-            if (data.president_name) {
-                const elPres = document.getElementById('display-president-name');
-                if (elPres) elPres.innerText = data.president_name;
-                localStorage.setItem('cached_president_name', data.president_name);
-            }
-            if (data.guild_name) {
-                const elGuild = document.getElementById('display-guild-name');
-                if (elGuild) elGuild.innerText = data.guild_name;
-                localStorage.setItem('cached_guild_name', data.guild_name);
-            }
-        }
-    } catch (err) {
-        console.error("Error loading footer info from database:", err);
+    const allCols = [...colFc, ...colConst, ...colRes, ...colTrain];
+    allCols.forEach(el => el.classList.remove('hidden'));
+
+    if (currentPosition === 'Vice President D1' || currentPosition === 'Vice President D5') {
+        colRes.forEach(el => el.classList.add('hidden'));
+        colTrain.forEach(el => el.classList.add('hidden'));
+    } 
+    else if (currentPosition === 'Vice President D2') {
+        colFc.forEach(el => el.classList.add('hidden'));
+        colConst.forEach(el => el.classList.add('hidden'));
+        colTrain.forEach(el => el.classList.add('hidden'));
+    } 
+    else if (currentPosition === 'Minister of Education D4') {
+        colFc.forEach(el => el.classList.add('hidden'));
+        colConst.forEach(el => el.classList.add('hidden'));
+        colRes.forEach(el => el.classList.add('hidden'));
     }
 }
 
-async function handleEditFooter() {
-    if (!isAdmin) return;
-    const currentName = document.getElementById('display-president-name').innerText;
-    const currentGuild = document.getElementById('display-guild-name').innerText;
-
-    const newName = prompt("Enter New President Name:", currentName);
-    if (newName === null) return;
-    const newGuild = prompt("Enter New Guild Name:", currentGuild);
-    if (newGuild === null) return;
-
-    if (newName.trim() === "" || newGuild.trim() === "") {
-        showToast("Name and Guild cannot be empty!", "warning");
-        return;
-    }
-
-    const client = getSupabase();
-    if (!client) return;
-
-    const { error } = await client
-        .from('footer_settings')
-        .upsert({ 
-            id: 'main', 
-            president_name: newName.trim(), 
-            guild_name: newGuild.trim(),
-            updated_at: new Date().toISOString()
-        });
-
-    if (!error) {
-        localStorage.setItem('cached_president_name', newName.trim());
-        localStorage.setItem('cached_guild_name', newGuild.trim());
-        loadFooterInfo();
-        showToast("President info updated globally!", "success");
-    } else {
-        showToast("Failed to update database.", "error");
-    }
-}
-
-// === FUNGSI EXPORT CSV ===
-function exportToCSV() {
-    if (savedApplications.length === 0) {
-        showToast("No data available to export!", "warning");
-        return;
-    }
-
-    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
-    const rows = savedApplications.map(app => [
-        `"${app.position}"`, `"${app.time_slot}"`, `"${app.status}"`,
-        `"${app.nickname || '-'}"`, `"${app.game_id || '-'}"`, `"${app.fire_crystal || '0'}"`,
-        `"${app.general_speedup || '0'}"`, `"${app.construction_speedup || '0'}"`,
-        `"${app.research_speedup || '0'}"`, `"${app.training_speedup || '0'}"`
-    ]);
-
-    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    
-    link.setAttribute("href", url);
-    link.setAttribute("download", `SVS_Ministry_Export_${currentPosition.replace(/\s+/g, '_')}.csv`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast("CSV File downloaded successfully!", "success");
-}
