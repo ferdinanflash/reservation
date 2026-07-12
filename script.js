@@ -433,40 +433,31 @@ function renderTimeSlots() {
 }
 
 function openWaitingModal(timeStr) {
+function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
-    const modalTitle = document.getElementById('modal-title');
+    modal.querySelector('table').style.tableLayout = 'fixed';
+    modal.querySelector('table').style.width = '100%';
+    
+    document.getElementById('modal-title').innerText = `Waiting List - ${timeStr} UTC`;
     const modalTbody = document.getElementById('modal-table-body');
-    modalTitle.innerText = `Waiting List - ${timeStr} UTC`;
     modalTbody.innerHTML = "";
 
+    // Header tabel yang disamakan lebarnya
+    const thead = modal.querySelector('thead tr');
+    thead.innerHTML = `
+        <th style="width: 15%; padding: 5px;">Action</th>
+        <th style="width: 45%; padding: 5px; text-align: left;">NICKNAME</th>
+        <th style="width: 40%; padding: 5px; text-align: left;">ID</th>
+    `;
+
     let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
-    
-    // Perbaikan Header Tabel agar lebih rapat
-    const thead = document.querySelector('#waiting-modal table thead tr');
-    if (thead) {
-        thead.innerHTML = `
-            <th class="admin-action-col" style="padding: 5px;">Action</th>
-            <th style="padding: 5px; width: 30px;"></th>
-            <th style="padding: 5px; text-align: left;">NICKNAME</th>
-            <th style="padding: 5px; text-align: left;">ID</th>
-        `;
-    }
 
     appsInSlot.forEach(app => {
         const mainRow = document.createElement('tr');
-        let actionCell = isAdmin ? `
-            <td class="admin-action-col" style="padding: 5px;">
-                <button class="btn-apply" style="background:#22c55e; margin-bottom:2px; font-size:0.7rem; padding:2px 5px;" onclick="acceptApp(${app.id})">Accept</button>
-                <button class="btn-apply" style="background:#ef4444; font-size:0.7rem; padding:2px 5px;" onclick="removeApp(${app.id})">Drop</button>
-            </td>
-        ` : '';
-
-        // Mengatur padding agar lebih rapat dan ID tidak terlalu jauh
         mainRow.innerHTML = `
-            ${actionCell}
-            <td style="cursor:pointer; font-size: 1.1rem; padding: 5px; text-align: center;" onclick="toggleDetails(${app.id})">🔍</td>
-            <td style="font-weight: 500; padding: 5px;">${app.nickname}</td>
-            <td style="padding: 5px;"><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span></td>
+            <td style="width: 15%; padding: 5px; text-align: center; cursor: pointer;" onclick="toggleDetails(${app.id})">🔍</td>
+            <td style="width: 45%; padding: 5px; font-weight: 500;">${app.nickname}</td>
+            <td style="width: 40%; padding: 5px;"><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span></td>
         `;
         modalTbody.appendChild(mainRow);
 
