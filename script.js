@@ -779,4 +779,3 @@ function updateTableColumns() {
     }
 }
 
-Ini script.js saya, berikan versi full yang sudah diubah
