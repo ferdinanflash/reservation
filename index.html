@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=8" defer></script>
+    <script src="script.js?v=9" defer></script>
 </head>
 <body>
     <header class="navbar">
@@ -88,16 +88,13 @@
             <h2 id="modal-title">Applicants List</h2>
             <div class="modal-table-container">
                 <table>
+                    <!-- HEADER TABEL WAITING LIST YANG SUDAH DIUBAH -->
                     <thead>
                         <tr>
                             <th class="admin-action-col">ACTION</th>
+                            <th style="width: 40px;">👁️</th>
                             <th>NICKNAME</th>
                             <th>GAME ID</th>
-                            <th class="col-fc">FC</th>
-                            <th>GENERAL SP</th>
-                            <th class="col-const">CONST SP</th>
-                            <th class="col-res">RES SP</th>
-                            <th class="col-train">TRAIN SP</th>
                         </tr>
                     </thead>
                     <tbody id="modal-table-body"></tbody>
@@ -189,4 +186,3 @@
 
 </body>
 </html>
-
