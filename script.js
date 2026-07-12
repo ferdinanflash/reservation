@@ -443,21 +443,22 @@ function openWaitingModal(timeStr) {
 
     // Header tabel yang disamakan lebarnya
     const thead = modal.querySelector('thead tr');
-    thead.innerHTML = `
-        <th style="width: 15%; padding: 5px;">Action</th>
-        <th style="width: 45%; padding: 5px; text-align: left;">NICKNAME</th>
-        <th style="width: 40%; padding: 5px; text-align: left;">ID</th>
-    `;
+    const cellStyle = "padding: 5px 10px; text-align: left; vertical-align: middle;";
 
+// Update header
+thead.innerHTML = `
+    <th style="width: 50%; ${cellStyle}">NICKNAME</th>
+    <th style="width: 50%; ${cellStyle}">ID</th>
+`;
     let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
 
     appsInSlot.forEach(app => {
         const mainRow = document.createElement('tr');
         mainRow.innerHTML = `
             <td style="width: 15%; padding: 5px; text-align: center; cursor: pointer;" onclick="toggleDetails(${app.id})">🔍</td>
-            <td style="width: 45%; padding: 5px; font-weight: 500;">${app.nickname}</td>
-            <td style="width: 40%; padding: 5px;"><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span></td>
-        `;
+                <td style="width: 50%; ${cellStyle} font-weight: 500;">${app.nickname}</td>
+    <td style="width: 50%; ${cellStyle}">${app.game_id}</td>
+`;
         modalTbody.appendChild(mainRow);
 
         // Baris Detail
