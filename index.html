@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=10" defer></script> <!-- Diperbarui versi ke 9 -->
+    <script src="script.js?v=11" defer></script>
 </head>
 <body>
     <header class="navbar">
@@ -76,7 +76,6 @@
         </section>
     </main>
 
-    <!-- Modal Waiting List (Diperbarui untuk Accordion) -->
     <div id="waiting-modal" class="modal hidden">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -84,11 +83,7 @@
             <div class="modal-table-container">
                 <table>
                     <thead>
-                        <tr>
-                            <th style="width: 40px;"></th> <!-- Ikon Mata -->
-                            <th>NICKNAME</th>
-                            <th>GAME ID</th>
-                        </tr>
+                        <tr><th style="width: 40px;"></th><th>NICKNAME</th><th>GAME ID</th></tr>
                     </thead>
                     <tbody id="modal-table-body"></tbody>
                 </table>
@@ -96,19 +91,38 @@
         </div>
     </div>
 
-    <!-- ... (Apply Modal dan Footer tetap sama seperti sebelumnya) ... -->
     <div id="apply-modal" class="modal hidden">
-        <!-- (Konten Apply Modal Anda) -->
+        <div class="modal-content custom-form-modal">
+            <span class="close-modal" onclick="closeApplyModal()">&times;</span>
+            <h2 id="form-position-title">Apply</h2>
+            <p id="form-time-title" style="color:#3b82f6;"></p>
+            <div class="form-group"><label>Nickname</label><input type="text" id="input-nickname"></div>
+            <div class="form-group"><label>Game ID</label><input type="number" id="input-gameid"></div>
+            <div class="form-group"><label>FC</label><input type="number" id="input-fc"></div>
+            <div class="form-group"><label>Gen SP</label><input type="number" id="input-gensp"></div>
+            <div class="form-group"><label>Const SP</label><input type="number" id="input-constsp"></div>
+            <div class="form-group"><label>Res SP</label><input type="number" id="input-ressp"></div>
+            <div class="form-group"><label>Train SP</label><input type="number" id="input-trainsp"></div>
+            <button class="btn-apply" onclick="submitApplication()">Submit</button>
+        </div>
     </div>
 
     <footer class="site-footer">
-        <!-- (Konten Footer Anda) -->
+        <div id="display-president-name">...</div>
+        <div id="display-guild-name">...</div>
+        <div id="recent-log-list"></div>
+        <button id="edit-footer-btn" class="hidden" onclick="handleEditFooter()">Edit</button>
+        <button id="finish-svs-btn" class="hidden" onclick="handleFinishSVS()">FINISH SVS</button>
     </footer>
 
     <div id="confirm-modal" class="modal hidden">
-        <!-- (Konten Confirm Modal Anda) -->
+        <div class="modal-content">
+            <p id="confirm-message"></p>
+            <button id="confirm-cancel-btn">Cancel</button>
+            <button id="confirm-ok-btn">OK</button>
+        </div>
     </div>
 
-    <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;"></div>
+    <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;"></div>
 </body>
 </html>
