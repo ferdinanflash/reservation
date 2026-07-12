@@ -470,22 +470,27 @@ function openWaitingModal(timeStr) {
         const colspan = isAdmin ? 4 : 3; 
         
         detailsRow.innerHTML = `
-            <td colspan="${colspan}" style="padding: 0; border: none;">
-                <div style="background: #151821; padding: 8px; margin: 2px 10px 8px 10px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
-                    <div class="col-fc" style="display: flex; justify-content: space-between; gap: 5px;">
-                        <span style="color:#8a8d98;">FC:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; gap: 5px;">
-                        <span style="color:#8a8d98;">General:</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong>
-                    </div>
-                    <div class="col-const" style="display: flex; justify-content: space-between; gap: 5px;">
-                        <span style="color:#8a8d98;">Const:</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong>
-                    </div>
-                    <div class="col-res" style="display: flex; justify-content: space-between; gap: 5px;">
-                        <span style="color:#8a8d98;">Research:</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong>
-                    </div>
-                    <div class="col-train" style="display: flex; justify-content: space-between; gap: 5px;">
-                        <span style="color:#8a8d98;">Train:</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong>
+    <td colspan="${colspan}" style="padding: 0; border: none;">
+        <div style="background: #151821; padding: 8px; margin: 2px 10px 8px 10px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
+            <div class="col-fc" style="display: flex; justify-content: flex-start;">
+                <span style="color:#8a8d98; margin-right: 8px; min-width: 60px;">FC:</span> 
+                <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong>
+            </div>
+            <div style="display: flex; justify-content: flex-start;">
+                <span style="color:#8a8d98; margin-right: 8px; min-width: 60px;">General:</span> 
+                <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong>
+            </div>
+            <div class="col-const" style="display: flex; justify-content: flex-start;">
+                <span style="color:#8a8d98; margin-right: 8px; min-width: 60px;">Const:</span> 
+                <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong>
+            </div>
+            <div class="col-res" style="display: flex; justify-content: flex-start;">
+                <span style="color:#8a8d98; margin-right: 8px; min-width: 60px;">Research:</span> 
+                <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong>
+            </div>
+            <div class="col-train" style="display: flex; justify-content: flex-start;">
+                <span style="color:#8a8d98; margin-right: 8px; min-width: 60px;">Train:</span> 
+                <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong>
                     </div>
                 </div>
             </td>
