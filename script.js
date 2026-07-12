@@ -438,7 +438,7 @@ function openWaitingModal(timeStr) {
     if (!modal) return;
     
     modal.querySelector('table').style.tableLayout = 'auto';
-    modal.querySelector('table').style.width = '100%';
+    modal.querySelector('table').style.width = '50%';
     
     document.getElementById('modal-title').innerText = `Waiting List - ${timeStr} UTC`;
     const modalTbody = document.getElementById('modal-table-body');
