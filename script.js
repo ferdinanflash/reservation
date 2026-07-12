@@ -441,24 +441,26 @@ function openWaitingModal(timeStr) {
     const modalTbody = document.getElementById('modal-table-body');
     modalTbody.innerHTML = "";
 
-    // Header tabel yang disamakan lebarnya
+    // Header dengan 2 kolom utama
     const thead = modal.querySelector('thead tr');
-    const cellStyle = "padding: 5px 10px; text-align: left; vertical-align: middle;";
+    thead.innerHTML = `
+        <th style="width: 60%; padding: 5px; text-align: left;">NICKNAME</th>
+        <th style="width: 40%; padding: 5px; text-align: left;">ID</th>
+    `;
 
-// Update header
-thead.innerHTML = `
-    <th style="width: 50%; ${cellStyle}">NICKNAME</th>
-    <th style="width: 50%; ${cellStyle}">ID</th>
-`;
     let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
 
     appsInSlot.forEach(app => {
         const mainRow = document.createElement('tr');
+        // Ikon 🔍 digabung ke kolom Nickname agar lebih rapat
         mainRow.innerHTML = `
-            <td style="width: 15%; padding: 5px; text-align: center; cursor: pointer;" onclick="toggleDetails(${app.id})">🔍</td>
-                <td style="width: 50%; ${cellStyle} font-weight: 500;">${app.nickname}</td>
-    <td style="width: 50%; ${cellStyle}">${app.game_id}</td>
-`;
+            <td style="width: 60%; padding: 5px; text-align: left; font-weight: 500;">
+                <span style="cursor:pointer; margin-right: 8px;" onclick="toggleDetails(${app.id})">🔍</span>${app.nickname}
+            </td>
+            <td style="width: 40%; padding: 5px; text-align: left;">
+                <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span>
+            </td>
+        `;
         modalTbody.appendChild(mainRow);
 
         // Baris Detail
