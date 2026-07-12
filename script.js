@@ -11,7 +11,7 @@ let selectedTimeSlot = '';
 let isReservationOpen = true; 
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Cek status login dari session storage[span_1](start_span)[span_1](end_span)
+    // Cek status login dari session storage
     if (sessionStorage.getItem('isPresidentMode') === 'true') {
         isAdmin = true;
         updateAdminUI(); 
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 30000);
 });
 
-// Fungsi untuk menyalin ID ke clipboard[span_2](start_span)[span_2](end_span)
+// Fungsi untuk menyalin ID ke clipboard
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         showToast(`ID ${text} copied to clipboard!`, "success");
@@ -38,7 +38,7 @@ function copyToClipboard(text) {
     });
 }
 
-// Fungsi untuk sinkronisasi UI Admin[span_3](start_span)[span_3](end_span)
+// Fungsi untuk sinkronisasi UI Admin
 function updateAdminUI() {
     const adminBtn = document.getElementById('admin-toggle-btn');
     const adminInd = document.getElementById('admin-indicator');
@@ -255,7 +255,7 @@ function handleAdminLogin() {
         const password = prompt("Enter President Password:");
         if (password === "3475") { 
             isAdmin = true;
-            sessionStorage.setItem('isPresidentMode', 'true'); // Simpan status[span_4](start_span)[span_4](end_span)
+            sessionStorage.setItem('isPresidentMode', 'true'); // Simpan status
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
@@ -268,7 +268,7 @@ function handleAdminLogin() {
         }
     } else {
         isAdmin = false;
-        sessionStorage.removeItem('isPresidentMode'); // Hapus status[span_5](start_span)[span_5](end_span)
+        sessionStorage.removeItem('isPresidentMode'); // Hapus status
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
@@ -444,7 +444,8 @@ function openWaitingModal(timeStr) {
     actionHeaders.forEach(el => el.style.display = isAdmin ? 'table-cell' : 'none');
 
     appsInSlot.forEach(app => {
-        const row = document.createElement('tr');
+        // Baris Utama (Nickname & Game ID)
+        const mainRow = document.createElement('tr');
         let actionCell = isAdmin ? `
             <td class="admin-action-col">
                 <button class="btn-apply" style="background:#22c55e; margin-bottom:4px; font-size:0.75rem; padding:4px 8px;" onclick="acceptApp(${app.id})">Accept</button>
@@ -452,21 +453,57 @@ function openWaitingModal(timeStr) {
             </td>
         ` : '';
 
-        row.innerHTML = `
+        mainRow.innerHTML = `
             ${actionCell}
-            <td>${app.nickname}</td>
+            <td style="cursor:pointer; font-size: 1.1rem; filter: grayscale(100%);" onclick="toggleDetails(${app.id})">👁️</td>
+            <td style="font-weight: 500;">${app.nickname}</td>
             <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span></td>
-            <td class="col-fc">${app.fire_crystal || '0'}</td>
-            <td>${app.general_speedup || '0'}</td>
-            <td class="col-const">${app.construction_speedup || '0'}</td>
-            <td class="col-res">${app.research_speedup || '0'}</td>
-            <td class="col-train">${app.training_speedup || '0'}</td>
         `;
-        modalTbody.appendChild(row);
+        modalTbody.appendChild(mainRow);
+
+        // Baris Detail (Disembunyikan secara default)
+        const detailsRow = document.createElement('tr');
+        detailsRow.id = `details-${app.id}`;
+        detailsRow.style.display = 'none'; // Sembunyikan saat pertama dibuka
+        
+        // Sesuaikan colspan berdasarkan status admin agar rata
+        const colspan = isAdmin ? 4 : 3; 
+        
+        detailsRow.innerHTML = `
+            <td colspan="${colspan}" style="padding: 0; border: none;">
+                <div style="background: #151821; padding: 12px; margin: 4px 10px 10px 10px; border-radius: 8px; font-size: 0.85rem; text-align: left; border: 1px solid #334155;">
+                    <div class="col-fc" style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #2d3039; padding-bottom: 4px;">
+                        <span style="color:#8a8d98;">Fire Crystal:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #2d3039; padding-bottom: 4px;">
+                        <span style="color:#8a8d98;">General SP (Days):</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong>
+                    </div>
+                    <div class="col-const" style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #2d3039; padding-bottom: 4px;">
+                        <span style="color:#8a8d98;">Construction SP (Days):</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong>
+                    </div>
+                    <div class="col-res" style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #2d3039; padding-bottom: 4px;">
+                        <span style="color:#8a8d98;">Research SP (Days):</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong>
+                    </div>
+                    <div class="col-train" style="display: flex; justify-content: space-between;">
+                        <span style="color:#8a8d98;">Training SP (Days):</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong>
+                    </div>
+                </div>
+            </td>
+        `;
+        modalTbody.appendChild(detailsRow);
     });
     modal.classList.remove('hidden');
 
     updateTableColumns();
+}
+
+// Fungsi baru untuk membuka/tutup rincian (expand/collapse)
+function toggleDetails(id) {
+    const detailsRow = document.getElementById(`details-${id}`);
+    if (detailsRow) {
+        // Toggle display table-row dan none
+        detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+    }
 }
 
 function closeModal() {
@@ -778,4 +815,3 @@ function updateTableColumns() {
         colRes.forEach(el => el.classList.add('hidden'));
     }
 }
-
