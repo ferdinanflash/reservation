@@ -394,6 +394,10 @@ th {
     animation-iteration-count: infinite;
 }
 
+    /* Tambahkan baris di bawah ini untuk memperlambat */
+    animation-duration: 8s; /* Makin besar angkanya (misal: 10s, 12s), makin lambat jalannya */
+}
+
 @keyframes fall {
     0% {
         transform: translateY(0) translateX(0);
