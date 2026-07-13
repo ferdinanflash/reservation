@@ -767,7 +767,7 @@ function updateTableColumns() {
 
 // ================= SNOWFLAKE EFFECT =================
 function createSnowEffect() {
-    const maxSnowflakes = 50; 
+    const maxSnowflakes = 30; 
     if (document.querySelectorAll('.snowflake').length >= maxSnowflakes) return;
 
     const snowflake = document.createElement('div');
