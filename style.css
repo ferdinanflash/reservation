@@ -392,8 +392,10 @@ th {
     animation-name: fall;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
+    
+    /* Tambahkan durasi default di sini agar browser tidak bingung */
+    animation-duration: 12s; 
 }
-
 
 @keyframes fall {
     0% {
