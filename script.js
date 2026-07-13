@@ -767,14 +767,14 @@ function updateTableColumns() {
 
 // ================= SNOWFLAKE EFFECT =================
 function createSnowEffect() {
-    const maxSnowflakes = 50; 
+    const maxSnowflakes = 40; 
     if (document.querySelectorAll('.snowflake').length >= maxSnowflakes) return;
 
     const snowflake = document.createElement('div');
     snowflake.classList.add('snowflake');
     snowflake.style.left = Math.random() * 100 + 'vw';
 
-    const size = Math.random() * 3 + 2 + 'px';
+    const size = Math.random() * 5 + 10 + 'px';
     snowflake.style.width = size;
     snowflake.style.height = size;
 
