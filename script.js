@@ -11,7 +11,6 @@ let selectedTimeSlot = '';
 let isReservationOpen = true; 
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Cek status login dari session storage
     if (sessionStorage.getItem('isPresidentMode') === 'true') {
         isAdmin = true;
         updateAdminUI(); 
@@ -28,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 30000);
 });
 
-// Fungsi untuk menyalin ID ke clipboard
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         showToast(`ID ${text} copied to clipboard!`, "success");
@@ -38,7 +36,6 @@ function copyToClipboard(text) {
     });
 }
 
-// Fungsi untuk sinkronisasi UI Admin
 function updateAdminUI() {
     const adminBtn = document.getElementById('admin-toggle-btn');
     const adminInd = document.getElementById('admin-indicator');
@@ -255,7 +252,7 @@ function handleAdminLogin() {
         const password = prompt("Enter President Password:");
         if (password === "3475") { 
             isAdmin = true;
-            sessionStorage.setItem('isPresidentMode', 'true'); // Simpan status
+            sessionStorage.setItem('isPresidentMode', 'true'); 
             document.getElementById('admin-toggle-btn').innerText = "Logout President";
             document.getElementById('admin-indicator').style.display = "inline";
             if (editFooterBtn) editFooterBtn.style.display = "inline-block";
@@ -268,7 +265,7 @@ function handleAdminLogin() {
         }
     } else {
         isAdmin = false;
-        sessionStorage.removeItem('isPresidentMode'); // Hapus status
+        sessionStorage.removeItem('isPresidentMode'); 
         document.getElementById('admin-toggle-btn').innerText = "President Login";
         document.getElementById('admin-indicator').style.display = "none";
         if (editFooterBtn) editFooterBtn.style.display = "none";
@@ -428,13 +425,11 @@ function renderTimeSlots() {
         }
         tbody.appendChild(row);
     }
-    
     updateTableColumns();
 }
 
 function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
-    // Pastikan modal ditemukan
     if (!modal) return;
     
     document.getElementById('modal-title').innerText = `Waiting List - ${timeStr} UTC`;
@@ -451,7 +446,6 @@ function openWaitingModal(timeStr) {
 
     appsInSlot.forEach(app => {
         const mainRow = document.createElement('tr');
-        
         let adminButtons = isAdmin ? `
             <div style="margin-top: 4px;">
                 <button class="btn-apply" style="background:#22c55e; font-size:0.65rem; padding:1px 4px; margin-right:4px;" onclick="acceptApp(${app.id})">Accept</button>
@@ -470,11 +464,9 @@ function openWaitingModal(timeStr) {
         `;
         modalTbody.appendChild(mainRow);
 
-        // Baris Detail
         const detailsRow = document.createElement('tr');
         detailsRow.id = `details-${app.id}`;
         detailsRow.style.display = 'none'; 
-        
         detailsRow.innerHTML = `
             <td colspan="2" style="padding: 0; border: none;">
                 <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
@@ -493,11 +485,9 @@ function openWaitingModal(timeStr) {
     updateTableColumns();
 }
 
-// Fungsi baru untuk membuka/tutup rincian (expand/collapse)
 function toggleDetails(id) {
     const detailsRow = document.getElementById(`details-${id}`);
     if (detailsRow) {
-        // Toggle display table-row dan none
         detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
     }
 }
@@ -576,12 +566,6 @@ async function submitApplication() {
     if (!nickname) { showToast("Please enter In-Game Nickname!", "warning"); return; }
     if (!gameId) { showToast("Please enter In-Game ID!", "warning"); return; }
 
-    if (fc < 0) { showToast("Fire Crystals amount cannot be less than 0!", "warning"); return; }
-    if (genSp < 0) { showToast("General Speedups cannot be less than 0!", "warning"); return; }
-    if (constSp < 0) { showToast("Construction Speedups cannot be less than 0!", "warning"); return; }
-    if (resSp < 0) { showToast("Research Speedups cannot be less than 0!", "warning"); return; }
-    if (trainSp < 0) { showToast("Training Speedups cannot be less than 0!", "warning"); return; }
-
     const { error } = await client
         .from('reservation_slots')
         .insert({ 
@@ -603,9 +587,7 @@ async function acceptApp(id) {
     showCustomConfirm("Accept this application? This will lock this time slot.", async () => {
         const client = getSupabase();
         if (!client) return;
-        
         closeModal(); 
-        
         const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
         if (!error) {
             showToast("Application Approved!", "success");
@@ -621,9 +603,7 @@ async function removeApp(id) {
     showCustomConfirm("Delete this application record permanently?", async () => {
         const client = getSupabase();
         if (!client) return;
-        
         closeModal(); 
-        
         const { error } = await client.from('reservation_slots').delete().eq('id', id);
         if (!error) {
             showToast("Record dropped successfully.", "success");
@@ -640,7 +620,6 @@ function exportToCSV() {
         showToast("No data available to export!", "warning");
         return;
     }
-
     const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
     const rows = savedApplications.map(app => [
         `"${app.position}"`, `"${app.time_slot}"`, `"${app.status}"`,
@@ -653,40 +632,29 @@ function exportToCSV() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    
     link.setAttribute("href", url);
     link.setAttribute("download", `SVS_Ministry_Export_${currentPosition.replace(/\s+/g, '_')}.csv`);
     link.style.visibility = 'hidden';
-    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
     showToast("CSV File downloaded successfully!", "success");
 }
 
 async function handleFinishSVS() {
     if (!isAdmin) return;
-
     const client = getSupabase();
     if (!client) return;
 
-    showCustomConfirm("Caution to finish SVS!\n Are you sure ?, this will be reset all applied data", async () => {
+    showCustomConfirm("Caution to finish SVS!\\n Are you sure ?, this will be reset all applied data", async () => {
         try {
-            const { error } = await client
-                .from('reservation_slots')
-                .delete()
-                .neq('id', 0); 
-
+            const { error } = await client.from('reservation_slots').delete().neq('id', 0); 
             if (!error) {
                 showToast("All record has been cleared.", "success");
-                if (typeof loadApplications === "function") loadApplications();
-                if (typeof loadRecentAccepts === "function") loadRecentAccepts(); 
-            } else {
-                throw error;
-            }
+                loadApplications();
+                loadRecentAccepts(); 
+            } else { throw error; }
         } catch (err) {
-            console.error("Fail to reset database:", err);
             showToast("Fail to clear data: " + err.message, "error");
         }
     }, '#dc2626'); 
@@ -702,7 +670,6 @@ function startLiveClock() {
 
     setInterval(() => {
         const now = new Date();
-
         const utcHours = String(now.getUTCHours()).padStart(2, '0');
         const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
         const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
@@ -725,22 +692,15 @@ function startLiveClock() {
             const hours = Math.floor(absOffset); 
             const minutes = Math.round((absOffset - hours) * 60); 
             
-            const formattedHours = String(hours).padStart(2, '0');
-            const formattedMinutes = String(minutes).padStart(2, '0');
-            
             if (minutes > 0) {
-                localLabelEl.innerText = `UTC${sign}${formattedHours}:${formattedMinutes}:`;
+                localLabelEl.innerText = `UTC${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:`;
             } else {
-                localLabelEl.innerText = `UTC${sign}${formattedHours}:`;
+                localLabelEl.innerText = `UTC${sign}${String(hours).padStart(2, '0')}:`;
             }
             localClockEl.innerText = `${displayHours}:${displayMinutes}:${displaySeconds}`;
         } else {
-            const localHours = String(now.getHours()).padStart(2, '0');
-            const localMinutes = String(now.getMinutes()).padStart(2, '0');
-            const localSeconds = String(now.getSeconds()).padStart(2, '0');
-            
             localLabelEl.innerText = "LOCAL:";
-            localClockEl.innerText = `${localHours}:${localMinutes}:${localSeconds}`;
+            localClockEl.innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
         }
     }, 1000);
 }
@@ -748,7 +708,6 @@ function startLiveClock() {
 async function loadRecentAccepts() {
     const logListEl = document.getElementById('recent-log-list');
     if (!logListEl) return;
-
     const client = getSupabase();
     if (!client) return;
 
@@ -763,14 +722,11 @@ async function loadRecentAccepts() {
             .limit(10);
 
         if (error) throw error;
-
         if (!data || data.length === 0) {
             logListEl.innerHTML = `<div class="log-item-empty">No recent activity</div>`;
             return;
         }
-
         logListEl.innerHTML = ''; 
-
         data.forEach(item => {
             let shortPos = item.position ? item.position.replace('Vice President', 'VP').replace('Minister of Education', 'Edu') : 'Unknown';
             const logRow = document.createElement('div');
@@ -781,10 +737,7 @@ async function loadRecentAccepts() {
             `;
             logListEl.appendChild(logRow);
         });
-
-    } catch (err) {
-        console.error("Gagal memuat log aktivitas:", err);
-    }
+    } catch (err) { console.error(err); }
 }
 
 function updateTableColumns() {
@@ -811,45 +764,29 @@ function updateTableColumns() {
         colRes.forEach(el => el.classList.add('hidden'));
     }
 }
+
 // ================= SNOWFLAKE EFFECT =================
-// Fungsi ini membuat efek salju berjatuhan
 function createSnowEffect() {
-    // Tentukan berapa banyak kepingan salju maksimum yang boleh ada di layar
     const maxSnowflakes = 50; 
-    
-    // Periksa apakah efek salju sudah diaktifkan (opsional, untuk mencegah duplikasi)
     if (document.querySelectorAll('.snowflake').length >= maxSnowflakes) return;
 
-    // Buat elemen div baru untuk kepingan salju
     const snowflake = document.createElement('div');
     snowflake.classList.add('snowflake');
-
-    // Atur posisi horizontal acak (0% hingga 100% lebar layar)
     snowflake.style.left = Math.random() * 100 + 'vw';
 
-    // Atur ukuran acak (antara 2px hingga 5px)
     const size = Math.random() * 3 + 2 + 'px';
     snowflake.style.width = size;
     snowflake.style.height = size;
 
-    // Atur durasi animasi acak agar salju jatuh dengan kecepatan berbeda (antara 3s hingga 8s)
     const duration = Math.random() * 5 + 3 + 's';
     snowflake.style.animationDuration = duration;
+    snowflake.style.opacity = Math.random() * 0.5 + 0.2;
 
-    // Atur transparansi acak agar terlihat lebih alami
-    snowflake.style.opacity = Math.random() * 0.5 + 0.2; // Antara 0.2 hingga 0.7
-
-    // Tambahkan kepingan salju ke dalam body dokumen
     document.body.appendChild(snowflake);
 
-    // Hapus kepingan salju setelah animasinya selesai untuk menghemat memori
     setTimeout(() => {
         snowflake.remove();
-    }, parseFloat(duration) * 1000); // Konversi durasi 's' ke milidetik
+    }, parseFloat(duration) * 1000);
 }
-
-// Jalankan fungsi createSnowEffect secara berkala (setiap 200ms)
-// Ini akan terus membuat salju baru selama halaman terbuka.
-// Kita menggunakan setInterval di luar DOMContentLoaded agar efeknya langsung terasa.
-setInterval(createSnowEffect, 200); 
+setInterval(createSnowEffect, 200);
 // ======================================================
