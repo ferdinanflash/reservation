@@ -382,4 +382,34 @@ th {
     word-break: break-all; /* Memotong kata jika terlalu panjang agar tidak merusak layout */
     text-align: left;
 }
+/* ==================== SNOWFLAKE EFFECT STYLE ==================== */
+/* Gaya dasar untuk setiap kepingan salju */
+.snowflake {
+    position: fixed; /* Tetap di layar saat di-scroll */
+    top: -10px; /* Mulai dari sedikit di atas layar */
+    background-color: #ffffff; /* Warna putih salju */
+    border-radius: 50%; /* Membuatnya bulat */
+    pointer-events: none; /* Salju tidak bisa diklik dan tidak mengganggu interaksi user */
+    z-index: 9999; /* Pastikan salju berada di atas elemen lain, tapi di bawah modal jika ada */
+    
+    /* Terapkan animasi 'fall' yang didefinisikan di bawah */
+    /* 'linear' membuat kecepatan jatuh konstan, 'infinite' membuatnya berulang */
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+/* Definisi animasi untuk gerakan jatuh */
+@keyframes fall {
+    0% {
+        /* Mulai dari posisi atas asli dan tanpa gerakan horizontal */
+        transform: translateY(0) translateX(0);
+    }
+    100% {
+        /* Jatuh ke bawah layar (+105vh) dan sedikit bergeser horizontal acak */
+        /* Gerakan horizontal (translateX) memberikan efek tertiup angin pelan */
+        transform: translateY(105vh) translateX(20px);
+    }
+}
+/* ================================================================= */
 
