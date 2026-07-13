@@ -58,13 +58,13 @@ body {
 /* ==================== MAIN LAYOUT CONTAINER ==================== */
 .container {
     max-width: 600px;
-    margin: 20px auto; /* Mengecilkan margin atas-bawah container utama */
+    margin: 20px auto; 
     padding: 0 20px;
 }
 
 .page-title {
     text-align: center;
-    font-size: 1.8rem; /* Sedikit dikecilkan agar hemat ruang di HP */
+    font-size: 1.8rem; 
     margin-bottom: 5px;
 }
 
@@ -79,7 +79,7 @@ body {
 .position-banner {
     display: block;
     margin: 0 auto;
-    width: 62%;           /* Ukuran banner ideal (tidak memenuhi layar) */
+    width: 62%;           
     max-width: 250px;     
     height: auto;
     border-radius: 8px;   
@@ -88,7 +88,7 @@ body {
 .page-subtitle {
     text-align: center;
     margin-top: 6px;       
-    margin-bottom: 12px;   /* Memangkas jarak kosong sebelum tombol kementerian */
+    margin-bottom: 12px;   
     font-size: 0.85rem;    
     color: #8a8d98;
 }
@@ -97,12 +97,12 @@ body {
 .list-container {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Merapatkan jarak antar tombol kementerian */
+    gap: 10px; 
 }
 
 .list-item {
     background: linear-gradient(135deg, #1e2230 0%, #151821 100%);
-    padding: 14px 18px; /* Memperkecil padding dalam agar lebih hemat space */
+    padding: 14px 18px; 
     border-radius: 12px;
     display: flex;
     justify-content: space-between;
@@ -207,7 +207,7 @@ body {
 
 /* ==================== FOOTER COMPONENT ==================== */
 .site-footer {
-    margin-top: 35px; /* Mengurangi jarak kosong menuju footer */
+    margin-top: 35px; 
     padding: 15px 10px;
     text-align: center;
     border-top: 1px solid #2b2f3a;
@@ -216,7 +216,7 @@ body {
 }
 
 .footer-section .guild-name.fire-text {
-    font-size: 1.05rem; /* Menyeimbangkan ukuran nama guild emas */
+    font-size: 1.05rem; 
     font-weight: 700;   
 }
 
@@ -268,14 +268,13 @@ th {
     color: #ffffff;
     padding: 20px;
     border-radius: 12px;
-    width: 95%;          /* Ubah dari 90% menjadi 95% agar lebih lebar di HP */
-    max-width: 450px;    /* Batasi agar tidak terlalu lebar */
-    max-height: 85vh;    /* Tambahkan ini agar tidak melampaui tinggi layar */
-    display: flex;       /* Tambahkan display flex */
+    width: 95%;          
+    max-width: 450px;    
+    max-height: 85vh;    
+    display: flex;       
     flex-direction: column; 
     position: relative;
 }
-
 
 .custom-form-modal { max-width: 420px; background: #151821; padding: 24px; }
 .custom-confirm-box { max-width: 320px; background: #151821; padding: 20px; text-align: center; }
@@ -298,6 +297,7 @@ th {
     background: #1e2230; color: #f1f5f9; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem;
     border-left: 4px solid #3b82f6; animation: slideInToast 0.3s ease forwards; min-width: 200px;
 }
+
 /* ==================== RECENTLY ACCEPTED LOG STYLE ==================== */
 #recent-log-container {
     max-width: 340px;
@@ -340,12 +340,12 @@ th {
 }
 
 .log-user {
-    color: #3b82f6; /* Warna biru untuk nama user */
+    color: #3b82f6; 
     font-weight: bold;
 }
 
-.log-pos {
-    color: #eab308; /* Warna emas untuk posisi kementerian */
+.log-entry-pos {
+    color: #eab308; 
 }
 
 .log-item-empty {
@@ -355,12 +355,12 @@ th {
     padding: 10px 0;
     font-style: italic;
 }
-/* 1. Mengaktifkan fungsi geser (scroll) kanan-kiri khusus untuk wadah tabel di dalam modal */
+
 .modal-table-container {
     width: 100%;
-    overflow-y: auto;    /* Scroll vertikal jika list banyak */
-    overflow-x: hidden;  /* MATIKAN horizontal scroll */
-    max-height: 60vh;    /* Batasi tinggi container agar tidak memakan seluruh layar */
+    overflow-y: auto;    
+    overflow-x: hidden;  
+    max-height: 60vh;    
     border: 1px solid #334155;
     border-radius: 6px;
     margin-top: 15px;
@@ -368,48 +368,38 @@ th {
 
 #waiting-modal table {
     width: 100%;
-    min-width: 0;        /* Penting: hapus min-width 800px agar tabel mengikuti lebar container */
+    min-width: 0;        
     table-layout: auto;
 }
 
-
-/* 2. Mengunci teks kolom agar tidak turun ke bawah berantakan saat dipaksa menyempit */
 .modal-table-container table th,
 #waiting-modal td {
     padding: 8px 10px;
     font-size: 0.8rem;
-    white-space: normal; /* Biarkan teks membungkus (wrap) ke bawah */
-    word-break: break-all; /* Memotong kata jika terlalu panjang agar tidak merusak layout */
+    white-space: normal; 
+    word-break: break-all; 
     text-align: left;
 }
+
 /* ==================== SNOWFLAKE EFFECT STYLE ==================== */
-/* Gaya dasar untuk setiap kepingan salju */
 .snowflake {
-    position: fixed; /* Tetap di layar saat di-scroll */
-    top: -10px; /* Mulai dari sedikit di atas layar */
-    background-color: #ffffff; /* Warna putih salju */
-    border-radius: 50%; /* Membuatnya bulat */
-    pointer-events: none; /* Salju tidak bisa diklik dan tidak mengganggu interaksi user */
-    z-index: 9999; /* Pastikan salju berada di atas elemen lain, tapi di bawah modal jika ada */
-    
-    /* Terapkan animasi 'fall' yang didefinisikan di bawah */
-    /* 'linear' membuat kecepatan jatuh konstan, 'infinite' membuatnya berulang */
+    position: fixed; 
+    top: -10px; 
+    background-color: #ffffff; 
+    border-radius: 50%; 
+    pointer-events: none; 
+    z-index: 9999; 
     animation-name: fall;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
 }
 
-/* Definisi animasi untuk gerakan jatuh */
 @keyframes fall {
     0% {
-        /* Mulai dari posisi atas asli dan tanpa gerakan horizontal */
         transform: translateY(0) translateX(0);
     }
     100% {
-        /* Jatuh ke bawah layar (+105vh) dan sedikit bergeser horizontal acak */
-        /* Gerakan horizontal (translateX) memberikan efek tertiup angin pelan */
         transform: translateY(105vh) translateX(20px);
     }
 }
 /* ================================================================= */
-
