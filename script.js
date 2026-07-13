@@ -767,26 +767,29 @@ function updateTableColumns() {
 
 // ================= SNOWFLAKE EFFECT =================
 function createSnowEffect() {
-    const maxSnowflakes = 40; 
+    const maxSnowflakes = 50; 
     if (document.querySelectorAll('.snowflake').length >= maxSnowflakes) return;
 
     const snowflake = document.createElement('div');
     snowflake.classList.add('snowflake');
     snowflake.style.left = Math.random() * 100 + 'vw';
 
-    const size = Math.random() * 5 + 10 + 'px';
+    const size = Math.random() * 3 + 2 + 'px';
     snowflake.style.width = size;
     snowflake.style.height = size;
 
-    const duration = Math.random() * 5 + 3 + 's';
-    snowflake.style.animationDuration = duration;
+    // Mengatur durasi acak antara 10 sampai 15 detik (Sangat lambat & estetik)
+    const durationSeconds = Math.random() * 5 + 10; 
+    snowflake.style.animationDuration = durationSeconds + 's';
     snowflake.style.opacity = Math.random() * 0.5 + 0.2;
 
     document.body.appendChild(snowflake);
 
+    // Menghapus salju secara tepat waktu setelah mencapai bawah
     setTimeout(() => {
         snowflake.remove();
-    }, parseFloat(duration) * 1000);
+    }, durationSeconds * 1000);
 }
 setInterval(createSnowEffect, 200);
 // ======================================================
+
