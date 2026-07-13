@@ -811,3 +811,45 @@ function updateTableColumns() {
         colRes.forEach(el => el.classList.add('hidden'));
     }
 }
+// ================= SNOWFLAKE EFFECT =================
+// Fungsi ini membuat efek salju berjatuhan
+function createSnowEffect() {
+    // Tentukan berapa banyak kepingan salju maksimum yang boleh ada di layar
+    const maxSnowflakes = 50; 
+    
+    // Periksa apakah efek salju sudah diaktifkan (opsional, untuk mencegah duplikasi)
+    if (document.querySelectorAll('.snowflake').length >= maxSnowflakes) return;
+
+    // Buat elemen div baru untuk kepingan salju
+    const snowflake = document.createElement('div');
+    snowflake.classList.add('snowflake');
+
+    // Atur posisi horizontal acak (0% hingga 100% lebar layar)
+    snowflake.style.left = Math.random() * 100 + 'vw';
+
+    // Atur ukuran acak (antara 2px hingga 5px)
+    const size = Math.random() * 3 + 2 + 'px';
+    snowflake.style.width = size;
+    snowflake.style.height = size;
+
+    // Atur durasi animasi acak agar salju jatuh dengan kecepatan berbeda (antara 3s hingga 8s)
+    const duration = Math.random() * 5 + 3 + 's';
+    snowflake.style.animationDuration = duration;
+
+    // Atur transparansi acak agar terlihat lebih alami
+    snowflake.style.opacity = Math.random() * 0.5 + 0.2; // Antara 0.2 hingga 0.7
+
+    // Tambahkan kepingan salju ke dalam body dokumen
+    document.body.appendChild(snowflake);
+
+    // Hapus kepingan salju setelah animasinya selesai untuk menghemat memori
+    setTimeout(() => {
+        snowflake.remove();
+    }, parseFloat(duration) * 1000); // Konversi durasi 's' ke milidetik
+}
+
+// Jalankan fungsi createSnowEffect secara berkala (setiap 200ms)
+// Ini akan terus membuat salju baru selama halaman terbuka.
+// Kita menggunakan setInterval di luar DOMContentLoaded agar efeknya langsung terasa.
+setInterval(createSnowEffect, 200); 
+// ======================================================
