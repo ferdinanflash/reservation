@@ -7,11 +7,15 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=14" defer></script>
+    <script src="script.js?v=15" defer></script>
 </head>
 <body>
     <header class="navbar">
         <span class="logo fire-text">SVS Ministry</span>
+           <!-- Tambahkan Kontainer Penerjemah di Sini -->
+        <div class="translate-container">
+            <div id="google_translate_element"></div>
+        </div>
         <button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()">President Login</button>
     </header>
 
