@@ -406,5 +406,40 @@ th {
     }
 }
 /* ================================================================= */
+/* ==================== GOOGLE TRANSLATE STYLE ==================== */
+.translate-container {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 10px;
+}
+
+/* Merapikan dropdown Google Translate bawaan */
+.goog-te-gadget-simple {
+    background-color: #1e2230 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    color: #f1f5f9 !important;
+    cursor: pointer;
+}
+
+.goog-te-gadget-simple a, 
+.goog-te-gadget-simple span {
+    color: #f1f5f9 !important;
+    text-decoration: none !important;
+}
+
+.goog-te-gadget-icon {
+    display: none !important; /* Menyembunyikan logo Google agar lebih clean */
+}
+
+/* Menghilangkan banner "Google Translate" di bagian paling atas jika muncul */
+iframe.goog-te-banner-frame {
+    display: none !important;
+}
+body {
+    top: 0px !important;
+}
 
 
