@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=19" defer></script>
+    <script src="script.js?v=18" defer></script>
 </head>
 <body>
     <header class="navbar">
@@ -73,12 +73,6 @@
                             <th>STATUS (APPLICANTS)</th>
                             <th>IN-GAME NICKNAME</th>
                             <th>IN-GAME ID</th>
-                            <th class="col-fc">FC</th>
-                            <th class="col-rfc">RFC</th>
-                            <th>GENERAL SP</th>
-                            <th class="col-const">CONST SP</th>
-                            <th class="col-res">RES SP</th>
-                            <th class="col-train">TRAIN SP</th>
                         </tr>
                     </thead>
                     <tbody id="schedule-table-body"></tbody>
@@ -87,6 +81,7 @@
         </section>
     </main>
 
+    <!-- Modal Daftar Menunggu -->
     <div id="waiting-modal" class="modal hidden">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -105,6 +100,18 @@
         </div>
     </div>
 
+    <!-- Modal Detail Statistik (Pop-up Ikon Mata) -->
+    <div id="details-modal" class="modal hidden">
+        <div class="modal-content custom-form-modal" style="max-width: 360px;">
+            <span class="close-modal" onclick="closeDetailsModal()">&times;</span>
+            <h2 style="margin-bottom: 12px; font-size: 1.2rem; text-align: center;">Application Details</h2>
+            <div id="details-content" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; text-align: left; background: #121316; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
+                <!-- Diisi secara dinamis via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form Apply -->
     <div id="apply-modal" class="modal hidden">
         <div class="modal-content custom-form-modal">
             <span class="close-modal" onclick="closeApplyModal()">&times;</span>

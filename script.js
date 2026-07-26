@@ -398,13 +398,10 @@ function renderTimeSlots() {
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">Accepted</span></td>
                 <td>${acceptedApp.nickname}</td>
-                <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${acceptedApp.game_id}')">${acceptedApp.game_id}</span></td>
-                <td class="col-fc">${acceptedApp.fire_crystal || '0'}</td>
-                <td class="col-rfc">${acceptedApp.refined_fire_crystal || '0'}</td>
-                <td>${acceptedApp.general_speedup || '0'}</td>
-                <td class="col-const">${acceptedApp.construction_speedup || '0'}</td>
-                <td class="col-res">${acceptedApp.research_speedup || '0'}</td>
-                <td class="col-train">${acceptedApp.training_speedup || '0'}</td>
+                <td>
+                    <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${acceptedApp.game_id}')">${acceptedApp.game_id}</span>
+                    <span style="cursor:pointer; margin-left: 6px; font-size: 0.95rem; vertical-align: middle;" title="View Details" onclick="openDetailsModal(${acceptedApp.id})">🔍</span>
+                </td>
             `;
         } else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
@@ -416,18 +413,39 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
                 <td>${statusText}</td>
-                <td>-</td><td>-</td>
-                <td class="col-fc">-</td>
-                <td class="col-rfc">-</td>
                 <td>-</td>
-                <td class="col-const">-</td>
-                <td class="col-res">-</td>
-                <td class="col-train">-</td>
+                <td>-</td>
             `;
         }
         tbody.appendChild(row);
     }
-    updateTableColumns();
+}
+
+// Fungsi untuk membuka pop-up modal detail
+function openDetailsModal(appId) {
+    const app = savedApplications.find(a => a.id === appId);
+    if (!app) return;
+
+    const modal = document.getElementById('details-modal');
+    const contentEl = document.getElementById('details-content');
+    
+    contentEl.innerHTML = `
+        <div><span style="color:#8a8d98;">Nickname:</span> <strong style="color:#f1f5f9;">${app.nickname || '-'}</strong></div>
+        <div><span style="color:#8a8d98;">Game ID:</span> <strong style="color:#3b82f6;">${app.game_id || '-'}</strong></div>
+        <hr style="border: 0; border-top: 1px solid #334155; margin: 4px 0;">
+        <div><span style="color:#8a8d98;">Fire Crystals (FC):</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong></div>
+        <div><span style="color:#8a8d98;">Refined Fire Crystals (RFC):</span> <strong style="color:#f59e0b;">${app.refined_fire_crystal || '0'}</strong></div>
+        <div><span style="color:#8a8d98;">General Speedup:</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'} Days</strong></div>
+        <div><span style="color:#8a8d98;">Construction Speedup:</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'} Days</strong></div>
+        <div><span style="color:#8a8d98;">Research Speedup:</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'} Days</strong></div>
+        <div><span style="color:#8a8d98;">Training Speedup:</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'} Days</strong></div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function closeDetailsModal() {
+    document.getElementById('details-modal').classList.add('hidden');
 }
 
 function openWaitingModal(timeStr) {
@@ -472,12 +490,12 @@ function openWaitingModal(timeStr) {
         detailsRow.innerHTML = `
             <td colspan="2" style="padding: 0; border: none;">
                 <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
-                    <div class="col-fc"><span style="color:#8a8d98; margin-right: 10px;">FC:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong></div>
-                    <div class="col-rfc"><span style="color:#8a8d98; margin-right: 10px;">RFC:</span> <strong style="color:#f59e0b;">${app.refined_fire_crystal || '0'}</strong></div>
+                    <div><span style="color:#8a8d98; margin-right: 10px;">FC:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong></div>
+                    <div><span style="color:#8a8d98; margin-right: 10px;">RFC:</span> <strong style="color:#f59e0b;">${app.refined_fire_crystal || '0'}</strong></div>
                     <div><span style="color:#8a8d98; margin-right: 10px;">General:</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong></div>
-                    <div class="col-const"><span style="color:#8a8d98; margin-right: 10px;">Const:</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong></div>
-                    <div class="col-res"><span style="color:#8a8d98; margin-right: 10px;">Research:</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong></div>
-                    <div class="col-train"><span style="color:#8a8d98; margin-right: 10px;">Train:</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong></div>
+                    <div><span style="color:#8a8d98; margin-right: 10px;">Const:</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong></div>
+                    <div><span style="color:#8a8d98; margin-right: 10px;">Research:</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong></div>
+                    <div><span style="color:#8a8d98; margin-right: 10px;">Train:</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong></div>
                 </div>
             </td>
         `;
@@ -485,7 +503,6 @@ function openWaitingModal(timeStr) {
     });
     
     modal.classList.remove('hidden');
-    updateTableColumns();
 }
 
 function toggleDetails(id) {
@@ -535,7 +552,6 @@ function applySlot(time) {
         groupTrain.classList.add('hidden');
     } 
     else if (currentPosition === 'Vice President D5') {
-        // RFC & Research muncul pada D5, hanya sembunyikan Training
         groupTrain.classList.add('hidden');
     } 
     else if (currentPosition === 'Vice President D2') {
@@ -660,7 +676,7 @@ async function handleFinishSVS() {
     const client = getSupabase();
     if (!client) return;
 
-    showCustomConfirm("Caution to finish SVS!\\n Are you sure ?, this will be reset all applied data", async () => {
+    showCustomConfirm("Caution to finish SVS!\n Are you sure ?, this will be reset all applied data", async () => {
         try {
             const { error } = await client.from('reservation_slots').delete().neq('id', 0); 
             if (!error) {
@@ -752,38 +768,6 @@ async function loadRecentAccepts() {
             logListEl.appendChild(logRow);
         });
     } catch (err) { console.error(err); }
-}
-
-function updateTableColumns() {
-    const colFc = document.querySelectorAll('.col-fc');
-    const colRfc = document.querySelectorAll('.col-rfc');
-    const colConst = document.querySelectorAll('.col-const');
-    const colRes = document.querySelectorAll('.col-res');
-    const colTrain = document.querySelectorAll('.col-train');
-
-    const allCols = [...colFc, ...colRfc, ...colConst, ...colRes, ...colTrain];
-    allCols.forEach(el => el.classList.remove('hidden'));
-
-    if (currentPosition === 'Vice President D1') {
-        colRes.forEach(el => el.classList.add('hidden'));
-        colTrain.forEach(el => el.classList.add('hidden'));
-    } 
-    else if (currentPosition === 'Vice President D5') {
-        // RFC & Research tetap muncul di tabel D5, sembunyikan Training speedup saja
-        colTrain.forEach(el => el.classList.add('hidden'));
-    } 
-    else if (currentPosition === 'Vice President D2') {
-        colFc.forEach(el => el.classList.add('hidden'));
-        colRfc.forEach(el => el.classList.add('hidden'));
-        colConst.forEach(el => el.classList.add('hidden'));
-        colTrain.forEach(el => el.classList.add('hidden'));
-    } 
-    else if (currentPosition === 'Minister of Education D4') {
-        colFc.forEach(el => el.classList.add('hidden'));
-        colRfc.forEach(el => el.classList.add('hidden'));
-        colConst.forEach(el => el.classList.add('hidden'));
-        colRes.forEach(el => el.classList.add('hidden'));
-    }
 }
 
 // ================= SNOWFLAKE EFFECT =================

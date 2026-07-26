@@ -57,9 +57,9 @@ body {
 
 /* ==================== MAIN LAYOUT CONTAINER ==================== */
 .container {
-    max-width: 600px;
+    max-width: 800px;
     margin: 20px auto; 
-    padding: 0 20px;
+    padding: 0 10px;
 }
 
 .page-title {
@@ -68,7 +68,7 @@ body {
     margin-bottom: 5px;
 }
 
-/* ==================== BANNER & SUBTITLE (COMPACT MODE) ==================== */
+/* ==================== BANNER & SUBTITLE ==================== */
 .banner-container {
     margin-top: 5px;       
     margin-bottom: 2px;    
@@ -153,12 +153,13 @@ body {
 .btn-apply {
     background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     color: white;
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
     border: 1px solid rgba(255, 255, 255, 0.15);
     transition: all 0.2s ease;
+    font-size: 0.8rem;
 }
 
 .btn-apply:hover {
@@ -225,29 +226,33 @@ body {
 
 .table-container {
     width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
     margin-top: 15px;
     border: 1px solid #2d3039;
     background-color: #1c1d22;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
+    min-width: 0; /* Diubah dari 800px agar tidak melebarkan layar */
+    table-layout: auto;
 }
 
 th, td {
-    padding: 10px 8px;
+    padding: 8px 4px; /* Memperkecil padding agar muat tanpa scroll */
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     border-bottom: 1px solid #2d3039;
+    word-break: break-word;
 }
 
 th {
     background-color: #24262e;
     color: #8a8d98;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
 }
 
 .modal {
@@ -392,8 +397,6 @@ th {
     animation-name: fall;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
-    
-    /* Tambahkan durasi default di sini agar browser tidak bingung */
     animation-duration: 12s; 
 }
 
@@ -405,7 +408,7 @@ th {
         transform: translateY(105vh) translateX(20px);
     }
 }
-/* ================================================================= */
+
 /* ==================== GOOGLE TRANSLATE STYLE ==================== */
 .translate-container {
     display: inline-block;
@@ -413,7 +416,6 @@ th {
     margin: 0 10px;
 }
 
-/* Merapikan dropdown Google Translate bawaan */
 .goog-te-gadget-simple {
     background-color: #1e2230 !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -431,15 +433,12 @@ th {
 }
 
 .goog-te-gadget-icon {
-    display: none !important; /* Menyembunyikan logo Google agar lebih clean */
+    display: none !important; 
 }
 
-/* Menghilangkan banner "Google Translate" di bagian paling atas jika muncul */
 iframe.goog-te-banner-frame {
     display: none !important;
 }
 body {
     top: 0px !important;
 }
-
-
