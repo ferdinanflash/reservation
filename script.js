@@ -400,6 +400,7 @@ function renderTimeSlots() {
                 <td>${acceptedApp.nickname}</td>
                 <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${acceptedApp.game_id}')">${acceptedApp.game_id}</span></td>
                 <td class="col-fc">${acceptedApp.fire_crystal || '0'}</td>
+                <td class="col-rfc">${acceptedApp.refined_fire_crystal || '0'}</td>
                 <td>${acceptedApp.general_speedup || '0'}</td>
                 <td class="col-const">${acceptedApp.construction_speedup || '0'}</td>
                 <td class="col-res">${acceptedApp.research_speedup || '0'}</td>
@@ -417,6 +418,7 @@ function renderTimeSlots() {
                 <td>${statusText}</td>
                 <td>-</td><td>-</td>
                 <td class="col-fc">-</td>
+                <td class="col-rfc">-</td>
                 <td>-</td>
                 <td class="col-const">-</td>
                 <td class="col-res">-</td>
@@ -471,6 +473,7 @@ function openWaitingModal(timeStr) {
             <td colspan="2" style="padding: 0; border: none;">
                 <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
                     <div class="col-fc"><span style="color:#8a8d98; margin-right: 10px;">FC:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong></div>
+                    <div class="col-rfc"><span style="color:#8a8d98; margin-right: 10px;">RFC:</span> <strong style="color:#f59e0b;">${app.refined_fire_crystal || '0'}</strong></div>
                     <div><span style="color:#8a8d98; margin-right: 10px;">General:</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong></div>
                     <div class="col-const"><span style="color:#8a8d98; margin-right: 10px;">Const:</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong></div>
                     <div class="col-res"><span style="color:#8a8d98; margin-right: 10px;">Research:</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong></div>
@@ -509,32 +512,41 @@ function applySlot(time) {
     document.getElementById('input-nickname').value = "";
     document.getElementById('input-gameid').value = "";
     document.getElementById('input-fc').value = "";
+    document.getElementById('input-rfc').value = "";
     document.getElementById('input-gensp').value = "";
     document.getElementById('input-constsp').value = "";
     document.getElementById('input-ressp').value = "";
     document.getElementById('input-trainsp').value = "";
 
     const groupFc = document.getElementById('input-fc').closest('.form-group');
+    const groupRfc = document.getElementById('input-rfc').closest('.form-group');
     const groupConst = document.getElementById('input-constsp').closest('.form-group');
     const groupRes = document.getElementById('input-ressp').closest('.form-group');
     const groupTrain = document.getElementById('input-trainsp').closest('.form-group');
 
     groupFc.classList.remove('hidden');
+    groupRfc.classList.remove('hidden');
     groupConst.classList.remove('hidden');
     groupRes.classList.remove('hidden');
     groupTrain.classList.remove('hidden');
 
-    if (currentPosition === 'Vice President D1' || currentPosition === 'Vice President D5') {
+    if (currentPosition === 'Vice President D1') {
         groupRes.classList.add('hidden');
+        groupTrain.classList.add('hidden');
+    } 
+    else if (currentPosition === 'Vice President D5') {
+        groupRfc.classList.add('hidden');
         groupTrain.classList.add('hidden');
     } 
     else if (currentPosition === 'Vice President D2') {
         groupFc.classList.add('hidden');
+        groupRfc.classList.add('hidden');
         groupConst.classList.add('hidden');
         groupTrain.classList.add('hidden');
     } 
     else if (currentPosition === 'Minister of Education D4') {
         groupFc.classList.add('hidden');
+        groupRfc.classList.add('hidden');
         groupConst.classList.add('hidden');
         groupRes.classList.add('hidden');
     }
@@ -558,6 +570,7 @@ async function submitApplication() {
     const nickname = document.getElementById('input-nickname').value.trim();
     const gameId = document.getElementById('input-gameid').value.trim();
     const fc = parseInt(document.getElementById('input-fc').value.trim()) || 0;
+    const rfc = parseInt(document.getElementById('input-rfc').value.trim()) || 0;
     const genSp = parseInt(document.getElementById('input-gensp').value.trim()) || 0;
     const constSp = parseInt(document.getElementById('input-constsp').value.trim()) || 0;
     const resSp = parseInt(document.getElementById('input-ressp').value.trim()) || 0;
@@ -570,7 +583,7 @@ async function submitApplication() {
         .from('reservation_slots')
         .insert({ 
             time_slot: selectedTimeSlot, position: currentPosition, nickname: nickname, game_id: gameId, 
-            fire_crystal: fc, general_speedup: genSp, construction_speedup: constSp, research_speedup: resSp, training_speedup: trainSp,
+            fire_crystal: fc, refined_fire_crystal: rfc, general_speedup: genSp, construction_speedup: constSp, research_speedup: resSp, training_speedup: trainSp,
             status: 'Waiting'
         });
 
@@ -620,10 +633,11 @@ function exportToCSV() {
         showToast("No data available to export!", "warning");
         return;
     }
-    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
+    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "Refined Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
     const rows = savedApplications.map(app => [
         `"${app.position}"`, `"${app.time_slot}"`, `"${app.status}"`,
         `"${app.nickname || '-'}"`, `"${app.game_id || '-'}"`, `"${app.fire_crystal || '0'}"`,
+        `"${app.refined_fire_crystal || '0'}"`,
         `"${app.general_speedup || '0'}"`, `"${app.construction_speedup || '0'}"`,
         `"${app.research_speedup || '0'}"`, `"${app.training_speedup || '0'}"`
     ]);
@@ -742,24 +756,31 @@ async function loadRecentAccepts() {
 
 function updateTableColumns() {
     const colFc = document.querySelectorAll('.col-fc');
+    const colRfc = document.querySelectorAll('.col-rfc');
     const colConst = document.querySelectorAll('.col-const');
     const colRes = document.querySelectorAll('.col-res');
     const colTrain = document.querySelectorAll('.col-train');
 
-    const allCols = [...colFc, ...colConst, ...colRes, ...colTrain];
+    const allCols = [...colFc, ...colRfc, ...colConst, ...colRes, ...colTrain];
     allCols.forEach(el => el.classList.remove('hidden'));
 
-    if (currentPosition === 'Vice President D1' || currentPosition === 'Vice President D5') {
+    if (currentPosition === 'Vice President D1') {
         colRes.forEach(el => el.classList.add('hidden'));
+        colTrain.forEach(el => el.classList.add('hidden'));
+    } 
+    else if (currentPosition === 'Vice President D5') {
+        colRfc.forEach(el => el.classList.add('hidden'));
         colTrain.forEach(el => el.classList.add('hidden'));
     } 
     else if (currentPosition === 'Vice President D2') {
         colFc.forEach(el => el.classList.add('hidden'));
+        colRfc.forEach(el => el.classList.add('hidden'));
         colConst.forEach(el => el.classList.add('hidden'));
         colTrain.forEach(el => el.classList.add('hidden'));
     } 
     else if (currentPosition === 'Minister of Education D4') {
         colFc.forEach(el => el.classList.add('hidden'));
+        colRfc.forEach(el => el.classList.add('hidden'));
         colConst.forEach(el => el.classList.add('hidden'));
         colRes.forEach(el => el.classList.add('hidden'));
     }
@@ -778,19 +799,15 @@ function createSnowEffect() {
     snowflake.style.width = size;
     snowflake.style.height = size;
 
-    // Mengatur durasi acak antara 10 sampai 15 detik (Sangat lambat & estetik)
     const durationSeconds = Math.random() * 5 + 10; 
     snowflake.style.animationDuration = durationSeconds + 's';
     snowflake.style.opacity = Math.random() * 0.5 + 0.2;
 
     document.body.appendChild(snowflake);
 
-    // Menghapus salju secara tepat waktu setelah mencapai bawah
     setTimeout(() => {
         snowflake.remove();
     }, durationSeconds * 1000);
 }
 setInterval(createSnowEffect, 200);
 // ======================================================
-
-
