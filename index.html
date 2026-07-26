@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=19" defer></script>
+    <script src="script.js?v=22" defer></script>
 </head>
 <body>
     <header class="navbar">
@@ -100,7 +100,7 @@
         </div>
     </div>
 
-    <!-- Modal Detail Statistik (Pop-up Ikon Mata) -->
+    <!-- Modal Detail Statistik (Pop-up Ikon Kaca Pembesar) -->
     <div id="details-modal" class="modal hidden">
         <div class="modal-content custom-form-modal" style="max-width: 360px;">
             <span class="close-modal" onclick="closeDetailsModal()">&times;</span>
@@ -182,6 +182,11 @@
         <div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
             <button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="handleEditFooter()">Edit President Info</button>
             <button id="finish-svs-btn" class="btn-apply" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); font-size:0.75rem; padding:6px 12px; display:none; margin: 0; font-weight: bold;" onclick="handleFinishSVS()">FINISH SVS</button>
+        </div>
+
+        <!-- Teks Credit Pembuat Web -->
+        <div style="margin-top: 20px; font-size: 0.75rem; color: #64748b; font-weight: 500; letter-spacing: 0.5px;">
+            Created By : ACE aka DEMON
         </div>
     </footer>
 
