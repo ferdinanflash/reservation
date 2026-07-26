@@ -396,7 +396,7 @@ function renderTimeSlots() {
             let actionBtn = isAdmin
                 ? `<div style="display:flex; align-items:center; justify-content:center; gap:6px;">
                      ${detailBtn}
-                     <button class="btn-apply" style="background:#ef4444; padding: 4px 8px; font-size: 0.75rem;" onclick="removeApp(${acceptedApp.id})">Remove</button>
+                     <button class="btn-apply btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeApp(${acceptedApp.id})">Remove</button>
                    </div>`
                 : detailBtn;
 
@@ -472,8 +472,8 @@ function openWaitingModal(timeStr) {
         const mainRow = document.createElement('tr');
         let adminButtons = isAdmin ? `
             <div style="margin-top: 4px;">
-                <button class="btn-apply" style="background:#22c55e; font-size:0.65rem; padding:1px 4px; margin-right:4px;" onclick="acceptApp(${app.id})">Accept</button>
-                <button class="btn-apply" style="background:#ef4444; font-size:0.65rem; padding:1px 4px;" onclick="removeApp(${app.id})">Drop</button>
+                <button class="btn-apply" style="background:#22c55e; font-size:0.65rem; padding:1px 4px; margin-right:4px; animation: none;" onclick="acceptApp(${app.id})">Accept</button>
+                <button class="btn-apply btn-danger" style="font-size:0.65rem; padding:1px 4px;" onclick="removeApp(${app.id})">Drop</button>
             </div>
         ` : '';
 

@@ -160,13 +160,52 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.15);
     transition: all 0.2s ease;
     font-size: 0.8rem;
-    white-space: nowrap; /* MENCEGAH TEKS TERPOTONG KE BAWAH */
+    white-space: nowrap;
     display: inline-block;
+    animation: bluePulse 2.5s infinite ease-in-out;
 }
 
 .btn-apply:hover {
-    filter: brightness(1.1);
+    filter: brightness(1.2);
     transform: translateY(-1px);
+}
+
+@keyframes bluePulse {
+    0% {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        box-shadow: 0 0 4px rgba(59, 130, 246, 0.4);
+    }
+    50% {
+        background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+        box-shadow: 0 0 12px rgba(96, 165, 250, 0.9);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        box-shadow: 0 0 4px rgba(59, 130, 246, 0.4);
+    }
+}
+
+/* ANIMASI BERKEDIP MERAH UNTUK TOMBOL REMOVE & DROP */
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    animation: redPulse 2.5s infinite ease-in-out !important;
+}
+
+@keyframes redPulse {
+    0% {
+        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+    }
+    50% {
+        background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+        box-shadow: 0 0 12px rgba(248, 113, 113, 0.9);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+    }
 }
 
 .btn-back {
@@ -232,7 +271,7 @@ body {
     border: 1px solid #2d3039;
     background-color: #1c1d22;
     border-radius: 8px;
-    overflow-x: auto; /* Memungkinkan scroll halus jika layar sangat sempit */
+    overflow-x: auto;
 }
 
 table {
