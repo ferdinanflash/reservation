@@ -160,6 +160,8 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.15);
     transition: all 0.2s ease;
     font-size: 0.8rem;
+    white-space: nowrap; /* MENCEGAH TEKS TERPOTONG KE BAWAH */
+    display: inline-block;
 }
 
 .btn-apply:hover {
@@ -230,18 +232,18 @@ body {
     border: 1px solid #2d3039;
     background-color: #1c1d22;
     border-radius: 8px;
-    overflow: hidden;
+    overflow-x: auto; /* Memungkinkan scroll halus jika layar sangat sempit */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 0; /* Diubah dari 800px agar tidak melebarkan layar */
+    min-width: 0;
     table-layout: auto;
 }
 
 th, td {
-    padding: 8px 4px; /* Memperkecil padding agar muat tanpa scroll */
+    padding: 8px 4px;
     text-align: center;
     font-size: 0.8rem;
     border-bottom: 1px solid #2d3039;
@@ -441,4 +443,21 @@ iframe.goog-te-banner-frame {
 }
 body {
     top: 0px !important;
+}
+
+/* ==================== OPTIMISASI TAMPILAN MOBILE (HP) ==================== */
+@media screen and (max-width: 480px) {
+    th, td {
+        padding: 6px 3px;
+        font-size: 0.72rem;
+    }
+
+    .btn-apply {
+        padding: 4px 6px;
+        font-size: 0.72rem;
+    }
+
+    .container {
+        padding: 0 5px;
+    }
 }
