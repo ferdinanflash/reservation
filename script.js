@@ -535,7 +535,7 @@ function applySlot(time) {
         groupTrain.classList.add('hidden');
     } 
     else if (currentPosition === 'Vice President D5') {
-        groupRfc.classList.add('hidden');
+        // RFC & Research muncul pada D5, hanya sembunyikan Training
         groupTrain.classList.add('hidden');
     } 
     else if (currentPosition === 'Vice President D2') {
@@ -769,7 +769,7 @@ function updateTableColumns() {
         colTrain.forEach(el => el.classList.add('hidden'));
     } 
     else if (currentPosition === 'Vice President D5') {
-        colRfc.forEach(el => el.classList.add('hidden'));
+        // RFC & Research tetap muncul di tabel D5, sembunyikan Training speedup saja
         colTrain.forEach(el => el.classList.add('hidden'));
     } 
     else if (currentPosition === 'Vice President D2') {
