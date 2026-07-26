@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="script.js?v=17" defer></script>
+    <script src="script.js?v=18" defer></script>
 </head>
 <body>
     <header class="navbar">
         <span class="logo fire-text">SVS Ministry</span>
-           <!-- Tambahkan Kontainer Penerjemah di Sini -->
+        <!-- Tambahkan Kontainer Penerjemah di Sini -->
         <div class="translate-container">
             <div id="google_translate_element"></div>
         </div>
@@ -74,6 +74,7 @@
                             <th>IN-GAME NICKNAME</th>
                             <th>IN-GAME ID</th>
                             <th class="col-fc">FC</th>
+                            <th class="col-rfc">RFC</th>
                             <th>GENERAL SP</th>
                             <th class="col-const">CONST SP</th>
                             <th class="col-res">RES SP</th>
@@ -124,6 +125,10 @@
             <div class="form-group">
                 <label>Fire Crystals Amount</label>
                 <input type="number" id="input-fc" placeholder="Fire Crystal">
+            </div>
+            <div class="form-group">
+                <label>Refined Fire Crystals Amount</label>
+                <input type="number" id="input-rfc" placeholder="Refined Fire Crystal">
             </div>
             <div class="form-group">
                 <label>General Speedups (Days)</label>
@@ -184,12 +189,12 @@
     </div>
 
     <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;"></div>
-            <!-- Google Translate Script yang Dibatasi Bahasanya -->
+
+    <!-- Google Translate Script yang Dibatasi Bahasanya -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'en',
-                // Tentukan bahasa apa saja yang ingin ditampilkan di sini (pisahkan dengan koma)
                 includedLanguages: 'en,id,vi,ru,ko,zh-CN,zh-TW,th,tl', 
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE
             }, 'google_translate_element');
