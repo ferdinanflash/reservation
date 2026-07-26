@@ -392,16 +392,20 @@ function renderTimeSlots() {
 
         const row = document.createElement('tr');
         if (acceptedApp) {
-            let actionBtn = isAdmin ? `<button class="btn-apply" style="background:#ef4444;" onclick="removeApp(${acceptedApp.id})">Remove</button>` : '-';
+            let detailBtn = `<span style="cursor:pointer; font-size: 1rem; vertical-align: middle;" title="View Details" onclick="openDetailsModal(${acceptedApp.id})">🔍</span>`;
+            let actionBtn = isAdmin
+                ? `<div style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                     ${detailBtn}
+                     <button class="btn-apply" style="background:#ef4444; padding: 4px 8px; font-size: 0.75rem;" onclick="removeApp(${acceptedApp.id})">Remove</button>
+                   </div>`
+                : detailBtn;
+
             row.innerHTML = `
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">Accepted</span></td>
                 <td>${acceptedApp.nickname}</td>
-                <td>
-                    <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${acceptedApp.game_id}')">${acceptedApp.game_id}</span>
-                    <span style="cursor:pointer; margin-left: 6px; font-size: 0.95rem; vertical-align: middle;" title="View Details" onclick="openDetailsModal(${acceptedApp.id})">🔍</span>
-                </td>
+                <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${acceptedApp.game_id}')">${acceptedApp.game_id}</span></td>
             `;
         } else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
