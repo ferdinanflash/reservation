@@ -776,7 +776,7 @@ async function loadRecentAccepts() {
 
 // ================= SNOWFLAKE EFFECT =================
 function createSnowEffect() {
-    const maxSnowflakes = 30; 
+    const maxSnowflakes = 20; 
     if (document.querySelectorAll('.snowflake').length >= maxSnowflakes) return;
 
     const snowflake = document.createElement('div');
@@ -795,7 +795,7 @@ function createSnowEffect() {
 
     setTimeout(() => {
         snowflake.remove();
-    }, durationSeconds * 1000);
+    }, durationSeconds * 500);
 }
 setInterval(createSnowEffect, 200);
 // ======================================================
