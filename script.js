@@ -776,8 +776,11 @@ async function loadRecentAccepts() {
 
 // ================= SNOWFLAKE EFFECT =================
 function createSnowEffect() {
+    const snowContainer = document.getElementById('snow-container');
+    if (!snowContainer) return;
+
     const maxSnowflakes = 20; 
-    if (document.querySelectorAll('.snowflake').length >= maxSnowflakes) return;
+    if (snowContainer.querySelectorAll('.snowflake').length >= maxSnowflakes) return;
 
     const snowflake = document.createElement('div');
     snowflake.classList.add('snowflake');
@@ -791,11 +794,11 @@ function createSnowEffect() {
     snowflake.style.animationDuration = durationSeconds + 's';
     snowflake.style.opacity = Math.random() * 0.5 + 0.2;
 
-    document.body.appendChild(snowflake);
+    snowContainer.appendChild(snowflake);
 
     setTimeout(() => {
         snowflake.remove();
-    }, durationSeconds * 500);
+    }, durationSeconds * 1000);
 }
 setInterval(createSnowEffect, 200);
 // ======================================================

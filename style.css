@@ -428,13 +428,23 @@ th {
 }
 
 /* ==================== SNOWFLAKE EFFECT STYLE ==================== */
+#snow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Aman, tidak menghalangi klik ke elemen form/tombol */
+    z-index: 1; /* Di bawah modal dan elemen isi utama */
+    overflow: hidden;
+}
+
 .snowflake {
-    position: fixed; 
+    position: absolute; 
     top: -10px; 
     background-color: #ffffff; 
     border-radius: 50%; 
     pointer-events: none; 
-    z-index: 9999; 
     animation-name: fall;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
