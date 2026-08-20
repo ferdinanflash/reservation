@@ -406,6 +406,7 @@ function renderTimeSlots() {
                 <td><span style="color:#22c55e; font-weight:bold;">Accepted</span></td>
                 <td>${acceptedApp.nickname}</td>
                 <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${acceptedApp.game_id}')">${acceptedApp.game_id}</span></td>
+                <td>${acceptedApp.furnace_level || '-'}</td>
             `;
         } else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
@@ -417,6 +418,7 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
                 <td>${statusText}</td>
+                <td>-</td>
                 <td>-</td>
                 <td>-</td>
             `;
@@ -436,6 +438,7 @@ function openDetailsModal(appId) {
     contentEl.innerHTML = `
         <div><span style="color:#8a8d98;">Nickname:</span> <strong style="color:#f1f5f9;">${app.nickname || '-'}</strong></div>
         <div><span style="color:#8a8d98;">Game ID:</span> <strong style="color:#3b82f6;">${app.game_id || '-'}</strong></div>
+        <div><span style="color:#8a8d98;">Furnace Level:</span> <strong style="color:#f1f5f9;">${app.furnace_level || '-'}</strong></div>
         <hr style="border: 0; border-top: 1px solid #334155; margin: 4px 0;">
         <div><span style="color:#8a8d98;">Fire Crystals (FC):</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong></div>
         <div><span style="color:#8a8d98;">Refined Fire Crystals (RFC):</span> <strong style="color:#f59e0b;">${app.refined_fire_crystal || '0'}</strong></div>
@@ -494,6 +497,7 @@ function openWaitingModal(timeStr) {
         detailsRow.innerHTML = `
             <td colspan="2" style="padding: 0; border: none;">
                 <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
+                    <div><span style="color:#8a8d98; margin-right: 10px;">Furnace Lvl:</span> <strong style="color:#f1f5f9;">${app.furnace_level || '-'}</strong></div>
                     <div><span style="color:#8a8d98; margin-right: 10px;">FC:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong></div>
                     <div><span style="color:#8a8d98; margin-right: 10px;">RFC:</span> <strong style="color:#f59e0b;">${app.refined_fire_crystal || '0'}</strong></div>
                     <div><span style="color:#8a8d98; margin-right: 10px;">General:</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong></div>
@@ -532,6 +536,7 @@ function applySlot(time) {
     
     document.getElementById('input-nickname').value = "";
     document.getElementById('input-gameid').value = "";
+    document.getElementById('input-furnace').value = "";
     document.getElementById('input-fc').value = "";
     document.getElementById('input-rfc').value = "";
     document.getElementById('input-gensp').value = "";
@@ -589,6 +594,7 @@ async function submitApplication() {
 
     const nickname = document.getElementById('input-nickname').value.trim();
     const gameId = document.getElementById('input-gameid').value.trim();
+    const furnaceLevel = document.getElementById('input-furnace').value.trim();
     const fc = parseInt(document.getElementById('input-fc').value.trim()) || 0;
     const rfc = parseInt(document.getElementById('input-rfc').value.trim()) || 0;
     const genSp = parseInt(document.getElementById('input-gensp').value.trim()) || 0;
@@ -598,11 +604,13 @@ async function submitApplication() {
 
     if (!nickname) { showToast("Please enter In-Game Nickname!", "warning"); return; }
     if (!gameId) { showToast("Please enter In-Game ID!", "warning"); return; }
+    if (!furnaceLevel) { showToast("Please select Furnace Level!", "warning"); return; }
 
     const { error } = await client
         .from('reservation_slots')
         .insert({ 
             time_slot: selectedTimeSlot, position: currentPosition, nickname: nickname, game_id: gameId, 
+            furnace_level: furnaceLevel,
             fire_crystal: fc, refined_fire_crystal: rfc, general_speedup: genSp, construction_speedup: constSp, research_speedup: resSp, training_speedup: trainSp,
             status: 'Waiting'
         });
@@ -653,10 +661,10 @@ function exportToCSV() {
         showToast("No data available to export!", "warning");
         return;
     }
-    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Fire Crystal", "Refined Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
+    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Furnace Level", "Fire Crystal", "Refined Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
     const rows = savedApplications.map(app => [
         `"${app.position}"`, `"${app.time_slot}"`, `"${app.status}"`,
-        `"${app.nickname || '-'}"`, `"${app.game_id || '-'}"`, `"${app.fire_crystal || '0'}"`,
+        `"${app.nickname || '-'}"`, `"${app.game_id || '-'}"`, `"${app.furnace_level || '-'}"`, `"${app.fire_crystal || '0'}"`,
         `"${app.refined_fire_crystal || '0'}"`,
         `"${app.general_speedup || '0'}"`, `"${app.construction_speedup || '0'}"`,
         `"${app.research_speedup || '0'}"`, `"${app.training_speedup || '0'}"`
