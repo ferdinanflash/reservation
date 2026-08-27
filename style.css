@@ -516,18 +516,23 @@ body {
 /*Credit*/
 body {
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Menyusun elemen dari atas ke bawah */
+    justify-content: space-between; /* Menjaga jarak antar elemen */
     align-items: center;
-    height: 100vh;
+    min-height: 100dvh; /* Menggunakan dvh agar pas di layar HP & laptop */
     margin: 0;
+    padding: 20px 0; /* Memberi sedikit ruang dari tepi layar */
+    box-sizing: border-box;
     background: #000;
     font-family: 'Arial', sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .neon-text {
-    /* Menggunakan clamp agar responsif: min 1.5rem (24px), ideal 4vw, max 2.5rem (40px) */
-    font-size: clamp(1rem, 4vw, 2.5rem);
+    /* Mendorong teks ke paling bawah container */
+    margin-top: auto; 
+    
+    font-size: clamp(1rem, 2.5vw, 1.5rem); /* Ukuran disesuaikan untuk teks footer */
     font-weight: bold;
     color: #fff;
     text-align: center;
