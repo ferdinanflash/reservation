@@ -7,7 +7,7 @@
 				<link rel="stylesheet" href="style.css">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
-					<script src="script.js?v=29" defer=""></script>
+					<script src="script.js?v=30" defer=""></script>
 				</head>
 	<body>
 		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
@@ -44,22 +44,22 @@
 
 				<p class="page-subtitle">Select a position to make reservation</p>
 				<div class="list-container">
-					<div class="list-item" onclick="showSchedule('Vice President D1')">
+					<button type="button" class="list-item" onclick="showSchedule('Vice President D1')">
 						<span>Vice President D1 (Monday)</span>
 						<span class="arrow">&gt;</span>
-					</div>
-					<div class="list-item" onclick="showSchedule('Vice President D2')">
+					</button>
+					<button type="button" class="list-item" onclick="showSchedule('Vice President D2')">
 						<span>Vice President D2 (Tuesday)</span>
 						<span class="arrow">&gt;</span>
-					</div>
-					<div class="list-item" onclick="showSchedule('Minister of Education D4')">
+					</button>
+					<button type="button" class="list-item" onclick="showSchedule('Minister of Education D4')">
 						<span>Minister of Education D4 (Thursday)</span>
 						<span class="arrow">&gt;</span>
-					</div>
-					<div class="list-item" onclick="showSchedule('Vice President D5')">
+					</button>
+					<button type="button" class="list-item" onclick="showSchedule('Vice President D5')">
 						<span>Vice President D5 (Friday)</span>
 						<span class="arrow">&gt;</span>
-					</div>
+					</button>
 				</div>
 
 				<div class="external-link-container">
@@ -113,7 +113,7 @@
 		<!-- Modal Daftar Menunggu -->
 		<div id="waiting-modal" class="modal hidden">
 			<div class="modal-content">
-				<span class="close-modal" onclick="closeModal()">&times;</span>
+				<button type="button" class="close-modal" onclick="closeModal()" aria-label="Close">&times;</button>
 				<h2 id="modal-title">Applicants List</h2>
 				<div class="modal-table-container">
 					<table>
@@ -132,7 +132,7 @@
 		<!-- Modal Detail Statistik (Pop-up Ikon Kaca Pembesar) -->
 		<div id="details-modal" class="modal hidden">
 			<div class="modal-content custom-form-modal" style="max-width: 360px;">
-				<span class="close-modal" onclick="closeDetailsModal()">&times;</span>
+				<button type="button" class="close-modal" onclick="closeDetailsModal()" aria-label="Close">&times;</button>
 				<h2 style="margin-bottom: 12px; font-size: 1.2rem; text-align: center;">Application Details</h2>
 				<div id="details-content" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; text-align: left; background: #121316; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
 					<!-- Diisi secara dinamis via JavaScript -->
@@ -143,7 +143,7 @@
 		<!-- Modal Form Apply -->
 		<div id="apply-modal" class="modal hidden">
 			<div class="modal-content custom-form-modal">
-				<span class="close-modal" onclick="closeApplyModal()">&times;</span>
+				<button type="button" class="close-modal" onclick="closeApplyModal()" aria-label="Close">&times;</button>
 				<h2 style="margin-bottom: 4px; font-size: 1.4rem;">Apply for Time Slot</h2>
 				<p style="color: #8a8d98; font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">
 					Position: <span id="form-position-title" style="color: #f1f5f9; font-weight: bold;">-</span><br>
@@ -238,7 +238,7 @@
 		<!-- Modal Edit President/Guild Info (menggantikan native prompt()) -->
 		<div id="edit-footer-modal" class="modal hidden">
 			<div class="modal-content custom-form-modal" style="max-width: 380px;">
-				<span class="close-modal" onclick="closeEditFooterModal()">&times;</span>
+				<button type="button" class="close-modal" onclick="closeEditFooterModal()" aria-label="Close">&times;</button>
 				<h2 style="margin-bottom: 20px; font-size: 1.2rem;">Edit President Info</h2>
 				<div class="form-group">
 					<label>President Name</label>

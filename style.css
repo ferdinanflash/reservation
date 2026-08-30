@@ -10,6 +10,11 @@ body {
     background-color: #121316;
     color: #ffffff;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    justify-content: space-between;
+    padding: 20px 0;
 }
 
 /* ==================== NAVBAR & LIVE CLOCK ==================== */
@@ -114,6 +119,14 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
     transition: all 0.25s ease;
     font-size: 1rem;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+}
+
+.list-item:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
 }
 
 .list-item:hover {
@@ -325,6 +338,14 @@ body {
     background-color: #1c1d22;
     border-radius: 8px;
     overflow-x: auto;
+    position: relative;
+    background-image:
+        linear-gradient(to right, #1c1d22 0%, rgba(28, 29, 34, 0) 100%),
+        linear-gradient(to left, #1c1d22 0%, rgba(28, 29, 34, 0) 100%);
+    background-position: left, right;
+    background-repeat: no-repeat;
+    background-size: 16px 100%, 16px 100%;
+    background-attachment: local, local;
 }
 
 table {
@@ -373,6 +394,7 @@ th {
     display: flex;       
     flex-direction: column; 
     position: relative;
+    overflow-y: auto;
 }
 
 .custom-form-modal { max-width: 420px; background: #151821; padding: 24px; }
@@ -380,11 +402,20 @@ th {
 
 .close-modal {
     position: absolute;
-    right: 15px;
-    top: 10px;
+    right: 8px;
+    top: 4px;
     font-size: 1.8rem;
     cursor: pointer;
     color: #8a8d98;
+    background: none;
+    border: none;
+    padding: 10px;
+    line-height: 1;
+    font-family: inherit;
+}
+
+.close-modal:hover {
+    color: #f1f5f9;
 }
 
 .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; text-align: left; }
@@ -549,6 +580,18 @@ body {
     top: 0px !important;
 }
 
+/* ==================== OPTIMISASI TAMPILAN TABLET ==================== */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    th, td {
+        padding: 10px 6px;
+        font-size: 0.85rem;
+    }
+}
+
 /* ==================== OPTIMISASI TAMPILAN MOBILE (HP) ==================== */
 @media screen and (max-width: 480px) {
     th, td {
@@ -564,22 +607,25 @@ body {
     .container {
         padding: 0 5px;
     }
+
+    /* Perbesar area sentuh tombol kecil (Accept/Drop/detail) yang di-generate
+       lewat JS, supaya tidak salah pencet di layar sentuh. */
+    .btn-apply.btn-compact {
+        padding: 8px 10px !important;
+        font-size: 0.75rem !important;
+        min-height: 30px;
+    }
+
+    .icon-tap-target {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        margin: -8px;
+    }
 }
 
 /*Credit*/
-body {
-    display: flex;
-    flex-direction: column; /* Menyusun elemen dari atas ke bawah */
-    justify-content: space-between; /* Menjaga jarak antar elemen */
-    align-items: center;
-    min-height: 100dvh; /* Menggunakan dvh agar pas di layar HP & laptop */
-    margin: 0;
-    padding: 20px 0; /* Memberi sedikit ruang dari tepi layar */
-    box-sizing: border-box;
-    background: #000;
-    font-family: 'Arial', sans-serif;
-    overflow-x: hidden;
-}
 
 .neon-text {
     /* Mendorong teks ke paling bawah container */

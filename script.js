@@ -517,11 +517,11 @@ function renderTimeSlots() {
 
         const row = document.createElement('tr');
         if (acceptedApp) {
-            let detailBtn = `<span style="cursor:pointer; font-size: 1rem; vertical-align: middle;" title="View Details" onclick="openDetailsModal(${acceptedApp.id})">🔍</span>`;
+            let detailBtn = `<span class="icon-tap-target" style="cursor:pointer; font-size: 1rem; vertical-align: middle;" title="View Details" onclick="openDetailsModal(${acceptedApp.id})">🔍</span>`;
             let actionBtn = isAdmin
                 ? `<div style="display:flex; align-items:center; justify-content:center; gap:6px;">
                      ${detailBtn}
-                     <button class="btn-apply btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeApp(${acceptedApp.id})">Remove</button>
+                     <button class="btn-apply btn-danger btn-compact" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeApp(${acceptedApp.id})">Remove</button>
                    </div>`
                 : detailBtn;
 
@@ -618,14 +618,14 @@ function openWaitingModal(timeStr) {
         const mainRow = document.createElement('tr');
         let adminButtons = isAdmin ? `
             <div style="margin-top: 4px;">
-                <button class="btn-apply" style="background:#22c55e; font-size:0.65rem; padding:1px 4px; margin-right:4px; animation: none;" onclick="acceptApp(${app.id})">Accept</button>
-                <button class="btn-apply btn-danger" style="font-size:0.65rem; padding:1px 4px;" onclick="removeApp(${app.id})">Drop</button>
+                <button class="btn-apply btn-compact" style="background:#22c55e; font-size:0.65rem; padding:1px 4px; margin-right:4px; animation: none;" onclick="acceptApp(${app.id})">Accept</button>
+                <button class="btn-apply btn-danger btn-compact" style="font-size:0.65rem; padding:1px 4px;" onclick="removeApp(${app.id})">Drop</button>
             </div>
         ` : '';
 
         mainRow.innerHTML = `
             <td style="padding: 5px 10px; text-align: left; font-weight: 500; white-space: nowrap;">
-                <span style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${escapeHtml(app.nickname)}
+                <span class="icon-tap-target" style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${escapeHtml(app.nickname)}
             </td>
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
                 <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
