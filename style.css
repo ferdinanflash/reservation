@@ -180,17 +180,30 @@ body {
 /* ==================== EXTERNAL LINK BUTTONS (SMALLER) ==================== */
 .external-link-container {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    gap: 10px;
     margin-top: 16px;
 }
 
 .list-item-small {
-    padding: 10px 16px;
+    flex: 1;
+    padding: 10px 14px;
     font-size: 0.85rem;
     font-weight: 500;
     text-decoration: none;
     opacity: 0.9;
+    justify-content: center;
+    text-align: center;
+}
+
+.list-item-small .arrow {
+    display: none;
+}
+
+@media screen and (max-width: 380px) {
+    .external-link-container {
+        flex-direction: column;
+    }
 }
 
 .list-item-small:hover {
