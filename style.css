@@ -22,6 +22,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
     padding: 15px 20px;
     background-color: #18191d;
     border-bottom: 1px solid #24262b;
@@ -31,12 +33,20 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    flex-wrap: wrap;
+    gap: 10px 15px;
     background-color: #111827;
     padding: 8px 16px;
     border-bottom: 1px solid #1f2937;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.85rem;
+}
+
+@media screen and (max-width: 360px) {
+    #live-clock-container {
+        font-size: 0.75rem;
+        gap: 6px 10px;
+    }
 }
 
 .clock-item {
@@ -69,7 +79,7 @@ body {
 
 .page-title {
     text-align: center;
-    font-size: 1.8rem; 
+    font-size: clamp(1.3rem, 5vw, 1.8rem);
     margin-bottom: 5px;
 }
 
@@ -302,7 +312,7 @@ body {
 /* ==================== GLOWING GOLD TEXT EFFECT ==================== */
 .fire-text {
     font-weight: 900;
-    font-size: 1.5rem; 
+    font-size: clamp(1.1rem, 4.5vw, 1.5rem);
     text-transform: uppercase;
     letter-spacing: 2px;
     display: inline-block;
@@ -383,6 +393,21 @@ th {
     letter-spacing: 0.5px;
 }
 
+/* Kolom pertama (ACTION) tetap terlihat saat tabel discroll horizontal di mobile */
+th:first-child,
+td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background-color: #1c1d22;
+    box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.5);
+}
+
+th:first-child {
+    background-color: #24262e;
+    z-index: 2;
+}
+
 .modal {
     position: fixed;
     z-index: 2000;
@@ -412,6 +437,25 @@ th {
 
 .custom-form-modal { max-width: 420px; background: #151821; padding: 24px; }
 .custom-confirm-box { max-width: 320px; background: #151821; padding: 20px; text-align: center; }
+
+/* Layar pendek (mis. HP landscape): kecilkan padding modal & jarak form
+   supaya tombol submit tetap terjangkau dan tidak tertutup keyboard */
+@media screen and (max-height: 500px) {
+    .modal-content {
+        max-height: 92vh;
+        padding: 14px;
+    }
+    .custom-form-modal {
+        padding: 16px;
+    }
+    .form-group {
+        margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group select {
+        padding: 8px 12px;
+    }
+}
 
 .close-modal {
     position: absolute;
@@ -559,40 +603,6 @@ th {
     }
 }
 
-/* ==================== GOOGLE TRANSLATE STYLE ==================== */
-.translate-container {
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0 10px;
-}
-
-.goog-te-gadget-simple {
-    background-color: #1e2230 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding: 6px 10px !important;
-    border-radius: 8px !important;
-    font-size: 0.85rem !important;
-    color: #f1f5f9 !important;
-    cursor: pointer;
-}
-
-.goog-te-gadget-simple a, 
-.goog-te-gadget-simple span {
-    color: #f1f5f9 !important;
-    text-decoration: none !important;
-}
-
-.goog-te-gadget-icon {
-    display: none !important; 
-}
-
-iframe.goog-te-banner-frame {
-    display: none !important;
-}
-body {
-    top: 0px !important;
-}
-
 /* ==================== OPTIMISASI TAMPILAN TABLET ==================== */
 @media screen and (min-width: 481px) and (max-width: 768px) {
     .container {
@@ -626,14 +636,17 @@ body {
     .btn-apply.btn-compact {
         padding: 8px 10px !important;
         font-size: 0.75rem !important;
-        min-height: 30px;
+        min-height: 36px !important;
+        min-width: 36px !important;
     }
 
     .icon-tap-target {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 8px;
+        min-width: 36px;
+        min-height: 36px;
+        padding: 8px !important;
         margin: -8px;
     }
 }

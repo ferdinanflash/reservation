@@ -618,8 +618,8 @@ function openWaitingModal(timeStr) {
         const mainRow = document.createElement('tr');
         let adminButtons = isAdmin ? `
             <div style="margin-top: 4px;">
-                <button class="btn-apply btn-compact" style="background:#22c55e; font-size:0.65rem; padding:1px 4px; margin-right:4px; animation: none;" onclick="acceptApp(${app.id})">Accept</button>
-                <button class="btn-apply btn-danger btn-compact" style="font-size:0.65rem; padding:1px 4px;" onclick="removeApp(${app.id})">Drop</button>
+                <button class="btn-apply btn-compact" style="background:#22c55e; font-size:0.7rem; margin-right:4px; animation: none;" onclick="acceptApp(${app.id})">Accept</button>
+                <button class="btn-apply btn-danger btn-compact" style="font-size:0.7rem;" onclick="removeApp(${app.id})">Drop</button>
             </div>
         ` : '';
 

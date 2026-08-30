@@ -7,7 +7,7 @@
 				<link rel="stylesheet" href="style.css">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
-					<script src="script.js?v=30" defer=""></script>
+					<script src="script.js?v=31" defer=""></script>
 				</head>
 	<body>
 		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
@@ -15,10 +15,6 @@
 
 		<header class="navbar">
 			<span class="logo fire-text">SVS Ministry</span>
-			<!-- Tambahkan Kontainer Penerjemah di Sini -->
-			<div class="translate-container">
-				<div id="google_translate_element"></div>
-			</div>
 			<button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()">President Login</button>
 		</header>
 
@@ -267,15 +263,5 @@
 
 		<div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;"></div>
 
-		<!-- Google Translate Script yang Dibatasi Bahasanya -->
-		<script type="text/javascript">
-			function googleTranslateElementInit() {
-			new google.translate.TranslateElement({
-			pageLanguage: 'en',
-			includedLanguages: 'en,id,vi,ru,ko,zh-CN,zh-TW,th,tl',
-			layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-			}, 'google_translate_element');
-			}
-		</script>
 	</body>
 </html>
