@@ -9,6 +9,35 @@ let savedApplications = [];
 let currentPosition = 'Vice President D1';
 let selectedTimeSlot = ''; 
 let isReservationOpen = true; 
+let isLoadingApplications = false;
+
+// ================= CENTRALIZED POSITION CONFIG =================
+// Satu sumber kebenaran untuk label singkat & field mana yang disembunyikan
+// di form apply, supaya tidak perlu edit banyak tempat kalau ada posisi baru.
+const POSITION_CONFIG = {
+    'Vice President D1': { shortLabel: 'VP D1', hiddenFields: ['res', 'train'] },
+    'Vice President D2': { shortLabel: 'VP D2', hiddenFields: ['fc', 'rfc', 'const', 'train'] },
+    'Minister of Education D4': { shortLabel: 'Edu D4', hiddenFields: ['fc', 'rfc', 'const', 'res'] },
+    'Vice President D5': { shortLabel: 'VP D5', hiddenFields: ['train'] }
+};
+
+function getPositionConfig(positionName) {
+    return POSITION_CONFIG[positionName] || { shortLabel: positionName, hiddenFields: [] };
+}
+
+// ================= SECURITY: HTML ESCAPING =================
+// Semua data yang berasal dari user (nickname, game id, dst) WAJIB lewat
+// fungsi ini sebelum dimasukkan ke innerHTML, supaya tidak bisa dipakai
+// untuk stored XSS (contoh: nickname berisi <img onerror=...>).
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     if (sessionStorage.getItem('isPresidentMode') === 'true') {
@@ -20,12 +49,45 @@ document.addEventListener("DOMContentLoaded", () => {
     checkReservationStatus(); 
     startLiveClock();
     loadRecentAccepts();
-    
+    subscribeToRealtimeUpdates();
+
+    // Fallback polling berjangka panjang saja (jaga-jaga kalau koneksi realtime
+    // putus), karena update utama sekarang didorong lewat Supabase Realtime.
     setInterval(() => {
         loadRecentAccepts();
         loadFooterInfo(); 
-    }, 30000);
+    }, 60000);
 });
+
+// ================= REALTIME SUBSCRIPTIONS =================
+// Menggantikan polling 30 detik dengan update instan begitu ada perubahan
+// data di database (submit baru, accept, delete, dsb).
+function subscribeToRealtimeUpdates() {
+    const client = getSupabase();
+    if (!client) return;
+
+    try {
+        client
+            .channel('reservation_slots_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'reservation_slots' }, (payload) => {
+                const affectedPosition = payload.new?.position || payload.old?.position;
+                if (affectedPosition === currentPosition) {
+                    loadApplications();
+                }
+                loadRecentAccepts();
+            })
+            .subscribe();
+
+        client
+            .channel('footer_settings_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'footer_settings' }, () => {
+                loadFooterInfo();
+            })
+            .subscribe();
+    } catch (err) {
+        console.error("Realtime subscription failed, relying on fallback polling:", err);
+    }
+}
 
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
@@ -97,27 +159,37 @@ function updateReservationButtonUI() {
 
 async function handleToggleReservation() {
     if (!isAdmin) return;
-    
-    const client = getSupabase();
-    if (!client) return;
 
     const newStatus = !isReservationOpen;
     const actionText = newStatus ? "open" : "close";
-    
-    if (confirm(`Are you sure to ${actionText} reservation for ${currentPosition}?`)) {
-        const { error } = await client
-            .from('system_settings')
-            .update({ is_open: newStatus })
-            .eq('id', currentPosition); 
-            
-        if (!error) {
+
+    // Menggunakan modal konfirmasi custom yang sudah ada, supaya konsisten
+    // secara visual (sebelumnya pakai confirm() bawaan browser).
+    showCustomConfirm(`Are you sure to ${actionText} reservation for ${currentPosition}?`, async () => {
+        const client = getSupabase();
+        if (!client) return;
+
+        const toggleBtn = document.getElementById('toggle-reservation-btn');
+        setButtonBusy(toggleBtn, true, actionText === 'open' ? 'Opening...' : 'Closing...');
+
+        try {
+            const { error } = await client
+                .from('system_settings')
+                .update({ is_open: newStatus })
+                .eq('id', currentPosition);
+
+            if (error) throw error;
+
             isReservationOpen = newStatus;
-            updateReservationButtonUI();
             showToast(`Reservation of ${currentPosition} now-${newStatus ? 'open' : 'close'}!`, "success");
-        } else {
-            showToast("Gagal memperbarui status ke database.", "error");
+        } catch (err) {
+            console.error("Failed to update reservation status:", err);
+            showToast("Failed to update reservation status. Please try again.", "error");
+        } finally {
+            setButtonBusy(toggleBtn, false);
+            updateReservationButtonUI();
         }
-    }
+    }, newStatus ? '#22c55e' : '#dc2626');
 }
 
 function showToast(message, type = 'info') {
@@ -167,6 +239,23 @@ function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
     });
 }
 
+// Helper untuk menonaktifkan tombol + tampilkan spinner saat proses async
+// berjalan, supaya user tidak bisa klik ganda (mencegah submit/aksi duplikat).
+function setButtonBusy(button, isBusy, busyText = null) {
+    if (!button) return;
+    if (isBusy) {
+        button.dataset.originalText = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = `<span class="spinner-inline"></span>${busyText || 'Please wait...'}`;
+    } else {
+        button.disabled = false;
+        if (button.dataset.originalText) {
+            button.innerHTML = button.dataset.originalText;
+            delete button.dataset.originalText;
+        }
+    }
+}
+
 async function loadFooterInfo() {
     const cachedPresident = localStorage.getItem('cached_president_name');
     const cachedGuild = localStorage.getItem('cached_guild_name');
@@ -206,17 +295,29 @@ async function loadFooterInfo() {
     }
 }
 
-async function handleEditFooter() {
+// Membuka modal custom untuk edit info president/guild (menggantikan
+// dua kali prompt() bawaan browser yang tampilannya tidak konsisten).
+function handleEditFooter() {
     if (!isAdmin) return;
     const currentName = document.getElementById('display-president-name').innerText;
     const currentGuild = document.getElementById('display-guild-name').innerText;
 
-    const newName = prompt("Enter New President Name:", currentName);
-    if (newName === null) return;
-    const newGuild = prompt("Enter New Guild Name:", currentGuild);
-    if (newGuild === null) return;
+    document.getElementById('edit-footer-name').value = currentName === '...' ? '' : currentName;
+    document.getElementById('edit-footer-guild').value = currentGuild === '...' ? '' : currentGuild;
+    document.getElementById('edit-footer-modal').classList.remove('hidden');
+}
 
-    if (newName.trim() === "" || newGuild.trim() === "") {
+function closeEditFooterModal() {
+    document.getElementById('edit-footer-modal').classList.add('hidden');
+}
+
+async function saveEditFooter() {
+    if (!isAdmin) return;
+
+    const newName = document.getElementById('edit-footer-name').value.trim();
+    const newGuild = document.getElementById('edit-footer-guild').value.trim();
+
+    if (newName === "" || newGuild === "") {
         showToast("Name and Guild cannot be empty!", "warning");
         return;
     }
@@ -224,22 +325,31 @@ async function handleEditFooter() {
     const client = getSupabase();
     if (!client) return;
 
-    const { error } = await client
-        .from('footer_settings')
-        .upsert({ 
-            id: 'main', 
-            president_name: newName.trim(), 
-            guild_name: newGuild.trim(),
-            updated_at: new Date().toISOString()
-        });
+    const saveBtn = document.getElementById('edit-footer-save-btn');
+    setButtonBusy(saveBtn, true, 'Saving...');
 
-    if (!error) {
-        localStorage.setItem('cached_president_name', newName.trim());
-        localStorage.setItem('cached_guild_name', newGuild.trim());
+    try {
+        const { error } = await client
+            .from('footer_settings')
+            .upsert({
+                id: 'main',
+                president_name: newName,
+                guild_name: newGuild,
+                updated_at: new Date().toISOString()
+            });
+
+        if (error) throw error;
+
+        localStorage.setItem('cached_president_name', newName);
+        localStorage.setItem('cached_guild_name', newGuild);
         loadFooterInfo();
         showToast("President info updated globally!", "success");
-    } else {
-        showToast("Failed to update database.", "error");
+        closeEditFooterModal();
+    } catch (err) {
+        console.error("Failed to update footer info:", err);
+        showToast("Failed to update database. Please try again.", "error");
+    } finally {
+        setButtonBusy(saveBtn, false);
     }
 }
 
@@ -356,6 +466,10 @@ function showPositions() {
 async function loadApplications() {
     const client = getSupabase();
     if (!client) return;
+
+    isLoadingApplications = true;
+    renderLoadingState();
+
     try {
         const { data, error } = await client.from('reservation_slots').select('*').eq('position', currentPosition);
         if (error) throw error;
@@ -363,13 +477,24 @@ async function loadApplications() {
     } catch (e) {
         console.error("Database failure:", e);
         savedApplications = [];
+        showToast("Failed to load schedule data. Please refresh.", "error");
     }
+    isLoadingApplications = false;
     renderTimeSlots();
+}
+
+// Baris placeholder saat data masih diambil dari Supabase, supaya tabel
+// tidak terlihat kosong / kedip sebelum data muncul.
+function renderLoadingState() {
+    const tbody = document.getElementById('schedule-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = `<tr class="loading-row"><td colspan="6"><span class="spinner-inline"></span>Loading schedule...</td></tr>`;
 }
 
 function renderTimeSlots() {
     const tbody = document.getElementById('schedule-table-body');
     if (!tbody) return;
+    if (isLoadingApplications) return;
     const offset = parseFloat(document.getElementById('timezone').value);
     tbody.innerHTML = "";
 
@@ -404,9 +529,9 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">Accepted</span></td>
-                <td>${acceptedApp.nickname}</td>
-                <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${acceptedApp.game_id}')">${acceptedApp.game_id}</span></td>
-                <td>${acceptedApp.furnace_level || '-'}</td>
+                <td>${escapeHtml(acceptedApp.nickname)}</td>
+                <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
+                <td>${escapeHtml(acceptedApp.furnace_level) || '-'}</td>
             `;
         } else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
@@ -427,6 +552,36 @@ function renderTimeSlots() {
     }
 }
 
+// ================= SHARED DETAIL BLOCK BUILDER =================
+// Dipakai bersama oleh openDetailsModal() dan openWaitingModal() supaya
+// markup detail statistik tidak diduplikasi di dua tempat berbeda.
+function buildStatDetailsHtml(app, compact = false) {
+    if (compact) {
+        return `
+            <div><span style="color:#8a8d98; margin-right: 10px;">Furnace Lvl:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">FC:</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">RFC:</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">General:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">Const:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">Research:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">Train:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.training_speedup) || '0'}</strong></div>
+        `;
+    }
+
+    return `
+        <div><span style="color:#8a8d98;">Nickname:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.nickname) || '-'}</strong></div>
+        <div><span style="color:#8a8d98;">Game ID:</span> <strong style="color:#3b82f6;">${escapeHtml(app.game_id) || '-'}</strong></div>
+        <div><span style="color:#8a8d98;">Furnace Level:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
+        <hr style="border: 0; border-top: 1px solid #334155; margin: 4px 0;">
+        <div><span style="color:#8a8d98;">Fire Crystals (FC):</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
+        <div><span style="color:#8a8d98;">Refined Fire Crystals (RFC):</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
+        <div><span style="color:#8a8d98;">General Speedup:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'} Days</strong></div>
+        <div><span style="color:#8a8d98;">Construction Speedup:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'} Days</strong></div>
+        <div><span style="color:#8a8d98;">Research Speedup:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'} Days</strong></div>
+        <div><span style="color:#8a8d98;">Training Speedup:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.training_speedup) || '0'} Days</strong></div>
+    `;
+}
+
 // Fungsi untuk membuka pop-up modal detail
 function openDetailsModal(appId) {
     const app = savedApplications.find(a => a.id === appId);
@@ -434,19 +589,7 @@ function openDetailsModal(appId) {
 
     const modal = document.getElementById('details-modal');
     const contentEl = document.getElementById('details-content');
-    
-    contentEl.innerHTML = `
-        <div><span style="color:#8a8d98;">Nickname:</span> <strong style="color:#f1f5f9;">${app.nickname || '-'}</strong></div>
-        <div><span style="color:#8a8d98;">Game ID:</span> <strong style="color:#3b82f6;">${app.game_id || '-'}</strong></div>
-        <div><span style="color:#8a8d98;">Furnace Level:</span> <strong style="color:#f1f5f9;">${app.furnace_level || '-'}</strong></div>
-        <hr style="border: 0; border-top: 1px solid #334155; margin: 4px 0;">
-        <div><span style="color:#8a8d98;">Fire Crystals (FC):</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong></div>
-        <div><span style="color:#8a8d98;">Refined Fire Crystals (RFC):</span> <strong style="color:#f59e0b;">${app.refined_fire_crystal || '0'}</strong></div>
-        <div><span style="color:#8a8d98;">General Speedup:</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'} Days</strong></div>
-        <div><span style="color:#8a8d98;">Construction Speedup:</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'} Days</strong></div>
-        <div><span style="color:#8a8d98;">Research Speedup:</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'} Days</strong></div>
-        <div><span style="color:#8a8d98;">Training Speedup:</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'} Days</strong></div>
-    `;
+    contentEl.innerHTML = buildStatDetailsHtml(app, false);
     
     modal.classList.remove('hidden');
 }
@@ -482,10 +625,10 @@ function openWaitingModal(timeStr) {
 
         mainRow.innerHTML = `
             <td style="padding: 5px 10px; text-align: left; font-weight: 500; white-space: nowrap;">
-                <span style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${app.nickname}
+                <span style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${escapeHtml(app.nickname)}
             </td>
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
-                <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${app.game_id}')">${app.game_id}</span>
+                <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
                 ${adminButtons}
             </td>
         `;
@@ -497,13 +640,7 @@ function openWaitingModal(timeStr) {
         detailsRow.innerHTML = `
             <td colspan="2" style="padding: 0; border: none;">
                 <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
-                    <div><span style="color:#8a8d98; margin-right: 10px;">Furnace Lvl:</span> <strong style="color:#f1f5f9;">${app.furnace_level || '-'}</strong></div>
-                    <div><span style="color:#8a8d98; margin-right: 10px;">FC:</span> <strong style="color:#f59e0b;">${app.fire_crystal || '0'}</strong></div>
-                    <div><span style="color:#8a8d98; margin-right: 10px;">RFC:</span> <strong style="color:#f59e0b;">${app.refined_fire_crystal || '0'}</strong></div>
-                    <div><span style="color:#8a8d98; margin-right: 10px;">General:</span> <strong style="color:#f1f5f9;">${app.general_speedup || '0'}</strong></div>
-                    <div><span style="color:#8a8d98; margin-right: 10px;">Const:</span> <strong style="color:#f1f5f9;">${app.construction_speedup || '0'}</strong></div>
-                    <div><span style="color:#8a8d98; margin-right: 10px;">Research:</span> <strong style="color:#f1f5f9;">${app.research_speedup || '0'}</strong></div>
-                    <div><span style="color:#8a8d98; margin-right: 10px;">Train:</span> <strong style="color:#f1f5f9;">${app.training_speedup || '0'}</strong></div>
+                    ${buildStatDetailsHtml(app, true)}
                 </div>
             </td>
         `;
@@ -544,37 +681,20 @@ function applySlot(time) {
     document.getElementById('input-ressp').value = "";
     document.getElementById('input-trainsp').value = "";
 
-    const groupFc = document.getElementById('input-fc').closest('.form-group');
-    const groupRfc = document.getElementById('input-rfc').closest('.form-group');
-    const groupConst = document.getElementById('input-constsp').closest('.form-group');
-    const groupRes = document.getElementById('input-ressp').closest('.form-group');
-    const groupTrain = document.getElementById('input-trainsp').closest('.form-group');
+    const fieldGroups = {
+        fc: document.getElementById('input-fc').closest('.form-group'),
+        rfc: document.getElementById('input-rfc').closest('.form-group'),
+        const: document.getElementById('input-constsp').closest('.form-group'),
+        res: document.getElementById('input-ressp').closest('.form-group'),
+        train: document.getElementById('input-trainsp').closest('.form-group')
+    };
 
-    groupFc.classList.remove('hidden');
-    groupRfc.classList.remove('hidden');
-    groupConst.classList.remove('hidden');
-    groupRes.classList.remove('hidden');
-    groupTrain.classList.remove('hidden');
+    Object.values(fieldGroups).forEach(group => group.classList.remove('hidden'));
 
-    if (currentPosition === 'Vice President D1') {
-        groupRes.classList.add('hidden');
-        groupTrain.classList.add('hidden');
-    } 
-    else if (currentPosition === 'Vice President D5') {
-        groupTrain.classList.add('hidden');
-    } 
-    else if (currentPosition === 'Vice President D2') {
-        groupFc.classList.add('hidden');
-        groupRfc.classList.add('hidden');
-        groupConst.classList.add('hidden');
-        groupTrain.classList.add('hidden');
-    } 
-    else if (currentPosition === 'Minister of Education D4') {
-        groupFc.classList.add('hidden');
-        groupRfc.classList.add('hidden');
-        groupConst.classList.add('hidden');
-        groupRes.classList.add('hidden');
-    }
+    const { hiddenFields } = getPositionConfig(currentPosition);
+    hiddenFields.forEach(fieldKey => {
+        if (fieldGroups[fieldKey]) fieldGroups[fieldKey].classList.add('hidden');
+    });
     
     document.getElementById('apply-modal').classList.remove('hidden');
 }
@@ -604,23 +724,32 @@ async function submitApplication() {
 
     if (!nickname) { showToast("Please enter In-Game Nickname!", "warning"); return; }
     if (!gameId) { showToast("Please enter In-Game ID!", "warning"); return; }
+    if (!/^\d+$/.test(gameId)) { showToast("Game ID must contain numbers only!", "warning"); return; }
     if (!furnaceLevel) { showToast("Please select Furnace Level!", "warning"); return; }
 
-    const { error } = await client
-        .from('reservation_slots')
-        .insert({ 
-            time_slot: selectedTimeSlot, position: currentPosition, nickname: nickname, game_id: gameId, 
-            furnace_level: furnaceLevel,
-            fire_crystal: fc, refined_fire_crystal: rfc, general_speedup: genSp, construction_speedup: constSp, research_speedup: resSp, training_speedup: trainSp,
-            status: 'Waiting'
-        });
+    const submitBtn = document.querySelector('#apply-modal .btn-apply');
+    setButtonBusy(submitBtn, true, 'Submitting...');
 
-    if (!error) {
+    try {
+        const { error } = await client
+            .from('reservation_slots')
+            .insert({ 
+                time_slot: selectedTimeSlot, position: currentPosition, nickname: nickname, game_id: gameId, 
+                furnace_level: furnaceLevel,
+                fire_crystal: fc, refined_fire_crystal: rfc, general_speedup: genSp, construction_speedup: constSp, research_speedup: resSp, training_speedup: trainSp,
+                status: 'Waiting'
+            });
+
+        if (error) throw error;
+
         showToast("Application submitted successfully!", "success");
         closeApplyModal();
         loadApplications();
-    } else {
-        showToast("Database error: " + error.message, "error");
+    } catch (err) {
+        console.error("Failed to submit application:", err);
+        showToast("Failed to submit application. Please try again.", "error");
+    } finally {
+        setButtonBusy(submitBtn, false);
     }
 }
 
@@ -628,14 +757,17 @@ async function acceptApp(id) {
     showCustomConfirm("Accept this application? This will lock this time slot.", async () => {
         const client = getSupabase();
         if (!client) return;
-        closeModal(); 
-        const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
-        if (!error) {
+        closeModal();
+        try {
+            const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
+            if (error) throw error;
             showToast("Application Approved!", "success");
             loadApplications();
             loadRecentAccepts(); 
-        } else {
-            showToast("Failed to approve.", "error");
+        } catch (err) {
+            console.error("Failed to approve application:", err);
+            showToast("Failed to approve. It may have just been taken by someone else.", "error");
+            loadApplications();
         }
     }, '#22c55e');
 }
@@ -645,15 +777,29 @@ async function removeApp(id) {
         const client = getSupabase();
         if (!client) return;
         closeModal(); 
-        const { error } = await client.from('reservation_slots').delete().eq('id', id);
-        if (!error) {
+        try {
+            const { error } = await client.from('reservation_slots').delete().eq('id', id);
+            if (error) throw error;
             showToast("Record dropped successfully.", "success");
             loadApplications();
             loadRecentAccepts(); 
-        } else {
+        } catch (err) {
+            console.error("Failed to delete application:", err);
             showToast("Failed executing delete request.", "error");
         }
     }, '#ef4444');
+}
+
+// Membungkus nilai untuk 1 sel CSV: escape tanda kutip ganda dengan benar,
+// dan cegah CSV/Formula Injection dengan prefix apostrof kalau value diawali
+// karakter =, +, -, atau @ (bisa dieksekusi sebagai formula di Excel/Sheets).
+function sanitizeCsvField(value) {
+    let str = String(value ?? '-');
+    if (/^[=+\-@]/.test(str)) {
+        str = `'${str}`;
+    }
+    str = str.replace(/"/g, '""');
+    return `"${str}"`;
 }
 
 function exportToCSV() {
@@ -663,11 +809,11 @@ function exportToCSV() {
     }
     const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Furnace Level", "Fire Crystal", "Refined Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
     const rows = savedApplications.map(app => [
-        `"${app.position}"`, `"${app.time_slot}"`, `"${app.status}"`,
-        `"${app.nickname || '-'}"`, `"${app.game_id || '-'}"`, `"${app.furnace_level || '-'}"`, `"${app.fire_crystal || '0'}"`,
-        `"${app.refined_fire_crystal || '0'}"`,
-        `"${app.general_speedup || '0'}"`, `"${app.construction_speedup || '0'}"`,
-        `"${app.research_speedup || '0'}"`, `"${app.training_speedup || '0'}"`
+        sanitizeCsvField(app.position), sanitizeCsvField(app.time_slot), sanitizeCsvField(app.status),
+        sanitizeCsvField(app.nickname || '-'), sanitizeCsvField(app.game_id || '-'), sanitizeCsvField(app.furnace_level || '-'), sanitizeCsvField(app.fire_crystal || '0'),
+        sanitizeCsvField(app.refined_fire_crystal || '0'),
+        sanitizeCsvField(app.general_speedup || '0'), sanitizeCsvField(app.construction_speedup || '0'),
+        sanitizeCsvField(app.research_speedup || '0'), sanitizeCsvField(app.training_speedup || '0')
     ]);
 
     const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
@@ -680,6 +826,7 @@ function exportToCSV() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
     showToast("CSV File downloaded successfully!", "success");
 }
 
@@ -689,15 +836,19 @@ async function handleFinishSVS() {
     if (!client) return;
 
     showCustomConfirm("Caution to finish SVS!\n Are you sure ?, this will be reset all applied data", async () => {
+        const finishBtn = document.getElementById('finish-svs-btn');
+        setButtonBusy(finishBtn, true, 'Clearing...');
         try {
             const { error } = await client.from('reservation_slots').delete().neq('id', 0); 
-            if (!error) {
-                showToast("All record has been cleared.", "success");
-                loadApplications();
-                loadRecentAccepts(); 
-            } else { throw error; }
+            if (error) throw error;
+            showToast("All record has been cleared.", "success");
+            loadApplications();
+            loadRecentAccepts(); 
         } catch (err) {
-            showToast("Fail to clear data: " + err.message, "error");
+            console.error("Failed to clear data:", err);
+            showToast("Failed to clear data. Please try again.", "error");
+        } finally {
+            setButtonBusy(finishBtn, false);
         }
     }, '#dc2626'); 
 }
@@ -770,16 +921,16 @@ async function loadRecentAccepts() {
         }
         logListEl.innerHTML = ''; 
         data.forEach(item => {
-            let shortPos = item.position ? item.position.replace('Vice President', 'VP').replace('Minister of Education', 'Edu') : 'Unknown';
+            const shortPos = item.position ? getPositionConfig(item.position).shortLabel : 'Unknown';
             const logRow = document.createElement('div');
             logRow.className = 'log-entry';
             logRow.innerHTML = `
-                <span>✅ <span class="log-user">${item.nickname}</span> <span style="color: #8a8d98; font-size: 0.95em; margin-left: 5px;">${item.time_slot} UTC</span></span>
-                <span class="log-pos">[${shortPos}]</span>
+                <span>✅ <span class="log-user">${escapeHtml(item.nickname)}</span> <span style="color: #8a8d98; font-size: 0.95em; margin-left: 5px;">${escapeHtml(item.time_slot)} UTC</span></span>
+                <span class="log-pos">[${escapeHtml(shortPos)}]</span>
             `;
             logListEl.appendChild(logRow);
         });
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error("Failed to load recent accepts:", err); }
 }
 
 // ================= SNOWFLAKE EFFECT =================

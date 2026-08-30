@@ -7,7 +7,7 @@
 				<link rel="stylesheet" href="style.css">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
-					<script src="script.js?v=28" defer=""></script>
+					<script src="script.js?v=29" defer=""></script>
 				</head>
 	<body>
 		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
@@ -60,6 +60,17 @@
 						<span>Vice President D5 (Friday)</span>
 						<span class="arrow">&gt;</span>
 					</div>
+				</div>
+
+				<div class="external-link-container">
+					<a class="list-item list-item-small" href="https://ferdinanflash.github.io/board/" target="_blank" rel="noopener noreferrer">
+						<span>Events Leaderboard Record</span>
+						<span class="arrow">&gt;</span>
+					</a>
+					<a class="list-item list-item-small" href="https://ferdinanflash.github.io/tal/" target="_blank" rel="noopener noreferrer">
+						<span>Tundra Arm League</span>
+						<span class="arrow">&gt;</span>
+					</a>
 				</div>
 			</section>
 
@@ -141,11 +152,11 @@
 
 				<div class="form-group">
 					<label>In-Game Nickname</label>
-					<input type="text" id="input-nickname" placeholder="Enter your nickname">
+					<input type="text" id="input-nickname" maxlength="40" placeholder="Enter your nickname">
             </div>
 				<div class="form-group">
 					<label>In-Game ID</label>
-					<input type="number" id="input-gameid" placeholder="Enter your game ID">
+					<input type="text" inputmode="numeric" pattern="[0-9]*" id="input-gameid" maxlength="20" placeholder="Enter your game ID">
             </div>
 				<div class="form-group">
 					<label>Furnace Level</label>
@@ -223,6 +234,26 @@
     <h1 class="neon-text">Created By : ACE aka DEMON</h1>
 </div>
 		</footer>
+
+		<!-- Modal Edit President/Guild Info (menggantikan native prompt()) -->
+		<div id="edit-footer-modal" class="modal hidden">
+			<div class="modal-content custom-form-modal" style="max-width: 380px;">
+				<span class="close-modal" onclick="closeEditFooterModal()">&times;</span>
+				<h2 style="margin-bottom: 20px; font-size: 1.2rem;">Edit President Info</h2>
+				<div class="form-group">
+					<label>President Name</label>
+					<input type="text" id="edit-footer-name" maxlength="60" placeholder="Enter president name">
+				</div>
+				<div class="form-group">
+					<label>Guild Name</label>
+					<input type="text" id="edit-footer-guild" maxlength="60" placeholder="Enter guild name">
+				</div>
+				<div class="form-actions">
+					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeEditFooterModal()">Cancel</button>
+					<button id="edit-footer-save-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="saveEditFooter()">Save</button>
+				</div>
+			</div>
+		</div>
 
 		<div id="confirm-modal" class="modal hidden">
 			<div class="modal-content custom-confirm-box">
