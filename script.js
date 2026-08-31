@@ -3,8 +3,24 @@ const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
 // =================================================================
 
+// Supabase Auth requires an email address, but this app only wants a plain
+// username + password (same pattern as troops.js, and same domain, so the
+// same staff account works for logging in on either page).
+const STAFF_EMAIL_DOMAIN = '@3475-staff.internal';
+
+function usernameToStaffEmail(username) {
+    return username.trim().toLowerCase().replace(/\s+/g, '') + STAFF_EMAIL_DOMAIN;
+}
+
+function staffEmailToUsername(email) {
+    return (email || '').endsWith(STAFF_EMAIL_DOMAIN)
+        ? email.slice(0, -STAFF_EMAIL_DOMAIN.length)
+        : email;
+}
+
 let supabaseClient = null;
 let isAdmin = false;
+let currentStaffUsername = null;
 let savedApplications = [];
 let currentPosition = 'Vice President D1';
 let selectedTimeSlot = ''; 
@@ -39,17 +55,34 @@ function escapeHtml(value) {
         .replace(/'/g, '&#039;');
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    if (sessionStorage.getItem('isPresidentMode') === 'true') {
-        isAdmin = true;
-        updateAdminUI(); 
+document.addEventListener("DOMContentLoaded", async () => {
+    const client = getSupabase();
+    if (client) {
+        // Restore session from Supabase's own encrypted storage instead of
+        // trusting a plain sessionStorage flag anyone could set by hand.
+        const { data: { session } } = await client.auth.getSession();
+        applyAuthSession(session);
+
+        // Keep isAdmin in sync if the session refreshes, expires, or the
+        // user signs in/out in another tab (or on troops.js, since it's the
+        // same Supabase project/account).
+        client.auth.onAuthStateChange((_event, session) => {
+            applyAuthSession(session);
+        });
     }
-    
+
     loadFooterInfo();
     checkReservationStatus(); 
     startLiveClock();
     loadRecentAccepts();
     subscribeToRealtimeUpdates();
+
+    const loginPasswordInput = document.getElementById('input-login-password');
+    if (loginPasswordInput) {
+        loginPasswordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitStaffLogin();
+        });
+    }
 
     // Fallback polling berjangka panjang saja (jaga-jaga kalau koneksi realtime
     // putus), karena update utama sekarang didorong lewat Supabase Realtime.
@@ -58,6 +91,19 @@ document.addEventListener("DOMContentLoaded", () => {
         loadFooterInfo(); 
     }, 60000);
 });
+
+// Applies (or clears) admin UI/state from a Supabase Auth session. This is
+// the single source of truth for isAdmin now — never set it directly.
+function applyAuthSession(session) {
+    isAdmin = !!session;
+    currentStaffUsername = session ? staffEmailToUsername(session.user.email) : null;
+    if (isAdmin) {
+        updateAdminUI();
+    } else {
+        resetAdminUI();
+    }
+    loadApplications();
+}
 
 // ================= REALTIME SUBSCRIPTIONS =================
 // Menggantikan polling 30 detik dengan update instan begitu ada perubahan
@@ -105,11 +151,25 @@ function updateAdminUI() {
     const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
     const finishSvsBtn = document.getElementById('finish-svs-btn'); 
 
-    if (adminBtn) adminBtn.innerText = "Logout President";
+    if (adminBtn) adminBtn.innerText = currentStaffUsername ? `Logout (${currentStaffUsername.toUpperCase()})` : "Logout President";
     if (adminInd) adminInd.style.display = "inline";
     if (editFooterBtn) editFooterBtn.style.display = "inline-block";
     if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
     if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; 
+}
+
+function resetAdminUI() {
+    const adminBtn = document.getElementById('admin-toggle-btn');
+    const adminInd = document.getElementById('admin-indicator');
+    const editFooterBtn = document.getElementById('edit-footer-btn');
+    const toggleResBtn = document.getElementById('toggle-reservation-btn');
+    const finishSvsBtn = document.getElementById('finish-svs-btn');
+
+    if (adminBtn) adminBtn.innerText = "President Login";
+    if (adminInd) adminInd.style.display = "none";
+    if (editFooterBtn) editFooterBtn.style.display = "none";
+    if (toggleResBtn) toggleResBtn.style.display = "none";
+    if (finishSvsBtn) finishSvsBtn.style.display = "none";
 }
 
 function getSupabase() {
@@ -353,37 +413,67 @@ async function saveEditFooter() {
     }
 }
 
+// ================= PRESIDENT LOGIN (Supabase Auth) =================
+// Real authentication now happens on Supabase's servers via
+// auth.signInWithPassword, which returns a verified session token. Access to
+// write endpoints (reservation_slots, footer_settings, system_settings) must
+// be enforced with Row Level Security policies tied to
+// auth.role() = 'authenticated' — this client-side isAdmin flag is only used
+// to show/hide UI, never to authorize writes.
 function handleAdminLogin() {
-    const editFooterBtn = document.getElementById('edit-footer-btn');
-    const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
-    const finishSvsBtn = document.getElementById('finish-svs-btn'); 
-
-    if (!isAdmin) {
-        const password = prompt("Enter President Password:");
-        if (password === "3475") { 
-            isAdmin = true;
-            sessionStorage.setItem('isPresidentMode', 'true'); 
-            document.getElementById('admin-toggle-btn').innerText = "Logout President";
-            document.getElementById('admin-indicator').style.display = "inline";
-            if (editFooterBtn) editFooterBtn.style.display = "inline-block";
-            if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
-            if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; 
-            showToast("Welcome back President!", "success");
-        } else {
-            showToast("Incorrect password!", "error");
-            return;
-        }
-    } else {
-        isAdmin = false;
-        sessionStorage.removeItem('isPresidentMode'); 
-        document.getElementById('admin-toggle-btn').innerText = "President Login";
-        document.getElementById('admin-indicator').style.display = "none";
-        if (editFooterBtn) editFooterBtn.style.display = "none";
-        if (toggleResBtn) toggleResBtn.style.display = "none"; 
-        if (finishSvsBtn) finishSvsBtn.style.display = "none"; 
-        showToast("Logged out from President Mode.", "info");
+    if (isAdmin) {
+        handleStaffLogout();
+        return;
     }
-    loadApplications();
+    document.getElementById('input-login-username').value = '';
+    document.getElementById('input-login-password').value = '';
+    document.getElementById('login-modal').classList.remove('hidden');
+    document.getElementById('input-login-username').focus();
+}
+
+function closeLoginModal() {
+    document.getElementById('login-modal').classList.add('hidden');
+}
+
+async function submitStaffLogin() {
+    const client = getSupabase();
+    if (!client) return;
+
+    const username = document.getElementById('input-login-username').value.trim();
+    const password = document.getElementById('input-login-password').value;
+
+    if (!username || !password) {
+        showToast("Please enter both username and password!", "warning");
+        return;
+    }
+
+    const submitBtn = document.getElementById('login-submit-btn');
+    setButtonBusy(submitBtn, true, 'Signing in...');
+
+    const { data, error } = await client.auth.signInWithPassword({
+        email: usernameToStaffEmail(username),
+        password
+    });
+
+    setButtonBusy(submitBtn, false);
+
+    if (error) {
+        showToast("Login failed: incorrect username or password", "error");
+        return;
+    }
+
+    applyAuthSession(data.session);
+    closeLoginModal();
+    showToast(`Welcome back${currentStaffUsername ? ', ' + currentStaffUsername.toUpperCase() : ''}!`, "success");
+}
+
+async function handleStaffLogout() {
+    const client = getSupabase();
+    if (client) {
+        await client.auth.signOut();
+    }
+    applyAuthSession(null);
+    showToast("Logged out from President Mode.", "info");
 }
 
 function showSchedule(positionName) {
