@@ -1,32 +1,10 @@
-// ================= SUPABASE PUBLIC CONFIGURATION =================
-const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co'; 
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY'; 
-// =================================================================
+// ================= SHARED CODE LIVES IN common.js =================
+// Supabase credentials, the President-login rules (STAFF_EMAIL_DOMAIN,
+// ALLOWED_ADMIN_USERNAMES, usernameToStaffEmail, staffEmailToUsername,
+// isPresidentUsername), escapeHtml, sanitizeCsvField, getSupabase, and
+// copyToClipboard are all defined once in common.js and shared with
+// script.js. Make sure this page's HTML loads common.js BEFORE this file.
 
-// Supabase Auth requires an email address, but this app only wants a plain
-// username + password. Uses the same email domain as troops.js so accounts
-// can be shared across both pages, but this page only grants admin access to
-// the usernames listed below — a session from troops.js as any OTHER staff
-// (idn, arx, vnx, zxc, cat, tal, etc.) is simply ignored here, it does not
-// unlock President controls on this page.
-const STAFF_EMAIL_DOMAIN = '@3475-staff.internal';
-const ALLOWED_ADMIN_USERNAMES = ['president', 'demon', 'phoenix']; // <-- only these usernames get admin here
-
-function usernameToStaffEmail(username) {
-    return username.trim().toLowerCase().replace(/\s+/g, '') + STAFF_EMAIL_DOMAIN;
-}
-
-function staffEmailToUsername(email) {
-    return (email || '').endsWith(STAFF_EMAIL_DOMAIN)
-        ? email.slice(0, -STAFF_EMAIL_DOMAIN.length)
-        : email;
-}
-
-function isPresidentUsername(username) {
-    return !!username && ALLOWED_ADMIN_USERNAMES.includes(username.trim().toLowerCase());
-}
-
-let supabaseClient = null;
 let isAdmin = false;
 let currentStaffUsername = null;
 let savedApplications = [];
@@ -36,8 +14,9 @@ let isReservationOpen = true;
 let isLoadingApplications = false;
 
 // ================= CENTRALIZED POSITION CONFIG =================
-// Satu sumber kebenaran untuk label singkat & field mana yang disembunyikan
-// di form apply, supaya tidak perlu edit banyak tempat kalau ada posisi baru.
+// One source of truth for each position's short label & which fields are
+// hidden on the apply form, so a new position doesn't require edits in
+// several places.
 const POSITION_CONFIG = {
     'Vice President D1': { shortLabel: 'VP D1', hiddenFields: ['res', 'train'] },
     'Vice President D2': { shortLabel: 'VP D2', hiddenFields: ['fc', 'rfc', 'const', 'train'] },
@@ -47,20 +26,6 @@ const POSITION_CONFIG = {
 
 function getPositionConfig(positionName) {
     return POSITION_CONFIG[positionName] || { shortLabel: positionName, hiddenFields: [] };
-}
-
-// ================= SECURITY: HTML ESCAPING =================
-// Semua data yang berasal dari user (nickname, game id, dst) WAJIB lewat
-// fungsi ini sebelum dimasukkan ke innerHTML, supaya tidak bisa dipakai
-// untuk stored XSS (contoh: nickname berisi <img onerror=...>).
-function escapeHtml(value) {
-    if (value === null || value === undefined) return '';
-    return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -92,8 +57,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Fallback polling berjangka panjang saja (jaga-jaga kalau koneksi realtime
-    // putus), karena update utama sekarang didorong lewat Supabase Realtime.
+    // Long-interval fallback polling only (in case the realtime connection
+    // drops), since primary updates are now pushed via Supabase Realtime.
     setInterval(() => {
         loadRecentAccepts();
         loadFooterInfo(); 
@@ -118,8 +83,8 @@ function applyAuthSession(session) {
 }
 
 // ================= REALTIME SUBSCRIPTIONS =================
-// Menggantikan polling 30 detik dengan update instan begitu ada perubahan
-// data di database (submit baru, accept, delete, dsb).
+// Replaces 30-second polling with instant updates as soon as the
+// database changes (new submission, accept, delete, etc.).
 function subscribeToRealtimeUpdates() {
     const client = getSupabase();
     if (!client) return;
@@ -145,15 +110,6 @@ function subscribeToRealtimeUpdates() {
     } catch (err) {
         console.error("Realtime subscription failed, relying on fallback polling:", err);
     }
-}
-
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        showToast(`ID ${text} copied to clipboard!`, "success");
-    }).catch(err => {
-        console.error('Failed to copy: ', err);
-        showToast("Failed to copy", "error");
-    });
 }
 
 function updateAdminUI() {
@@ -182,17 +138,6 @@ function resetAdminUI() {
     if (editFooterBtn) editFooterBtn.style.display = "none";
     if (toggleResBtn) toggleResBtn.style.display = "none";
     if (finishSvsBtn) finishSvsBtn.style.display = "none";
-}
-
-function getSupabase() {
-    if (!supabaseClient) {
-        if (typeof window.supabase !== 'undefined') {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } else {
-            console.error("Supabase CDN library failed to load");
-        }
-    }
-    return supabaseClient;
 }
 
 async function checkReservationStatus() {
@@ -235,8 +180,8 @@ async function handleToggleReservation() {
     const newStatus = !isReservationOpen;
     const actionText = newStatus ? "open" : "close";
 
-    // Menggunakan modal konfirmasi custom yang sudah ada, supaya konsisten
-    // secara visual (sebelumnya pakai confirm() bawaan browser).
+    // Uses the existing custom confirm modal for visual consistency
+    // (previously used the browser's built-in confirm()).
     showCustomConfirm(`Are you sure to ${actionText} reservation for ${currentPosition}?`, async () => {
         const client = getSupabase();
         if (!client) return;
@@ -311,8 +256,8 @@ function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
     });
 }
 
-// Helper untuk menonaktifkan tombol + tampilkan spinner saat proses async
-// berjalan, supaya user tidak bisa klik ganda (mencegah submit/aksi duplikat).
+// Helper to disable a button + show a spinner while an async process is
+// running, so the user can't double-click (prevents duplicate submits/actions).
 function setButtonBusy(button, isBusy, busyText = null) {
     if (!button) return;
     if (isBusy) {
@@ -367,8 +312,8 @@ async function loadFooterInfo() {
     }
 }
 
-// Membuka modal custom untuk edit info president/guild (menggantikan
-// dua kali prompt() bawaan browser yang tampilannya tidak konsisten).
+// Opens the custom modal for editing president/guild info (replacing
+// two calls to the browser's built-in prompt(), which looked inconsistent).
 function handleEditFooter() {
     if (!isAdmin) return;
     const currentName = document.getElementById('display-president-name').innerText;
@@ -594,8 +539,8 @@ async function loadApplications() {
     renderTimeSlots();
 }
 
-// Baris placeholder saat data masih diambil dari Supabase, supaya tabel
-// tidak terlihat kosong / kedip sebelum data muncul.
+// Placeholder row while data is still being fetched from Supabase, so the
+// table doesn't look empty or flicker before the data appears.
 function renderLoadingState() {
     const tbody = document.getElementById('schedule-table-body');
     if (!tbody) return;
@@ -664,8 +609,8 @@ function renderTimeSlots() {
 }
 
 // ================= SHARED DETAIL BLOCK BUILDER =================
-// Dipakai bersama oleh openDetailsModal() dan openWaitingModal() supaya
-// markup detail statistik tidak diduplikasi di dua tempat berbeda.
+// Shared by openDetailsModal() and openWaitingModal() so the stat detail
+// markup isn't duplicated in two different places.
 function buildStatDetailsHtml(app, compact = false) {
     if (compact) {
         return `
@@ -693,7 +638,7 @@ function buildStatDetailsHtml(app, compact = false) {
     `;
 }
 
-// Fungsi untuk membuka pop-up modal detail
+// Function to open the detail popup modal
 function openDetailsModal(appId) {
     const app = savedApplications.find(a => a.id === appId);
     if (!app) return;
@@ -899,18 +844,6 @@ async function removeApp(id) {
             showToast("Failed executing delete request.", "error");
         }
     }, '#ef4444');
-}
-
-// Membungkus nilai untuk 1 sel CSV: escape tanda kutip ganda dengan benar,
-// dan cegah CSV/Formula Injection dengan prefix apostrof kalau value diawali
-// karakter =, +, -, atau @ (bisa dieksekusi sebagai formula di Excel/Sheets).
-function sanitizeCsvField(value) {
-    let str = String(value ?? '-');
-    if (/^[=+\-@]/.test(str)) {
-        str = `'${str}`;
-    }
-    str = str.replace(/"/g, '""');
-    return `"${str}"`;
 }
 
 function exportToCSV() {
