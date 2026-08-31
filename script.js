@@ -444,12 +444,14 @@ async function saveEditFooter() {
   setButtonBusy(saveBtn, true, "Saving...");
 
   try {
-    const { error } = await client.from("footer_settings").upsert({
-      id: "main",
-      president_name: newName,
-      guild_name: newGuild,
-      updated_at: new Date().toISOString(),
-    });
+    const { error } = await client
+      .from("footer_settings")
+      .update({
+        president_name: newName,
+        guild_name: newGuild,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", "main");
 
     if (error) throw error;
 
