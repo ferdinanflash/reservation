@@ -1,4 +1,4 @@
-// Animasi bara api biru untuk banner "3475" — menggantikan gambar statis.
+// Animasi bara api oranye untuk banner "3475" — menggantikan gambar statis.
 (function () {
 	function initFireBanner() {
 		const container = document.getElementById('fire-banner');
@@ -46,12 +46,12 @@
 				const t = p.life / p.maxLife;
 				if (t >= 1) { particles.splice(i, 1); continue; }
 				const alpha = Math.sin(Math.PI * t) * 0.9;
-				const r = 130 + p.hueShift * 80;
-				const g = 210 + p.hueShift * 30;
-				const b = 255;
+				const r = 255;
+				const g = 120 + p.hueShift * 100;
+				const b = 20 + p.hueShift * 60;
 				ctx.beginPath();
-				ctx.fillStyle = `rgba(${r | 0},${g | 0},${b},${alpha})`;
-				ctx.shadowColor = `rgba(120,210,255,${alpha})`;
+				ctx.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${alpha})`;
+				ctx.shadowColor = `rgba(255,140,0,${alpha})`;
 				ctx.shadowBlur = 5;
 				ctx.arc(p.x, p.y, p.size * (1 - t * 0.4), 0, Math.PI * 2);
 				ctx.fill();
