@@ -10,10 +10,22 @@
 		<script src="common.js"></script>
 					<script src="script.js?v=33" defer=""></script>
 					<script src="fire-banner.js" defer=""></script>
+					<script src="opening-animation.js" defer=""></script>
 				</head>
 	<body>
 		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
 		<div id="snow-container"></div>
+
+		<!-- Opening animation: tidak mengubah layout halaman utama -->
+		<div id="svs-opening" class="svs-opening" aria-hidden="true">
+			<div class="svs-opening-glow"></div>
+			<div class="svs-opening-sparks" aria-hidden="true"></div>
+			<div class="svs-opening-content">
+				<div class="svs-opening-number">3475</div>
+				<div class="svs-opening-line"></div>
+				<div class="svs-opening-title">SVS MINISTRY</div>
+			</div>
+		</div>
 
 		<header class="navbar">
 			<span class="logo fire-text">SVS Ministry</span>

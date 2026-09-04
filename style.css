@@ -854,3 +854,174 @@ th:first-child {
         text-shadow: 0 0 5px #00d4ff, 0 0 15px #00d4ff, 0 0 30px #00d4ff;
     }
 }
+
+
+/* ==================== SVS OPENING ANIMATION ====================
+   Overlay-only: tidak mengubah ukuran, posisi, atau tata letak halaman.
+   Durasi total ±1.8 detik dan hanya tampil sekali per sesi browser.
+====================================================================== */
+.svs-opening {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 48%, rgba(245, 158, 11, 0.10) 0%, rgba(245, 158, 11, 0.035) 18%, transparent 43%),
+        #050505;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    animation: svs-opening-hide 0.45s ease 1.55s forwards;
+}
+
+.svs-opening-content {
+    position: relative;
+    z-index: 3;
+    width: min(92vw, 720px);
+    text-align: center;
+    transform: translateY(8px) scale(0.88);
+    opacity: 0;
+    animation: svs-opening-content-in 1.15s cubic-bezier(.18,.72,.22,1) 0.18s forwards,
+               svs-opening-content-out 0.42s ease 1.32s forwards;
+}
+
+.svs-opening-number {
+    font-family: inherit;
+    font-size: clamp(5rem, 22vw, 11rem);
+    line-height: 0.82;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: #f59e0b;
+    background: linear-gradient(180deg, #fff7c2 0%, #ffd166 22%, #f59e0b 52%, #b45309 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(255, 145, 0, .95))
+            drop-shadow(0 0 22px rgba(255, 100, 0, .75))
+            drop-shadow(0 0 55px rgba(255, 75, 0, .42));
+    animation: svs-number-pulse 0.75s ease-in-out 0.55s both;
+}
+
+.svs-opening-line {
+    width: min(280px, 55vw);
+    height: 2px;
+    margin: 16px auto 13px;
+    background: linear-gradient(90deg, transparent, #ffb52e, #fff0a3, #ff8c00, transparent);
+    box-shadow: 0 0 10px rgba(255, 145, 0, .95), 0 0 28px rgba(255, 90, 0, .55);
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: svs-line-in 0.55s ease 0.72s forwards;
+}
+
+.svs-opening-title {
+    font-family: inherit;
+    font-size: clamp(1.15rem, 4.4vw, 2rem);
+    font-weight: 800;
+    letter-spacing: clamp(.18em, 1vw, .34em);
+    color: #f8fafc;
+    text-shadow: 0 0 7px rgba(255, 255, 255, .35),
+                 0 0 18px rgba(245, 158, 11, .65);
+    opacity: 0;
+    transform: translateY(12px);
+    animation: svs-title-in 0.55s ease 0.83s forwards;
+}
+
+.svs-opening-glow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(70vw, 650px);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 150, 0, .23) 0%, rgba(255, 90, 0, .10) 18%, transparent 65%);
+    filter: blur(5px);
+    animation: svs-glow-pulse 1.25s ease-out both;
+}
+
+.svs-opening-sparks,
+.svs-opening-sparks::before,
+.svs-opening-sparks::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.svs-opening-sparks {
+    opacity: 0;
+    background-image:
+        radial-gradient(circle at 50% 50%, #fff0a3 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 35%, #ff9d00 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #ff6a00 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 70%, #ffb52e 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, #ff7a00 0 1px, transparent 2px);
+    background-size: 190px 190px, 230px 230px, 260px 260px, 310px 310px, 340px 340px;
+    animation: svs-sparks-in 1.25s ease-out 0.05s forwards;
+}
+
+.svs-opening-sparks::before {
+    content: "";
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,145,0,.75) 0deg 0.7deg, transparent 0.7deg 18deg);
+    -webkit-mask-image: radial-gradient(circle, black 0%, transparent 52%);
+    mask-image: radial-gradient(circle, black 0%, transparent 52%);
+    animation: svs-rays 1.15s ease-out both;
+}
+
+.svs-opening-sparks::after {
+    content: "";
+    background: linear-gradient(90deg, transparent 0%, rgba(255,145,0,.6) 49%, rgba(255,240,163,.9) 50%, rgba(255,145,0,.6) 51%, transparent 100%);
+    height: 1px;
+    top: 50%;
+    bottom: auto;
+    transform: scaleX(0);
+    box-shadow: 0 0 18px rgba(255, 100, 0, .8);
+    animation: svs-horizon 0.65s ease-out 0.18s forwards;
+}
+
+@keyframes svs-opening-content-in {
+    0% { opacity: 0; transform: translateY(12px) scale(.72); filter: blur(8px); }
+    55% { opacity: 1; transform: translateY(0) scale(1.04); filter: blur(0); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes svs-opening-content-out {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(1.08); filter: blur(2px); }
+}
+
+@keyframes svs-opening-hide {
+    to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+@keyframes svs-number-pulse {
+    0% { filter: drop-shadow(0 0 4px rgba(255,145,0,.65)); }
+    100% { filter: drop-shadow(0 0 9px rgba(255,145,0,1)) drop-shadow(0 0 35px rgba(255,90,0,.72)); }
+}
+
+@keyframes svs-line-in { to { transform: scaleX(1); } }
+@keyframes svs-title-in { to { opacity: 1; transform: translateY(0); } }
+@keyframes svs-glow-pulse {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(.45); }
+    45% { opacity: 1; }
+    100% { opacity: .7; transform: translate(-50%, -50%) scale(1.12); }
+}
+@keyframes svs-sparks-in { 0% { opacity: 0; transform: scale(.7); } 35% { opacity: 1; } 100% { opacity: .48; transform: scale(1.12); } }
+@keyframes svs-rays { 0% { transform: scale(.2) rotate(-10deg); opacity: 0; } 50% { opacity: .8; } 100% { transform: scale(1.1) rotate(8deg); opacity: 0; } }
+@keyframes svs-horizon { to { transform: scaleX(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .svs-opening,
+    .svs-opening-content,
+    .svs-opening-number,
+    .svs-opening-line,
+    .svs-opening-title,
+    .svs-opening-glow,
+    .svs-opening-sparks,
+    .svs-opening-sparks::before,
+    .svs-opening-sparks::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+    }
+}
