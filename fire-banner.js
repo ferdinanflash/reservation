@@ -35,7 +35,8 @@
 		function draw() {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-			if (Math.random() < 0.6) spawnParticle();
+			if (Math.random() < 0.85) spawnParticle();
+			if (Math.random() < 0.35) spawnParticle();
 
 			for (let i = particles.length - 1; i >= 0; i--) {
 				const p = particles[i];

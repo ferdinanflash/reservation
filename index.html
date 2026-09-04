@@ -8,8 +8,8 @@
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js"></script>
-					<script src="script.js?v=3" defer=""></script>
-					<script src="fire-banner.js?v=3" defer=""></script>
+					<script src="script.js?v=33" defer=""></script>
+					<script src="fire-banner.js" defer=""></script>
 				</head>
 	<body>
 		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
@@ -42,29 +42,39 @@
 							<defs>
 								<linearGradient id="fireBannerFlameGrad" x1="0" y1="1" x2="0" y2="0">
 									<stop offset="0%" stop-color="#7a1a00" stop-opacity="0"/>
-									<stop offset="35%" stop-color="#ff4500" stop-opacity="0.6"/>
-									<stop offset="70%" stop-color="#ffa500" stop-opacity="0.88"/>
-									<stop offset="100%" stop-color="#fff3b0" stop-opacity="0.95"/>
+									<stop offset="35%" stop-color="#ff4500" stop-opacity="0.7"/>
+									<stop offset="70%" stop-color="#ffa500" stop-opacity="0.92"/>
+									<stop offset="100%" stop-color="#fff3b0" stop-opacity="0.98"/>
+								</linearGradient>
+								<linearGradient id="fireBannerFlameInner" x1="0" y1="1" x2="0" y2="0">
+									<stop offset="0%" stop-color="#ffb300" stop-opacity="0"/>
+									<stop offset="30%" stop-color="#ffd54f" stop-opacity="0.85"/>
+									<stop offset="65%" stop-color="#fff59d" stop-opacity="0.95"/>
+									<stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
 								</linearGradient>
 							</defs>
 						</svg>
 						<div class="fire-glow-back"></div>
 						<div class="fire-numbers">
 							<div class="fire-digit-wrap">
-								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path d="M50,140 C20,110 30,80 45,60 C35,45 45,20 50,0 C58,22 68,45 58,62 C75,82 82,112 50,140 Z"/></svg></div>
+								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path class="flame-outer" d="M50,138 C30,138 12,118 14,94 C15,80 26,72 24,58 C23,48 15,40 19,28 C28,36 34,28 31,16 C40,26 46,16 42,4 C54,14 58,28 50,38 C62,42 72,52 68,66 C80,70 90,84 82,100 C90,108 84,126 66,134 C70,118 58,112 56,98 C55,112 44,116 42,128 C46,134 48,138 50,138 Z"/><path class="flame-inner" d="M50,132 C38,130 28,116 30,100 C31,90 38,84 36,74 C35,66 30,60 33,50 C40,56 44,48 42,38 C48,46 52,38 49,28 C56,36 58,46 53,54 C60,58 66,66 62,76 C70,80 76,90 70,100 C74,106 68,118 56,124 C58,114 50,108 48,98 C47,108 40,112 38,120 C42,126 45,130 50,132 Z"/></svg></div>
 								<div class="fire-digit">3</div>
+								<div class="fire-digit-shine">3</div>
 							</div>
 							<div class="fire-digit-wrap">
-								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path d="M50,140 C18,108 32,78 44,58 C33,42 48,18 50,0 C60,20 70,42 60,60 C78,80 84,110 50,140 Z"/></svg></div>
+								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path class="flame-outer" d="M50,138 C30,138 12,118 14,94 C15,80 26,72 24,58 C23,48 15,40 19,28 C28,36 34,28 31,16 C40,26 46,16 42,4 C54,14 58,28 50,38 C62,42 72,52 68,66 C80,70 90,84 82,100 C90,108 84,126 66,134 C70,118 58,112 56,98 C55,112 44,116 42,128 C46,134 48,138 50,138 Z"/><path class="flame-inner" d="M50,132 C38,130 28,116 30,100 C31,90 38,84 36,74 C35,66 30,60 33,50 C40,56 44,48 42,38 C48,46 52,38 49,28 C56,36 58,46 53,54 C60,58 66,66 62,76 C70,80 76,90 70,100 C74,106 68,118 56,124 C58,114 50,108 48,98 C47,108 40,112 38,120 C42,126 45,130 50,132 Z"/></svg></div>
 								<div class="fire-digit">4</div>
+								<div class="fire-digit-shine">4</div>
 							</div>
 							<div class="fire-digit-wrap">
-								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path d="M50,140 C22,112 28,82 46,60 C36,44 44,20 50,0 C57,24 66,44 57,64 C74,84 80,114 50,140 Z"/></svg></div>
+								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path class="flame-outer" d="M50,138 C30,138 12,118 14,94 C15,80 26,72 24,58 C23,48 15,40 19,28 C28,36 34,28 31,16 C40,26 46,16 42,4 C54,14 58,28 50,38 C62,42 72,52 68,66 C80,70 90,84 82,100 C90,108 84,126 66,134 C70,118 58,112 56,98 C55,112 44,116 42,128 C46,134 48,138 50,138 Z"/><path class="flame-inner" d="M50,132 C38,130 28,116 30,100 C31,90 38,84 36,74 C35,66 30,60 33,50 C40,56 44,48 42,38 C48,46 52,38 49,28 C56,36 58,46 53,54 C60,58 66,66 62,76 C70,80 76,90 70,100 C74,106 68,118 56,124 C58,114 50,108 48,98 C47,108 40,112 38,120 C42,126 45,130 50,132 Z"/></svg></div>
 								<div class="fire-digit">7</div>
+								<div class="fire-digit-shine">7</div>
 							</div>
 							<div class="fire-digit-wrap">
-								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path d="M50,140 C20,110 30,80 45,60 C35,45 45,20 50,0 C58,22 68,45 58,62 C75,82 82,112 50,140 Z"/></svg></div>
+								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path class="flame-outer" d="M50,138 C30,138 12,118 14,94 C15,80 26,72 24,58 C23,48 15,40 19,28 C28,36 34,28 31,16 C40,26 46,16 42,4 C54,14 58,28 50,38 C62,42 72,52 68,66 C80,70 90,84 82,100 C90,108 84,126 66,134 C70,118 58,112 56,98 C55,112 44,116 42,128 C46,134 48,138 50,138 Z"/><path class="flame-inner" d="M50,132 C38,130 28,116 30,100 C31,90 38,84 36,74 C35,66 30,60 33,50 C40,56 44,48 42,38 C48,46 52,38 49,28 C56,36 58,46 53,54 C60,58 66,66 62,76 C70,80 76,90 70,100 C74,106 68,118 56,124 C58,114 50,108 48,98 C47,108 40,112 38,120 C42,126 45,130 50,132 Z"/></svg></div>
 								<div class="fire-digit">5</div>
+								<div class="fire-digit-shine">5</div>
 							</div>
 						</div>
 						<canvas id="fire-banner-embers"></canvas>
