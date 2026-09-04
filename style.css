@@ -102,11 +102,12 @@ body {
 /* ==================== ANIMATED ORANGE FIRE BANNER (replaces 3475 image) ==================== */
 .fire-banner {
     position: relative;
-    width: 62%;
-    max-width: 250px;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: 50%;
+    transform: translateX(-50%);
     aspect-ratio: 1408 / 768;
-    margin: 0 auto;
-    border-radius: 8px;
+    border-radius: 0;
     overflow: hidden;
     background: radial-gradient(ellipse at 50% 70%, #1a0d05 0%, #100804 55%, #030201 100%);
     isolation: isolate;
@@ -146,7 +147,7 @@ body {
 
 .fire-digit {
     font-family: Georgia, 'Times New Roman', serif;
-    font-size: clamp(28px, 9vw, 46px);
+    font-size: clamp(40px, 17vw, 110px);
     font-weight: 900;
     line-height: 1;
     position: relative;
