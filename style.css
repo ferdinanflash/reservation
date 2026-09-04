@@ -99,6 +99,124 @@ body {
     border-radius: 8px;   
 }
 
+/* ==================== ANIMATED BLUE FIRE BANNER (replaces 3475 image) ==================== */
+.fire-banner {
+    position: relative;
+    width: 62%;
+    max-width: 250px;
+    aspect-ratio: 1408 / 768;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 70%, #0a1420 0%, #050912 55%, #020306 100%);
+    isolation: isolate;
+}
+
+.fire-glow-back {
+    position: absolute;
+    left: 15%;
+    top: 20%;
+    width: 70%;
+    height: 55%;
+    background: radial-gradient(ellipse at center, rgba(60,180,255,0.35), rgba(20,90,160,0.12) 40%, transparent 70%);
+    filter: blur(10px);
+    animation: fireBannerPulse 2.6s ease-in-out infinite;
+    z-index: 1;
+}
+
+@keyframes fireBannerPulse {
+    0%, 100% { opacity: 0.75; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.06); }
+}
+
+.fire-numbers {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.01em;
+}
+
+.fire-digit-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.fire-digit {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(28px, 9vw, 46px);
+    font-weight: 900;
+    line-height: 1;
+    position: relative;
+    background: linear-gradient(180deg, #eafcff 0%, #7fdbff 25%, #2a9df4 55%, #0a3d62 85%, #041b2e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 4px rgba(120,220,255,0.9))
+            drop-shadow(0 0 10px rgba(60,170,255,0.85))
+            drop-shadow(0 0 22px rgba(20,110,220,0.6));
+    animation: fireBannerFlicker 2.4s infinite ease-in-out;
+}
+
+.fire-digit-wrap:nth-child(1) .fire-digit { animation-delay: 0s; }
+.fire-digit-wrap:nth-child(2) .fire-digit { animation-delay: 0.15s; }
+.fire-digit-wrap:nth-child(3) .fire-digit { animation-delay: 0.3s; }
+.fire-digit-wrap:nth-child(4) .fire-digit { animation-delay: 0.45s; }
+
+@keyframes fireBannerFlicker {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(120,220,255,0.9)) drop-shadow(0 0 10px rgba(60,170,255,0.85)) drop-shadow(0 0 22px rgba(20,110,220,0.6)); transform: translateY(0); }
+    20%      { filter: drop-shadow(0 0 6px rgba(150,235,255,1)) drop-shadow(0 0 15px rgba(80,190,255,0.95)) drop-shadow(0 0 30px rgba(30,130,240,0.7)); transform: translateY(-1px); }
+    40%      { filter: drop-shadow(0 0 3px rgba(120,220,255,0.8)) drop-shadow(0 0 8px rgba(60,170,255,0.7)) drop-shadow(0 0 18px rgba(20,110,220,0.5)); transform: translateY(1px); }
+    60%      { filter: drop-shadow(0 0 6px rgba(160,240,255,1)) drop-shadow(0 0 17px rgba(90,200,255,1)) drop-shadow(0 0 32px rgba(35,140,250,0.75)); transform: translateY(-1px); }
+    80%      { filter: drop-shadow(0 0 4px rgba(120,220,255,0.85)) drop-shadow(0 0 10px rgba(60,170,255,0.8)) drop-shadow(0 0 24px rgba(20,110,220,0.6)); transform: translateY(0); }
+}
+
+.fire-flame-tongue {
+    position: absolute;
+    bottom: 78%;
+    left: 50%;
+    width: 60%;
+    height: 55%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 2;
+    filter: blur(0.5px);
+}
+
+.fire-flame-tongue svg { width: 100%; height: 100%; overflow: visible; }
+
+.fire-flame-tongue path {
+    fill: url(#fireBannerFlameGrad);
+    transform-origin: bottom center;
+    animation: fireBannerRise 1.6s infinite ease-in-out;
+    opacity: 0.9;
+}
+
+.fire-digit-wrap:nth-child(1) .fire-flame-tongue path { animation-delay: 0s; }
+.fire-digit-wrap:nth-child(2) .fire-flame-tongue path { animation-delay: 0.2s; }
+.fire-digit-wrap:nth-child(3) .fire-flame-tongue path { animation-delay: 0.35s; }
+.fire-digit-wrap:nth-child(4) .fire-flame-tongue path { animation-delay: 0.1s; }
+
+@keyframes fireBannerRise {
+    0%, 100% { transform: scaleY(0.85) scaleX(1) translateY(0); opacity: 0.55; }
+    50%      { transform: scaleY(1.15) scaleX(0.9) translateY(-4px); opacity: 0.95; }
+}
+
+#fire-banner-embers {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fire-digit, .fire-flame-tongue path, .fire-glow-back {
+        animation: none !important;
+    }
+}
+
 .page-subtitle {
     text-align: center;
     margin-top: 6px;       

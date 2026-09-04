@@ -9,6 +9,7 @@
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js"></script>
 					<script src="script.js?v=33" defer=""></script>
+					<script src="fire-banner.js" defer=""></script>
 				</head>
 	<body>
 		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
@@ -36,7 +37,38 @@
 				<h1 class="page-title">SVS Ministry Position</h1>
 
 				<div class="banner-container">
-					<img src="https://raw.githubusercontent.com/ferdinanflash/reservation/refs/heads/main/1783251176830.png" alt="SVS Banner" class="position-banner">
+					<div id="fire-banner" class="fire-banner" role="img" aria-label="3475">
+						<svg width="0" height="0" aria-hidden="true">
+							<defs>
+								<linearGradient id="fireBannerFlameGrad" x1="0" y1="1" x2="0" y2="0">
+									<stop offset="0%" stop-color="#0a3d62" stop-opacity="0"/>
+									<stop offset="35%" stop-color="#1c7fc9" stop-opacity="0.55"/>
+									<stop offset="70%" stop-color="#7fdbff" stop-opacity="0.85"/>
+									<stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+								</linearGradient>
+							</defs>
+						</svg>
+						<div class="fire-glow-back"></div>
+						<div class="fire-numbers">
+							<div class="fire-digit-wrap">
+								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path d="M50,140 C20,110 30,80 45,60 C35,45 45,20 50,0 C58,22 68,45 58,62 C75,82 82,112 50,140 Z"/></svg></div>
+								<div class="fire-digit">3</div>
+							</div>
+							<div class="fire-digit-wrap">
+								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path d="M50,140 C18,108 32,78 44,58 C33,42 48,18 50,0 C60,20 70,42 60,60 C78,80 84,110 50,140 Z"/></svg></div>
+								<div class="fire-digit">4</div>
+							</div>
+							<div class="fire-digit-wrap">
+								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path d="M50,140 C22,112 28,82 46,60 C36,44 44,20 50,0 C57,24 66,44 57,64 C74,84 80,114 50,140 Z"/></svg></div>
+								<div class="fire-digit">7</div>
+							</div>
+							<div class="fire-digit-wrap">
+								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path d="M50,140 C20,110 30,80 45,60 C35,45 45,20 50,0 C58,22 68,45 58,62 C75,82 82,112 50,140 Z"/></svg></div>
+								<div class="fire-digit">5</div>
+							</div>
+						</div>
+						<canvas id="fire-banner-embers"></canvas>
+					</div>
             </div>
 
 				<p class="page-subtitle">Select a position to make reservation</p>
