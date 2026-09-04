@@ -1,6 +1,6 @@
 /* SVS Ministry opening animation
- * The overlay is intentionally isolated from the existing page layout.
- * It shows once per browser session, then disappears permanently for that session.
+ * Overlay-only: tidak mengubah ukuran, posisi, atau tata letak halaman utama.
+ * Durasi total 2.5 detik dan selalu tampil setiap kali halaman di-refresh/dibuka.
  */
 (function () {
     'use strict';
@@ -9,28 +9,13 @@
         var intro = document.getElementById('svs-opening');
         if (!intro) return;
 
-        var storageKey = 'svs-ministry-opening-seen-v1';
-        var seen = false;
-        try {
-            seen = sessionStorage.getItem(storageKey) === '1';
-        } catch (_) {}
-
-        if (seen) {
-            intro.remove();
-            return;
-        }
-
-        try {
-            sessionStorage.setItem(storageKey, '1');
-        } catch (_) {}
-
-        // Failsafe: never leave the overlay blocking the page.
+        // Failsafe: jangan pernah membiarkan overlay memblokir halaman.
         window.setTimeout(function () {
             intro.classList.add('is-finished');
             intro.style.opacity = '0';
             intro.style.visibility = 'hidden';
             intro.style.pointerEvents = 'none';
-        }, 2400);
+        }, 2500);
     }
 
     if (document.readyState === 'loading') {

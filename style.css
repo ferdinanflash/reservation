@@ -858,7 +858,7 @@ th:first-child {
 
 /* ==================== SVS OPENING ANIMATION ====================
    Overlay-only: tidak mengubah ukuran, posisi, atau tata letak halaman.
-   Durasi total ±1.8 detik dan hanya tampil sekali per sesi browser.
+   Durasi total ±2.5 detik dan tampil setiap kali halaman dibuka atau di-refresh.
 ====================================================================== */
 .svs-opening {
     position: fixed;
@@ -873,7 +873,7 @@ th:first-child {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    animation: svs-opening-hide 0.45s ease 1.55s forwards;
+    animation: svs-opening-hide 0.50s ease 2.00s forwards;
 }
 
 .svs-opening-content {
@@ -883,8 +883,8 @@ th:first-child {
     text-align: center;
     transform: translateY(8px) scale(0.88);
     opacity: 0;
-    animation: svs-opening-content-in 1.15s cubic-bezier(.18,.72,.22,1) 0.18s forwards,
-               svs-opening-content-out 0.42s ease 1.32s forwards;
+    animation: svs-opening-content-in 1.45s cubic-bezier(.18,.72,.22,1) 0.18s forwards,
+               svs-opening-content-out 0.50s ease 2.00s forwards;
 }
 
 .svs-opening-number {
@@ -901,7 +901,7 @@ th:first-child {
     filter: drop-shadow(0 0 5px rgba(255, 145, 0, .95))
             drop-shadow(0 0 22px rgba(255, 100, 0, .75))
             drop-shadow(0 0 55px rgba(255, 75, 0, .42));
-    animation: svs-number-pulse 0.75s ease-in-out 0.55s both;
+    animation: svs-number-pulse 0.95s ease-in-out 0.65s both;
 }
 
 .svs-opening-line {
@@ -912,7 +912,7 @@ th:first-child {
     box-shadow: 0 0 10px rgba(255, 145, 0, .95), 0 0 28px rgba(255, 90, 0, .55);
     transform: scaleX(0);
     transform-origin: center;
-    animation: svs-line-in 0.55s ease 0.72s forwards;
+    animation: svs-line-in 0.65s ease 0.95s forwards;
 }
 
 .svs-opening-title {
@@ -925,7 +925,7 @@ th:first-child {
                  0 0 18px rgba(245, 158, 11, .65);
     opacity: 0;
     transform: translateY(12px);
-    animation: svs-title-in 0.55s ease 0.83s forwards;
+    animation: svs-title-in 0.65s ease 1.05s forwards;
 }
 
 .svs-opening-glow {
@@ -938,7 +938,7 @@ th:first-child {
     border-radius: 50%;
     background: radial-gradient(circle, rgba(255, 150, 0, .23) 0%, rgba(255, 90, 0, .10) 18%, transparent 65%);
     filter: blur(5px);
-    animation: svs-glow-pulse 1.25s ease-out both;
+    animation: svs-glow-pulse 1.80s ease-out both;
 }
 
 .svs-opening-sparks,
@@ -958,7 +958,7 @@ th:first-child {
         radial-gradient(circle at 22% 70%, #ffb52e 0 1px, transparent 2px),
         radial-gradient(circle at 80% 25%, #ff7a00 0 1px, transparent 2px);
     background-size: 190px 190px, 230px 230px, 260px 260px, 310px 310px, 340px 340px;
-    animation: svs-sparks-in 1.25s ease-out 0.05s forwards;
+    animation: svs-sparks-in 1.90s ease-out 0.05s forwards;
 }
 
 .svs-opening-sparks::before {
@@ -966,7 +966,7 @@ th:first-child {
     background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,145,0,.75) 0deg 0.7deg, transparent 0.7deg 18deg);
     -webkit-mask-image: radial-gradient(circle, black 0%, transparent 52%);
     mask-image: radial-gradient(circle, black 0%, transparent 52%);
-    animation: svs-rays 1.15s ease-out both;
+    animation: svs-rays 1.65s ease-out both;
 }
 
 .svs-opening-sparks::after {
@@ -977,7 +977,7 @@ th:first-child {
     bottom: auto;
     transform: scaleX(0);
     box-shadow: 0 0 18px rgba(255, 100, 0, .8);
-    animation: svs-horizon 0.65s ease-out 0.18s forwards;
+    animation: svs-horizon 0.80s ease-out 0.22s forwards;
 }
 
 @keyframes svs-opening-content-in {
