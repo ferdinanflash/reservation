@@ -1118,13 +1118,14 @@ th:first-child {
     }
 }
 
-/* ==================== RESPONSIVE TABLE HEADER FIX ====================
-   Keep the main schedule table readable on small screens instead of
-   squeezing short headers like NAMA / FC into awkward single letters.
+/* ==================== RESPONSIVE TABLE ====================
+   Keep the schedule table inside the viewport on phones.
+   The previous fixed 760px minimum width made the page look oversized
+   and forced horizontal scrolling on mobile.
 */
 .table-container > table {
-    min-width: 760px;
     width: 100%;
+    min-width: 0;
     table-layout: fixed;
 }
 
@@ -1136,44 +1137,58 @@ th:first-child {
     vertical-align: middle;
 }
 
+/* Balanced proportions for the 6 actual schedule columns. */
 .table-container > table th:nth-child(1),
-.table-container > table td:nth-child(1) { width: 92px; }
+.table-container > table td:nth-child(1) { width: 9%; }
 .table-container > table th:nth-child(2),
-.table-container > table td:nth-child(2) { width: 120px; }
+.table-container > table td:nth-child(2) { width: 18%; }
 .table-container > table th:nth-child(3),
-.table-container > table td:nth-child(3) { width: 145px; }
+.table-container > table td:nth-child(3) { width: 17%; }
 .table-container > table th:nth-child(4),
-.table-container > table td:nth-child(4) { width: 115px; }
+.table-container > table td:nth-child(4) { width: 20%; }
 .table-container > table th:nth-child(5),
-.table-container > table td:nth-child(5) { width: 115px; }
+.table-container > table td:nth-child(5) { width: 26%; }
 .table-container > table th:nth-child(6),
-.table-container > table td:nth-child(6) { width: 82px; }
-.table-container > table th:nth-child(7),
-.table-container > table td:nth-child(7) { width: 91px; }
+.table-container > table td:nth-child(6) { width: 10%; }
 
 .table-container > table th {
-    line-height: 1.2;
-    padding: 10px 6px;
+    line-height: 1.15;
+    padding: 9px 4px;
 }
 
 @media screen and (max-width: 480px) {
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 6px;
+        margin: 14px auto;
+    }
+
+    .table-container {
+        margin-top: 12px;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
     .table-container > table {
-        min-width: 760px;
+        width: 100%;
+        min-width: 0;
     }
 
     .table-container > table th {
-        font-size: 0.72rem;
-        line-height: 1.18;
-        padding: 9px 6px;
-        letter-spacing: 0.35px;
+        font-size: 0.62rem;
+        line-height: 1.12;
+        padding: 8px 2px;
+        letter-spacing: 0.15px;
     }
 
     .table-container > table td {
-        padding: 7px 5px;
+        font-size: 0.68rem;
+        padding: 7px 2px;
     }
 
-    /* Short headers stay visually centered and never collapse to one letter. */
-    .table-container > table th:nth-child(4),
+    /* Keep short labels on one line. */
+    .table-container > table th:nth-child(1),
     .table-container > table th:nth-child(6) {
         white-space: nowrap;
         word-break: keep-all;
