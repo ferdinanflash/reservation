@@ -295,7 +295,7 @@
             btn_remove: "Hapus",
             move_waiting_count: "⚠️ Pindahkan yang Menunggu ({{count}})",
             local_prefix: "Lokal: {{time}}",
-            btn_apply_action: "Ajukan",
+            btn_apply_action: "Mag-apply",
             waiting_list_title: "Daftar Tunggu - {{time}} UTC",
             btn_accept: "Terima",
             btn_drop: "Hapus",
@@ -346,6 +346,170 @@
             toast_id_copied: "ID {{id}} disalin ke clipboard!",
             toast_id_copied_fallback: "ID {{id}} disalin!",
             toast_copy_failed: "Gagal menyalin ID secara otomatis."
+        },
+        ph: {
+            doc_title: "3475 SvS Minister Reservation",
+            admin_login_btn: "Login ng Pangulo",
+            admin_logout_btn: "Logout ng Pangulo",
+            admin_logout_named: "Logout ({{name}})",
+            page_title: "Posisyon ng SvS Minister",
+            page_subtitle: "Pumili ng posisyon para gumawa ng reservation",
+            selected_position_title: "Pangalan ng Posisyon",
+            pos_vp_d1: "Bise Presidente H+1 (Lunes)",
+            pos_vp_d2: "Bise Presidente H+2 (Martes)",
+            pos_edu_d4: "Minister ng Edukasyon H+4 (Huwebes)",
+            pos_vp_d5: "Bise Presidente H+5 (Biyernes)",
+            link_leaderboard: "Record ng Events Leaderboard",
+            link_tal: "Tundra Arm League",
+            link_transfer_portal: "Transfer Portal",
+            btn_back: "< Bumalik sa mga posisyon",
+            btn_export_csv: "I-export ang CSV",
+            btn_close_reservation: "Isara ang Reservation",
+            btn_open_reservation: "Buksan ang Reservation",
+            schedule_opening: "Binubuksan...",
+            schedule_closing: "Isinasara...",
+            schedule_heading: "Iskedyul ng Time Slot",
+            admin_mode_indicator: "(PRESIDENT MODE)",
+            label_timezone: "Timezone na Ipinapakita:",
+            th_action: "AKSYON",
+            th_preferred_time: "TIME SLOT (UTC+0)",
+            th_status: "STATUS",
+            th_nickname: "NICKNAME SA GAME",
+            th_gameid: "GAME ID",
+            th_fc: "FC",
+            modal_nickname_short: "NICKNAME",
+            modal_id_short: "ID",
+            reassign_modal_title: "Ilipat ang mga Naghihintay na Aplikante",
+            reassign_desc: "Ang slot na ito ay mayroon nang tinanggap na application. HINDI buburahin ang mga aplikante sa ibaba — pumili ng bakanteng slot para sa bawat isa at i-click ang Ilipat.",
+            th_move_to: "ILIPAT SA",
+            details_modal_title: "Detalye ng Application",
+            apply_modal_title: "Mag-apply para sa Time Slot",
+            apply_position_label: "Posisyon:",
+            apply_time_label: "Oras:",
+            label_nickname: "Nickname sa Game",
+            placeholder_nickname: "Ilagay ang iyong nickname",
+            label_gameid: "Game ID",
+            placeholder_gameid: "Ilagay ang iyong game ID",
+            label_furnace: "Level ng Furnace",
+            option_select_furnace: "Piliin ang Level ng Furnace",
+            label_fc: "Halaga ng Fire Crystals",
+            placeholder_fc: "Fire Crystal",
+            label_rfc: "Halaga ng Refined Fire Crystals",
+            placeholder_rfc: "Refined Fire Crystal",
+            label_gensp: "General Speedups (Araw)",
+            placeholder_gensp: "General Speedup sa Araw",
+            label_constsp: "Construction Speedups (Araw)",
+            placeholder_constsp: "Construction Speedup sa Araw",
+            label_ressp: "Research Speedups (Araw)",
+            placeholder_ressp: "Research Speedup sa Araw",
+            label_trainsp: "Troop Training Speedups (Araw)",
+            placeholder_trainsp: "Training Speedup sa Araw",
+            btn_cancel: "Kanselahin",
+            btn_submit_application: "Isumite ang Application",
+            footer_current_president: "Kasalukuyang Pangulo",
+            footer_recent_log_title: "📢 MGA BAGONG TINANGGAP NA RESERVATION",
+            log_empty: "Wala pang kamakailang aktibidad",
+            btn_edit_footer: "I-edit ang Info ng Pangulo",
+            btn_finish_svs: "TAPUSIN ANG SvS",
+            login_modal_title: "Login ng Pangulo",
+            label_username: "Username",
+            placeholder_username: "Ilagay ang username",
+            label_password: "Password",
+            placeholder_password: "Ilagay ang password",
+            btn_signin: "Mag-sign In",
+            edit_footer_modal_title: "I-edit ang Info ng Pangulo",
+            label_president_name: "Pangalan ng Pangulo",
+            placeholder_president_name: "Ilagay ang pangalan ng pangulo",
+            label_guild_name: "Pangalan ng Guild",
+            placeholder_guild_name: "Ilagay ang pangalan ng guild",
+            btn_save: "I-save",
+            confirm_default_message: "Sigurado ka ba?",
+            btn_ok: "OK",
+            title_view_details: "Tingnan ang Detalye",
+            label_unknown: "Hindi Alam",
+            applicants_list_title: "Listahan ng mga Aplikante",
+            btn_close: "Isara",
+            created_by: "Ginawa Ni : ACE aka DEMON",
+            confirm_toggle_reservation: "Sigurado ka bang {{action}} ang reservation para sa {{position}}?",
+            action_open: "buksan",
+            action_close: "isara",
+            toast_reservation_now: "Ang reservation ng {{position}} ay {{status}} na!",
+            status_word_open: "bukas",
+            status_word_close: "sarado",
+            toast_update_reservation_failed: "Hindi ma-update ang status ng reservation. Pakisubukan muli.",
+            please_wait: "Mangyaring maghintay...",
+            saving: "Sine-save...",
+            loading_schedule: "Nilo-load ang schedule...",
+            signing_in: "Nagsa-sign in...",
+            submitting: "Isinusumite...",
+            clearing: "Binubura...",
+            toast_name_guild_empty: "Hindi maaaring walang laman ang Name at Guild!",
+            toast_president_updated: "Na-update na ang info ng Pangulo para sa lahat!",
+            toast_update_db_failed: "Hindi ma-update ang database: {{detail}}",
+            toast_enter_both: "Ilagay ang username at password!",
+            toast_president_only: "Para lamang sa account ng Pangulo ang page na ito.",
+            toast_login_failed: "Nabigo ang login: maling username o password",
+            toast_welcome_back: "Maligayang pagbabalik, Pangulo!",
+            toast_logged_out: "Nag-logout mula sa President Mode.",
+            local_label: "LOKAL:",
+            utc_label: "UTC-0:",
+            status_accepted: "Tinanggap",
+            status_no_applications: "Walang Application",
+            status_waiting_count: "Naghihintay ({{count}})",
+            btn_remove: "Alisin",
+            move_waiting_count: "⚠️ Ilipat ang Naghihintay ({{count}})",
+            local_prefix: "Lokal: {{time}}",
+            btn_apply_action: "Ajukan",
+            waiting_list_title: "Listahan ng Naghihintay - {{time}} UTC",
+            btn_accept: "Tanggapin",
+            btn_drop: "I-drop",
+            stat_furnace_lvl: "Level ng Furnace:",
+            stat_fc: "FC:",
+            stat_rfc: "RFC:",
+            stat_general: "General:",
+            stat_const: "Construction:",
+            stat_research: "Research:",
+            stat_train: "Training:",
+            stat_nickname: "Nickname:",
+            stat_game_id: "Game ID:",
+            stat_furnace_level: "Level ng Furnace:",
+            stat_fire_crystals: "Fire Crystals (FC):",
+            stat_refined_fire_crystals: "Refined Fire Crystals (RFC):",
+            stat_general_speedup: "General Speedup:",
+            stat_construction_speedup: "Construction Speedup:",
+            stat_research_speedup: "Research Speedup:",
+            stat_training_speedup: "Training Speedup:",
+            days_suffix: "Araw",
+            toast_reservation_locked: "Naka-lock pa ang reservation para sa araw na ito",
+            toast_enter_nickname: "Ilagay ang In-Game Nickname!",
+            toast_enter_gameid: "Ilagay ang In-Game ID!",
+            toast_gameid_numeric: "Numero lamang ang maaaring nasa Game ID!",
+            toast_select_furnace: "Piliin ang Level ng Furnace!",
+            toast_app_submitted: "Matagumpay na naisumite ang application!",
+            toast_app_submit_failed: "Hindi naisumite ang application. Pakisubukan muli.",
+            confirm_accept_app: "Tanggapin ang application na ito? Ila-lock nito ang time slot.",
+            toast_app_approved: "Naaprubahan ang Application!",
+            toast_app_approve_failed: "Hindi maaprubahan. Maaaring kinuha na ito ng iba.",
+            reassign_modal_title_dyn: "Ilipat ang Naghihintay na Aplikante - {{time}} UTC",
+            no_more_waiting: "Wala nang naghihintay na aplikante sa slot na ito.",
+            no_free_slots: "Walang bakanteng slot",
+            btn_move: "Ilipat",
+            toast_no_slot_selected: "Walang napiling available na slot.",
+            toast_applicant_moved: "Nailipat ang aplikante sa {{time}} UTC.",
+            toast_move_failed: "Hindi nailipat ang aplikante. Pakisubukan muli.",
+            confirm_delete_record: "Permanenteng burahin ang application record na ito?",
+            toast_record_dropped: "Matagumpay na na-delete ang record.",
+            toast_delete_failed: "Nabigo ang pag-delete.",
+            toast_no_data_export: "Walang data na maaaring i-export!",
+            toast_csv_downloaded: "Matagumpay na na-download ang CSV file!",
+            confirm_finish_svs: "Babala sa pagtatapos ng SvS!\n Sigurado ka ba? Mare-reset ang lahat ng na-submit na data",
+            toast_all_cleared: "Nabura na ang lahat ng record.",
+            toast_clear_failed: "Hindi mabura ang data. Pakisubukan muli.",
+            your_location_suffix: " (Iyong Lokasyon)",
+            toast_load_schedule_failed: "Hindi ma-load ang schedule data. I-refresh ang page.",
+            toast_id_copied: "Nakopya ang ID {{id}} sa clipboard!",
+            toast_id_copied_fallback: "Nakopya ang ID {{id}}!",
+            toast_copy_failed: "Hindi awtomatikong makopya ang ID."
         },
         cn: {
             doc_title: "3475 SvS 部长预约系统",
@@ -517,19 +681,19 @@
     // Position display-name translations. Internal English keys (used as
     // DB values / currentPosition) never change — only the label shown.
     const POSITION_NAMES = {
-        'Vice President D1': { en: 'Vice President D1', cn: '副会长 D1', id: 'Wakil Presiden H+1' },
-        'Vice President D2': { en: 'Vice President D2', cn: '副会长 D2', id: 'Wakil Presiden H+2' },
-        'Minister of Education D4': { en: 'Minister of Education D4', cn: '教育部长 D4', id: 'Menteri Pendidikan H+4' },
-        'Vice President D5': { en: 'Vice President D5', cn: '副会长 D5', id: 'Wakil Presiden H+5' }
+        'Vice President D1': { en: 'Vice President D1', cn: '副会长 D1', id: 'Wakil Presiden H+1', ph: 'Bise Presidente H+1' },
+        'Vice President D2': { en: 'Vice President D2', cn: '副会长 D2', id: 'Wakil Presiden H+2', ph: 'Bise Presidente H+2' },
+        'Minister of Education D4': { en: 'Minister of Education D4', cn: '教育部长 D4', id: 'Menteri Pendidikan H+4', ph: 'Minister ng Edukasyon H+4' },
+        'Vice President D5': { en: 'Vice President D5', cn: '副会长 D5', id: 'Wakil Presiden H+5', ph: 'Bise Presidente H+5' }
     };
     const POSITION_SHORT_LABELS = {
-        'Vice President D1': { en: 'VP D1', cn: '副D1', id: 'WP H+1' },
-        'Vice President D2': { en: 'VP D2', cn: '副D2', id: 'WP H+2' },
-        'Minister of Education D4': { en: 'Edu D4', cn: '教D4', id: 'Pendidikan H+4' },
-        'Vice President D5': { en: 'VP D5', cn: '副D5', id: 'WP H+5' }
+        'Vice President D1': { en: 'VP D1', cn: '副D1', id: 'WP H+1', ph: 'BP H+1' },
+        'Vice President D2': { en: 'VP D2', cn: '副D2', id: 'WP H+2', ph: 'BP H+2' },
+        'Minister of Education D4': { en: 'Edu D4', cn: '教D4', id: 'Pendidikan H+4', ph: 'Edu H+4' },
+        'Vice President D5': { en: 'VP D5', cn: '副D5', id: 'WP H+5', ph: 'BP H+5' }
     };
 
-    let currentLang = ['en', 'cn', 'id'].includes(localStorage.getItem(LANG_STORAGE_KEY)) ? localStorage.getItem(LANG_STORAGE_KEY) : 'en';
+    let currentLang = ['en', 'cn', 'id', 'ph'].includes(localStorage.getItem(LANG_STORAGE_KEY)) ? localStorage.getItem(LANG_STORAGE_KEY) : 'en';
 
     function t(key, vars) {
         const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
@@ -558,7 +722,7 @@
     function getLang() { return currentLang; }
 
     function applyStaticTranslations() {
-        document.documentElement.lang = currentLang === 'cn' ? 'zh' : (currentLang === 'id' ? 'id' : 'en');
+        document.documentElement.lang = currentLang === 'cn' ? 'zh' : (currentLang === 'id' ? 'id' : (currentLang === 'ph' ? 'tl' : 'en'));
         document.title = t('doc_title');
 
         document.querySelectorAll('[data-i18n]').forEach(function (el) {
@@ -575,7 +739,7 @@
         const toggleBtn = document.getElementById('lang-toggle-btn');
         if (toggleBtn) {
             toggleBtn.setAttribute('data-lang', currentLang);
-            toggleBtn.setAttribute('aria-label', currentLang === 'en' ? 'Switch to Chinese or Indonesian' : (currentLang === 'cn' ? '切换为英语或印尼语' : 'Ganti ke Bahasa Inggris atau Mandarin'));
+            toggleBtn.setAttribute('aria-label', currentLang === 'en' ? 'Switch to Chinese, Indonesian, or Filipino' : (currentLang === 'cn' ? '切换为英语、印尼语或菲律宾语' : (currentLang === 'id' ? 'Ganti ke Bahasa Inggris, Mandarin, atau Filipino' : 'Lumipat sa English, Mandarin, o Bahasa Indonesia')));
         }
     }
 
@@ -632,7 +796,7 @@
     }
 
     function setLanguage(lang) {
-        if (!['en', 'cn', 'id'].includes(lang)) return;
+        if (!['en', 'cn', 'id', 'ph'].includes(lang)) return;
         currentLang = lang;
         localStorage.setItem(LANG_STORAGE_KEY, lang);
         applyStaticTranslations();
@@ -640,7 +804,7 @@
     }
 
     function toggleLanguage() {
-        setLanguage(currentLang === 'en' ? 'cn' : (currentLang === 'cn' ? 'id' : 'en'));
+        setLanguage(currentLang === 'en' ? 'cn' : (currentLang === 'cn' ? 'id' : (currentLang === 'id' ? 'ph' : 'en')));
     }
 
     // Expose globally so script.js / common.js / inline HTML can use them.

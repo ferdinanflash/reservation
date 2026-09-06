@@ -34,7 +34,8 @@
 .lang-option:hover { opacity: 1; color: #fff; transform: translateY(-1px); }
 .lang-toggle[data-lang="en"] .lang-eng,
 .lang-toggle[data-lang="cn"] .lang-cn,
-.lang-toggle[data-lang="id"] .lang-id {
+.lang-toggle[data-lang="id"] .lang-id,
+.lang-toggle[data-lang="ph"] .lang-ph {
     opacity: 1;
     color: #f59e0b;
     background: rgba(245,158,11,0.10);
