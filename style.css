@@ -413,11 +413,57 @@ body {
     flex: 1;
     padding: 10px 14px;
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 700;
     text-decoration: none;
-    opacity: 0.9;
+    opacity: 1;
     justify-content: center;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent;
+    background: linear-gradient(#171a22, #171a22) padding-box,
+                linear-gradient(135deg, #64748b, #cbd5e1, #334155) border-box;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 5px 14px rgba(0,0,0,0.28);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+/* Tiga link dibuat seperti tiga portal eksklusif dengan border berbeda. */
+.external-link-container .list-item-small:nth-child(1) {
+    border-radius: 4px 14px 4px 14px;
+    background: linear-gradient(#171a22, #171a22) padding-box,
+                linear-gradient(135deg, #f59e0b, #fde68a, #b45309) border-box;
+    box-shadow: 0 0 14px rgba(245,158,11,0.14), inset 0 0 12px rgba(245,158,11,0.04);
+}
+
+.external-link-container .list-item-small:nth-child(2) {
+    border-radius: 14px 4px 14px 4px;
+    background: linear-gradient(#171a22, #171a22) padding-box,
+                linear-gradient(135deg, #22d3ee, #a5f3fc, #0e7490) border-box;
+    box-shadow: 0 0 16px rgba(34,211,238,0.16), inset 0 0 12px rgba(34,211,238,0.04);
+}
+
+.external-link-container .list-item-small:nth-child(3) {
+    border-radius: 14px 4px 14px 4px;
+    background: linear-gradient(#171a22, #171a22) padding-box,
+                linear-gradient(135deg, #a78bfa, #e9d5ff, #6d28d9) border-box;
+    box-shadow: 0 0 16px rgba(167,139,250,0.15), inset 0 0 12px rgba(167,139,250,0.04);
+}
+
+.external-link-container .list-item-small:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.12);
+}
+
+.external-link-container .list-item-small:nth-child(1):hover {
+    box-shadow: 0 0 24px rgba(245,158,11,0.30), 0 8px 18px rgba(0,0,0,0.35);
+}
+
+.external-link-container .list-item-small:nth-child(2):hover {
+    box-shadow: 0 0 26px rgba(34,211,238,0.32), 0 8px 18px rgba(0,0,0,0.35);
+}
+
+.external-link-container .list-item-small:nth-child(3):hover {
+    box-shadow: 0 0 26px rgba(167,139,250,0.30), 0 8px 18px rgba(0,0,0,0.35);
 }
 
 .list-item-small .arrow {
