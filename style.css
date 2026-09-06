@@ -26,7 +26,8 @@
 .lang-option { opacity: 0.45; transition: all 0.2s ease; }
 .lang-separator { opacity: 0.35; }
 .lang-toggle[data-lang="en"] .lang-eng,
-.lang-toggle[data-lang="cn"] .lang-cn {
+.lang-toggle[data-lang="cn"] .lang-cn,
+.lang-toggle[data-lang="id"] .lang-id {
     opacity: 1;
     color: #f59e0b;
 }
@@ -1062,3 +1063,5 @@ th:first-child {
         animation-delay: 0ms !important;
     }
 }
+
+.lang-toggle[data-lang="id"] .lang-id { text-shadow: 0 0 8px rgba(245,158,11,0.35); }
