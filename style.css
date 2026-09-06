@@ -1195,3 +1195,28 @@ th:first-child {
         overflow-wrap: normal;
     }
 }
+
+/* Fix mobile action column: the Indonesian "Ajukan" button must stay
+   completely inside its own column and never cover the Time Slot column. */
+@media screen and (max-width: 480px) {
+    .table-container > table th:nth-child(1),
+    .table-container > table td:nth-child(1) { width: 20%; min-width: 78px; }
+    .table-container > table th:nth-child(2),
+    .table-container > table td:nth-child(2) { width: 18%; }
+    .table-container > table th:nth-child(3),
+    .table-container > table td:nth-child(3) { width: 17%; }
+    .table-container > table th:nth-child(4),
+    .table-container > table td:nth-child(4) { width: 19%; }
+    .table-container > table th:nth-child(5),
+    .table-container > table td:nth-child(5) { width: 21%; }
+    .table-container > table th:nth-child(6),
+    .table-container > table td:nth-child(6) { width: 5%; }
+
+    .table-container > table td:first-child .btn-apply {
+        max-width: 100%;
+        box-sizing: border-box;
+        padding-left: 4px;
+        padding-right: 4px;
+        font-size: 0.68rem;
+    }
+}
