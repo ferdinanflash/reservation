@@ -295,7 +295,7 @@
             btn_remove: "Hapus",
             move_waiting_count: "⚠️ Pindahkan yang Menunggu ({{count}})",
             local_prefix: "Lokal: {{time}}",
-            btn_apply_action: "Mag-apply",
+            btn_apply_action: "Ajukan",
             waiting_list_title: "Daftar Tunggu - {{time}} UTC",
             btn_accept: "Terima",
             btn_drop: "Hapus",
