@@ -1117,3 +1117,66 @@ th:first-child {
         animation-delay: 0ms !important;
     }
 }
+
+/* ==================== RESPONSIVE TABLE HEADER FIX ====================
+   Keep the main schedule table readable on small screens instead of
+   squeezing short headers like NAMA / FC into awkward single letters.
+*/
+.table-container > table {
+    min-width: 760px;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table-container > table th,
+.table-container > table td {
+    overflow-wrap: anywhere;
+    word-break: normal;
+    white-space: normal;
+    vertical-align: middle;
+}
+
+.table-container > table th:nth-child(1),
+.table-container > table td:nth-child(1) { width: 92px; }
+.table-container > table th:nth-child(2),
+.table-container > table td:nth-child(2) { width: 120px; }
+.table-container > table th:nth-child(3),
+.table-container > table td:nth-child(3) { width: 145px; }
+.table-container > table th:nth-child(4),
+.table-container > table td:nth-child(4) { width: 115px; }
+.table-container > table th:nth-child(5),
+.table-container > table td:nth-child(5) { width: 115px; }
+.table-container > table th:nth-child(6),
+.table-container > table td:nth-child(6) { width: 82px; }
+.table-container > table th:nth-child(7),
+.table-container > table td:nth-child(7) { width: 91px; }
+
+.table-container > table th {
+    line-height: 1.2;
+    padding: 10px 6px;
+}
+
+@media screen and (max-width: 480px) {
+    .table-container > table {
+        min-width: 760px;
+    }
+
+    .table-container > table th {
+        font-size: 0.72rem;
+        line-height: 1.18;
+        padding: 9px 6px;
+        letter-spacing: 0.35px;
+    }
+
+    .table-container > table td {
+        padding: 7px 5px;
+    }
+
+    /* Short headers stay visually centered and never collapse to one letter. */
+    .table-container > table th:nth-child(4),
+    .table-container > table th:nth-child(6) {
+        white-space: nowrap;
+        word-break: keep-all;
+        overflow-wrap: normal;
+    }
+}
