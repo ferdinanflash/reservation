@@ -210,7 +210,7 @@
             th_action: "AKSI",
             th_preferred_time: "WAKTU PILIHAN (UTC)",
             th_status: "STATUS (PEMOHON)",
-            th_nickname: "NAMA PANGGILAN DALAM GAME",
+            th_nickname: "NAMA",
             th_gameid: "ID DALAM GAME",
             th_fc: "FC",
             modal_nickname_short: "NAMA",
