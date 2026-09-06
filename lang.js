@@ -459,7 +459,7 @@
             btn_remove: "Alisin",
             move_waiting_count: "⚠️ Ilipat ang Naghihintay ({{count}})",
             local_prefix: "Lokal: {{time}}",
-            btn_apply_action: "Ajukan",
+            btn_apply_action: "Mag-apply",
             waiting_list_title: "Listahan ng Naghihintay - {{time}} UTC",
             btn_accept: "Tanggapin",
             btn_drop: "I-drop",
