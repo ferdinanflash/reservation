@@ -183,6 +183,170 @@
             toast_id_copied_fallback: "ID {{id}} copied!",
             toast_copy_failed: "Failed to copy ID automatically."
         },
+        id: {
+            doc_title: "3475 SVS Ministry Reservasi",
+            admin_login_btn: "Login Presiden",
+            admin_logout_btn: "Logout Presiden",
+            admin_logout_named: "Logout ({{name}})",
+            page_title: "Posisi SVS Ministry",
+            page_subtitle: "Pilih posisi untuk membuat reservasi",
+            selected_position_title: "Judul Posisi",
+            pos_vp_d1: "Wakil Presiden D1 (Senin)",
+            pos_vp_d2: "Wakil Presiden D2 (Selasa)",
+            pos_edu_d4: "Menteri Pendidikan D4 (Kamis)",
+            pos_vp_d5: "Wakil Presiden D5 (Jumat)",
+            link_leaderboard: "Rekor Events Leaderboard",
+            link_tal: "Tundra Arm League",
+            link_transfer_portal: "Portal Transfer",
+            btn_back: "< Kembali ke posisi",
+            btn_export_csv: "Ekspor CSV",
+            btn_close_reservation: "Tutup Reservasi",
+            btn_open_reservation: "Buka Reservasi",
+            schedule_opening: "Membuka...",
+            schedule_closing: "Menutup...",
+            schedule_heading: "Jadwal Slot Waktu",
+            admin_mode_indicator: "(MODE PRESIDEN)",
+            label_timezone: "Zona Waktu Tampilan:",
+            th_action: "AKSI",
+            th_preferred_time: "WAKTU PILIHAN (UTC)",
+            th_status: "STATUS (PEMOHON)",
+            th_nickname: "NAMA PANGGILAN DALAM GAME",
+            th_gameid: "ID DALAM GAME",
+            th_fc: "FC",
+            modal_nickname_short: "NAMA",
+            modal_id_short: "ID",
+            reassign_modal_title: "Pindahkan Pemohon yang Menunggu",
+            reassign_desc: "Slot ini sekarang memiliki aplikasi yang Diterima. Pemohon di bawah TIDAK dihapus — pilih slot kosong untuk masing-masing lalu klik Pindahkan.",
+            th_move_to: "PINDAHKAN KE",
+            details_modal_title: "Detail Aplikasi",
+            apply_modal_title: "Ajukan Slot Waktu",
+            apply_position_label: "Posisi:",
+            apply_time_label: "Waktu:",
+            label_nickname: "Nama Panggilan Dalam Game",
+            placeholder_nickname: "Masukkan nama panggilan",
+            label_gameid: "ID Dalam Game",
+            placeholder_gameid: "Masukkan ID game",
+            label_furnace: "Level Furnace",
+            option_select_furnace: "Pilih Level Furnace",
+            label_fc: "Jumlah Fire Crystals",
+            placeholder_fc: "Fire Crystal",
+            label_rfc: "Jumlah Refined Fire Crystals",
+            placeholder_rfc: "Refined Fire Crystal",
+            label_gensp: "Speedup Umum (Hari)",
+            placeholder_gensp: "Speedup Umum dalam Hari",
+            label_constsp: "Speedup Konstruksi (Hari)",
+            placeholder_constsp: "Speedup Konstruksi dalam Hari",
+            label_ressp: "Speedup Riset (Hari)",
+            placeholder_ressp: "Speedup Riset dalam Hari",
+            label_trainsp: "Speedup Pelatihan Pasukan (Hari)",
+            placeholder_trainsp: "Speedup Pelatihan dalam Hari",
+            btn_cancel: "Batal",
+            btn_submit_application: "Kirim Aplikasi",
+            footer_current_president: "Presiden Saat Ini",
+            footer_recent_log_title: "📢 PENUNJUKAN YANG BARU DITERIMA",
+            log_empty: "Belum ada aktivitas",
+            btn_edit_footer: "Edit Info Presiden",
+            btn_finish_svs: "SELESAIKAN SVS",
+            login_modal_title: "Login Presiden",
+            label_username: "Nama Pengguna",
+            placeholder_username: "Masukkan nama pengguna",
+            label_password: "Kata Sandi",
+            placeholder_password: "Masukkan kata sandi",
+            btn_signin: "Masuk",
+            edit_footer_modal_title: "Edit Info Presiden",
+            label_president_name: "Nama Presiden",
+            placeholder_president_name: "Masukkan nama presiden",
+            label_guild_name: "Nama Guild",
+            placeholder_guild_name: "Masukkan nama guild",
+            btn_save: "Simpan",
+            confirm_default_message: "Apakah Anda yakin?",
+            btn_ok: "OK",
+            title_view_details: "Lihat Detail",
+            label_unknown: "Tidak Diketahui",
+            applicants_list_title: "Daftar Pemohon",
+            btn_close: "Tutup",
+            created_by: "Dibuat Oleh : ACE aka DEMON",
+            confirm_toggle_reservation: "Apakah Anda yakin ingin {{action}} reservasi untuk {{position}}?",
+            action_open: "membuka",
+            action_close: "menutup",
+            toast_reservation_now: "Reservasi {{position}} sekarang-{{status}}!",
+            status_word_open: "terbuka",
+            status_word_close: "tertutup",
+            toast_update_reservation_failed: "Gagal memperbarui status reservasi. Silakan coba lagi.",
+            please_wait: "Harap tunggu...",
+            saving: "Menyimpan...",
+            loading_schedule: "Memuat jadwal...",
+            signing_in: "Sedang masuk...",
+            submitting: "Mengirim...",
+            clearing: "Menghapus...",
+            toast_name_guild_empty: "Nama dan Guild tidak boleh kosong!",
+            toast_president_updated: "Info Presiden berhasil diperbarui secara global!",
+            toast_update_db_failed: "Gagal memperbarui database: {{detail}}",
+            toast_enter_both: "Harap masukkan nama pengguna dan kata sandi!",
+            toast_president_only: "Halaman ini hanya untuk akun Presiden.",
+            toast_login_failed: "Login gagal: nama pengguna atau kata sandi salah",
+            toast_welcome_back: "Selamat datang kembali, Presiden!",
+            toast_logged_out: "Keluar dari Mode Presiden.",
+            local_label: "LOKAL:",
+            utc_label: "UTC-0:",
+            status_accepted: "Diterima",
+            status_no_applications: "Tidak Ada Aplikasi",
+            status_waiting_count: "Menunggu ({{count}})",
+            btn_remove: "Hapus",
+            move_waiting_count: "⚠️ Pindahkan yang Menunggu ({{count}})",
+            local_prefix: "Lokal: {{time}}",
+            btn_apply_action: "Ajukan",
+            waiting_list_title: "Daftar Tunggu - {{time}} UTC",
+            btn_accept: "Terima",
+            btn_drop: "Hapus",
+            stat_furnace_lvl: "Level Furnace:",
+            stat_fc: "FC:",
+            stat_rfc: "RFC:",
+            stat_general: "Umum:",
+            stat_const: "Konstruksi:",
+            stat_research: "Riset:",
+            stat_train: "Pelatihan:",
+            stat_nickname: "Nama Panggilan:",
+            stat_game_id: "ID Game:",
+            stat_furnace_level: "Level Furnace:",
+            stat_fire_crystals: "Fire Crystals (FC):",
+            stat_refined_fire_crystals: "Refined Fire Crystals (RFC):",
+            stat_general_speedup: "Speedup Umum:",
+            stat_construction_speedup: "Speedup Konstruksi:",
+            stat_research_speedup: "Speedup Riset:",
+            stat_training_speedup: "Speedup Pelatihan:",
+            days_suffix: "Hari",
+            toast_reservation_locked: "Reservasi hari ini masih terkunci untuk saat ini",
+            toast_enter_nickname: "Harap masukkan Nama Panggilan Dalam Game!",
+            toast_enter_gameid: "Harap masukkan ID Dalam Game!",
+            toast_gameid_numeric: "ID Game hanya boleh berisi angka!",
+            toast_select_furnace: "Harap pilih Level Furnace!",
+            toast_app_submitted: "Aplikasi berhasil dikirim!",
+            toast_app_submit_failed: "Gagal mengirim aplikasi. Silakan coba lagi.",
+            confirm_accept_app: "Terima aplikasi ini? Slot waktu ini akan terkunci.",
+            toast_app_approved: "Aplikasi Disetujui!",
+            toast_app_approve_failed: "Gagal menyetujui. Mungkin baru saja diambil orang lain.",
+            reassign_modal_title_dyn: "Pindahkan Pemohon yang Menunggu - {{time}} UTC",
+            no_more_waiting: "Tidak ada lagi pemohon yang menunggu di slot ini.",
+            no_free_slots: "Tidak ada slot kosong",
+            btn_move: "Pindahkan",
+            toast_no_slot_selected: "Tidak ada slot tersedia yang dipilih.",
+            toast_applicant_moved: "Pemohon dipindahkan ke {{time}} UTC.",
+            toast_move_failed: "Gagal memindahkan pemohon. Silakan coba lagi.",
+            confirm_delete_record: "Hapus catatan aplikasi ini secara permanen?",
+            toast_record_dropped: "Catatan berhasil dihapus.",
+            toast_delete_failed: "Gagal menjalankan penghapusan.",
+            toast_no_data_export: "Tidak ada data untuk diekspor!",
+            toast_csv_downloaded: "File CSV berhasil diunduh!",
+            confirm_finish_svs: "Hati-hati saat menyelesaikan SVS!\n Apakah Anda yakin? Semua data yang diajukan akan direset",
+            toast_all_cleared: "Semua catatan telah dihapus.",
+            toast_clear_failed: "Gagal menghapus data. Silakan coba lagi.",
+            your_location_suffix: " (Lokasi Anda)",
+            toast_load_schedule_failed: "Gagal memuat data jadwal. Silakan refresh.",
+            toast_id_copied: "ID {{id}} disalin ke clipboard!",
+            toast_id_copied_fallback: "ID {{id}} disalin!",
+            toast_copy_failed: "Gagal menyalin ID secara otomatis."
+        },
         cn: {
             doc_title: "3475 SVS Ministry 预约系统",
             admin_login_btn: "会长登录",
@@ -353,19 +517,19 @@
     // Position display-name translations. Internal English keys (used as
     // DB values / currentPosition) never change — only the label shown.
     const POSITION_NAMES = {
-        'Vice President D1': { en: 'Vice President D1', cn: '副会长 D1' },
-        'Vice President D2': { en: 'Vice President D2', cn: '副会长 D2' },
-        'Minister of Education D4': { en: 'Minister of Education D4', cn: '教育部长 D4' },
-        'Vice President D5': { en: 'Vice President D5', cn: '副会长 D5' }
+        'Vice President D1': { en: 'Vice President D1', cn: '副会长 D1', id: 'Wakil Presiden D1' },
+        'Vice President D2': { en: 'Vice President D2', cn: '副会长 D2', id: 'Wakil Presiden D2' },
+        'Minister of Education D4': { en: 'Minister of Education D4', cn: '教育部长 D4', id: 'Menteri Pendidikan D4' },
+        'Vice President D5': { en: 'Vice President D5', cn: '副会长 D5', id: 'Wakil Presiden D5' }
     };
     const POSITION_SHORT_LABELS = {
-        'Vice President D1': { en: 'VP D1', cn: '副D1' },
-        'Vice President D2': { en: 'VP D2', cn: '副D2' },
-        'Minister of Education D4': { en: 'Edu D4', cn: '教D4' },
-        'Vice President D5': { en: 'VP D5', cn: '副D5' }
+        'Vice President D1': { en: 'VP D1', cn: '副D1', id: 'WP D1' },
+        'Vice President D2': { en: 'VP D2', cn: '副D2', id: 'WP D2' },
+        'Minister of Education D4': { en: 'Edu D4', cn: '教D4', id: 'Pendidikan D4' },
+        'Vice President D5': { en: 'VP D5', cn: '副D5', id: 'WP D5' }
     };
 
-    let currentLang = (localStorage.getItem(LANG_STORAGE_KEY) === 'cn') ? 'cn' : 'en';
+    let currentLang = ['en', 'cn', 'id'].includes(localStorage.getItem(LANG_STORAGE_KEY)) ? localStorage.getItem(LANG_STORAGE_KEY) : 'en';
 
     function t(key, vars) {
         const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
@@ -394,7 +558,7 @@
     function getLang() { return currentLang; }
 
     function applyStaticTranslations() {
-        document.documentElement.lang = (currentLang === 'cn') ? 'zh' : 'en';
+        document.documentElement.lang = currentLang === 'cn' ? 'zh' : (currentLang === 'id' ? 'id' : 'en');
         document.title = t('doc_title');
 
         document.querySelectorAll('[data-i18n]').forEach(function (el) {
@@ -411,7 +575,7 @@
         const toggleBtn = document.getElementById('lang-toggle-btn');
         if (toggleBtn) {
             toggleBtn.setAttribute('data-lang', currentLang);
-            toggleBtn.setAttribute('aria-label', currentLang === 'cn' ? 'Switch to English' : '切换为中文');
+            toggleBtn.setAttribute('aria-label', currentLang === 'en' ? 'Switch to Chinese or Indonesian' : (currentLang === 'cn' ? '切换为英语或印尼语' : 'Ganti ke Bahasa Inggris atau Mandarin'));
         }
     }
 
@@ -468,7 +632,7 @@
     }
 
     function setLanguage(lang) {
-        if (lang !== 'en' && lang !== 'cn') return;
+        if (!['en', 'cn', 'id'].includes(lang)) return;
         currentLang = lang;
         localStorage.setItem(LANG_STORAGE_KEY, lang);
         applyStaticTranslations();
@@ -476,7 +640,7 @@
     }
 
     function toggleLanguage() {
-        setLanguage(currentLang === 'en' ? 'cn' : 'en');
+        setLanguage(currentLang === 'en' ? 'cn' : (currentLang === 'cn' ? 'id' : 'en'));
     }
 
     // Expose globally so script.js / common.js / inline HTML can use them.

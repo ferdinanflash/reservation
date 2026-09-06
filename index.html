@@ -30,7 +30,7 @@
 
 		<header class="navbar">
 			<span class="logo fire-text">SVS Ministry</span>
-			<div class="navbar-actions"><button id="lang-toggle-btn" class="lang-toggle" type="button" onclick="toggleLanguage()" data-lang="en" aria-label="切换为中文"><span class="lang-option lang-eng">ENG</span><span class="lang-separator">/</span><span class="lang-option lang-cn">CN</span></button><button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()" data-i18n="admin_login_btn">President Login</button></div>
+			<div class="navbar-actions"><div id="lang-toggle-btn" class="lang-toggle" data-lang="en" role="group" aria-label="Language"><button type="button" class="lang-option lang-eng" onclick="setLanguage('en')" aria-label="English">ENG</button><span class="lang-separator">/</span><button type="button" class="lang-option lang-cn" onclick="setLanguage('cn')" aria-label="中文">CN</button><span class="lang-separator">/</span><button type="button" class="lang-option lang-id" onclick="setLanguage('id')" aria-label="Bahasa Indonesia">ID</button></div><button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()" data-i18n="admin_login_btn">President Login</button></div>
 		</header>
 
 		<div id="live-clock-container">
