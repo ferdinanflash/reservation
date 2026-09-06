@@ -1008,7 +1008,7 @@ function exportToCSV() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `SVS_Ministry_Export_${currentPosition.replace(/\s+/g, '_')}.csv`);
+    link.setAttribute("download", `SVS_Minister_Export_${currentPosition.replace(/\s+/g, '_')}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -1022,7 +1022,7 @@ async function handleFinishSVS() {
     const client = getSupabase();
     if (!client) return;
 
-    showCustomConfirm("Caution to finish SVS!\n Are you sure ?, this will be reset all applied data", async () => {
+    showCustomConfirm("Caution to finish SvS!\n Are you sure ?, this will be reset all applied data", async () => {
         const finishBtn = document.getElementById('finish-svs-btn');
         setButtonBusy(finishBtn, true, 'Clearing...');
         try {

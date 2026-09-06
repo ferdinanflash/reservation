@@ -1,4 +1,4 @@
-/* SVS Ministry opening animation
+/* SvS Minister opening animation
  * Overlay-only: tidak mengubah ukuran, posisi, atau tata letak halaman utama.
  * Durasi total 2.5 detik dan selalu tampil setiap kali halaman di-refresh/dibuka.
  */
