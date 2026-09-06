@@ -24,6 +24,7 @@
             admin_logout_named: "Logout ({{name}})",
             page_title: "SVS Ministry Position",
             page_subtitle: "Select a position to make reservation",
+            selected_position_title: "Position Title",
             pos_vp_d1: "Vice President D1 (Monday)",
             pos_vp_d2: "Vice President D2 (Tuesday)",
             pos_edu_d4: "Minister of Education D4 (Thursday)",
@@ -122,6 +123,7 @@
             toast_welcome_back: "Welcome back, President!",
             toast_logged_out: "Logged out from President Mode.",
             local_label: "LOCAL:",
+            utc_label: "UTC-0:",
             status_accepted: "Accepted",
             status_no_applications: "No Applications",
             status_waiting_count: "Waiting ({{count}})",
@@ -184,9 +186,10 @@
             doc_title: "3475 SVS Ministry 预约系统",
             admin_login_btn: "会长登录",
             admin_logout_btn: "退出会长模式",
-            admin_logout_named: "退出登录（{{name}}）",
+            admin_logout_named: "退出会长模式（{{name}}）",
             page_title: "SVS Ministry 职位",
             page_subtitle: "请选择职位进行预约",
+            selected_position_title: "职位名称",
             pos_vp_d1: "副会长 D1（周一）",
             pos_vp_d2: "副会长 D2（周二）",
             pos_edu_d4: "教育部长 D4（周四）",
@@ -284,6 +287,7 @@
             toast_welcome_back: "欢迎回来，会长！",
             toast_logged_out: "已退出会长模式。",
             local_label: "本地：",
+            utc_label: "UTC-0：",
             status_accepted: "已接受",
             status_no_applications: "暂无申请",
             status_waiting_count: "等待中（{{count}}）",
@@ -431,6 +435,28 @@
                     titleEl.innerText = translatePositionName(currentPosition);
                 }
                 if (typeof renderTimeSlots === 'function') renderTimeSlots();
+            }
+        } catch (e) { /* noop */ }
+
+        try {
+            const waitingModal = document.getElementById('waiting-modal');
+            if (waitingModal && !waitingModal.classList.contains('hidden') && typeof currentWaitingModalTime !== 'undefined' && currentWaitingModalTime && typeof openWaitingModal === 'function') {
+                openWaitingModal(currentWaitingModalTime);
+            }
+        } catch (e) { /* noop */ }
+
+        try {
+            const reassignModal = document.getElementById('reassign-modal');
+            if (reassignModal && !reassignModal.classList.contains('hidden') && typeof currentReassignModalTime !== 'undefined' && currentReassignModalTime && typeof openReassignModal === 'function') {
+                openReassignModal(currentReassignModalTime);
+            }
+        } catch (e) { /* noop */ }
+
+        try {
+            const detailsModal = document.getElementById('details-modal');
+            const detailsContent = document.getElementById('details-content');
+            if (detailsModal && !detailsModal.classList.contains('hidden') && detailsContent && detailsContent.dataset.appId && typeof openDetailsModal === 'function') {
+                openDetailsModal(Number(detailsContent.dataset.appId));
             }
         } catch (e) { /* noop */ }
 

@@ -12,6 +12,8 @@ let currentPosition = 'Vice President D1';
 let selectedTimeSlot = ''; 
 let isReservationOpen = true; 
 let isLoadingApplications = false;
+let currentWaitingModalTime = null;
+let currentReassignModalTime = null;
 
 // ================= CENTRALIZED POSITION CONFIG =================
 // One source of truth for each position's short label & which fields are
@@ -119,7 +121,7 @@ function updateAdminUI() {
     const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
     const finishSvsBtn = document.getElementById('finish-svs-btn'); 
 
-    if (adminBtn) adminBtn.innerText = currentStaffUsername ? `Logout (${currentStaffUsername.toUpperCase()})` : t("admin_logout_btn");
+    if (adminBtn) adminBtn.innerText = currentStaffUsername ? t("admin_logout_named", { name: currentStaffUsername.toUpperCase() }) : t("admin_logout_btn");
     if (adminInd) adminInd.style.display = "inline";
     if (editFooterBtn) editFooterBtn.style.display = "inline-block";
     if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
@@ -592,21 +594,21 @@ function renderTimeSlots() {
 
             row.innerHTML = `
                 <td>${actionBtn}</td>
-                <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
-                <td><span style="color:#22c55e; font-weight:bold;">Accepted</span>${leftoverBadge}</td>
+                <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">${t("local_prefix", { time: localTimeStr })}</small></td>
+                <td><span style="color:#22c55e; font-weight:bold;">${t("status_accepted")}</span>${leftoverBadge}</td>
                 <td>${escapeHtml(acceptedApp.nickname)}</td>
                 <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
                 <td>${escapeHtml(acceptedApp.furnace_level) || '-'}</td>
             `;
         } else {
-            let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
-            let statusText = '<span class="no-apps">No Applications</span>';
+            let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">${t("btn_apply_action")}</button>`;
+            let statusText = `<span class="no-apps">${t("status_no_applications")}</span>`;
             if (countWaiting > 0) {
                 statusText = `<span style="color:#f59e0b; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openWaitingModal('${utcTimeStr}')">${t("status_waiting_count", { count: countWaiting })}</span>`;
             }
             row.innerHTML = `
                 <td>${actionBtn}</td>
-                <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
+                <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">${t("local_prefix", { time: localTimeStr })}</small></td>
                 <td>${statusText}</td>
                 <td>-</td>
                 <td>-</td>
@@ -623,27 +625,27 @@ function renderTimeSlots() {
 function buildStatDetailsHtml(app, compact = false) {
     if (compact) {
         return `
-            <div><span style="color:#8a8d98; margin-right: 10px;">Furnace Lvl:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
-            <div><span style="color:#8a8d98; margin-right: 10px;">FC:</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
-            <div><span style="color:#8a8d98; margin-right: 10px;">RFC:</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
-            <div><span style="color:#8a8d98; margin-right: 10px;">General:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'}</strong></div>
-            <div><span style="color:#8a8d98; margin-right: 10px;">Const:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'}</strong></div>
-            <div><span style="color:#8a8d98; margin-right: 10px;">Research:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'}</strong></div>
-            <div><span style="color:#8a8d98; margin-right: 10px;">Train:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.training_speedup) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_furnace_lvl")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_fc")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_rfc")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_general")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_const")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_research")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_train")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.training_speedup) || '0'}</strong></div>
         `;
     }
 
     return `
-        <div><span style="color:#8a8d98;">Nickname:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.nickname) || '-'}</strong></div>
-        <div><span style="color:#8a8d98;">Game ID:</span> <strong style="color:#3b82f6;">${escapeHtml(app.game_id) || '-'}</strong></div>
-        <div><span style="color:#8a8d98;">Furnace Level:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_nickname")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.nickname) || '-'}</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_game_id")}</span> <strong style="color:#3b82f6;">${escapeHtml(app.game_id) || '-'}</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_furnace_level")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
         <hr style="border: 0; border-top: 1px solid #334155; margin: 4px 0;">
-        <div><span style="color:#8a8d98;">Fire Crystals (FC):</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
-        <div><span style="color:#8a8d98;">Refined Fire Crystals (RFC):</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
-        <div><span style="color:#8a8d98;">General Speedup:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'} Days</strong></div>
-        <div><span style="color:#8a8d98;">Construction Speedup:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'} Days</strong></div>
-        <div><span style="color:#8a8d98;">Research Speedup:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'} Days</strong></div>
-        <div><span style="color:#8a8d98;">Training Speedup:</span> <strong style="color:#f1f5f9;">${escapeHtml(app.training_speedup) || '0'} Days</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_refined_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_general_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'} ${t('days_suffix')}</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_construction_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'} ${t('days_suffix')}</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_research_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'} ${t('days_suffix')}</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_training_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.training_speedup) || '0'} ${t('days_suffix')}</strong></div>
     `;
 }
 
@@ -655,7 +657,7 @@ function openDetailsModal(appId) {
     const modal = document.getElementById('details-modal');
     const contentEl = document.getElementById('details-content');
     contentEl.innerHTML = buildStatDetailsHtml(app, false);
-    
+    contentEl.dataset.appId = String(appId);
     modal.classList.remove('hidden');
 }
 
@@ -667,14 +669,15 @@ function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
     if (!modal) return;
     
+    currentWaitingModalTime = timeStr;
     document.getElementById('modal-title').innerText = t("waiting_list_title", { time: timeStr });
     const modalTbody = document.getElementById('modal-table-body');
     modalTbody.innerHTML = "";
 
     const thead = modal.querySelector('thead tr');
     thead.innerHTML = `
-        <th style="padding: 5px 10px; text-align: left;">NICKNAME</th>
-        <th style="padding: 5px 10px; text-align: left;">ID</th>
+        <th style="padding: 5px 10px; text-align: left;">${t("modal_nickname_short")}</th>
+        <th style="padding: 5px 10px; text-align: left;">${t("modal_id_short")}</th>
     `;
 
     let appsInSlot = savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
@@ -723,6 +726,7 @@ function toggleDetails(id) {
 }
 
 function closeModal() {
+    currentWaitingModalTime = null;
     document.getElementById('waiting-modal').classList.add('hidden');
 }
 
@@ -733,7 +737,7 @@ function applySlot(time) {
     }
 
     selectedTimeSlot = time;
-    document.getElementById('form-position-title').innerText = currentPosition;
+    document.getElementById('form-position-title').innerText = translatePositionName(currentPosition);
     document.getElementById('form-time-title').innerText = time + " UTC";
     
     document.getElementById('input-nickname').value = "";
@@ -889,6 +893,7 @@ function openReassignModal(originTime) {
     const modal = document.getElementById('reassign-modal');
     if (!modal) return;
 
+    currentReassignModalTime = originTime;
     const titleEl = document.getElementById('reassign-modal-title');
     if (titleEl) titleEl.innerText = t("reassign_modal_title_dyn", { time: originTime });
 
@@ -897,6 +902,7 @@ function openReassignModal(originTime) {
 }
 
 function closeReassignModal() {
+    currentReassignModalTime = null;
     const modal = document.getElementById('reassign-modal');
     if (modal) modal.classList.add('hidden');
 }
@@ -919,7 +925,7 @@ function renderReassignRows(originTime) {
         const selectId = `reassign-select-${app.id}`;
         const options = availableSlots.length > 0
             ? availableSlots.map(t => `<option value="${t}">${t} UTC</option>`).join('')
-            : `<option value="">No free slots</option>`;
+            : `<option value="">${t("no_free_slots")}</option>`;
 
         row.innerHTML = `
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">${escapeHtml(app.nickname)}</td>
@@ -1102,7 +1108,7 @@ async function loadRecentAccepts() {
         }
         logListEl.innerHTML = ''; 
         data.forEach(item => {
-            const shortPos = item.position ? getPositionConfig(item.position).shortLabel : 'Unknown';
+            const shortPos = item.position ? translatePositionShort(item.position) : t('label_unknown');
             const logRow = document.createElement('div');
             logRow.className = 'log-entry';
             logRow.innerHTML = `

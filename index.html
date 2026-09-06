@@ -35,12 +35,12 @@
 
 		<div id="live-clock-container">
 			<div class="clock-item">
-				<span id="local-clock-label" class="clock-label">LOCAL:</span>
+				<span id="local-clock-label" class="clock-label" data-i18n="local_label">LOCAL:</span>
 				<span id="local-clock" class="clock-time">00:00:00</span>
 			</div>
 			<div class="clock-divider">|</div>
 			<div class="clock-item">
-				<span class="clock-label">UTC-0:</span>
+				<span class="clock-label" data-i18n="utc_label">UTC-0:</span>
 				<span id="utc-clock" class="clock-time" style="color: #f59e0b;">00:00:00</span>
 			</div>
 		</div>
@@ -133,9 +133,9 @@
 					<button id="toggle-reservation-btn" class="btn-apply" style="background: #dc2626; margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem; display: none;" onclick="handleToggleReservation()" data-i18n="btn_close_reservation">Close Reservation</button>
 				</div>
 
-				<h1 class="page-title" id="selected-title">Position Title</h1>
+				<h1 class="page-title" id="selected-title" data-i18n="selected_position_title">Position Title</h1>
 				<h3 class="section-title">
-					<span data-i18n="schedule_heading">Time Slot Schedule</span> <span id="admin-indicator" style="color:#ef4444; font-size:0.8rem; display:none;">(PRESIDENT MODE)</span>
+					<span data-i18n="schedule_heading">Time Slot Schedule</span> <span id="admin-indicator" data-i18n="admin_mode_indicator" style="color:#ef4444; font-size:0.8rem; display:none;">(PRESIDENT MODE)</span>
 				</h3>
 
 				<div class="timezone-selector">
@@ -171,8 +171,8 @@
 					<table>
 						<thead>
 							<tr>
-								<th style="padding: 5px 10px; text-align: left;">NICKNAME</th>
-								<th style="padding: 5px 10px; text-align: left;">ID</th>
+								<th data-i18n="modal_nickname_short" style="padding: 5px 10px; text-align: left;">NICKNAME</th>
+								<th data-i18n="modal_id_short" style="padding: 5px 10px; text-align: left;">ID</th>
 							</tr>
 						</thead>
 						<tbody id="modal-table-body"></tbody>
@@ -191,8 +191,8 @@
 					<table>
 						<thead>
 							<tr>
-								<th style="padding: 5px 10px; text-align: left;">NICKNAME</th>
-								<th style="padding: 5px 10px; text-align: left;">ID</th>
+								<th data-i18n="modal_nickname_short" style="padding: 5px 10px; text-align: left;">NICKNAME</th>
+								<th data-i18n="modal_id_short" style="padding: 5px 10px; text-align: left;">ID</th>
 								<th data-i18n="th_move_to" style="padding: 5px 10px; text-align: left;">MOVE TO</th>
 								<th style="padding: 5px 10px; text-align: left;"></th>
 							</tr>
@@ -292,9 +292,9 @@
 			</div>
 
 			<div id="recent-log-container">
-				<div class="log-title">📢 RECENTLY ACCEPTED APPOINTMENT</div>
+				<div class="log-title" data-i18n="footer_recent_log_title">📢 RECENTLY ACCEPTED APPOINTMENT</div>
 				<div id="recent-log-list">
-					<div class="log-item-empty">No recent activity</div>
+					<div class="log-item-empty" data-i18n="log_empty">No recent activity</div>
 				</div>
 			</div>
 
@@ -323,7 +323,7 @@
 					<input type="password" id="input-login-password" placeholder="Enter password" data-i18n-placeholder="placeholder_password">
 				</div>
 				<div class="form-actions">
-					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeLoginModal()">Cancel</button>
+					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeLoginModal()" data-i18n="btn_cancel">Cancel</button>
 					<button id="login-submit-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="submitStaffLogin()" data-i18n="btn_signin">Sign In</button>
 				</div>
 			</div>
@@ -343,7 +343,7 @@
 					<input type="text" id="edit-footer-guild" maxlength="60" placeholder="Enter guild name" data-i18n-placeholder="placeholder_guild_name">
 				</div>
 				<div class="form-actions">
-					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeEditFooterModal()">Cancel</button>
+					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeEditFooterModal()" data-i18n="btn_cancel">Cancel</button>
 					<button id="edit-footer-save-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="saveEditFooter()" data-i18n="btn_save">Save</button>
 				</div>
 			</div>
@@ -351,10 +351,10 @@
 
 		<div id="confirm-modal" class="modal hidden">
 			<div class="modal-content custom-confirm-box">
-				<h3 id="confirm-message" style="margin-bottom: 20px; font-size: 1.1rem; line-height: 1.5; color: #f1f5f9;">Are you sure?</h3>
+				<h3 id="confirm-message" data-i18n="confirm_default_message" style="margin-bottom: 20px; font-size: 1.1rem; line-height: 1.5; color: #f1f5f9;">Are you sure?</h3>
 				<div class="form-actions" style="margin-top: 0;">
-					<button id="confirm-cancel-btn" class="btn-back" style="margin-bottom:0; flex: 1; padding: 10px;">Cancel</button>
-					<button id="confirm-ok-btn" class="btn-apply" style="flex: 1; padding: 10px; background: #ef4444;">OK</button>
+					<button id="confirm-cancel-btn" class="btn-back" data-i18n="btn_cancel" style="margin-bottom:0; flex: 1; padding: 10px;">Cancel</button>
+					<button id="confirm-ok-btn" class="btn-apply" data-i18n="btn_ok" style="flex: 1; padding: 10px; background: #ef4444;">OK</button>
 				</div>
 			</div>
 		</div>
