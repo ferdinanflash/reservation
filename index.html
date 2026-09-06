@@ -8,7 +8,7 @@
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js"></script>
-					<script src="script.js?v=33" defer=""></script>
+					<script src="script.js?v=34" defer=""></script>
 					<script src="fire-banner.js" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 				</head>
@@ -175,6 +175,30 @@
 							</tr>
 						</thead>
 						<tbody id="modal-table-body"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal Pindahkan Pengajuan Menunggu (leftover setelah salah satu di-Accept) -->
+		<div id="reassign-modal" class="modal hidden">
+			<div class="modal-content">
+				<button type="button" class="close-modal" onclick="closeReassignModal()" aria-label="Close">&times;</button>
+				<h2 id="reassign-modal-title">Move Waiting Applicants</h2>
+				<p style="color:#8a8d98; font-size:0.85rem; margin-bottom:12px; line-height:1.4;">
+					This slot now has an Accepted application. The applicants below are NOT deleted — pick a free slot for each one and click Move.
+				</p>
+				<div class="modal-table-container">
+					<table>
+						<thead>
+							<tr>
+								<th style="padding: 5px 10px; text-align: left;">NICKNAME</th>
+								<th style="padding: 5px 10px; text-align: left;">ID</th>
+								<th style="padding: 5px 10px; text-align: left;">MOVE TO</th>
+								<th style="padding: 5px 10px; text-align: left;"></th>
+							</tr>
+						</thead>
+						<tbody id="reassign-table-body"></tbody>
 					</table>
 				</div>
 			</div>

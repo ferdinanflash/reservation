@@ -581,10 +581,19 @@ function renderTimeSlots() {
                    </div>`
                 : detailBtn;
 
+            // Other applicants who were still "Waiting" in this slot are NOT
+            // removed just because one got accepted — surface them here so
+            // the President can always come back and move them later, not
+            // only right after clicking Accept.
+            let leftoverCount = appsInSlot.filter(a => a.status === 'Waiting').length;
+            let leftoverBadge = (isAdmin && leftoverCount > 0)
+                ? `<br><span style="color:#f59e0b; font-size:0.75rem; cursor:pointer; text-decoration:underline;" onclick="openReassignModal('${utcTimeStr}')">⚠️ Move Waiting (${leftoverCount})</span>`
+                : '';
+
             row.innerHTML = `
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">Local: ${localTimeStr}</small></td>
-                <td><span style="color:#22c55e; font-weight:bold;">Accepted</span></td>
+                <td><span style="color:#22c55e; font-weight:bold;">Accepted</span>${leftoverBadge}</td>
                 <td>${escapeHtml(acceptedApp.nickname)}</td>
                 <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
                 <td>${escapeHtml(acceptedApp.furnace_level) || '-'}</td>
@@ -810,6 +819,11 @@ async function submitApplication() {
 }
 
 async function acceptApp(id) {
+    // Grab this app's time slot BEFORE it's accepted, so we know which
+    // slot's other applicants (if any) need attention afterwards.
+    const targetApp = savedApplications.find(a => a.id === id);
+    const targetTime = targetApp ? String(targetApp.time_slot).trim() : null;
+
     showCustomConfirm("Accept this application? This will lock this time slot.", async () => {
         const client = getSupabase();
         if (!client) return;
@@ -818,14 +832,137 @@ async function acceptApp(id) {
             const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
             if (error) throw error;
             showToast("Application Approved!", "success");
-            loadApplications();
+            await loadApplications();
             loadRecentAccepts(); 
+
+            // IMPORTANT: any other application that was still "Waiting" in
+            // this same slot is NEVER deleted just because one got accepted.
+            // Instead, immediately prompt the President to move each one to
+            // a free slot instead of letting them sit invisible in the DB.
+            if (targetTime && getLeftoverWaitingApps(targetTime).length > 0) {
+                openReassignModal(targetTime);
+            }
         } catch (err) {
             console.error("Failed to approve application:", err);
             showToast("Failed to approve. It may have just been taken by someone else.", "error");
             loadApplications();
         }
     }, '#22c55e');
+}
+
+// ================= MOVE LEFTOVER WAITING APPS TO ANOTHER SLOT =================
+// Whenever a slot gets an Accepted application, any OTHER application that
+// was still "Waiting" in that same slot is left completely intact in the
+// database — it is never auto-deleted or auto-accepted. This section gives
+// the President a way to relocate each leftover applicant to a free slot
+// instead, from a dedicated modal (openReassignModal / closeReassignModal).
+
+// All 48 half-hour UTC slots used by the schedule table, as "HH:MM" strings.
+function getAllUtcSlots() {
+    const slots = [];
+    for (let i = 0; i < 48; i++) {
+        const totalMinutes = i * 30;
+        const h = Math.floor(totalMinutes / 60);
+        const m = totalMinutes % 60;
+        slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+    }
+    return slots;
+}
+
+// A slot counts as "free" for reassignment if it doesn't already have an
+// Accepted application. excludeTime lets the origin slot be left out, since
+// moving an applicant back to the slot they're already stuck in is pointless.
+function getAvailableTimeSlots(excludeTime = null) {
+    return getAllUtcSlots().filter(time => {
+        if (time === excludeTime) return false;
+        const hasAccepted = savedApplications.some(a => String(a.time_slot).trim() === time && a.status === 'Accepted');
+        return !hasAccepted;
+    });
+}
+
+function getLeftoverWaitingApps(timeStr) {
+    return savedApplications.filter(a => String(a.time_slot).trim() === timeStr && a.status === 'Waiting');
+}
+
+function openReassignModal(originTime) {
+    if (!isAdmin) return;
+    const modal = document.getElementById('reassign-modal');
+    if (!modal) return;
+
+    const titleEl = document.getElementById('reassign-modal-title');
+    if (titleEl) titleEl.innerText = `Move Waiting Applicants - ${originTime} UTC`;
+
+    renderReassignRows(originTime);
+    modal.classList.remove('hidden');
+}
+
+function closeReassignModal() {
+    const modal = document.getElementById('reassign-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function renderReassignRows(originTime) {
+    const tbody = document.getElementById('reassign-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const leftovers = getLeftoverWaitingApps(originTime);
+    if (leftovers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="padding:12px; text-align:center; color:#8a8d98;">No more waiting applicants in this slot.</td></tr>`;
+        return;
+    }
+
+    const availableSlots = getAvailableTimeSlots(originTime);
+
+    leftovers.forEach(app => {
+        const row = document.createElement('tr');
+        const selectId = `reassign-select-${app.id}`;
+        const options = availableSlots.length > 0
+            ? availableSlots.map(t => `<option value="${t}">${t} UTC</option>`).join('')
+            : `<option value="">No free slots</option>`;
+
+        row.innerHTML = `
+            <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">${escapeHtml(app.nickname)}</td>
+            <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
+                <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
+            </td>
+            <td style="padding: 5px 10px; text-align: left;">
+                <select id="${selectId}" style="max-width: 140px;" ${availableSlots.length === 0 ? 'disabled' : ''}>${options}</select>
+            </td>
+            <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
+                <button class="btn-apply btn-compact" style="font-size:0.7rem;" ${availableSlots.length === 0 ? 'disabled' : ''} onclick="moveAppToSlot(${app.id}, document.getElementById('${selectId}').value, '${originTime}')">Move</button>
+                <button class="btn-apply btn-danger btn-compact" style="font-size:0.7rem;" onclick="removeApp(${app.id})">Drop</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Relocates one leftover applicant to a different (still free) slot. Status
+// stays "Waiting" — this only moves them, it never deletes or auto-accepts.
+async function moveAppToSlot(id, newTimeSlot, originTime) {
+    if (!isAdmin) return;
+    if (!newTimeSlot) {
+        showToast("No available slot selected.", "warning");
+        return;
+    }
+
+    const client = getSupabase();
+    if (!client) return;
+
+    try {
+        const { error } = await client
+            .from('reservation_slots')
+            .update({ time_slot: newTimeSlot })
+            .eq('id', id);
+        if (error) throw error;
+        showToast(`Applicant moved to ${newTimeSlot} UTC.`, "success");
+        await loadApplications();
+        renderReassignRows(originTime);
+    } catch (err) {
+        console.error("Failed to move application:", err);
+        showToast("Failed to move applicant. Please try again.", "error");
+    }
 }
 
 async function removeApp(id) {
