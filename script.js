@@ -119,7 +119,7 @@ function updateAdminUI() {
     const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
     const finishSvsBtn = document.getElementById('finish-svs-btn'); 
 
-    if (adminBtn) adminBtn.innerText = currentStaffUsername ? `Logout (${currentStaffUsername.toUpperCase()})` : "Logout President";
+    if (adminBtn) adminBtn.innerText = currentStaffUsername ? `Logout (${currentStaffUsername.toUpperCase()})` : t("admin_logout_btn");
     if (adminInd) adminInd.style.display = "inline";
     if (editFooterBtn) editFooterBtn.style.display = "inline-block";
     if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
@@ -133,7 +133,7 @@ function resetAdminUI() {
     const toggleResBtn = document.getElementById('toggle-reservation-btn');
     const finishSvsBtn = document.getElementById('finish-svs-btn');
 
-    if (adminBtn) adminBtn.innerText = "President Login";
+    if (adminBtn) adminBtn.innerText = t("admin_login_btn");
     if (adminInd) adminInd.style.display = "none";
     if (editFooterBtn) editFooterBtn.style.display = "none";
     if (toggleResBtn) toggleResBtn.style.display = "none";
@@ -166,10 +166,10 @@ function updateReservationButtonUI() {
     if (!toggleBtn) return;
 
     if (isReservationOpen) {
-        toggleBtn.innerText = "Close Reservation";
+        toggleBtn.innerText = t("btn_close_reservation");
         toggleBtn.style.background = "#dc2626"; 
     } else {
-        toggleBtn.innerText = "Open Reservation";
+        toggleBtn.innerText = t("btn_open_reservation");
         toggleBtn.style.background = "#22c55e"; 
     }
 }
@@ -198,10 +198,10 @@ async function handleToggleReservation() {
             if (error) throw error;
 
             isReservationOpen = newStatus;
-            showToast(`Reservation of ${currentPosition} now-${newStatus ? 'open' : 'close'}!`, "success");
+            showToast(t("toast_reservation_now", { position: translatePositionName(currentPosition), status: newStatus ? t("status_word_open") : t("status_word_close") }), "success");
         } catch (err) {
             console.error("Failed to update reservation status:", err);
-            showToast("Failed to update reservation status. Please try again.", "error");
+            showToast(t("toast_update_reservation_failed"), "error");
         } finally {
             setButtonBusy(toggleBtn, false);
             updateReservationButtonUI();
@@ -263,7 +263,7 @@ function setButtonBusy(button, isBusy, busyText = null) {
     if (isBusy) {
         button.dataset.originalText = button.innerHTML;
         button.disabled = true;
-        button.innerHTML = `<span class="spinner-inline"></span>${busyText || 'Please wait...'}`;
+        button.innerHTML = `<span class="spinner-inline"></span>${busyText || t('please_wait')}`;
     } else {
         button.disabled = false;
         if (button.dataset.originalText) {
@@ -335,7 +335,7 @@ async function saveEditFooter() {
     const newGuild = document.getElementById('edit-footer-guild').value.trim();
 
     if (newName === "" || newGuild === "") {
-        showToast("Name and Guild cannot be empty!", "warning");
+        showToast(t("toast_name_guild_empty"), "warning");
         return;
     }
 
@@ -360,12 +360,12 @@ async function saveEditFooter() {
         localStorage.setItem('cached_president_name', newName);
         localStorage.setItem('cached_guild_name', newGuild);
         loadFooterInfo();
-        showToast("President info updated globally!", "success");
+        showToast(t("toast_president_updated"), "success");
         closeEditFooterModal();
     } catch (err) {
         console.error("Failed to update footer info:", err);
         const detail = err?.message || err?.error_description || JSON.stringify(err);
-        showToast(`Failed to update database: ${detail}`, "error");
+        showToast(t("toast_update_db_failed", { detail: detail }), "error");
     } finally {
         setButtonBusy(saveBtn, false);
     }
@@ -401,7 +401,7 @@ async function submitStaffLogin() {
     const password = document.getElementById('input-login-password').value;
 
     if (!username || !password) {
-        showToast("Please enter both username and password!", "warning");
+        showToast(t("toast_enter_both"), "warning");
         return;
     }
 
@@ -409,7 +409,7 @@ async function submitStaffLogin() {
     // other staff username (idn/arx/vnx/zxc/cat/tal/etc.), so a valid staff
     // password never accidentally opens a real session here.
     if (!isPresidentUsername(username)) {
-        showToast("This page is for the President account only.", "error");
+        showToast(t("toast_president_only"), "error");
         return;
     }
 
@@ -424,13 +424,13 @@ async function submitStaffLogin() {
     setButtonBusy(submitBtn, false);
 
     if (error) {
-        showToast("Login failed: incorrect username or password", "error");
+        showToast(t("toast_login_failed"), "error");
         return;
     }
 
     applyAuthSession(data.session);
     closeLoginModal();
-    showToast("Welcome back, President!", "success");
+    showToast(t("toast_welcome_back"), "success");
 }
 
 async function handleStaffLogout() {
@@ -439,14 +439,14 @@ async function handleStaffLogout() {
         await client.auth.signOut();
     }
     applyAuthSession(null);
-    showToast("Logged out from President Mode.", "info");
+    showToast(t("toast_logged_out"), "info");
 }
 
 function showSchedule(positionName) {
     currentPosition = positionName;
     document.getElementById('positions-page').classList.add('hidden');
     document.getElementById('schedule-page').classList.remove('hidden');
-    document.getElementById('selected-title').innerText = positionName;
+    document.getElementById('selected-title').innerText = translatePositionName(positionName);
     detectAndSetTimezone();
     
     checkReservationStatus().then(() => {
@@ -533,7 +533,7 @@ async function loadApplications() {
     } catch (e) {
         console.error("Database failure:", e);
         savedApplications = [];
-        showToast("Failed to load schedule data. Please refresh.", "error");
+        showToast(t("toast_load_schedule_failed"), "error");
     }
     isLoadingApplications = false;
     renderTimeSlots();
@@ -544,7 +544,7 @@ async function loadApplications() {
 function renderLoadingState() {
     const tbody = document.getElementById('schedule-table-body');
     if (!tbody) return;
-    tbody.innerHTML = `<tr class="loading-row"><td colspan="6"><span class="spinner-inline"></span>Loading schedule...</td></tr>`;
+    tbody.innerHTML = `<tr class="loading-row"><td colspan="6"><span class="spinner-inline"></span>${t("loading_schedule")}</td></tr>`;
 }
 
 function renderTimeSlots() {
@@ -573,11 +573,11 @@ function renderTimeSlots() {
 
         const row = document.createElement('tr');
         if (acceptedApp) {
-            let detailBtn = `<span class="icon-tap-target" style="cursor:pointer; font-size: 1rem; vertical-align: middle;" title="View Details" onclick="openDetailsModal(${acceptedApp.id})">🔍</span>`;
+            let detailBtn = `<span class="icon-tap-target" style="cursor:pointer; font-size: 1rem; vertical-align: middle;" title="${t("title_view_details")}" onclick="openDetailsModal(${acceptedApp.id})">🔍</span>`;
             let actionBtn = isAdmin
                 ? `<div style="display:flex; align-items:center; justify-content:center; gap:6px;">
                      ${detailBtn}
-                     <button class="btn-apply btn-danger btn-compact" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeApp(${acceptedApp.id})">Remove</button>
+                     <button class="btn-apply btn-danger btn-compact" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeApp(${acceptedApp.id})">${t("btn_remove")}</button>
                    </div>`
                 : detailBtn;
 
@@ -587,7 +587,7 @@ function renderTimeSlots() {
             // only right after clicking Accept.
             let leftoverCount = appsInSlot.filter(a => a.status === 'Waiting').length;
             let leftoverBadge = (isAdmin && leftoverCount > 0)
-                ? `<br><span style="color:#f59e0b; font-size:0.75rem; cursor:pointer; text-decoration:underline;" onclick="openReassignModal('${utcTimeStr}')">⚠️ Move Waiting (${leftoverCount})</span>`
+                ? `<br><span style="color:#f59e0b; font-size:0.75rem; cursor:pointer; text-decoration:underline;" onclick="openReassignModal('${utcTimeStr}')">${t("move_waiting_count", { count: leftoverCount })}</span>`
                 : '';
 
             row.innerHTML = `
@@ -602,7 +602,7 @@ function renderTimeSlots() {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">Apply</button>`;
             let statusText = '<span class="no-apps">No Applications</span>';
             if (countWaiting > 0) {
-                statusText = `<span style="color:#f59e0b; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openWaitingModal('${utcTimeStr}')">Waiting (${countWaiting})</span>`;
+                statusText = `<span style="color:#f59e0b; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openWaitingModal('${utcTimeStr}')">${t("status_waiting_count", { count: countWaiting })}</span>`;
             }
             row.innerHTML = `
                 <td>${actionBtn}</td>
@@ -667,7 +667,7 @@ function openWaitingModal(timeStr) {
     const modal = document.getElementById('waiting-modal');
     if (!modal) return;
     
-    document.getElementById('modal-title').innerText = `Waiting List - ${timeStr} UTC`;
+    document.getElementById('modal-title').innerText = t("waiting_list_title", { time: timeStr });
     const modalTbody = document.getElementById('modal-table-body');
     modalTbody.innerHTML = "";
 
@@ -683,8 +683,8 @@ function openWaitingModal(timeStr) {
         const mainRow = document.createElement('tr');
         let adminButtons = isAdmin ? `
             <div style="margin-top: 4px;">
-                <button class="btn-apply btn-compact" style="background:#22c55e; font-size:0.7rem; margin-right:4px; animation: none;" onclick="acceptApp(${app.id})">Accept</button>
-                <button class="btn-apply btn-danger btn-compact" style="font-size:0.7rem;" onclick="removeApp(${app.id})">Drop</button>
+                <button class="btn-apply btn-compact" style="background:#22c55e; font-size:0.7rem; margin-right:4px; animation: none;" onclick="acceptApp(${app.id})">${t("btn_accept")}</button>
+                <button class="btn-apply btn-danger btn-compact" style="font-size:0.7rem;" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
             </div>
         ` : '';
 
@@ -728,7 +728,7 @@ function closeModal() {
 
 function applySlot(time) {
     if (!isReservationOpen) {
-        showToast("This day reservation still locked for now", "error");
+        showToast(t("toast_reservation_locked"), "error");
         return; 
     }
 
@@ -770,7 +770,7 @@ function closeApplyModal() {
 
 async function submitApplication() {
     if (!isReservationOpen) {
-        showToast("This day reservation still locked for now", "error");
+        showToast(t("toast_reservation_locked"), "error");
         return;
     }
 
@@ -787,10 +787,10 @@ async function submitApplication() {
     const resSp = parseInt(document.getElementById('input-ressp').value.trim()) || 0;
     const trainSp = parseInt(document.getElementById('input-trainsp').value.trim()) || 0;
 
-    if (!nickname) { showToast("Please enter In-Game Nickname!", "warning"); return; }
-    if (!gameId) { showToast("Please enter In-Game ID!", "warning"); return; }
-    if (!/^\d+$/.test(gameId)) { showToast("Game ID must contain numbers only!", "warning"); return; }
-    if (!furnaceLevel) { showToast("Please select Furnace Level!", "warning"); return; }
+    if (!nickname) { showToast(t("toast_enter_nickname"), "warning"); return; }
+    if (!gameId) { showToast(t("toast_enter_gameid"), "warning"); return; }
+    if (!/^\d+$/.test(gameId)) { showToast(t("toast_gameid_numeric"), "warning"); return; }
+    if (!furnaceLevel) { showToast(t("toast_select_furnace"), "warning"); return; }
 
     const submitBtn = document.querySelector('#apply-modal .btn-apply');
     setButtonBusy(submitBtn, true, 'Submitting...');
@@ -807,12 +807,12 @@ async function submitApplication() {
 
         if (error) throw error;
 
-        showToast("Application submitted successfully!", "success");
+        showToast(t("toast_app_submitted"), "success");
         closeApplyModal();
         loadApplications();
     } catch (err) {
         console.error("Failed to submit application:", err);
-        showToast("Failed to submit application. Please try again.", "error");
+        showToast(t("toast_app_submit_failed"), "error");
     } finally {
         setButtonBusy(submitBtn, false);
     }
@@ -824,14 +824,14 @@ async function acceptApp(id) {
     const targetApp = savedApplications.find(a => a.id === id);
     const targetTime = targetApp ? String(targetApp.time_slot).trim() : null;
 
-    showCustomConfirm("Accept this application? This will lock this time slot.", async () => {
+    showCustomConfirm(t("confirm_accept_app"), async () => {
         const client = getSupabase();
         if (!client) return;
         closeModal();
         try {
             const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
             if (error) throw error;
-            showToast("Application Approved!", "success");
+            showToast(t("toast_app_approved"), "success");
             await loadApplications();
             loadRecentAccepts(); 
 
@@ -844,7 +844,7 @@ async function acceptApp(id) {
             }
         } catch (err) {
             console.error("Failed to approve application:", err);
-            showToast("Failed to approve. It may have just been taken by someone else.", "error");
+            showToast(t("toast_app_approve_failed"), "error");
             loadApplications();
         }
     }, '#22c55e');
@@ -890,7 +890,7 @@ function openReassignModal(originTime) {
     if (!modal) return;
 
     const titleEl = document.getElementById('reassign-modal-title');
-    if (titleEl) titleEl.innerText = `Move Waiting Applicants - ${originTime} UTC`;
+    if (titleEl) titleEl.innerText = t("reassign_modal_title_dyn", { time: originTime });
 
     renderReassignRows(originTime);
     modal.classList.remove('hidden');
@@ -908,7 +908,7 @@ function renderReassignRows(originTime) {
 
     const leftovers = getLeftoverWaitingApps(originTime);
     if (leftovers.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="padding:12px; text-align:center; color:#8a8d98;">No more waiting applicants in this slot.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="padding:12px; text-align:center; color:#8a8d98;">${t("no_more_waiting")}</td></tr>`;
         return;
     }
 
@@ -930,8 +930,8 @@ function renderReassignRows(originTime) {
                 <select id="${selectId}" style="max-width: 140px;" ${availableSlots.length === 0 ? 'disabled' : ''}>${options}</select>
             </td>
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
-                <button class="btn-apply btn-compact" style="font-size:0.7rem;" ${availableSlots.length === 0 ? 'disabled' : ''} onclick="moveAppToSlot(${app.id}, document.getElementById('${selectId}').value, '${originTime}')">Move</button>
-                <button class="btn-apply btn-danger btn-compact" style="font-size:0.7rem;" onclick="removeApp(${app.id})">Drop</button>
+                <button class="btn-apply btn-compact" style="font-size:0.7rem;" ${availableSlots.length === 0 ? 'disabled' : ''} onclick="moveAppToSlot(${app.id}, document.getElementById('${selectId}').value, '${originTime}')">${t("btn_move")}</button>
+                <button class="btn-apply btn-danger btn-compact" style="font-size:0.7rem;" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
             </td>
         `;
         tbody.appendChild(row);
@@ -943,7 +943,7 @@ function renderReassignRows(originTime) {
 async function moveAppToSlot(id, newTimeSlot, originTime) {
     if (!isAdmin) return;
     if (!newTimeSlot) {
-        showToast("No available slot selected.", "warning");
+        showToast(t("toast_no_slot_selected"), "warning");
         return;
     }
 
@@ -956,12 +956,12 @@ async function moveAppToSlot(id, newTimeSlot, originTime) {
             .update({ time_slot: newTimeSlot })
             .eq('id', id);
         if (error) throw error;
-        showToast(`Applicant moved to ${newTimeSlot} UTC.`, "success");
+        showToast(t("toast_applicant_moved", { time: newTimeSlot }), "success");
         await loadApplications();
         renderReassignRows(originTime);
     } catch (err) {
         console.error("Failed to move application:", err);
-        showToast("Failed to move applicant. Please try again.", "error");
+        showToast(t("toast_move_failed"), "error");
     }
 }
 
@@ -973,19 +973,19 @@ async function removeApp(id) {
         try {
             const { error } = await client.from('reservation_slots').delete().eq('id', id);
             if (error) throw error;
-            showToast("Record dropped successfully.", "success");
+            showToast(t("toast_record_dropped"), "success");
             loadApplications();
             loadRecentAccepts(); 
         } catch (err) {
             console.error("Failed to delete application:", err);
-            showToast("Failed executing delete request.", "error");
+            showToast(t("toast_delete_failed"), "error");
         }
     }, '#ef4444');
 }
 
 function exportToCSV() {
     if (savedApplications.length === 0) {
-        showToast("No data available to export!", "warning");
+        showToast(t("toast_no_data_export"), "warning");
         return;
     }
     const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Furnace Level", "Fire Crystal", "Refined Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
@@ -1008,7 +1008,7 @@ function exportToCSV() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    showToast("CSV File downloaded successfully!", "success");
+    showToast(t("toast_csv_downloaded"), "success");
 }
 
 async function handleFinishSVS() {
@@ -1022,12 +1022,12 @@ async function handleFinishSVS() {
         try {
             const { error } = await client.from('reservation_slots').delete().neq('id', 0); 
             if (error) throw error;
-            showToast("All record has been cleared.", "success");
+            showToast(t("toast_all_cleared"), "success");
             loadApplications();
             loadRecentAccepts(); 
         } catch (err) {
             console.error("Failed to clear data:", err);
-            showToast("Failed to clear data. Please try again.", "error");
+            showToast(t("toast_clear_failed"), "error");
         } finally {
             setButtonBusy(finishBtn, false);
         }
@@ -1073,7 +1073,7 @@ function startLiveClock() {
             }
             localClockEl.innerText = `${displayHours}:${displayMinutes}:${displaySeconds}`;
         } else {
-            localLabelEl.innerText = "LOCAL:";
+            localLabelEl.innerText = t("local_label");
             localClockEl.innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
         }
     }, 1000);
@@ -1097,7 +1097,7 @@ async function loadRecentAccepts() {
 
         if (error) throw error;
         if (!data || data.length === 0) {
-            logListEl.innerHTML = `<div class="log-item-empty">No recent activity</div>`;
+            logListEl.innerHTML = `<div class="log-item-empty">${t("log_empty")}</div>`;
             return;
         }
         logListEl.innerHTML = ''; 

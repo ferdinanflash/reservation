@@ -83,7 +83,7 @@ function sanitizeCsvField(value) {
 function copyToClipboard(text) {
     if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
-        showToast(`ID ${text} copied to clipboard!`, "success");
+        showToast(typeof t === "function" ? t("toast_id_copied", { id: text }) : `ID ${text} copied to clipboard!`, "success");
     }).catch(err => {
         console.error('Failed to copy text: ', err);
         // Fallback for browsers/contexts where the Clipboard API is blocked
@@ -94,9 +94,9 @@ function copyToClipboard(text) {
         textArea.select();
         try {
             document.execCommand('copy');
-            showToast(`ID ${text} copied!`, "success");
+            showToast(typeof t === "function" ? t("toast_id_copied_fallback", { id: text }) : `ID ${text} copied!`, "success");
         } catch (e) {
-            showToast("Failed to copy ID automatically.", "error");
+            showToast(typeof t === "function" ? t("toast_copy_failed") : "Failed to copy ID automatically.", "error");
         }
         document.body.removeChild(textArea);
     });

@@ -1,3 +1,40 @@
+
+/* ==================== LANGUAGE TOGGLE ==================== */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+.lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #374151;
+    border-radius: 999px;
+    background: #111827;
+    color: #8a8d98;
+    padding: 6px 9px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.lang-toggle:hover { border-color: #64748b; transform: translateY(-1px); }
+.lang-option { opacity: 0.45; transition: all 0.2s ease; }
+.lang-separator { opacity: 0.35; }
+.lang-toggle[data-lang="en"] .lang-eng,
+.lang-toggle[data-lang="cn"] .lang-cn {
+    opacity: 1;
+    color: #f59e0b;
+}
+.lang-toggle[data-lang="en"] .lang-eng { text-shadow: 0 0 8px rgba(245,158,11,0.35); }
+.lang-toggle[data-lang="cn"] .lang-cn { text-shadow: 0 0 8px rgba(245,158,11,0.35); }
+@media screen and (max-width: 480px) {
+    .navbar-actions { width: 100%; justify-content: space-between; }
+}
 /* ==================== RESET AND BASE STYLES ==================== */
 * {
     box-sizing: border-box;

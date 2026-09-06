@@ -8,7 +8,8 @@
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js"></script>
-					<script src="script.js?v=34" defer=""></script>
+		<script src="lang.js"></script>
+					<script src="script.js?v=35" defer=""></script>
 					<script src="fire-banner.js" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 				</head>
@@ -29,7 +30,7 @@
 
 		<header class="navbar">
 			<span class="logo fire-text">SVS Ministry</span>
-			<button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()">President Login</button>
+			<div class="navbar-actions"><button id="lang-toggle-btn" class="lang-toggle" type="button" onclick="toggleLanguage()" data-lang="en" aria-label="切换为中文"><span class="lang-option lang-eng">ENG</span><span class="lang-separator">/</span><span class="lang-option lang-cn">CN</span></button><button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()" data-i18n="admin_login_btn">President Login</button></div>
 		</header>
 
 		<div id="live-clock-container">
@@ -46,7 +47,7 @@
 
 		<main class="container">
 			<section id="positions-page">
-				<h1 class="page-title">SVS Ministry Position</h1>
+				<h1 class="page-title" data-i18n="page_title">SVS Ministry Position</h1>
 
 				<div class="banner-container">
 					<div id="fire-banner" class="fire-banner" role="img" aria-label="3475">
@@ -93,33 +94,33 @@
 					</div>
             </div>
 
-				<p class="page-subtitle">Select a position to make reservation</p>
+				<p class="page-subtitle" data-i18n="page_subtitle">Select a position to make reservation</p>
 				<div class="list-container">
 					<button type="button" class="list-item" onclick="showSchedule('Vice President D1')">
-						<span>Vice President D1 (Monday)</span>
+						<span data-i18n="pos_vp_d1">Vice President D1 (Monday)</span>
 						<span class="arrow">&gt;</span>
 					</button>
 					<button type="button" class="list-item" onclick="showSchedule('Vice President D2')">
-						<span>Vice President D2 (Tuesday)</span>
+						<span data-i18n="pos_vp_d2">Vice President D2 (Tuesday)</span>
 						<span class="arrow">&gt;</span>
 					</button>
 					<button type="button" class="list-item" onclick="showSchedule('Minister of Education D4')">
-						<span>Minister of Education D4 (Thursday)</span>
+						<span data-i18n="pos_edu_d4">Minister of Education D4 (Thursday)</span>
 						<span class="arrow">&gt;</span>
 					</button>
 					<button type="button" class="list-item" onclick="showSchedule('Vice President D5')">
-						<span>Vice President D5 (Friday)</span>
+						<span data-i18n="pos_vp_d5">Vice President D5 (Friday)</span>
 						<span class="arrow">&gt;</span>
 					</button>
 				</div>
 
 				<div class="external-link-container">
 					<a class="list-item list-item-small" href="https://ferdinanflash.github.io/board/" target="_blank" rel="noopener noreferrer">
-						<span>Events Leaderboard Record</span>
+						<span data-i18n="link_leaderboard">Events Leaderboard Record</span>
 						<span class="arrow">&gt;</span>
 					</a>
 					<a class="list-item list-item-small" href="https://ferdinanflash.github.io/tal/" target="_blank" rel="noopener noreferrer">
-						<span>Tundra Arm League</span>
+						<span data-i18n="link_tal">Tundra Arm League</span>
 						<span class="arrow">&gt;</span>
 					</a>
 				</div>
@@ -127,18 +128,18 @@
 
 			<section id="schedule-page" class="hidden">
 				<div class="schedule-actions" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-start;">
-					<button class="btn-back" onclick="showPositions()" style="margin-bottom: 0;">&lt; Back to positions</button>
-					<button id="export-csv-btn" class="btn-apply" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem;" onclick="exportToCSV()">Export CSV</button>
-					<button id="toggle-reservation-btn" class="btn-apply" style="background: #dc2626; margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem; display: none;" onclick="handleToggleReservation()">Close Reservation</button>
+					<button class="btn-back" onclick="showPositions()" style="margin-bottom: 0;" data-i18n="btn_back">&lt; Back to positions</button>
+					<button id="export-csv-btn" class="btn-apply" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem;" onclick="exportToCSV()" data-i18n="btn_export_csv">Export CSV</button>
+					<button id="toggle-reservation-btn" class="btn-apply" style="background: #dc2626; margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem; display: none;" onclick="handleToggleReservation()" data-i18n="btn_close_reservation">Close Reservation</button>
 				</div>
 
 				<h1 class="page-title" id="selected-title">Position Title</h1>
 				<h3 class="section-title">
-					Time Slot Schedule <span id="admin-indicator" style="color:#ef4444; font-size:0.8rem; display:none;">(PRESIDENT MODE)</span>
+					<span data-i18n="schedule_heading">Time Slot Schedule</span> <span id="admin-indicator" style="color:#ef4444; font-size:0.8rem; display:none;">(PRESIDENT MODE)</span>
 				</h3>
 
 				<div class="timezone-selector">
-					<label for="timezone">Display Time Zone:</label>
+					<label for="timezone" data-i18n="label_timezone">Display Time Zone:</label>
 					<select id="timezone" onchange="renderTimeSlots()">
 					</select>
 				</div>
@@ -147,12 +148,12 @@
 					<table>
 						<thead>
 							<tr>
-								<th>ACTION</th>
-								<th>PREFERRED TIME (UTC)</th>
-								<th>STATUS (APPLICANTS)</th>
-								<th>IN-GAME NICKNAME</th>
-								<th>IN-GAME ID</th>
-								<th>FC</th>
+								<th data-i18n="th_action">ACTION</th>
+								<th data-i18n="th_preferred_time">PREFERRED TIME (UTC)</th>
+								<th data-i18n="th_status">STATUS (APPLICANTS)</th>
+								<th data-i18n="th_nickname">IN-GAME NICKNAME</th>
+								<th data-i18n="th_gameid">IN-GAME ID</th>
+								<th data-i18n="th_fc">FC</th>
 							</tr>
 						</thead>
 						<tbody id="schedule-table-body"></tbody>
@@ -164,8 +165,8 @@
 		<!-- Modal Daftar Menunggu -->
 		<div id="waiting-modal" class="modal hidden">
 			<div class="modal-content">
-				<button type="button" class="close-modal" onclick="closeModal()" aria-label="Close">&times;</button>
-				<h2 id="modal-title">Applicants List</h2>
+				<button type="button" class="close-modal" onclick="closeModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 id="modal-title" data-i18n="applicants_list_title">Applicants List</h2>
 				<div class="modal-table-container">
 					<table>
 						<thead>
@@ -183,18 +184,16 @@
 		<!-- Modal Pindahkan Pengajuan Menunggu (leftover setelah salah satu di-Accept) -->
 		<div id="reassign-modal" class="modal hidden">
 			<div class="modal-content">
-				<button type="button" class="close-modal" onclick="closeReassignModal()" aria-label="Close">&times;</button>
-				<h2 id="reassign-modal-title">Move Waiting Applicants</h2>
-				<p style="color:#8a8d98; font-size:0.85rem; margin-bottom:12px; line-height:1.4;">
-					This slot now has an Accepted application. The applicants below are NOT deleted — pick a free slot for each one and click Move.
-				</p>
+				<button type="button" class="close-modal" onclick="closeReassignModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 id="reassign-modal-title" data-i18n="reassign_modal_title">Move Waiting Applicants</h2>
+				<p data-i18n="reassign_desc" style="color:#8a8d98; font-size:0.85rem; margin-bottom:12px; line-height:1.4;">This slot now has an Accepted application. The applicants below are NOT deleted — pick a free slot for each one and click Move.</p>
 				<div class="modal-table-container">
 					<table>
 						<thead>
 							<tr>
 								<th style="padding: 5px 10px; text-align: left;">NICKNAME</th>
 								<th style="padding: 5px 10px; text-align: left;">ID</th>
-								<th style="padding: 5px 10px; text-align: left;">MOVE TO</th>
+								<th data-i18n="th_move_to" style="padding: 5px 10px; text-align: left;">MOVE TO</th>
 								<th style="padding: 5px 10px; text-align: left;"></th>
 							</tr>
 						</thead>
@@ -207,8 +206,8 @@
 		<!-- Modal Detail Statistik (Pop-up Ikon Kaca Pembesar) -->
 		<div id="details-modal" class="modal hidden">
 			<div class="modal-content custom-form-modal" style="max-width: 360px;">
-				<button type="button" class="close-modal" onclick="closeDetailsModal()" aria-label="Close">&times;</button>
-				<h2 style="margin-bottom: 12px; font-size: 1.2rem; text-align: center;">Application Details</h2>
+				<button type="button" class="close-modal" onclick="closeDetailsModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 data-i18n="details_modal_title" style="margin-bottom: 12px; font-size: 1.2rem; text-align: center;">Application Details</h2>
 				<div id="details-content" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; text-align: left; background: #121316; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
 					<!-- Diisi secara dinamis via JavaScript -->
 				</div>
@@ -218,25 +217,25 @@
 		<!-- Modal Form Apply -->
 		<div id="apply-modal" class="modal hidden">
 			<div class="modal-content custom-form-modal">
-				<button type="button" class="close-modal" onclick="closeApplyModal()" aria-label="Close">&times;</button>
-				<h2 style="margin-bottom: 4px; font-size: 1.4rem;">Apply for Time Slot</h2>
+				<button type="button" class="close-modal" onclick="closeApplyModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 data-i18n="apply_modal_title" style="margin-bottom: 4px; font-size: 1.4rem;">Apply for Time Slot</h2>
 				<p style="color: #8a8d98; font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">
-					Position: <span id="form-position-title" style="color: #f1f5f9; font-weight: bold;">-</span><br>
-						Time: <span id="form-time-title" style="color: #3b82f6; font-weight: bold;">-</span>
+					<span data-i18n="apply_position_label">Position:</span> <span id="form-position-title" style="color: #f1f5f9; font-weight: bold;">-</span><br>
+						<span data-i18n="apply_time_label">Time:</span> <span id="form-time-title" style="color: #3b82f6; font-weight: bold;">-</span>
 					</p>
 
 				<div class="form-group">
-					<label>In-Game Nickname</label>
-					<input type="text" id="input-nickname" maxlength="40" placeholder="Enter your nickname">
+					<label data-i18n="label_nickname">In-Game Nickname</label>
+					<input type="text" id="input-nickname" maxlength="40" placeholder="Enter your nickname" data-i18n-placeholder="placeholder_nickname">
             </div>
 				<div class="form-group">
-					<label>In-Game ID</label>
-					<input type="text" inputmode="numeric" pattern="[0-9]*" id="input-gameid" maxlength="20" placeholder="Enter your game ID">
+					<label data-i18n="label_gameid">In-Game ID</label>
+					<input type="text" inputmode="numeric" pattern="[0-9]*" id="input-gameid" maxlength="20" placeholder="Enter your game ID" data-i18n-placeholder="placeholder_gameid">
             </div>
 				<div class="form-group">
-					<label>Furnace Level</label>
+					<label data-i18n="label_furnace">Furnace Level</label>
 					<select id="input-furnace">
-						<option value="">Select Furnace Level</option>
+						<option value="" data-i18n="option_select_furnace">Select Furnace Level</option>
 						<option value="1">1</option>
 						<option value="2">2</option>
 						<option value="3">3</option>
@@ -250,40 +249,40 @@
 					</select>
             </div>
 				<div class="form-group">
-					<label>Fire Crystals Amount</label>
-					<input type="number" id="input-fc" placeholder="Fire Crystal">
+					<label data-i18n="label_fc">Fire Crystals Amount</label>
+					<input type="number" id="input-fc" placeholder="Fire Crystal" data-i18n-placeholder="placeholder_fc">
             </div>
 				<div class="form-group">
-					<label>Refined Fire Crystals Amount</label>
-					<input type="number" id="input-rfc" placeholder="Refined Fire Crystal">
+					<label data-i18n="label_rfc">Refined Fire Crystals Amount</label>
+					<input type="number" id="input-rfc" placeholder="Refined Fire Crystal" data-i18n-placeholder="placeholder_rfc">
             </div>
 				<div class="form-group">
-					<label>General Speedups (Days)</label>
-					<input type="number" id="input-gensp" placeholder="General Speedup in Days">
+					<label data-i18n="label_gensp">General Speedups (Days)</label>
+					<input type="number" id="input-gensp" placeholder="General Speedup in Days" data-i18n-placeholder="placeholder_gensp">
             </div>
 				<div class="form-group">
-					<label>Construction Speedups (Days)</label>
-					<input type="number" id="input-constsp" placeholder="Construction Speedup in Days">
+					<label data-i18n="label_constsp">Construction Speedups (Days)</label>
+					<input type="number" id="input-constsp" placeholder="Construction Speedup in Days" data-i18n-placeholder="placeholder_constsp">
             </div>
 				<div class="form-group">
-					<label>Research Speedups (Days)</label>
-					<input type="number" id="input-ressp" placeholder="Research Speedup in Days">
+					<label data-i18n="label_ressp">Research Speedups (Days)</label>
+					<input type="number" id="input-ressp" placeholder="Research Speedup in Days" data-i18n-placeholder="placeholder_ressp">
             </div>
 				<div class="form-group">
-					<label>Troops Training Speedups (Days)</label>
-					<input type="number" id="input-trainsp" placeholder="Training Speedup in Days">
+					<label data-i18n="label_trainsp">Troops Training Speedups (Days)</label>
+					<input type="number" id="input-trainsp" placeholder="Training Speedup in Days" data-i18n-placeholder="placeholder_trainsp">
             </div>
 
 				<div class="form-actions">
-					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeApplyModal()">Cancel</button>
-					<button class="btn-apply" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);" onclick="submitApplication()">Submit Application</button>
+					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeApplyModal()" data-i18n="btn_cancel">Cancel</button>
+					<button class="btn-apply" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);" onclick="submitApplication()" data-i18n="btn_submit_application">Submit Application</button>
 				</div>
 			</div>
 		</div>
 
 		<footer class="site-footer">
 			<div class="footer-section">
-				<p style="color: #8a8d98; margin-bottom: 6px;">Current President</p>
+				<p data-i18n="footer_current_president" style="color: #8a8d98; margin-bottom: 6px;">Current President</p>
 				<div class="footer-row">
 					<div id="display-president-name" class="fire-text">...</div>
 				</div>
@@ -300,32 +299,32 @@
 			</div>
 
 			<div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
-				<button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="handleEditFooter()">Edit President Info</button>
-				<button id="finish-svs-btn" class="btn-apply" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); font-size:0.75rem; padding:6px 12px; display:none; margin: 0; font-weight: bold;" onclick="handleFinishSVS()">FINISH SVS</button>
+				<button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="handleEditFooter()" data-i18n="btn_edit_footer">Edit President Info</button>
+				<button id="finish-svs-btn" class="btn-apply" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); font-size:0.75rem; padding:6px 12px; display:none; margin: 0; font-weight: bold;" onclick="handleFinishSVS()" data-i18n="btn_finish_svs">FINISH SVS</button>
 			</div>
 
 			<!-- Teks Credit Pembuat Web -->
 			<div class="neon-container">
-    <h1 class="neon-text">Created By : ACE aka DEMON</h1>
+    <h1 class="neon-text"><span data-i18n="created_by">Created By : ACE aka DEMON</span></h1>
 </div>
 		</footer>
 
 		<!-- Modal President Login (Supabase Auth - signInWithPassword) -->
 		<div id="login-modal" class="modal hidden">
 			<div class="modal-content custom-form-modal" style="max-width: 380px;">
-				<button type="button" class="close-modal" onclick="closeLoginModal()" aria-label="Close">&times;</button>
-				<h2 style="margin-bottom: 20px; font-size: 1.2rem;">President Login</h2>
+				<button type="button" class="close-modal" onclick="closeLoginModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 data-i18n="login_modal_title" style="margin-bottom: 20px; font-size: 1.2rem;">President Login</h2>
 				<div class="form-group">
-					<label>Username</label>
-					<input type="text" id="input-login-username" placeholder="Enter username">
+					<label data-i18n="label_username">Username</label>
+					<input type="text" id="input-login-username" placeholder="Enter username" data-i18n-placeholder="placeholder_username">
 				</div>
 				<div class="form-group">
-					<label>Password</label>
-					<input type="password" id="input-login-password" placeholder="Enter password">
+					<label data-i18n="label_password">Password</label>
+					<input type="password" id="input-login-password" placeholder="Enter password" data-i18n-placeholder="placeholder_password">
 				</div>
 				<div class="form-actions">
 					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeLoginModal()">Cancel</button>
-					<button id="login-submit-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="submitStaffLogin()">Sign In</button>
+					<button id="login-submit-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="submitStaffLogin()" data-i18n="btn_signin">Sign In</button>
 				</div>
 			</div>
 		</div>
@@ -333,19 +332,19 @@
 		<!-- Modal Edit President/Guild Info (menggantikan native prompt()) -->
 		<div id="edit-footer-modal" class="modal hidden">
 			<div class="modal-content custom-form-modal" style="max-width: 380px;">
-				<button type="button" class="close-modal" onclick="closeEditFooterModal()" aria-label="Close">&times;</button>
-				<h2 style="margin-bottom: 20px; font-size: 1.2rem;">Edit President Info</h2>
+				<button type="button" class="close-modal" onclick="closeEditFooterModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 data-i18n="edit_footer_modal_title" style="margin-bottom: 20px; font-size: 1.2rem;">Edit President Info</h2>
 				<div class="form-group">
-					<label>President Name</label>
-					<input type="text" id="edit-footer-name" maxlength="60" placeholder="Enter president name">
+					<label data-i18n="label_president_name">President Name</label>
+					<input type="text" id="edit-footer-name" maxlength="60" placeholder="Enter president name" data-i18n-placeholder="placeholder_president_name">
 				</div>
 				<div class="form-group">
-					<label>Guild Name</label>
-					<input type="text" id="edit-footer-guild" maxlength="60" placeholder="Enter guild name">
+					<label data-i18n="label_guild_name">Guild Name</label>
+					<input type="text" id="edit-footer-guild" maxlength="60" placeholder="Enter guild name" data-i18n-placeholder="placeholder_guild_name">
 				</div>
 				<div class="form-actions">
 					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeEditFooterModal()">Cancel</button>
-					<button id="edit-footer-save-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="saveEditFooter()">Save</button>
+					<button id="edit-footer-save-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="saveEditFooter()" data-i18n="btn_save">Save</button>
 				</div>
 			</div>
 		</div>
