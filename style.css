@@ -1586,26 +1586,29 @@ th:first-child {
         overflow-wrap: anywhere;
         word-break: normal;
         white-space: normal !important;
+        overflow: hidden;
     }
 
     /* Waiting list: nickname / ID / destination / actions */
     #waiting-modal th:nth-child(1),
-    #waiting-modal td:nth-child(1) { width: 32%; }
+    #waiting-modal td:nth-child(1) { width: 26%; }
     #waiting-modal th:nth-child(2),
-    #waiting-modal td:nth-child(2) { width: 25%; }
+    #waiting-modal td:nth-child(2) { width: 20%; }
     #waiting-modal th:nth-child(3),
-    #waiting-modal td:nth-child(3) { width: 25%; }
+    #waiting-modal td:nth-child(3) { width: 32%; }
     #waiting-modal th:nth-child(4),
-    #waiting-modal td:nth-child(4) { width: 18%; }
+    #waiting-modal td:nth-child(4) { width: 22%; }
 
     #waiting-modal .waiting-move-select {
-        width: 132px !important;
-        min-width: 120px !important;
+        width: 100% !important;
+        min-width: 0 !important;
         max-width: 100%;
         box-sizing: border-box;
-        font-size: 0.7rem;
-        padding: 7px 28px 7px 7px;
+        font-size: 0.68rem;
+        padding: 7px 22px 7px 6px;
         white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     #waiting-modal .waiting-move-btn {
@@ -1632,22 +1635,24 @@ th:first-child {
 
     /* Reassign modal: nickname / ID / move-to / action */
     #reassign-modal th:nth-child(1),
-    #reassign-modal td:nth-child(1) { width: 29%; }
+    #reassign-modal td:nth-child(1) { width: 24%; }
     #reassign-modal th:nth-child(2),
-    #reassign-modal td:nth-child(2) { width: 23%; }
+    #reassign-modal td:nth-child(2) { width: 19%; }
     #reassign-modal th:nth-child(3),
-    #reassign-modal td:nth-child(3) { width: 25%; }
+    #reassign-modal td:nth-child(3) { width: 32%; }
     #reassign-modal th:nth-child(4),
-    #reassign-modal td:nth-child(4) { width: 23%; }
+    #reassign-modal td:nth-child(4) { width: 25%; }
 
     #reassign-modal td:nth-child(3) select {
-        width: 132px !important;
-        min-width: 120px !important;
+        width: 100% !important;
+        min-width: 0 !important;
         max-width: 100% !important;
         box-sizing: border-box;
-        font-size: 0.7rem;
-        padding: 7px 28px 7px 7px;
+        font-size: 0.68rem;
+        padding: 7px 22px 7px 6px;
         white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     #reassign-modal td:nth-child(4) {
@@ -1696,11 +1701,12 @@ th:first-child {
 
     #waiting-modal .waiting-move-select,
     #reassign-modal td:nth-child(3) select {
-        width: 120px !important;
-        min-width: 112px !important;
-        padding-left: 6px;
-        padding-right: 25px;
-        font-size: 0.66rem !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        padding-left: 5px;
+        padding-right: 18px;
+        font-size: 0.64rem !important;
     }
 }
 
