@@ -61,3 +61,36 @@ CREATE TRIGGER trg_reservation_time_log_on_insert
 BEFORE INSERT ON public.reservation_slots
 FOR EACH ROW
 EXECUTE FUNCTION public.ensure_reservation_time_log_on_insert();
+
+-- SVS Ministry: editable How to Use notes, stored per position + language.
+CREATE TABLE IF NOT EXISTS public.how_to_use_notes (
+    position text NOT NULL,
+    language text NOT NULL,
+    content text NOT NULL DEFAULT '',
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (position, language)
+);
+
+ALTER TABLE public.how_to_use_notes ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "how_to_use_notes_public_read" ON public.how_to_use_notes;
+CREATE POLICY "how_to_use_notes_public_read"
+ON public.how_to_use_notes
+FOR SELECT
+TO anon, authenticated
+USING (true);
+
+DROP POLICY IF EXISTS "how_to_use_notes_authenticated_write" ON public.how_to_use_notes;
+CREATE POLICY "how_to_use_notes_authenticated_write"
+ON public.how_to_use_notes
+FOR INSERT
+TO authenticated
+WITH CHECK (true);
+
+DROP POLICY IF EXISTS "how_to_use_notes_authenticated_update" ON public.how_to_use_notes;
+CREATE POLICY "how_to_use_notes_authenticated_update"
+ON public.how_to_use_notes
+FOR UPDATE
+TO authenticated
+USING (true)
+WITH CHECK (true);

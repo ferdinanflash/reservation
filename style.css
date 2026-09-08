@@ -1374,3 +1374,106 @@ th:first-child {
         max-height: 160px;
     }
 }
+
+
+/* Waiting List admin move controls */
+.waiting-move-select { max-width: 125px; min-width: 105px; padding: 5px 7px; font-size: 0.78rem; }
+.waiting-move-btn { font-size: 0.72rem; padding: 5px 8px; margin-left: 4px; }
+@media (max-width: 700px) {
+  #waiting-modal .modal-content { max-width: 96vw; overflow-x: auto; }
+  #waiting-modal table { min-width: 620px; }
+  #waiting-modal .waiting-move-select { min-width: 105px; }
+  #waiting-modal .admin-action-buttons { display: flex; flex-direction: column; gap: 5px; align-items: stretch; }
+  #waiting-modal .admin-action-btn { width: 82px; margin: 0; }
+}
+
+/* ==================== HOW TO USE ==================== */
+.how-to-use-btn {
+    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%) !important;
+}
+
+.how-to-use-modal-content {
+    max-width: 620px;
+}
+
+.how-to-use-description {
+    color: #8a8d98;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    margin: 0 0 12px;
+    text-align: center;
+}
+
+.how-to-use-notes {
+    width: 100%;
+    min-height: 300px;
+    box-sizing: border-box;
+    resize: vertical;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    background: #121316;
+    color: #cbd5e1;
+    padding: 12px;
+    font: inherit;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    outline: none;
+}
+
+.how-to-use-notes:read-only {
+    cursor: default;
+}
+
+.how-to-use-notes.admin-editable:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(96,165,250,0.12);
+}
+
+.how-to-use-actions {
+    margin-top: 12px;
+}
+
+/* Prevent the magnifier + Remove pair from overflowing the narrow mobile
+   ACTION column. They intentionally stack on phones instead of competing
+   for the same few pixels. */
+@media screen and (max-width: 480px) {
+    .table-container > table td:first-child > div {
+        flex-direction: column !important;
+        gap: 2px !important;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .table-container > table td:first-child .icon-tap-target {
+        margin: 0 !important;
+        min-width: 30px;
+        min-height: 30px;
+        padding: 5px !important;
+    }
+
+    .table-container > table td:first-child .btn-danger {
+        width: 100%;
+        max-width: 74px;
+        box-sizing: border-box;
+        padding: 6px 4px !important;
+        font-size: 0.66rem !important;
+    }
+
+    .schedule-actions {
+        gap: 8px !important;
+    }
+
+    .how-to-use-btn {
+        padding: 9px 12px !important;
+        font-size: 0.82rem !important;
+    }
+
+    .how-to-use-modal-content {
+        max-width: 94vw;
+        padding: 18px;
+    }
+
+    .how-to-use-notes {
+        min-height: 260px;
+    }
+}

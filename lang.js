@@ -36,6 +36,14 @@
             btn_export_csv: "Export CSV",
             btn_close_reservation: "Close Reservation",
             btn_open_reservation: "Open Reservation",
+            btn_how_to_use: "How to use",
+            how_to_use_title: "How to use",
+            how_to_use_description: "Notes for using this reservation page. President can edit and save these notes.",
+            how_to_use_placeholder: "Write usage notes here...",
+            saving_text: "Saving...",
+            toast_how_to_use_empty: "Notes cannot be empty.",
+            toast_how_to_use_saved: "How to Use notes saved successfully.",
+            toast_how_to_use_save_failed: "Failed to save How to Use notes. Please try again.",
             schedule_opening: "Opening...",
             schedule_closing: "Closing...",
             schedule_heading: "Time Slot Schedule",
@@ -52,6 +60,7 @@
             reassign_modal_title: "Move Waiting Applicants",
             reassign_desc: "This slot now has an Accepted application. The applicants below are NOT deleted — pick a free slot for each one and click Move.",
             th_move_to: "MOVE TO",
+             th_actions: "ACTIONS",
             details_modal_title: "Application Details",
             admin_application_controls: "President Controls",
             admin_status_label: "Status",
@@ -217,6 +226,14 @@
             btn_export_csv: "Ekspor CSV",
             btn_close_reservation: "Tutup Reservasi",
             btn_open_reservation: "Buka Reservasi",
+            btn_how_to_use: "Cara Penggunaan",
+            how_to_use_title: "Cara Penggunaan",
+            how_to_use_description: "Catatan penggunaan halaman reservasi ini. Presiden dapat mengedit dan menyimpan catatan ini.",
+            how_to_use_placeholder: "Tulis catatan cara penggunaan di sini...",
+            saving_text: "Menyimpan...",
+            toast_how_to_use_empty: "Catatan tidak boleh kosong.",
+            toast_how_to_use_saved: "Catatan Cara Penggunaan berhasil disimpan.",
+            toast_how_to_use_save_failed: "Gagal menyimpan catatan Cara Penggunaan. Silakan coba lagi.",
             schedule_opening: "Membuka...",
             schedule_closing: "Menutup...",
             schedule_heading: "Jadwal Slot Waktu",
@@ -233,6 +250,7 @@
             reassign_modal_title: "Pindahkan Pemohon yang Menunggu",
             reassign_desc: "Slot ini sekarang memiliki aplikasi yang Diterima. Pemohon di bawah TIDAK dihapus — pilih slot kosong untuk masing-masing lalu klik Pindahkan.",
             th_move_to: "PINDAHKAN KE",
+             th_actions: "TINDAKAN",
             details_modal_title: "Detail Aplikasi",
             admin_application_controls: "Kontrol Presiden",
             admin_status_label: "Status",
@@ -396,6 +414,14 @@
             btn_export_csv: "I-export ang CSV",
             btn_close_reservation: "Isara ang Reservation",
             btn_open_reservation: "Buksan ang Reservation",
+            btn_how_to_use: "Paano gamitin",
+            how_to_use_title: "Paano gamitin",
+            how_to_use_description: "Mga tala para sa paggamit ng reservation page. Maaaring i-edit at i-save ng President ang mga tala.",
+            how_to_use_placeholder: "Isulat ang mga tala ng paggamit dito...",
+            saving_text: "Sine-save...",
+            toast_how_to_use_empty: "Hindi maaaring walang laman ang mga tala.",
+            toast_how_to_use_saved: "Matagumpay na na-save ang How to Use notes.",
+            toast_how_to_use_save_failed: "Hindi ma-save ang How to Use notes. Subukan muli.",
             schedule_opening: "Binubuksan...",
             schedule_closing: "Isinasara...",
             schedule_heading: "Iskedyul ng Time Slot",
@@ -412,6 +438,7 @@
             reassign_modal_title: "Ilipat ang mga Naghihintay na Aplikante",
             reassign_desc: "Ang slot na ito ay mayroon nang tinanggap na application. HINDI buburahin ang mga aplikante sa ibaba — pumili ng bakanteng slot para sa bawat isa at i-click ang Ilipat.",
             th_move_to: "ILIPAT SA",
+             th_actions: "MGA AKSYON",
             details_modal_title: "Detalye ng Application",
             admin_application_controls: "Mga Kontrol ng Presidente",
             admin_status_label: "Status",
@@ -575,6 +602,14 @@
             btn_export_csv: "导出CSV",
             btn_close_reservation: "关闭预约",
             btn_open_reservation: "开启预约",
+            btn_how_to_use: "使用说明",
+            how_to_use_title: "使用说明",
+            how_to_use_description: "此预约页面的使用说明。会长可以编辑并保存这些说明。",
+            how_to_use_placeholder: "在这里填写使用说明...",
+            saving_text: "保存中...",
+            toast_how_to_use_empty: "说明不能为空。",
+            toast_how_to_use_saved: "使用说明已成功保存。",
+            toast_how_to_use_save_failed: "使用说明保存失败，请重试。",
             schedule_opening: "开启中...",
             schedule_closing: "关闭中...",
             schedule_heading: "时段预约表",
@@ -591,6 +626,7 @@
             reassign_modal_title: "移动等待中的申请人",
             reassign_desc: "该时段已有一个被接受的申请。以下申请人不会被删除——请为每位申请人选择一个空闲时段，然后点击「移动」。",
             th_move_to: "移动至",
+             th_actions: "操作",
             details_modal_title: "申请详情",
             admin_application_controls: "总统控制",
             admin_status_label: "状态",
@@ -839,6 +875,14 @@
             const reassignModal = document.getElementById('reassign-modal');
             if (reassignModal && !reassignModal.classList.contains('hidden') && typeof currentReassignModalTime !== 'undefined' && currentReassignModalTime && typeof openReassignModal === 'function') {
                 openReassignModal(currentReassignModalTime);
+            }
+        } catch (e) { /* noop */ }
+
+        try {
+            const howToUseModal = document.getElementById('how-to-use-modal');
+            if (howToUseModal && !howToUseModal.classList.contains('hidden') && typeof openHowToUseModal === 'function') {
+                howToUseNotesLoaded = false;
+                openHowToUseModal();
             }
         } catch (e) { /* noop */ }
 

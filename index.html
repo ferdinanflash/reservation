@@ -4,12 +4,12 @@
 		<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<title>3475 SvS Minister Reservation</title>
-				<link rel="stylesheet" href="style.css">
+				<link rel="stylesheet" href="style.css?v=37">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js"></script>
 		<script src="lang.js"></script>
-					<script src="script.js?v=36" defer=""></script>
+					<script src="script.js?v=37" defer=""></script>
 					<script src="fire-banner.js" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 				</head>
@@ -135,6 +135,7 @@
 					<button class="btn-back" onclick="showPositions()" style="margin-bottom: 0;" data-i18n="btn_back">&lt; Back to positions</button>
 					<button id="export-csv-btn" class="btn-apply" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem;" onclick="exportToCSV()" data-i18n="btn_export_csv">Export CSV</button>
 					<button id="toggle-reservation-btn" class="btn-apply" style="background: #dc2626; margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem; display: none;" onclick="handleToggleReservation()" data-i18n="btn_close_reservation">Close Reservation</button>
+					<button id="how-to-use-btn" class="btn-apply how-to-use-btn" style="margin-bottom: 0; padding: 10px 16px; font-size: 0.9rem;" onclick="openHowToUseModal()" data-i18n="btn_how_to_use">How to use</button>
 				</div>
 
 				<h1 class="page-title" id="selected-title" data-i18n="selected_position_title">Position Title</h1>
@@ -214,6 +215,20 @@
 				<h2 data-i18n="details_modal_title" style="margin-bottom: 12px; font-size: 1.2rem; text-align: center;">Application Details</h2>
 				<div id="details-content" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; text-align: left; background: #121316; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
 					<!-- Diisi secara dinamis via JavaScript -->
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal How to Use -->
+		<div id="how-to-use-modal" class="modal hidden">
+			<div class="modal-content custom-form-modal how-to-use-modal-content">
+				<button type="button" class="close-modal" onclick="closeHowToUseModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 data-i18n="how_to_use_title" style="margin-bottom: 8px; font-size: 1.3rem; text-align: center;">How to use</h2>
+				<p class="how-to-use-description" data-i18n="how_to_use_description">Notes for using this reservation page. President can edit and save these notes.</p>
+				<textarea id="how-to-use-notes" class="how-to-use-notes" maxlength="10000" spellcheck="true" data-i18n-placeholder="how_to_use_placeholder" placeholder="Write usage notes here..."></textarea>
+				<div class="form-actions how-to-use-actions">
+					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeHowToUseModal()" data-i18n="btn_close">Close</button>
+					<button id="how-to-use-save-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="saveHowToUseNotes()" data-i18n="btn_save">Save</button>
 				</div>
 			</div>
 		</div>
