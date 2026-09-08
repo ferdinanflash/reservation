@@ -16,6 +16,12 @@
       <stop offset="0%" stop-color="#3b4358"/>
       <stop offset="100%" stop-color="#1a1e2a"/>
     </linearGradient>
+    <linearGradient id="blade" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#e8390a"/>
+      <stop offset="45%" stop-color="#ff8c00"/>
+      <stop offset="75%" stop-color="#ffd23f"/>
+      <stop offset="100%" stop-color="#fff6d5"/>
+    </linearGradient>
   </defs>
 
   <rect width="512" height="512" rx="112" fill="url(#bgGlow)"/>
@@ -25,17 +31,21 @@
   <path d="M256 84 L378 124 V246 C378 342 328 400 256 432 C184 400 134 342 134 246 V124 Z"
         fill="#12141c"/>
 
-  <path d="M256 150
-           C232 190 208 214 208 256
-           C208 300 230 328 256 336
-           C282 328 304 300 304 256
-           C304 214 280 190 256 150 Z
-           M256 176
-           C268 202 282 220 282 250
-           C282 276 270 292 256 298
-           C242 292 230 276 230 250
-           C230 220 244 202 256 176 Z"
-        fill="url(#flame)"/>
+  <g transform="translate(256,260) rotate(-45)">
+    <path d="M0,-108 C6,-70 6,-30 5,-8 L-5,-8 C-6,-30 -6,-70 0,-108 Z" fill="url(#blade)"/>
+    <rect x="-3" y="-8" width="6" height="6" fill="#fff6d5"/>
+    <rect x="-26" y="-2" width="52" height="9" rx="3" fill="#ffd23f" stroke="#7a1a00" stroke-width="1.5"/>
+    <rect x="-5" y="7" width="10" height="34" rx="3" fill="#2a2f3d" stroke="#4a5570" stroke-width="1.5"/>
+    <circle cx="0" cy="46" r="8" fill="#ffd23f" stroke="#7a1a00" stroke-width="1.5"/>
+  </g>
+
+  <g transform="translate(256,260) rotate(45)">
+    <path d="M0,-108 C6,-70 6,-30 5,-8 L-5,-8 C-6,-30 -6,-70 0,-108 Z" fill="url(#blade)"/>
+    <rect x="-3" y="-8" width="6" height="6" fill="#fff6d5"/>
+    <rect x="-26" y="-2" width="52" height="9" rx="3" fill="#ffd23f" stroke="#7a1a00" stroke-width="1.5"/>
+    <rect x="-5" y="7" width="10" height="34" rx="3" fill="#2a2f3d" stroke="#4a5570" stroke-width="1.5"/>
+    <circle cx="0" cy="46" r="8" fill="#ffd23f" stroke="#7a1a00" stroke-width="1.5"/>
+  </g>
 
   <text x="256" y="410" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
         font-weight="700" font-size="58" fill="#ffd23f" letter-spacing="1">3475</text>
