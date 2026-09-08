@@ -146,6 +146,27 @@ body {
     border-radius: 8px;   
 }
 
+/* ==================== DESKTOP BANNER COMPACT LAYOUT ==================== */
+/* Keep the main position menu close to the top on desktop. The banner
+   previously used 100vw + a tall aspect-ratio, making the menu require
+   an unnecessary long scroll on wide screens. */
+@media screen and (min-width: 769px) {
+    .fire-banner {
+        width: 100%;
+        max-width: 800px;
+        height: 190px;
+        aspect-ratio: auto;
+        margin-left: auto;
+        margin-right: auto;
+        transform: none;
+        border-radius: 10px;
+    }
+
+    .fire-digit {
+        font-size: clamp(42px, 8vw, 82px);
+    }
+}
+
 /* ==================== ANIMATED ORANGE FIRE BANNER (replaces 3475 image) ==================== */
 .fire-banner {
     position: relative;
