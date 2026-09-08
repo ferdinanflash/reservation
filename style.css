@@ -551,6 +551,59 @@ body {
     animation: redPulse 2.5s infinite ease-in-out !important;
 }
 
+/* ==================== ADMIN ACCEPT / REJECT ACTIONS ====================
+   Keep translated labels inside the modal on every language and screen size.
+   The buttons use a dedicated flex wrapper instead of inline margins/sizing. */
+.admin-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.admin-action-btn {
+    flex: 1 1 90px;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    animation: none !important;
+}
+
+.admin-accept-btn {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.35);
+}
+
+.admin-accept-btn:hover {
+    filter: brightness(1.12);
+}
+
+.admin-reject-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+@media screen and (max-width: 480px) {
+    /* Stack Accept/Reject in the narrow ID column so long translations
+       never overlap the nickname, ID, or modal edge. */
+    .admin-action-buttons {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 6px;
+    }
+
+    .admin-action-btn {
+        width: 100%;
+        min-width: 0;
+        min-height: 36px;
+        padding: 8px 10px !important;
+        font-size: 0.75rem !important;
+    }
+}
+
 @keyframes redPulse {
     0% {
         background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
@@ -1219,5 +1272,105 @@ th:first-child {
         padding-left: 4px;
         padding-right: 4px;
         font-size: 0.68rem;
+    }
+}
+
+/* ==================== APPLICATION TIME LOG + PRESIDENT CONTROLS ==================== */
+.application-time-log {
+    margin-top: 12px;
+    border-top: 1px solid #334155;
+    padding-top: 10px;
+}
+
+.application-time-log-title,
+.admin-control-title {
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.application-time-log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.time-log-entry {
+    background: #151821;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 7px 9px;
+}
+
+.time-log-main {
+    color: #e5e7eb;
+    font-size: 0.78rem;
+    line-height: 1.35;
+}
+
+.time-log-meta {
+    color: #8a8d98;
+    font-size: 0.7rem;
+    margin-top: 2px;
+}
+
+.time-log-actor {
+    color: #60a5fa;
+}
+
+.application-time-log-empty {
+    color: #8a8d98;
+    font-size: 0.78rem;
+}
+
+.admin-application-controls {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #334155;
+}
+
+.admin-control-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.admin-control-grid label {
+    color: #8a8d98;
+    font-size: 0.72rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.admin-control-select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 8px 7px;
+    border-radius: 6px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: #f1f5f9;
+    font-size: 0.78rem;
+}
+
+.admin-save-application-btn {
+    width: 100%;
+    margin-top: 9px;
+    padding: 9px 12px;
+    font-size: 0.8rem;
+}
+
+@media screen and (max-width: 480px) {
+    .admin-control-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .application-time-log-list {
+        max-height: 160px;
     }
 }

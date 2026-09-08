@@ -619,6 +619,178 @@ function renderTimeSlots() {
     }
 }
 
+// ================= APPLICATION TIME LOG =================
+// Time history is stored per application in reservation_slots.time_log as a
+// JSON array. It is intentionally rendered only inside the magnifying-glass
+// detail view, never in the main schedule table.
+function getApplicationTimeLog(app) {
+    let log = app && app.time_log;
+    if (typeof log === 'string') {
+        try { log = JSON.parse(log); } catch (_) { log = []; }
+    }
+    if (!Array.isArray(log)) log = [];
+
+    // Older records may predate the time_log column. If they have created_at,
+    // surface that timestamp without changing the record until an admin saves it.
+    if (log.length === 0 && app && app.created_at) {
+        log = [{ action: 'created', at: app.created_at, actor: 'Applicant' }];
+    }
+    return log;
+}
+
+function formatApplicationLogTime(value) {
+    if (!value) return '-';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return escapeHtml(String(value));
+    const langMap = { en: 'en-US', id: 'id-ID', ph: 'fil-PH', cn: 'zh-CN' };
+    const locale = langMap[(typeof getLang === 'function' ? getLang() : 'en')] || 'en-US';
+    try {
+        return new Intl.DateTimeFormat(locale, {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+        }).format(date);
+    } catch (_) {
+        return date.toLocaleString();
+    }
+}
+
+function buildApplicationTimeLogHtml(app) {
+    const log = getApplicationTimeLog(app);
+    if (log.length === 0) {
+        return `<div class="application-time-log-empty">${t("time_log_empty")}</div>`;
+    }
+
+    return log.map(entry => {
+        const actionKey = String(entry.action || 'updated').toLowerCase();
+        const actionLabel = t(`time_log_${actionKey}`) || entry.action || t("time_log_updated");
+        const detail = entry.detail ? ` — ${escapeHtml(String(entry.detail))}` : '';
+        const actor = entry.actor ? `<span class="time-log-actor">${escapeHtml(String(entry.actor))}</span>` : '';
+        return `<div class="time-log-entry">
+            <div class="time-log-main"><strong>${escapeHtml(actionLabel)}</strong>${detail}</div>
+            <div class="time-log-meta">${formatApplicationLogTime(entry.at)}${actor ? ` · ${actor}` : ''}</div>
+        </div>`;
+    }).join('');
+}
+
+async function appendApplicationTimeLog(app, entry) {
+    const client = getSupabase();
+    if (!client || !app || !app.id) return;
+
+    const nextLog = [...getApplicationTimeLog(app), {
+        action: entry.action || 'updated',
+        at: entry.at || new Date().toISOString(),
+        actor: entry.actor || (isAdmin ? (currentStaffUsername || 'President') : 'Applicant'),
+        detail: entry.detail || ''
+    }];
+
+    const { error } = await client
+        .from('reservation_slots')
+        .update({ time_log: nextLog })
+        .eq('id', app.id);
+    if (error) throw error;
+    app.time_log = nextLog;
+}
+
+function buildAdminApplicationControls(app) {
+    if (!isAdmin) return '';
+
+    const currentStatus = app.status === 'Accepted' ? 'Accepted' : 'Waiting';
+    const allSlots = getAllUtcSlots();
+    const options = allSlots.map(time =>
+        `<option value="${time}" ${String(app.time_slot).trim() === time ? 'selected' : ''}>${time} UTC</option>`
+    ).join('');
+
+    return `
+        <div class="admin-application-controls">
+            <div class="admin-control-title">${t("admin_application_controls")}</div>
+            <div class="admin-control-grid">
+                <label>${t("admin_status_label")}
+                    <select id="admin-status-select-${app.id}" class="admin-control-select">
+                        <option value="Waiting" ${currentStatus === 'Waiting' ? 'selected' : ''}>${t("status_waiting")}</option>
+                        <option value="Accepted" ${currentStatus === 'Accepted' ? 'selected' : ''}>${t("status_accepted")}</option>
+                    </select>
+                </label>
+                <label>${t("admin_time_label")}
+                    <select id="admin-time-select-${app.id}" class="admin-control-select">${options}</select>
+                </label>
+            </div>
+            <button type="button" class="btn-apply admin-save-application-btn" onclick="saveAdminApplicationChanges(${app.id})">${t("btn_save_changes")}</button>
+        </div>
+    `;
+}
+
+async function saveAdminApplicationChanges(id) {
+    if (!isAdmin) return;
+    const app = savedApplications.find(a => a.id === id);
+    if (!app) return;
+
+    const statusEl = document.getElementById(`admin-status-select-${id}`);
+    const timeEl = document.getElementById(`admin-time-select-${id}`);
+    if (!statusEl || !timeEl) return;
+
+    const newStatus = statusEl.value === 'Accepted' ? 'Accepted' : 'Waiting';
+    const newTime = String(timeEl.value || '').trim();
+    const oldStatus = app.status === 'Accepted' ? 'Accepted' : 'Waiting';
+    const oldTime = String(app.time_slot).trim();
+
+    if (!newTime) {
+        showToast(t("toast_no_slot_selected"), "warning");
+        return;
+    }
+    if (newStatus === oldStatus && newTime === oldTime) {
+        showToast(t("toast_no_changes"), "warning");
+        return;
+    }
+
+    // Only one Accepted application is allowed per UTC slot.
+    const occupiedByAnotherAccepted = savedApplications.some(other =>
+        other.id !== id &&
+        other.status === 'Accepted' &&
+        String(other.time_slot).trim() === newTime
+    );
+    if (newStatus === 'Accepted' && occupiedByAnotherAccepted) {
+        showToast(t("toast_slot_already_accepted"), "error");
+        return;
+    }
+
+    const changes = {};
+    if (newStatus !== oldStatus) changes.status = newStatus;
+    if (newTime !== oldTime) changes.time_slot = newTime;
+
+    const detailParts = [];
+    if (newTime !== oldTime) detailParts.push(`${oldTime} UTC → ${newTime} UTC`);
+    if (newStatus !== oldStatus) detailParts.push(`${oldStatus} → ${newStatus}`);
+
+    const now = new Date().toISOString();
+    const nextLog = [...getApplicationTimeLog(app), {
+        action: newTime !== oldTime && newStatus !== oldStatus ? 'updated' : (newTime !== oldTime ? 'moved' : 'status_changed'),
+        at: now,
+        actor: currentStaffUsername || 'President',
+        detail: detailParts.join('; ')
+    }];
+    changes.time_log = nextLog;
+
+    const client = getSupabase();
+    if (!client) return;
+
+    const saveBtn = document.querySelector(`#details-content .admin-save-application-btn`);
+    setButtonBusy(saveBtn, true, t("saving"));
+    try {
+        const { error } = await client.from('reservation_slots').update(changes).eq('id', id);
+        if (error) throw error;
+        showToast(t("toast_application_updated"), "success");
+        await loadApplications();
+        loadRecentAccepts();
+        const refreshed = savedApplications.find(a => a.id === id);
+        if (refreshed) openDetailsModal(id);
+    } catch (err) {
+        console.error("Failed to update application:", err);
+        showToast(t("toast_application_update_failed"), "error");
+    } finally {
+        setButtonBusy(saveBtn, false);
+    }
+}
+
 // ================= SHARED DETAIL BLOCK BUILDER =================
 // Shared by openDetailsModal() and openWaitingModal() so the stat detail
 // markup isn't duplicated in two different places.
@@ -656,7 +828,14 @@ function openDetailsModal(appId) {
 
     const modal = document.getElementById('details-modal');
     const contentEl = document.getElementById('details-content');
-    contentEl.innerHTML = buildStatDetailsHtml(app, false);
+    contentEl.innerHTML = `
+        <div class="details-stats">${buildStatDetailsHtml(app, false)}</div>
+        <div class="application-time-log">
+            <div class="application-time-log-title">${t("time_log_title")}</div>
+            <div class="application-time-log-list">${buildApplicationTimeLogHtml(app)}</div>
+        </div>
+        ${buildAdminApplicationControls(app)}
+    `;
     contentEl.dataset.appId = String(appId);
     modal.classList.remove('hidden');
 }
@@ -685,9 +864,9 @@ function openWaitingModal(timeStr) {
     appsInSlot.forEach(app => {
         const mainRow = document.createElement('tr');
         let adminButtons = isAdmin ? `
-            <div style="margin-top: 4px;">
-                <button class="btn-apply btn-compact" style="background:#22c55e; font-size:0.7rem; margin-right:4px; animation: none;" onclick="acceptApp(${app.id})">${t("btn_accept")}</button>
-                <button class="btn-apply btn-danger btn-compact" style="font-size:0.7rem;" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
+            <div class="admin-action-buttons" role="group" aria-label="Application actions">
+                <button type="button" class="btn-apply btn-compact admin-action-btn admin-accept-btn" onclick="acceptApp(${app.id})">${t("btn_accept")}</button>
+                <button type="button" class="btn-apply btn-danger btn-compact admin-action-btn admin-reject-btn" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
             </div>
         ` : '';
 
@@ -806,7 +985,8 @@ async function submitApplication() {
                 time_slot: selectedTimeSlot, position: currentPosition, nickname: nickname, game_id: gameId, 
                 furnace_level: furnaceLevel,
                 fire_crystal: fc, refined_fire_crystal: rfc, general_speedup: genSp, construction_speedup: constSp, research_speedup: resSp, training_speedup: trainSp,
-                status: 'Waiting'
+                status: 'Waiting',
+                time_log: [{ action: 'created', at: new Date().toISOString(), actor: 'Applicant', detail: `${selectedTimeSlot} UTC` }]
             });
 
         if (error) throw error;
@@ -833,7 +1013,14 @@ async function acceptApp(id) {
         if (!client) return;
         closeModal();
         try {
-            const { error } = await client.from('reservation_slots').update({ status: 'Accepted' }).eq('id', id);
+            if (!targetApp) throw new Error('Application not found');
+            const nextLog = [...getApplicationTimeLog(targetApp), {
+                action: 'status_changed',
+                at: new Date().toISOString(),
+                actor: currentStaffUsername || 'President',
+                detail: `${targetApp.status} → Accepted`
+            }];
+            const { error } = await client.from('reservation_slots').update({ status: 'Accepted', time_log: nextLog }).eq('id', id);
             if (error) throw error;
             showToast(t("toast_app_approved"), "success");
             await loadApplications();
@@ -937,7 +1124,7 @@ function renderReassignRows(originTime) {
             </td>
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
                 <button class="btn-apply btn-compact" style="font-size:0.7rem;" ${availableSlots.length === 0 ? 'disabled' : ''} onclick="moveAppToSlot(${app.id}, document.getElementById('${selectId}').value, '${originTime}')">${t("btn_move")}</button>
-                <button class="btn-apply btn-danger btn-compact" style="font-size:0.7rem;" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
+                <button type="button" class="btn-apply btn-danger btn-compact admin-action-btn admin-reject-btn" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
             </td>
         `;
         tbody.appendChild(row);
@@ -957,9 +1144,18 @@ async function moveAppToSlot(id, newTimeSlot, originTime) {
     if (!client) return;
 
     try {
+        const app = savedApplications.find(a => a.id === id);
+        if (!app) throw new Error('Application not found');
+        const oldTime = String(app.time_slot).trim();
+        const nextLog = [...getApplicationTimeLog(app), {
+            action: 'moved',
+            at: new Date().toISOString(),
+            actor: currentStaffUsername || 'President',
+            detail: `${oldTime} UTC → ${newTimeSlot} UTC`
+        }];
         const { error } = await client
             .from('reservation_slots')
-            .update({ time_slot: newTimeSlot })
+            .update({ time_slot: newTimeSlot, time_log: nextLog })
             .eq('id', id);
         if (error) throw error;
         showToast(t("toast_applicant_moved", { time: newTimeSlot }), "success");
