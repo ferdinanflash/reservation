@@ -205,7 +205,12 @@
             toast_load_schedule_failed: "Failed to load schedule data. Please refresh.",
             toast_id_copied: "ID {{id}} copied to clipboard!",
             toast_id_copied_fallback: "ID {{id}} copied!",
-            toast_copy_failed: "Failed to copy ID automatically."
+            toast_copy_failed: "Failed to copy ID automatically.",
+            label_additional_time_toggle: "Additional Preferred Time Slot",
+            desc_additional_time_toggle: "If this time slot not available, you can pick another time to reservation",
+            btn_add_another_time: "+ Add another time?",
+            option_select_additional_time: "Select time slot",
+            stat_additional_time_slots: "Additional Preferred:"
         },
         id: {
             doc_title: "3475 SvS Menteri Reservasi",
@@ -393,7 +398,12 @@
             toast_load_schedule_failed: "Gagal memuat data jadwal. Silakan refresh.",
             toast_id_copied: "ID {{id}} disalin ke clipboard!",
             toast_id_copied_fallback: "ID {{id}} disalin!",
-            toast_copy_failed: "Gagal menyalin ID secara otomatis."
+            toast_copy_failed: "Gagal menyalin ID secara otomatis.",
+            label_additional_time_toggle: "Slot Waktu Alternatif Tambahan",
+            desc_additional_time_toggle: "Jika slot waktu ini tidak tersedia, Anda dapat memilih waktu lain untuk reservasi",
+            btn_add_another_time: "+ Tambah waktu lain?",
+            option_select_additional_time: "Pilih slot waktu",
+            stat_additional_time_slots: "Alternatif Tambahan:"
         },
         ph: {
             doc_title: "3475 SvS Minister Reservation",
@@ -581,7 +591,12 @@
             toast_load_schedule_failed: "Hindi ma-load ang schedule data. I-refresh ang page.",
             toast_id_copied: "Nakopya ang ID {{id}} sa clipboard!",
             toast_id_copied_fallback: "Nakopya ang ID {{id}}!",
-            toast_copy_failed: "Hindi awtomatikong makopya ang ID."
+            toast_copy_failed: "Hindi awtomatikong makopya ang ID.",
+            label_additional_time_toggle: "Karagdagang Preferred Time Slot",
+            desc_additional_time_toggle: "Kung hindi available ang time slot na ito, maaari kang pumili ng ibang oras para sa reservation",
+            btn_add_another_time: "+ Magdagdag pa ng oras?",
+            option_select_additional_time: "Pumili ng time slot",
+            stat_additional_time_slots: "Karagdagang Preferred:"
         },
         cn: {
             doc_title: "3475 SvS 部长预约系统",
@@ -770,7 +785,12 @@
             toast_load_schedule_failed: "加载时间表数据失败，请刷新页面。",
             toast_id_copied: "ID {{id}} 已复制到剪贴板！",
             toast_id_copied_fallback: "ID {{id}} 已复制！",
-            toast_copy_failed: "自动复制ID失败。"
+            toast_copy_failed: "自动复制ID失败。",
+            label_additional_time_toggle: "附加首选时段",
+            desc_additional_time_toggle: "如果该时段不可用，您可以选择其他时间进行预约",
+            btn_add_another_time: "+ 添加其他时间？",
+            option_select_additional_time: "选择时段",
+            stat_additional_time_slots: "附加首选时段："
         }
     };
 

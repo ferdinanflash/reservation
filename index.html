@@ -292,6 +292,18 @@
 					<input type="number" id="input-trainsp" placeholder="Training Speedup in Days" data-i18n-placeholder="placeholder_trainsp">
             </div>
 
+				<div class="form-group additional-time-toggle-group">
+					<label class="checkbox-label">
+						<input type="checkbox" id="input-additional-time-toggle" onchange="toggleAdditionalTimeSlots()">
+						<span data-i18n="label_additional_time_toggle">Additional Preferred Time Slot</span>
+					</label>
+					<small class="field-hint" data-i18n="desc_additional_time_toggle">If this time slot not available, you can pick another time to reservation</small>
+				</div>
+
+				<div id="additional-time-slots-container" class="additional-time-slots-container hidden"></div>
+
+				<button type="button" id="btn-add-another-time" class="btn-add-another-time hidden" onclick="addAnotherTimeSlot()" data-i18n="btn_add_another_time">+ Add another time?</button>
+
 				<div class="form-actions">
 					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeApplyModal()" data-i18n="btn_cancel">Cancel</button>
 					<button class="btn-apply" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);" onclick="submitApplication()" data-i18n="btn_submit_application">Submit Application</button>

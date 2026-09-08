@@ -17,6 +17,14 @@ let currentReassignModalTime = null;
 let currentHowToUseNotes = '';
 let howToUseNotesLoaded = false;
 
+// ================= ADDITIONAL PREFERRED TIME SLOT (Apply Form) =================
+// Up to MAX_ADDITIONAL_TIME_SLOTS extra dropdowns an applicant can fill in
+// case their main selectedTimeSlot ends up unavailable. additionalTimeSlotSeq
+// is a monotonic id generator for DOM row ids (never reused, even after a
+// row is removed) so remove/add never collides on the same element id.
+const MAX_ADDITIONAL_TIME_SLOTS = 3;
+let additionalTimeSlotSeq = 0;
+
 // ================= CENTRALIZED POSITION CONFIG =================
 // One source of truth for each position's short label & which fields are
 // hidden on the apply form, so a new position doesn't require edits in
@@ -933,9 +941,19 @@ async function saveAdminApplicationChanges(id) {
 // Shared by openDetailsModal() and openWaitingModal() so the stat detail
 // markup isn't duplicated in two different places.
 function buildStatDetailsHtml(app, compact = false) {
+    const additionalSlots = getAdditionalTimeSlots(app);
+    const additionalSlotsText = additionalSlots.map(s => `${escapeHtml(s)} UTC`).join(', ');
+    const additionalRowCompact = additionalSlots.length > 0
+        ? `<div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_additional_time_slots")}</span> <strong style="color:#f1f5f9;">${additionalSlotsText}</strong></div>`
+        : '';
+    const additionalRowFull = additionalSlots.length > 0
+        ? `<div><span style="color:#8a8d98;">${t("stat_additional_time_slots")}</span> <strong style="color:#f1f5f9;">${additionalSlotsText}</strong></div>`
+        : '';
+
     if (compact) {
         return `
             <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_furnace_lvl")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
+            ${additionalRowCompact}
             <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_fc")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
             <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_rfc")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
             <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_general")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'}</strong></div>
@@ -949,6 +967,7 @@ function buildStatDetailsHtml(app, compact = false) {
         <div><span style="color:#8a8d98;">${t("stat_nickname")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.nickname) || '-'}</strong></div>
         <div><span style="color:#8a8d98;">${t("stat_game_id")}</span> <strong style="color:#3b82f6;">${escapeHtml(app.game_id) || '-'}</strong></div>
         <div><span style="color:#8a8d98;">${t("stat_furnace_level")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
+        ${additionalRowFull}
         <hr style="border: 0; border-top: 1px solid #334155; margin: 4px 0;">
         <div><span style="color:#8a8d98;">${t("stat_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
         <div><span style="color:#8a8d98;">${t("stat_refined_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
@@ -1133,6 +1152,14 @@ function applySlot(time) {
     document.getElementById('input-ressp').value = "";
     document.getElementById('input-trainsp').value = "";
 
+    // Reset the Additional Preferred Time Slot section for a fresh form.
+    document.getElementById('input-additional-time-toggle').checked = false;
+    const additionalContainer = document.getElementById('additional-time-slots-container');
+    additionalContainer.innerHTML = "";
+    additionalContainer.classList.add('hidden');
+    document.getElementById('btn-add-another-time').classList.add('hidden');
+    additionalTimeSlotSeq = 0;
+
     const fieldGroups = {
         fc: document.getElementById('input-fc').closest('.form-group'),
         rfc: document.getElementById('input-rfc').closest('.form-group'),
@@ -1153,6 +1180,90 @@ function applySlot(time) {
 
 function closeApplyModal() {
     document.getElementById('apply-modal').classList.add('hidden');
+}
+
+// Called when the "Additional Preferred Time Slot" checkbox is toggled.
+// Checking it reveals the first extra dropdown; unchecking it clears
+// everything back out.
+function toggleAdditionalTimeSlots() {
+    const checked = document.getElementById('input-additional-time-toggle').checked;
+    const container = document.getElementById('additional-time-slots-container');
+    const addBtn = document.getElementById('btn-add-another-time');
+
+    if (checked) {
+        container.classList.remove('hidden');
+        if (container.children.length === 0) {
+            addAdditionalTimeSlotRow();
+        }
+        addBtn.classList.toggle('hidden', container.children.length >= MAX_ADDITIONAL_TIME_SLOTS);
+    } else {
+        container.classList.add('hidden');
+        container.innerHTML = "";
+        addBtn.classList.add('hidden');
+    }
+}
+
+// Triggered by the "+ Add another time?" button.
+function addAnotherTimeSlot() {
+    addAdditionalTimeSlotRow();
+}
+
+// Appends one more time-slot dropdown row, up to MAX_ADDITIONAL_TIME_SLOTS.
+function addAdditionalTimeSlotRow() {
+    const container = document.getElementById('additional-time-slots-container');
+    const addBtn = document.getElementById('btn-add-another-time');
+    if (container.children.length >= MAX_ADDITIONAL_TIME_SLOTS) return;
+
+    additionalTimeSlotSeq++;
+    const rowId = additionalTimeSlotSeq;
+
+    const options = getAllUtcSlots().map(time => `<option value="${time}">${time} UTC</option>`).join('');
+    const row = document.createElement('div');
+    row.className = 'additional-time-slot-row';
+    row.id = `additional-time-row-${rowId}`;
+    row.innerHTML = `
+        <select id="input-additional-time-${rowId}" class="additional-time-select">
+            <option value="">${t("option_select_additional_time")}</option>
+            ${options}
+        </select>
+        <button type="button" class="btn-remove-additional-time" onclick="removeAdditionalTimeSlot(${rowId})" aria-label="${t("btn_remove")}" title="${t("btn_remove")}">&times;</button>
+    `;
+    container.appendChild(row);
+
+    addBtn.classList.toggle('hidden', container.children.length >= MAX_ADDITIONAL_TIME_SLOTS);
+}
+
+// Removes a single additional time-slot row (does not touch the checkbox;
+// the user can always add another one back up to the max).
+function removeAdditionalTimeSlot(rowId) {
+    const row = document.getElementById(`additional-time-row-${rowId}`);
+    if (row) row.remove();
+
+    const container = document.getElementById('additional-time-slots-container');
+    const addBtn = document.getElementById('btn-add-another-time');
+    const stillChecked = document.getElementById('input-additional-time-toggle').checked;
+    addBtn.classList.toggle('hidden', !stillChecked || container.children.length >= MAX_ADDITIONAL_TIME_SLOTS);
+}
+
+// Reads every additional time-slot dropdown currently in the form and
+// returns the distinct, non-empty selections (excluding the main
+// selectedTimeSlot), capped at MAX_ADDITIONAL_TIME_SLOTS.
+function collectAdditionalTimeSlots() {
+    const values = Array.from(document.querySelectorAll('#additional-time-slots-container .additional-time-select'))
+        .map(sel => sel.value.trim())
+        .filter(v => v !== '' && v !== selectedTimeSlot);
+    return [...new Set(values)].slice(0, MAX_ADDITIONAL_TIME_SLOTS);
+}
+
+// Normalizes an application's stored additional_time_slots (jsonb array or
+// legacy JSON string) into a clean array of "HH:MM" strings.
+function getAdditionalTimeSlots(app) {
+    let slots = app && app.additional_time_slots;
+    if (typeof slots === 'string') {
+        try { slots = JSON.parse(slots); } catch (_) { slots = []; }
+    }
+    if (!Array.isArray(slots)) slots = [];
+    return slots.filter(s => typeof s === 'string' && s.trim() !== '');
 }
 
 async function submitApplication() {
@@ -1179,6 +1290,8 @@ async function submitApplication() {
     if (!/^\d+$/.test(gameId)) { showToast(t("toast_gameid_numeric"), "warning"); return; }
     if (!furnaceLevel) { showToast(t("toast_select_furnace"), "warning"); return; }
 
+    const additionalTimeSlots = collectAdditionalTimeSlots();
+
     const submitBtn = document.querySelector('#apply-modal .btn-apply');
     setButtonBusy(submitBtn, true, 'Submitting...');
 
@@ -1190,6 +1303,7 @@ async function submitApplication() {
                 furnace_level: furnaceLevel,
                 fire_crystal: fc, refined_fire_crystal: rfc, general_speedup: genSp, construction_speedup: constSp, research_speedup: resSp, training_speedup: trainSp,
                 status: 'Waiting',
+                additional_time_slots: additionalTimeSlots,
                 time_log: [{ action: 'created', at: new Date().toISOString(), actor: 'Applicant', detail: `${selectedTimeSlot} UTC` }]
             });
 

@@ -1703,3 +1703,105 @@ th:first-child {
         font-size: 0.66rem !important;
     }
 }
+
+/* ================= Additional Preferred Time Slot (Apply Form) ================= */
+.additional-time-toggle-group {
+    margin-bottom: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #e2e8f0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: #2563eb;
+}
+
+.additional-time-toggle-group .field-hint {
+    color: #64748b;
+    font-size: 0.74rem;
+    line-height: 1.4;
+    padding-left: 26px;
+}
+
+.additional-time-slots-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.additional-time-slot-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.additional-time-slot-row select {
+    flex: 1;
+    min-width: 0;
+    background: #1e2230;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 11px 14px;
+    border-radius: 8px;
+    color: #f1f5f9;
+    outline: none;
+    cursor: pointer;
+}
+
+.additional-time-slot-row select:focus {
+    border-color: #2563eb;
+}
+
+.btn-remove-additional-time {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #1e2230;
+    color: #f87171;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-remove-additional-time:hover {
+    background: rgba(248, 113, 113, 0.12);
+    border-color: #f87171;
+}
+
+.btn-add-another-time {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 1px dashed #475569;
+    color: #60a5fa;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.btn-add-another-time:hover {
+    border-color: #2563eb;
+    color: #93c5fd;
+    background: rgba(37, 99, 235, 0.08);
+}
+
+.btn-add-another-time:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
