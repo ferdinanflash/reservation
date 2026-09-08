@@ -1477,3 +1477,179 @@ th:first-child {
         min-height: 260px;
     }
 }
+
+/* ==================== MOBILE MODAL TABLE FIX v38 ====================
+   Keep Waiting List / Move Waiting modals compact on phones. The old
+   responsive rules allowed the modal table to stretch to the viewport and
+   the reassign table kept a 620px minimum width, clipping the action buttons.
+*/
+.modal-content {
+    min-height: 0;
+    flex: 0 1 auto;
+}
+
+.modal-table-container {
+    height: auto !important;
+    min-height: 0 !important;
+    flex: 0 1 auto;
+    overflow-y: auto;
+}
+
+.modal-table-container table,
+#waiting-modal table,
+#reassign-modal table {
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+#waiting-modal tbody tr,
+#reassign-modal tbody tr {
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+@media screen and (max-width: 700px) {
+    #waiting-modal .modal-content,
+    #reassign-modal .modal-content {
+        width: calc(100% - 24px);
+        max-width: 560px;
+        box-sizing: border-box;
+        overflow: hidden;
+        padding: 16px;
+    }
+
+    #waiting-modal .modal-table-container,
+    #reassign-modal .modal-table-container {
+        width: 100%;
+        max-width: 100%;
+        max-height: 62vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        box-sizing: border-box;
+    }
+
+    #waiting-modal table,
+    #reassign-modal table {
+        width: 100% !important;
+        min-width: 0 !important;
+        table-layout: fixed !important;
+    }
+
+    #waiting-modal th,
+    #waiting-modal td,
+    #reassign-modal th,
+    #reassign-modal td {
+        box-sizing: border-box;
+        padding: 8px 6px !important;
+        font-size: 0.74rem !important;
+        line-height: 1.2;
+        vertical-align: middle;
+        overflow-wrap: anywhere;
+        word-break: normal;
+        white-space: normal !important;
+    }
+
+    /* Waiting list: nickname / ID / destination / actions */
+    #waiting-modal th:nth-child(1),
+    #waiting-modal td:nth-child(1) { width: 32%; }
+    #waiting-modal th:nth-child(2),
+    #waiting-modal td:nth-child(2) { width: 25%; }
+    #waiting-modal th:nth-child(3),
+    #waiting-modal td:nth-child(3) { width: 25%; }
+    #waiting-modal th:nth-child(4),
+    #waiting-modal td:nth-child(4) { width: 18%; }
+
+    #waiting-modal .waiting-move-select {
+        width: 100%;
+        min-width: 0 !important;
+        max-width: none;
+        box-sizing: border-box;
+        font-size: 0.7rem;
+        padding: 7px 4px;
+    }
+
+    #waiting-modal .waiting-move-btn {
+        width: 100%;
+        margin: 4px 0 0;
+        box-sizing: border-box;
+        font-size: 0.7rem;
+        padding: 7px 4px;
+    }
+
+    #waiting-modal .admin-action-buttons {
+        width: 100%;
+        align-items: stretch;
+        gap: 4px;
+    }
+
+    #waiting-modal .admin-action-btn {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        font-size: 0.68rem !important;
+        padding: 7px 3px !important;
+    }
+
+    /* Reassign modal: nickname / ID / move-to / action */
+    #reassign-modal th:nth-child(1),
+    #reassign-modal td:nth-child(1) { width: 29%; }
+    #reassign-modal th:nth-child(2),
+    #reassign-modal td:nth-child(2) { width: 23%; }
+    #reassign-modal th:nth-child(3),
+    #reassign-modal td:nth-child(3) { width: 25%; }
+    #reassign-modal th:nth-child(4),
+    #reassign-modal td:nth-child(4) { width: 23%; }
+
+    #reassign-modal td:nth-child(3) select {
+        width: 100%;
+        min-width: 0;
+        max-width: none !important;
+        box-sizing: border-box;
+        font-size: 0.7rem;
+        padding: 7px 4px;
+    }
+
+    #reassign-modal td:nth-child(4) {
+        white-space: normal !important;
+    }
+
+    #reassign-modal td:nth-child(4) button {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        margin: 3px 0 !important;
+        box-sizing: border-box;
+        font-size: 0.68rem !important;
+        padding: 7px 3px !important;
+    }
+
+    #waiting-modal .close-modal,
+    #reassign-modal .close-modal {
+        right: 4px;
+        top: 2px;
+    }
+
+    #waiting-modal h2,
+    #reassign-modal h2 {
+        padding-right: 38px;
+        line-height: 1.15;
+        font-size: 1.25rem;
+    }
+}
+
+@media screen and (max-width: 380px) {
+    #waiting-modal .modal-content,
+    #reassign-modal .modal-content {
+        width: calc(100% - 14px);
+        padding: 12px;
+    }
+
+    #waiting-modal th,
+    #waiting-modal td,
+    #reassign-modal th,
+    #reassign-modal td {
+        padding: 6px 4px !important;
+        font-size: 0.68rem !important;
+    }
+}
