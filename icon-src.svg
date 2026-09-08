@@ -1,0 +1,42 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="68%" r="65%">
+      <stop offset="0%" stop-color="#2a1608"/>
+      <stop offset="55%" stop-color="#161a24"/>
+      <stop offset="100%" stop-color="#0d0f16"/>
+    </radialGradient>
+    <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#7a1a00"/>
+      <stop offset="30%" stop-color="#e8390a"/>
+      <stop offset="62%" stop-color="#ff8c00"/>
+      <stop offset="85%" stop-color="#ffd23f"/>
+      <stop offset="100%" stop-color="#fff6d5"/>
+    </linearGradient>
+    <linearGradient id="shieldEdge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b4358"/>
+      <stop offset="100%" stop-color="#1a1e2a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bgGlow)"/>
+
+  <path d="M256 60 L400 108 V246 C400 356 340 424 256 460 C172 424 112 356 112 246 V108 Z"
+        fill="url(#shieldEdge)" stroke="#4a5570" stroke-width="6"/>
+  <path d="M256 84 L378 124 V246 C378 342 328 400 256 432 C184 400 134 342 134 246 V124 Z"
+        fill="#12141c"/>
+
+  <path d="M256 150
+           C232 190 208 214 208 256
+           C208 300 230 328 256 336
+           C282 328 304 300 304 256
+           C304 214 280 190 256 150 Z
+           M256 176
+           C268 202 282 220 282 250
+           C282 276 270 292 256 298
+           C242 292 230 276 230 250
+           C230 220 244 202 256 176 Z"
+        fill="url(#flame)"/>
+
+  <text x="256" y="410" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
+        font-weight="700" font-size="58" fill="#ffd23f" letter-spacing="1">3475</text>
+</svg>
