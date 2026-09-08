@@ -1041,6 +1041,10 @@ function openWaitingModal(timeStr) {
             <td colspan="4" style="padding: 0; border: none;">
                 <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
                     ${buildStatDetailsHtml(app, true)}
+                    <div class="waiting-time-log">
+                        <div class="application-time-log-title">${t("time_log_title")}</div>
+                        <div class="application-time-log-list">${buildApplicationTimeLogHtml(app)}</div>
+                    </div>
                 </div>
             </td>
         `;

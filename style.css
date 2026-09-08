@@ -1275,6 +1275,24 @@ th:first-child {
     }
 }
 
+
+.waiting-time-log {
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid #334155;
+}
+
+.waiting-time-log .application-time-log-title {
+    margin-bottom: 6px;
+    font-size: 0.82rem;
+    color: #f1f5f9;
+}
+
+.waiting-time-log .application-time-log-list {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
 /* ==================== APPLICATION TIME LOG + PRESIDENT CONTROLS ==================== */
 .application-time-log {
     margin-top: 12px;
@@ -1560,12 +1578,13 @@ th:first-child {
     #waiting-modal td:nth-child(4) { width: 18%; }
 
     #waiting-modal .waiting-move-select {
-        width: 100%;
-        min-width: 0 !important;
-        max-width: none;
+        width: 132px !important;
+        min-width: 120px !important;
+        max-width: 100%;
         box-sizing: border-box;
         font-size: 0.7rem;
-        padding: 7px 4px;
+        padding: 7px 28px 7px 7px;
+        white-space: nowrap;
     }
 
     #waiting-modal .waiting-move-btn {
@@ -1601,12 +1620,13 @@ th:first-child {
     #reassign-modal td:nth-child(4) { width: 23%; }
 
     #reassign-modal td:nth-child(3) select {
-        width: 100%;
-        min-width: 0;
-        max-width: none !important;
+        width: 132px !important;
+        min-width: 120px !important;
+        max-width: 100% !important;
         box-sizing: border-box;
         font-size: 0.7rem;
-        padding: 7px 4px;
+        padding: 7px 28px 7px 7px;
+        white-space: nowrap;
     }
 
     #reassign-modal td:nth-child(4) {
@@ -1651,5 +1671,14 @@ th:first-child {
     #reassign-modal td {
         padding: 6px 4px !important;
         font-size: 0.68rem !important;
+    }
+
+    #waiting-modal .waiting-move-select,
+    #reassign-modal td:nth-child(3) select {
+        width: 120px !important;
+        min-width: 112px !important;
+        padding-left: 6px;
+        padding-right: 25px;
+        font-size: 0.66rem !important;
     }
 }
