@@ -30,10 +30,10 @@ let additionalTimeSlotSeq = 0;
 // hidden on the apply form, so a new position doesn't require edits in
 // several places.
 const POSITION_CONFIG = {
-    'Vice President D1': { shortLabel: 'VP D1', hiddenFields: ['res', 'train'] },
+    'Vice President D1': { shortLabel: 'VP D1', hiddenFields: ['res', 'train', 'shard'] },
     'Vice President D2': { shortLabel: 'VP D2', hiddenFields: ['fc', 'rfc', 'const', 'train'] },
-    'Minister of Education D4': { shortLabel: 'Edu D4', hiddenFields: ['fc', 'rfc', 'const', 'res'] },
-    'Vice President D5': { shortLabel: 'VP D5', hiddenFields: ['train'] }
+    'Minister of Education D4': { shortLabel: 'Edu D4', hiddenFields: ['fc', 'rfc', 'const', 'res', 'shard'] },
+    'Vice President D5': { shortLabel: 'VP D5', hiddenFields: ['train', 'shard'] }
 };
 
 function getPositionConfig(positionName) {
@@ -956,6 +956,7 @@ function buildStatDetailsHtml(app, compact = false) {
             ${additionalRowCompact}
             <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_fc")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
             <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_rfc")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
+            <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_shard")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal_shard) || '0'}</strong></div>
             <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_general")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'}</strong></div>
             <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_const")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'}</strong></div>
             <div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_research")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'}</strong></div>
@@ -971,6 +972,7 @@ function buildStatDetailsHtml(app, compact = false) {
         <hr style="border: 0; border-top: 1px solid #334155; margin: 4px 0;">
         <div><span style="color:#8a8d98;">${t("stat_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
         <div><span style="color:#8a8d98;">${t("stat_refined_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
+        <div><span style="color:#8a8d98;">${t("stat_fire_crystal_shard")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal_shard) || '0'}</strong></div>
         <div><span style="color:#8a8d98;">${t("stat_general_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'} ${t('days_suffix')}</strong></div>
         <div><span style="color:#8a8d98;">${t("stat_construction_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'} ${t('days_suffix')}</strong></div>
         <div><span style="color:#8a8d98;">${t("stat_research_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'} ${t('days_suffix')}</strong></div>
@@ -1147,6 +1149,7 @@ function applySlot(time) {
     document.getElementById('input-furnace').value = "";
     document.getElementById('input-fc').value = "";
     document.getElementById('input-rfc').value = "";
+    document.getElementById('input-shard').value = "";
     document.getElementById('input-gensp').value = "";
     document.getElementById('input-constsp').value = "";
     document.getElementById('input-ressp').value = "";
@@ -1163,6 +1166,7 @@ function applySlot(time) {
     const fieldGroups = {
         fc: document.getElementById('input-fc').closest('.form-group'),
         rfc: document.getElementById('input-rfc').closest('.form-group'),
+        shard: document.getElementById('input-shard').closest('.form-group'),
         const: document.getElementById('input-constsp').closest('.form-group'),
         res: document.getElementById('input-ressp').closest('.form-group'),
         train: document.getElementById('input-trainsp').closest('.form-group')
@@ -1280,6 +1284,7 @@ async function submitApplication() {
     const furnaceLevel = document.getElementById('input-furnace').value.trim();
     const fc = parseInt(document.getElementById('input-fc').value.trim()) || 0;
     const rfc = parseInt(document.getElementById('input-rfc').value.trim()) || 0;
+    const shard = parseInt(document.getElementById('input-shard').value.trim()) || 0;
     const genSp = parseInt(document.getElementById('input-gensp').value.trim()) || 0;
     const constSp = parseInt(document.getElementById('input-constsp').value.trim()) || 0;
     const resSp = parseInt(document.getElementById('input-ressp').value.trim()) || 0;
@@ -1301,7 +1306,7 @@ async function submitApplication() {
             .insert({ 
                 time_slot: selectedTimeSlot, position: currentPosition, nickname: nickname, game_id: gameId, 
                 furnace_level: furnaceLevel,
-                fire_crystal: fc, refined_fire_crystal: rfc, general_speedup: genSp, construction_speedup: constSp, research_speedup: resSp, training_speedup: trainSp,
+                fire_crystal: fc, refined_fire_crystal: rfc, fire_crystal_shard: shard, general_speedup: genSp, construction_speedup: constSp, research_speedup: resSp, training_speedup: trainSp,
                 status: 'Waiting',
                 additional_time_slots: additionalTimeSlots,
                 time_log: [{ action: 'created', at: new Date().toISOString(), actor: 'Applicant', detail: `${selectedTimeSlot} UTC` }]
@@ -1508,11 +1513,11 @@ function exportToCSV() {
         showToast(t("toast_no_data_export"), "warning");
         return;
     }
-    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Furnace Level", "Fire Crystal", "Refined Fire Crystal", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
+    const headers = ["Position", "Time Slot UTC", "Status", "Nickname", "Game ID", "Furnace Level", "Fire Crystal", "Refined Fire Crystal", "Fire Crystal Shard", "General SP (Days)", "Construction SP (Days)", "Research SP (Days)", "Training SP (Days)"];
     const rows = savedApplications.map(app => [
         sanitizeCsvField(app.position), sanitizeCsvField(app.time_slot), sanitizeCsvField(app.status),
         sanitizeCsvField(app.nickname || '-'), sanitizeCsvField(app.game_id || '-'), sanitizeCsvField(app.furnace_level || '-'), sanitizeCsvField(app.fire_crystal || '0'),
-        sanitizeCsvField(app.refined_fire_crystal || '0'),
+        sanitizeCsvField(app.refined_fire_crystal || '0'), sanitizeCsvField(app.fire_crystal_shard || '0'),
         sanitizeCsvField(app.general_speedup || '0'), sanitizeCsvField(app.construction_speedup || '0'),
         sanitizeCsvField(app.research_speedup || '0'), sanitizeCsvField(app.training_speedup || '0')
     ]);
