@@ -1399,6 +1399,16 @@ th:first-child {
     min-width: 15ch;
     margin-right: 10px;
 }
+.stat-full-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+.stat-full-label {
+    flex: 0 0 auto;
+    min-width: 29ch;
+    margin-right: 10px;
+}
 
 .admin-application-controls {
     margin-top: 12px;

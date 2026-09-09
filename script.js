@@ -944,10 +944,10 @@ function buildStatDetailsHtml(app, compact = false) {
     const additionalSlots = getAdditionalTimeSlots(app);
     const additionalSlotsText = additionalSlots.map(s => `${escapeHtml(s)} UTC`).join(', ');
     const additionalRowCompact = additionalSlots.length > 0
-        ? `<div><span style="color:#8a8d98; margin-right: 10px;">${t("stat_additional_time_slots")}</span> <strong style="color:#f1f5f9;">${additionalSlotsText}</strong></div>`
+        ? `<div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_additional_time_slots")}</span> <strong style="color:#f1f5f9;">${additionalSlotsText}</strong></div>`
         : '';
     const additionalRowFull = additionalSlots.length > 0
-        ? `<div><span style="color:#8a8d98;">${t("stat_additional_time_slots")}</span> <strong style="color:#f1f5f9;">${additionalSlotsText}</strong></div>`
+        ? `<div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_additional_time_slots")}</span> <strong style="color:#f1f5f9;">${additionalSlotsText}</strong></div>`
         : '';
 
     if (compact) {
@@ -965,18 +965,18 @@ function buildStatDetailsHtml(app, compact = false) {
     }
 
     return `
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_nickname")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.nickname) || '-'}</strong></div>
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_game_id")}</span> <strong style="color:#3b82f6;">${escapeHtml(app.game_id) || '-'}</strong></div>
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_furnace_level")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_nickname")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.nickname) || '-'}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_game_id")}</span> <strong style="color:#3b82f6;">${escapeHtml(app.game_id) || '-'}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_furnace_level")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
         ${additionalRowFull}
         <hr style="border: 0; border-top: 1px solid #334155; margin: 4px 0;">
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_refined_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_fire_crystal_shard")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal_shard) || '0'}</strong></div>
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_general_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'} ${t('days_suffix')}</strong></div>
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_construction_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'} ${t('days_suffix')}</strong></div>
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_research_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'} ${t('days_suffix')}</strong></div>
-        <div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_training_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.training_speedup) || '0'} ${t('days_suffix')}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_refined_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_fire_crystal_shard")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal_shard) || '0'}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_general_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'} ${t('days_suffix')}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_construction_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'} ${t('days_suffix')}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_research_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'} ${t('days_suffix')}</strong></div>
+        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_training_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.training_speedup) || '0'} ${t('days_suffix')}</strong></div>
     `;
 }
 
