@@ -961,17 +961,48 @@
         localStorage.setItem(LANG_STORAGE_KEY, lang);
         applyStaticTranslations();
         refreshDynamicUI();
+        closeLangDropdown();
     }
 
     function toggleLanguage() {
         setLanguage(currentLang === 'en' ? 'cn' : (currentLang === 'cn' ? 'id' : (currentLang === 'id' ? 'ph' : 'en')));
     }
 
+    // ================= LANGUAGE DROPDOWN OPEN/CLOSE =================
+    function toggleLangDropdown(event) {
+        if (event) event.stopPropagation();
+        const container = document.getElementById('lang-toggle-btn');
+        if (!container) return;
+        const isOpen = container.classList.toggle('lang-open');
+        const trigger = container.querySelector('.lang-trigger');
+        if (trigger) trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    function closeLangDropdown() {
+        const container = document.getElementById('lang-toggle-btn');
+        if (!container) return;
+        container.classList.remove('lang-open');
+        const trigger = container.querySelector('.lang-trigger');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    // Clicking anywhere outside the widget, or pressing Escape, closes it —
+    // same expected behavior as any other dropdown on the page.
+    document.addEventListener('click', function (e) {
+        const container = document.getElementById('lang-toggle-btn');
+        if (container && !container.contains(e.target)) closeLangDropdown();
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeLangDropdown();
+    });
+
     // Expose globally so script.js / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
     window.setLanguage = setLanguage;
     window.toggleLanguage = toggleLanguage;
+    window.toggleLangDropdown = toggleLangDropdown;
+    window.closeLangDropdown = closeLangDropdown;
     window.translatePositionName = translatePositionName;
     window.translatePositionShort = translatePositionShort;
 
