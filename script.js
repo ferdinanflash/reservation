@@ -1697,9 +1697,6 @@ function startLiveClock() {
 let recentAcceptRotationTimers = [];
 
 const RAR_STAT_POOL = [
-    // furnace_level has no hideKey: the apply form always asks for it, so
-    // it's never conditionally hidden per position like the others below.
-    { key: 'furnace_level',        hideKey: null,    icon: '🛡️', color: '#22c55e', style: 'dots', labelKey: 'stat_furnace_lvl' },
     { key: 'fire_crystal',         hideKey: 'fc',    icon: '🔥', color: '#3b82f6', style: 'bar',  labelKey: 'stat_fc' },
     { key: 'refined_fire_crystal', hideKey: 'rfc',   icon: '🔥', color: '#f59e0b', style: 'bar',  labelKey: 'stat_rfc' },
     { key: 'fire_crystal_shard',   hideKey: 'shard', icon: '💠', color: '#2dd4bf', style: 'dots', labelKey: 'stat_shard' },
@@ -1709,11 +1706,12 @@ const RAR_STAT_POOL = [
     { key: 'training_speedup',     hideKey: 'train', icon: '🏋️', color: '#fb923c', style: 'bar',  labelKey: 'stat_train' }
 ];
 
-function buildRarAvatarSvg() {
-    return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="8" r="3.6" fill="#67e8f9" opacity="0.85"/>
-        <path d="M4.5 19.2c0-3.6 3.3-6 7.5-6s7.5 2.4 7.5 6" stroke="#67e8f9" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.85"/>
-    </svg>`;
+// Furnace level is shown inline next to the player's name ("Test 2 (FC 9)"),
+// not as one of the rotating stat badges below — so it's kept out of
+// RAR_STAT_POOL entirely and rendered separately in loadRecentAccepts().
+function buildRarFurnaceLabel(item) {
+    const level = String(item.furnace_level || '').trim();
+    return level ? `<span class="rar-furnace">(FC ${escapeHtml(level)})</span>` : '';
 }
 
 // Returns only the stats that are (a) not hidden for this app's position and
@@ -1722,14 +1720,13 @@ function getRarVisibleStats(item) {
     const hidden = getPositionConfig(item.position).hiddenFields || [];
     return RAR_STAT_POOL.filter(stat => {
         if (stat.hideKey && hidden.includes(stat.hideKey)) return false;
-        if (stat.key === 'furnace_level') return !!String(item[stat.key] || '').trim();
         return (parseInt(item[stat.key], 10) || 0) > 0;
     }).map(stat => ({ ...stat, value: item[stat.key] }));
 }
 
 function buildRarStatHtml(stat) {
-    const value = stat.key === 'furnace_level' ? escapeHtml(String(stat.value)) : (parseInt(stat.value, 10) || 0);
-    const label = stat.key === 'furnace_level' ? `${stat.icon} Level` : `${stat.icon} ${t(stat.labelKey)}`;
+    const value = parseInt(stat.value, 10) || 0;
+    const label = `${stat.icon} ${t(stat.labelKey)}`;
     const indicator = stat.style === 'dots'
         ? `<div class="rar-stat-dots">${[0, 1, 2].map(() => `<span class="rar-dot-on" style="color:${stat.color}; background:${stat.color};"></span>`).join('')}</div>`
         : `<div class="rar-stat-bar"><span style="background:${stat.color};"></span></div>`;
@@ -1808,9 +1805,8 @@ async function loadRecentAccepts() {
             const card = document.createElement('div');
             card.className = 'rar-card';
             card.innerHTML = `
-                <div class="rar-avatar">${buildRarAvatarSvg()}</div>
                 <div class="rar-info">
-                    <div class="rar-name">${escapeHtml(item.nickname)}</div>
+                    <div class="rar-name">${escapeHtml(item.nickname)} ${buildRarFurnaceLabel(item)}</div>
                     <div class="rar-pos">[${escapeHtml(shortPos)}]</div>
                 </div>
                 <div class="rar-right">

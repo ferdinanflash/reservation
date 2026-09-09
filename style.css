@@ -906,7 +906,7 @@ th:first-child {
     background: linear-gradient(180deg, rgba(15, 23, 32, 0.9) 0%, rgba(10, 16, 24, 0.9) 100%);
     border: 1px solid rgba(34, 211, 238, 0.35);
     border-radius: 999px;
-    padding: 8px 16px 8px 8px;
+    padding: 10px 18px;
     box-shadow: 0 0 12px rgba(34, 211, 238, 0.12), inset 0 0 12px rgba(34, 211, 238, 0.05);
     animation: rarCardIn 0.35s ease both;
 }
@@ -914,24 +914,6 @@ th:first-child {
 @keyframes rarCardIn {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-.rar-avatar {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, rgba(103, 232, 249, 0.35), rgba(15, 23, 32, 0.9) 70%);
-    border: 1px solid rgba(103, 232, 249, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 8px rgba(34, 211, 238, 0.25);
-}
-
-.rar-avatar svg {
-    width: 22px;
-    height: 22px;
 }
 
 .rar-info {
@@ -950,7 +932,15 @@ th:first-child {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 110px;
+    max-width: 100%;
+}
+
+.rar-furnace {
+    color: #8a8d98;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-shadow: none;
+    margin-left: 2px;
 }
 
 .rar-pos {
