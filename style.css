@@ -1402,16 +1402,12 @@ th:first-child {
 .stat-full-row {
     display: flex;
     align-items: baseline;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 }
 .stat-full-label {
-    flex: 0 0 29ch;
+    flex: 0 0 auto;
+    min-width: 29ch;
     margin-right: 10px;
-}
-.stat-full-row strong {
-    flex: 1 1 auto;
-    min-width: 0;
-    word-break: break-word;
 }
 
 .admin-application-controls {
