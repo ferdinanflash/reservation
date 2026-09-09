@@ -1459,6 +1459,340 @@ th:first-child {
     }
 }
 
+/* ==================== APPLICATION DETAILS — CARD REDESIGN ==================== */
+#details-modal .modal-content.custom-form-modal {
+    max-width: 380px;
+    background: #14151a;
+    padding: 22px 18px 20px;
+    border: 1px solid #262a35;
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.06), 0 20px 50px rgba(0, 0, 0, 0.55);
+}
+
+#details-modal h2[data-i18n="details_modal_title"] {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #e8ecf3;
+    margin: 2px 0 14px;
+}
+
+#details-modal .close-modal {
+    top: -6px;
+    right: -6px;
+    width: 34px;
+    height: 34px;
+    font-size: 1.15rem;
+    color: #fde68a;
+    background: radial-gradient(circle at 32% 28%, #f87171 0%, #b91c1c 55%, #7f1d1d 100%);
+    border: 2px solid #fbbf24;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+#details-modal .close-modal:hover {
+    color: #fff7d6;
+    filter: brightness(1.08);
+}
+
+#details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.85rem;
+    text-align: left;
+    background: transparent;
+    padding: 0;
+    border: none;
+}
+
+.detail-card {
+    background: linear-gradient(180deg, rgba(30, 34, 48, 0.55) 0%, rgba(21, 23, 30, 0.55) 100%);
+    border: 1px solid #2b2f3b;
+    border-radius: 10px;
+    padding: 12px 13px;
+}
+
+.detail-card-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #93c5fd;
+    margin-bottom: 9px;
+}
+
+.detail-card-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.detail-extra-row {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: #cbd5e1;
+}
+
+/* -- Player Info -- */
+.player-info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.player-avatar {
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    background: radial-gradient(circle at 35% 30%, #38bdf8 0%, #1e3a8a 60%, #0f172a 100%);
+    border: 2px solid #60a5fa;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+}
+
+.player-info-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 0.84rem;
+    color: #94a3b8;
+    min-width: 0;
+}
+
+.player-info-text strong {
+    color: #f1f5f9;
+}
+
+.game-id-copy {
+    cursor: pointer;
+    color: #60a5fa !important;
+}
+
+.game-id-copy:hover {
+    text-decoration: underline;
+}
+
+.copy-icon {
+    font-size: 0.72rem;
+    opacity: 0.75;
+}
+
+/* -- City & Power -- */
+.city-power-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.city-power-text {
+    font-size: 0.84rem;
+    color: #94a3b8;
+}
+
+.city-power-text strong {
+    color: #f1f5f9;
+}
+
+.furnace-gauge-svg {
+    flex: 0 0 auto;
+}
+
+/* -- Essentials -- */
+.essentials-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.essential-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    background: rgba(15, 17, 23, 0.6);
+    border: 1px solid #334155;
+}
+
+.essential-badge strong {
+    font-size: 0.85rem;
+}
+
+.essential-badge.essential-fc {
+    border-color: rgba(52, 211, 153, 0.35);
+}
+.essential-badge.essential-fc strong { color: #34d399; }
+
+.essential-badge.essential-rfc {
+    border-color: rgba(249, 115, 22, 0.4);
+}
+.essential-badge.essential-rfc strong { color: #fb923c; }
+
+.essential-badge.essential-shard {
+    border-color: rgba(139, 92, 246, 0.4);
+}
+.essential-badge.essential-shard strong { color: #a78bfa; }
+
+/* -- Speedups -- */
+.speedup-rings-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.speedup-ring-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.speedup-ring-outer {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.speedup-ring-inner {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #191b22;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.ring-value {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #f1f5f9;
+    line-height: 1.1;
+}
+
+.ring-unit {
+    font-size: 0.48rem;
+    letter-spacing: 0.5px;
+    color: #8a8d98;
+    text-transform: uppercase;
+}
+
+.speedup-ring-label {
+    font-size: 0.66rem;
+    color: #94a3b8;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* -- Time Log (reskinned to card) -- */
+.application-time-log {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+    background: linear-gradient(180deg, rgba(30, 34, 48, 0.55) 0%, rgba(21, 23, 30, 0.55) 100%);
+    border: 1px solid #2b2f3b;
+    border-radius: 10px;
+    padding: 12px 13px;
+}
+
+.application-time-log-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #93c5fd;
+    margin-bottom: 9px;
+}
+
+.application-time-log-title::before {
+    content: "🕒";
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+/* -- President Controls (reskinned to gold card) -- */
+.admin-application-controls {
+    margin-top: 0;
+    border-top: none;
+    padding: 13px 13px 12px;
+    background: linear-gradient(180deg, rgba(41, 33, 15, 0.55) 0%, rgba(24, 20, 12, 0.55) 100%);
+    border: 1px solid rgba(217, 164, 65, 0.55);
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(217, 164, 65, 0.08);
+}
+
+.admin-control-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #fbbf24;
+    margin-bottom: 10px;
+}
+
+.admin-control-title::before {
+    content: "🔨";
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.admin-save-application-btn {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    border: none;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.admin-save-application-btn::after {
+    content: " 🔨";
+}
+
+@media screen and (max-width: 420px) {
+    .speedup-ring-outer {
+        width: 52px;
+        height: 52px;
+    }
+    .speedup-ring-inner {
+        width: 40px;
+        height: 40px;
+    }
+    .ring-value {
+        font-size: 0.72rem;
+    }
+    .essential-badge {
+        padding: 5px 9px;
+        font-size: 0.72rem;
+    }
+}
+
 
 /* Waiting List admin move controls */
 .waiting-move-select { max-width: 125px; min-width: 105px; padding: 5px 7px; font-size: 0.78rem; }

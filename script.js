@@ -937,6 +937,50 @@ async function saveAdminApplicationChanges(id) {
     }
 }
 
+// ================= DETAIL CARD VISUAL HELPERS =================
+// Small presentational helpers used only by the full (non-compact) branch
+// of buildStatDetailsHtml() below — the "Application Details" card view.
+function stripTrailingColon(label) {
+    return String(label || '').replace(/:\s*$/, '');
+}
+
+// Half-circle furnace gauge (cyan -> amber -> red zones) with a needle
+// pointing at the current furnace level out of 10.
+function buildFurnaceGaugeSvg(level) {
+    const lvl = Math.max(0, Math.min(10, parseInt(level, 10) || 0));
+    const rad = (180 + (lvl / 10) * 180) * Math.PI / 180;
+    const nx = (50 + 29 * Math.cos(rad)).toFixed(1);
+    const ny = (50 + 29 * Math.sin(rad)).toFixed(1);
+    return `
+        <svg width="60" height="38" viewBox="0 0 100 58" class="furnace-gauge-svg" aria-hidden="true">
+            <path d="M 12 50 A 38 38 0 0 1 31 17.1" stroke="#22d3ee" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M 31 17.1 A 38 38 0 0 1 69 17.1" stroke="#f59e0b" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M 69 17.1 A 38 38 0 0 1 88 50" stroke="#ef4444" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <line x1="50" y1="50" x2="${nx}" y2="${ny}" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="4.5" fill="#e5e7eb"/>
+        </svg>
+    `;
+}
+
+// One donut-ring speedup indicator. `pct` (0-100) drives the conic-gradient
+// fill; the raw day count + label are rendered centered/underneath.
+function buildSpeedupRing(value, maxValue, colorKey, label) {
+    const ringColors = { general: '#22d3ee', construction: '#a78bfa', research: '#34d399', training: '#f59e0b' };
+    const color = ringColors[colorKey] || '#3b82f6';
+    const pct = maxValue > 0 ? Math.min(100, Math.round((value / maxValue) * 100)) : 0;
+    return `
+        <div class="speedup-ring-wrap">
+            <div class="speedup-ring-outer" style="background: conic-gradient(${color} 0% ${pct}%, #262a35 ${pct}% 100%);">
+                <div class="speedup-ring-inner">
+                    <span class="ring-value">${value}</span>
+                    <span class="ring-unit">${escapeHtml(t('days_suffix'))}</span>
+                </div>
+            </div>
+            <div class="speedup-ring-label">${escapeHtml(label)}</div>
+        </div>
+    `;
+}
+
 // ================= SHARED DETAIL BLOCK BUILDER =================
 // Shared by openDetailsModal() and openWaitingModal() so the stat detail
 // markup isn't duplicated in two different places.
@@ -947,7 +991,7 @@ function buildStatDetailsHtml(app, compact = false) {
         ? `<div class="stat-compact-row"><span class="stat-compact-label" style="color:#8a8d98;">${t("stat_additional_time_slots")}</span> <strong style="color:#f1f5f9;">${additionalSlotsText}</strong></div>`
         : '';
     const additionalRowFull = additionalSlots.length > 0
-        ? `<div><span style="color:#8a8d98;">${t("stat_additional_time_slots")}</span> <strong style="color:#f1f5f9;">${additionalSlotsText}</strong></div>`
+        ? `<div class="detail-extra-row">${t("stat_additional_time_slots")} <strong>${additionalSlotsText}</strong></div>`
         : '';
 
     if (compact) {
@@ -964,19 +1008,56 @@ function buildStatDetailsHtml(app, compact = false) {
         `;
     }
 
+    const furnaceLevel = parseInt(app.furnace_level, 10) || 0;
+    const fc = parseInt(app.fire_crystal, 10) || 0;
+    const rfc = parseInt(app.refined_fire_crystal, 10) || 0;
+    const shard = parseInt(app.fire_crystal_shard, 10) || 0;
+    const gen = parseInt(app.general_speedup, 10) || 0;
+    const cons = parseInt(app.construction_speedup, 10) || 0;
+    const res = parseInt(app.research_speedup, 10) || 0;
+    const train = parseInt(app.training_speedup, 10) || 0;
+    const maxSpeedup = Math.max(gen, cons, res, train, 20);
+    const gameId = escapeHtml(app.game_id) || '-';
+
     return `
-        <div><span style="color:#8a8d98;">${t("stat_nickname")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.nickname) || '-'}</strong></div>
-        <div><span style="color:#8a8d98;">${t("stat_game_id")}</span> <strong style="color:#3b82f6;">${escapeHtml(app.game_id) || '-'}</strong></div>
-        <div><span style="color:#8a8d98;">${t("stat_furnace_level")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.furnace_level) || '-'}</strong></div>
-        ${additionalRowFull}
-        <hr style="border: 0; border-top: 1px solid #334155; margin: 4px 0;">
-        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
-        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_refined_fire_crystals")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
-        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_fire_crystal_shard")}</span> <strong style="color:#f59e0b;">${escapeHtml(app.fire_crystal_shard) || '0'}</strong></div>
-        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_general_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.general_speedup) || '0'} ${t('days_suffix')}</strong></div>
-        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_construction_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.construction_speedup) || '0'} ${t('days_suffix')}</strong></div>
-        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_research_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.research_speedup) || '0'} ${t('days_suffix')}</strong></div>
-        <div class="stat-full-row"><span class="stat-full-label" style="color:#8a8d98;">${t("stat_training_speedup")}</span> <strong style="color:#f1f5f9;">${escapeHtml(app.training_speedup) || '0'} ${t('days_suffix')}</strong></div>
+        <div class="detail-card">
+            <div class="detail-card-title"><span class="detail-card-icon">🛡️</span>${t("detail_section_player_info")}</div>
+            <div class="player-info-row">
+                <div class="player-avatar">🔥</div>
+                <div class="player-info-text">
+                    <div>${t("stat_nickname")} <strong>${escapeHtml(app.nickname) || '-'}</strong></div>
+                    <div>${t("stat_game_id")} <strong class="game-id-copy" title="${t('title_view_details')}" onclick="copyToClipboard('${gameId}')">${gameId} <span class="copy-icon">📋</span></strong></div>
+                    ${additionalRowFull}
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-card-title"><span class="detail-card-icon">🏰</span>${t("detail_section_city_power")}</div>
+            <div class="city-power-row">
+                <div class="city-power-text">${t("stat_furnace_level")} <strong>${furnaceLevel || '-'}</strong></div>
+                ${buildFurnaceGaugeSvg(furnaceLevel)}
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-card-title"><span class="detail-card-icon">💎</span>${t("detail_section_essentials")}</div>
+            <div class="essentials-badges">
+                <span class="essential-badge essential-fc">🔥 ${t("stat_fc")} <strong>${fc}</strong></span>
+                <span class="essential-badge essential-rfc">🔥 ${t("stat_rfc")} <strong>${rfc}</strong></span>
+                <span class="essential-badge essential-shard">💠 ${t("essentials_shard_label")} <strong>${shard}</strong></span>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-card-title"><span class="detail-card-icon">⚡</span>${t("detail_section_speedups")}</div>
+            <div class="speedup-rings-row">
+                ${buildSpeedupRing(gen, maxSpeedup, 'general', stripTrailingColon(t('stat_general')))}
+                ${buildSpeedupRing(cons, maxSpeedup, 'construction', stripTrailingColon(t('stat_const')))}
+                ${buildSpeedupRing(res, maxSpeedup, 'research', stripTrailingColon(t('stat_research')))}
+                ${buildSpeedupRing(train, maxSpeedup, 'training', stripTrailingColon(t('stat_train')))}
+            </div>
+        </div>
     `;
 }
 
@@ -988,7 +1069,7 @@ function openDetailsModal(appId) {
     const modal = document.getElementById('details-modal');
     const contentEl = document.getElementById('details-content');
     contentEl.innerHTML = `
-        <div class="details-stats">${buildStatDetailsHtml(app, false)}</div>
+        ${buildStatDetailsHtml(app, false)}
         <div class="application-time-log">
             <div class="application-time-log-title">${t("time_log_title")}</div>
             <div class="application-time-log-list">${buildApplicationTimeLogHtml(app)}</div>
