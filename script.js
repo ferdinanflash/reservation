@@ -1685,16 +1685,112 @@ function startLiveClock() {
     }, 1000);
 }
 
+// ================= "RECENTLY ACCEPTED RESERVATION" BANNER =================
+// Each accepted reservation can carry up to 8 different stat fields, but
+// only some are relevant to a given position (see POSITION_CONFIG's
+// hiddenFields) and only some were actually filled in by the applicant.
+// getRarVisibleStats() narrows the pool down to "hidden for this position?
+// no. + has a real value? yes." — exactly what's applicable and filled in.
+// If more than 3 stats survive that filter, renderRarStats() rotates
+// through them 3-at-a-time every 2-3 seconds instead of cramming them all
+// into the row at once.
+let recentAcceptRotationTimers = [];
+
+const RAR_STAT_POOL = [
+    // furnace_level has no hideKey: the apply form always asks for it, so
+    // it's never conditionally hidden per position like the others below.
+    { key: 'furnace_level',        hideKey: null,    icon: '🛡️', color: '#22c55e', style: 'dots', labelKey: 'stat_furnace_lvl' },
+    { key: 'fire_crystal',         hideKey: 'fc',    icon: '🔥', color: '#3b82f6', style: 'bar',  labelKey: 'stat_fc' },
+    { key: 'refined_fire_crystal', hideKey: 'rfc',   icon: '🔥', color: '#f59e0b', style: 'bar',  labelKey: 'stat_rfc' },
+    { key: 'fire_crystal_shard',   hideKey: 'shard', icon: '💠', color: '#2dd4bf', style: 'dots', labelKey: 'stat_shard' },
+    { key: 'general_speedup',      hideKey: null,    icon: '⚡', color: '#a78bfa', style: 'bar',  labelKey: 'stat_general' },
+    { key: 'construction_speedup', hideKey: 'const', icon: '🏗️', color: '#f472b6', style: 'bar',  labelKey: 'stat_const' },
+    { key: 'research_speedup',     hideKey: 'res',   icon: '🔬', color: '#38bdf8', style: 'bar',  labelKey: 'stat_research' },
+    { key: 'training_speedup',     hideKey: 'train', icon: '🏋️', color: '#fb923c', style: 'bar',  labelKey: 'stat_train' }
+];
+
+function buildRarAvatarSvg() {
+    return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="8" r="3.6" fill="#67e8f9" opacity="0.85"/>
+        <path d="M4.5 19.2c0-3.6 3.3-6 7.5-6s7.5 2.4 7.5 6" stroke="#67e8f9" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.85"/>
+    </svg>`;
+}
+
+// Returns only the stats that are (a) not hidden for this app's position and
+// (b) actually have a value — "hanya menampilkan sesuai isian pada posisinya".
+function getRarVisibleStats(item) {
+    const hidden = getPositionConfig(item.position).hiddenFields || [];
+    return RAR_STAT_POOL.filter(stat => {
+        if (stat.hideKey && hidden.includes(stat.hideKey)) return false;
+        if (stat.key === 'furnace_level') return !!String(item[stat.key] || '').trim();
+        return (parseInt(item[stat.key], 10) || 0) > 0;
+    }).map(stat => ({ ...stat, value: item[stat.key] }));
+}
+
+function buildRarStatHtml(stat) {
+    const value = stat.key === 'furnace_level' ? escapeHtml(String(stat.value)) : (parseInt(stat.value, 10) || 0);
+    const label = stat.key === 'furnace_level' ? `${stat.icon} Level` : `${stat.icon} ${t(stat.labelKey)}`;
+    const indicator = stat.style === 'dots'
+        ? `<div class="rar-stat-dots">${[0, 1, 2].map(() => `<span class="rar-dot-on" style="color:${stat.color}; background:${stat.color};"></span>`).join('')}</div>`
+        : `<div class="rar-stat-bar"><span style="background:${stat.color};"></span></div>`;
+    return `<div class="rar-stat">
+        <div class="rar-stat-line"><span class="rar-stat-label">${label}</span><span class="rar-stat-value">${value}</span></div>
+        ${indicator}
+    </div>`;
+}
+
+// Renders a card's stat area. 3 or fewer applicable stats -> show them all,
+// no animation. More than 3 -> rotate through 3-item groups (wrapping
+// around so every group is always full) every 2-3s with a short fade.
+function renderRarStats(container, stats) {
+    if (!container) return;
+    if (stats.length <= 3) {
+        container.innerHTML = stats.map(buildRarStatHtml).join('');
+        return;
+    }
+
+    const groups = [];
+    for (let i = 0; i < stats.length; i += 3) {
+        let group = stats.slice(i, i + 3);
+        if (group.length < 3) group = group.concat(stats.slice(0, 3 - group.length));
+        groups.push(group);
+    }
+
+    let groupIndex = 0;
+    const renderGroup = () => { container.innerHTML = groups[groupIndex].map(buildRarStatHtml).join(''); };
+    renderGroup();
+
+    const scheduleNext = () => {
+        const delay = 2000 + Math.random() * 1000; // 2-3 detik
+        const timerId = setTimeout(() => {
+            container.classList.add('rar-fade');
+            setTimeout(() => {
+                groupIndex = (groupIndex + 1) % groups.length;
+                renderGroup();
+                container.classList.remove('rar-fade');
+            }, 300);
+            scheduleNext();
+        }, delay);
+        recentAcceptRotationTimers.push(timerId);
+    };
+    scheduleNext();
+}
+
 async function loadRecentAccepts() {
     const logListEl = document.getElementById('recent-log-list');
     if (!logListEl) return;
     const client = getSupabase();
     if (!client) return;
 
+    // Old rotation timers point at DOM nodes that are about to be thrown
+    // away below — clear them first so they don't keep firing on nothing.
+    recentAcceptRotationTimers.forEach(clearTimeout);
+    recentAcceptRotationTimers = [];
+
     try {
         const { data, error } = await client
             .from('reservation_slots')
-            .select('nickname, position, time_slot, updated_at') 
+            .select('nickname, position, time_slot, updated_at, furnace_level, fire_crystal, refined_fire_crystal, fire_crystal_shard, general_speedup, construction_speedup, research_speedup, training_speedup')
             .eq('status', 'Accepted')
             .not('nickname', 'is', null)
             .neq('nickname', '')
@@ -1706,16 +1802,24 @@ async function loadRecentAccepts() {
             logListEl.innerHTML = `<div class="log-item-empty">${t("log_empty")}</div>`;
             return;
         }
-        logListEl.innerHTML = ''; 
+        logListEl.innerHTML = '';
         data.forEach(item => {
             const shortPos = item.position ? translatePositionShort(item.position) : t('label_unknown');
-            const logRow = document.createElement('div');
-            logRow.className = 'log-entry';
-            logRow.innerHTML = `
-                <span>✅ <span class="log-user">${escapeHtml(item.nickname)}</span> <span style="color: #8a8d98; font-size: 0.95em; margin-left: 5px;">${escapeHtml(item.time_slot)} UTC</span></span>
-                <span class="log-pos">[${escapeHtml(shortPos)}]</span>
+            const card = document.createElement('div');
+            card.className = 'rar-card';
+            card.innerHTML = `
+                <div class="rar-avatar">${buildRarAvatarSvg()}</div>
+                <div class="rar-info">
+                    <div class="rar-name">${escapeHtml(item.nickname)}</div>
+                    <div class="rar-pos">[${escapeHtml(shortPos)}]</div>
+                </div>
+                <div class="rar-right">
+                    <div class="rar-top"><span class="rar-check">✅</span><span class="rar-time">${escapeHtml(item.time_slot)} UTC</span></div>
+                    <div class="rar-stats"></div>
+                </div>
             `;
-            logListEl.appendChild(logRow);
+            logListEl.appendChild(card);
+            renderRarStats(card.querySelector('.rar-stats'), getRarVisibleStats(item));
         });
     } catch (err) { console.error("Failed to load recent accepts:", err); }
 }
