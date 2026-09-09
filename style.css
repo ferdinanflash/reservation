@@ -1389,6 +1389,17 @@ th:first-child {
     font-size: 0.78rem;
 }
 
+/* ==================== STAT DETAIL ROWS (aligned label/value columns) ==================== */
+.stat-compact-row {
+    display: flex;
+    align-items: baseline;
+}
+.stat-compact-label {
+    flex: 0 0 auto;
+    min-width: 15ch;
+    margin-right: 10px;
+}
+
 .admin-application-controls {
     margin-top: 12px;
     padding-top: 10px;
