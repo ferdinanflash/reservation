@@ -45,7 +45,8 @@
 .lang-toggle[data-lang="en"] .lang-current-en,
 .lang-toggle[data-lang="cn"] .lang-current-cn,
 .lang-toggle[data-lang="id"] .lang-current-id,
-.lang-toggle[data-lang="ph"] .lang-current-ph {
+.lang-toggle[data-lang="ph"] .lang-current-ph,
+.lang-toggle[data-lang="th"] .lang-current-th {
     display: inline-flex;
 }
 .lang-flag-emoji { font-size: 0.95rem; line-height: 1; }
@@ -55,6 +56,8 @@
     top: calc(100% + 8px);
     left: 0;
     display: flex;
+    flex-wrap: wrap;
+    max-width: 220px;
     gap: 6px;
     background: linear-gradient(180deg, rgba(26, 22, 15, 0.98) 0%, rgba(10, 9, 6, 0.98) 100%);
     border: 1px solid rgba(245, 197, 107, 0.5);
@@ -101,7 +104,8 @@
 .lang-toggle[data-lang="en"] .lang-dropdown .lang-eng,
 .lang-toggle[data-lang="cn"] .lang-dropdown .lang-cn,
 .lang-toggle[data-lang="id"] .lang-dropdown .lang-id,
-.lang-toggle[data-lang="ph"] .lang-dropdown .lang-ph {
+.lang-toggle[data-lang="ph"] .lang-dropdown .lang-ph,
+.lang-toggle[data-lang="th"] .lang-dropdown .lang-th {
     display: none;
 }
 

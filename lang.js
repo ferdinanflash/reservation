@@ -827,25 +827,229 @@
             btn_add_another_time: "+ 添加其他时间？",
             option_select_additional_time: "选择时段",
             stat_additional_time_slots: "附加首选时段："
+        },
+        th: {
+            doc_title: "3475 SvS การจองตำแหน่งรัฐมนตรี",
+            admin_login_btn: "ประธาน 👑",
+            admin_logout_btn: "ออกจากระบบประธาน",
+            admin_logout_named: "ออกจากระบบ ({{name}})",
+            page_title: "ตำแหน่งรัฐมนตรี SvS",
+            page_subtitle: "เลือกตำแหน่งเพื่อทำการจอง",
+            selected_position_title: "ชื่อตำแหน่ง",
+            pos_vp_d1: "รองประธาน D1 (วันจันทร์)",
+            pos_vp_d2: "รองประธาน D2 (วันอังคาร)",
+            pos_edu_d4: "รัฐมนตรีศึกษาธิการ D4 (วันพฤหัสบดี)",
+            pos_vp_d5: "รองประธาน D5 (วันศุกร์)",
+            link_leaderboard: "บันทึกอันดับกิจกรรม",
+            link_tal: "Tundra Arm League",
+            link_transfer_portal: "พอร์ทัลการย้าย",
+            btn_back: "< กลับไปที่ตำแหน่ง",
+            btn_export_csv: "ส่งออก CSV",
+            btn_close_reservation: "ปิดการจอง",
+            btn_open_reservation: "เปิดการจอง",
+            btn_how_to_use: "วิธีใช้งาน",
+            how_to_use_title: "วิธีใช้งาน",
+            how_to_use_description: "หมายเหตุสำหรับการใช้งานหน้าจองนี้ ประธานสามารถแก้ไขและบันทึกหมายเหตุนี้ได้",
+            how_to_use_placeholder: "เขียนหมายเหตุการใช้งานที่นี่...",
+            saving_text: "กำลังบันทึก...",
+            toast_how_to_use_empty: "หมายเหตุห้ามว่างเปล่า",
+            toast_how_to_use_saved: "บันทึกหมายเหตุวิธีใช้งานสำเร็จแล้ว",
+            toast_how_to_use_save_failed: "บันทึกหมายเหตุวิธีใช้งานล้มเหลว กรุณาลองอีกครั้ง",
+            schedule_opening: "กำลังเปิด...",
+            schedule_closing: "กำลังปิด...",
+            schedule_heading: "ตารางช่วงเวลา",
+            admin_mode_indicator: "(โหมดประธาน)",
+            label_timezone: "เขตเวลาที่แสดง:",
+            th_action: "การดำเนินการ",
+            th_preferred_time: "ช่วงเวลา (UTC+0)",
+            th_status: "สถานะ",
+            th_nickname: "ชื่อเล่นในเกม",
+            th_gameid: "ไอดีในเกม",
+            th_fc: "FC",
+            modal_nickname_short: "ชื่อเล่น",
+            modal_id_short: "ไอดี",
+            reassign_modal_title: "ย้ายผู้สมัครที่รอ",
+            reassign_desc: "ช่วงเวลานี้มีใบสมัครที่ได้รับการอนุมัติแล้ว ผู้สมัครด้านล่างจะไม่ถูกลบ — เลือกช่วงเวลาว่างให้แต่ละคนแล้วกดย้าย",
+            th_move_to: "ย้ายไปที่",
+            th_actions: "การดำเนินการ",
+            details_modal_title: "รายละเอียดใบสมัคร",
+            admin_application_controls: "การควบคุมของประธาน",
+            admin_status_label: "สถานะ",
+            admin_time_label: "ช่วงเวลา",
+            status_waiting: "รอดำเนินการ",
+            btn_save_changes: "บันทึกการเปลี่ยนแปลง",
+            time_log_title: "บันทึกเวลา",
+            time_log_empty: "ไม่มีประวัติเวลาที่บันทึกไว้",
+            time_log_created: "สร้างแล้ว",
+            time_log_moved: "ย้ายแล้ว",
+            time_log_status_changed: "เปลี่ยนสถานะแล้ว",
+            time_log_updated: "อัปเดตแล้ว",
+            toast_no_changes: "ไม่มีการเปลี่ยนแปลงให้บันทึก",
+            toast_slot_already_accepted: "ช่วงเวลานั้นมีใบสมัครที่ได้รับการอนุมัติแล้ว",
+            toast_application_updated: "อัปเดตใบสมัครสำเร็จแล้ว",
+            toast_application_update_failed: "อัปเดตใบสมัครล้มเหลว กรุณาลองอีกครั้ง",
+            apply_modal_title: "สมัครช่วงเวลา",
+            apply_position_label: "ตำแหน่ง:",
+            apply_time_label: "เวลา:",
+            label_nickname: "ชื่อเล่นในเกม",
+            placeholder_nickname: "กรอกชื่อเล่นของคุณ",
+            label_gameid: "ไอดีในเกม",
+            placeholder_gameid: "กรอกไอดีเกมของคุณ",
+            label_furnace: "เลเวลเตาหลอม",
+            option_select_furnace: "เลือกเลเวลเตาหลอม",
+            label_fc: "จำนวน Fire Crystal",
+            placeholder_fc: "Fire Crystal",
+            label_rfc: "จำนวน Refined Fire Crystal",
+            placeholder_rfc: "Refined Fire Crystal",
+            label_shard: "จำนวน Fire Crystal Shard",
+            placeholder_shard: "Fire Crystal Shard",
+            label_gensp: "ตัวเร่งทั่วไป (วัน)",
+            placeholder_gensp: "ตัวเร่งทั่วไปเป็นวัน",
+            label_constsp: "ตัวเร่งก่อสร้าง (วัน)",
+            placeholder_constsp: "ตัวเร่งก่อสร้างเป็นวัน",
+            label_ressp: "ตัวเร่งวิจัย (วัน)",
+            placeholder_ressp: "ตัวเร่งวิจัยเป็นวัน",
+            label_trainsp: "ตัวเร่งฝึกทหาร (วัน)",
+            placeholder_trainsp: "ตัวเร่งฝึกทหารเป็นวัน",
+            btn_cancel: "ยกเลิก",
+            btn_submit_application: "ส่งใบสมัคร",
+            footer_current_president: "ประธานคนปัจจุบัน",
+            footer_recent_log_title: "📢 การจองที่อนุมัติล่าสุด",
+            log_empty: "ไม่มีกิจกรรมล่าสุด",
+            btn_edit_footer: "แก้ไขข้อมูลประธาน",
+            btn_finish_svs: "จบ SvS",
+            login_modal_title: "เข้าสู่ระบบประธาน",
+            label_username: "ชื่อผู้ใช้",
+            placeholder_username: "กรอกชื่อผู้ใช้",
+            label_password: "รหัสผ่าน",
+            placeholder_password: "กรอกรหัสผ่าน",
+            btn_signin: "เข้าสู่ระบบ",
+            edit_footer_modal_title: "แก้ไขข้อมูลประธาน",
+            label_president_name: "ชื่อประธาน",
+            placeholder_president_name: "กรอกชื่อประธาน",
+            label_guild_name: "ชื่อกิลด์",
+            placeholder_guild_name: "กรอกชื่อกิลด์",
+            btn_save: "บันทึก",
+            confirm_default_message: "คุณแน่ใจหรือไม่?",
+            btn_ok: "ตกลง",
+            title_view_details: "ดูรายละเอียด",
+            label_unknown: "ไม่ทราบ",
+            applicants_list_title: "รายชื่อผู้สมัคร",
+            btn_close: "ปิด",
+            created_by: "สร้างด้วย ♥️ โดย :\n[IDN] - ACĒ",
+
+            // dynamic strings (used from script.js / common.js via t())
+            confirm_toggle_reservation: "คุณแน่ใจหรือไม่ที่จะ{{action}}การจองสำหรับ {{position}}?",
+            action_open: "เปิด",
+            action_close: "ปิด",
+            toast_reservation_now: "การจอง {{position}} ตอนนี้{{status}}แล้ว!",
+            status_word_open: "เปิด",
+            status_word_close: "ปิด",
+            toast_update_reservation_failed: "อัปเดตสถานะการจองล้มเหลว กรุณาลองอีกครั้ง",
+            please_wait: "กรุณารอสักครู่...",
+            saving: "กำลังบันทึก...",
+            loading_schedule: "กำลังโหลดตาราง...",
+            signing_in: "กำลังเข้าสู่ระบบ...",
+            submitting: "กำลังส่ง...",
+            clearing: "กำลังล้างข้อมูล...",
+            toast_name_guild_empty: "ชื่อและกิลด์ห้ามว่างเปล่า!",
+            toast_president_updated: "อัปเดตข้อมูลประธานเรียบร้อยแล้ว!",
+            toast_update_db_failed: "อัปเดตฐานข้อมูลล้มเหลว: {{detail}}",
+            toast_enter_both: "กรุณากรอกทั้งชื่อผู้ใช้และรหัสผ่าน!",
+            toast_president_only: "หน้านี้สำหรับบัญชีประธานเท่านั้น",
+            toast_login_failed: "เข้าสู่ระบบล้มเหลว: ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
+            toast_welcome_back: "ยินดีต้อนรับกลับมา ท่านประธาน!",
+            toast_logged_out: "ออกจากโหมดประธานแล้ว",
+            local_label: "เวลาท้องถิ่น:",
+            utc_label: "UTC-0:",
+            status_accepted: "อนุมัติแล้ว",
+            status_no_applications: "ไม่มีใบสมัคร",
+            status_waiting_count: "รอดำเนินการ ({{count}})",
+            btn_remove: "ลบ",
+            move_waiting_count: "⚠️ ย้ายผู้รอ ({{count}})",
+            local_prefix: "ท้องถิ่น: {{time}}",
+            btn_apply_action: "สมัคร",
+            waiting_list_title: "รายชื่อผู้รอ - {{time}} UTC",
+            btn_accept: "อนุมัติ",
+            btn_drop: "ลบทิ้ง",
+            stat_furnace_lvl: "เลเวลเตาหลอม:",
+            stat_fc: "FC:",
+            stat_rfc: "RFC:",
+            stat_shard: "FC Shard:",
+            stat_general: "ทั่วไป:",
+            stat_const: "ก่อสร้าง:",
+            stat_research: "วิจัย:",
+            stat_train: "ฝึกทหาร:",
+            stat_nickname: "ชื่อเล่น:",
+            stat_game_id: "ไอดีเกม:",
+            stat_furnace_level: "เลเวลเตาหลอม:",
+            stat_fire_crystals: "Fire Crystals (FC):",
+            stat_refined_fire_crystals: "Refined Fire Crystals (RFC):",
+            stat_fire_crystal_shard: "Fire Crystal Shard:",
+            stat_general_speedup: "ตัวเร่งทั่วไป:",
+            stat_construction_speedup: "ตัวเร่งก่อสร้าง:",
+            stat_research_speedup: "ตัวเร่งวิจัย:",
+            stat_training_speedup: "ตัวเร่งฝึกทหาร:",
+            days_suffix: "วัน",
+            detail_section_player_info: "ข้อมูลผู้เล่น",
+            detail_section_city_power: "เมืองและพลัง",
+            detail_section_essentials: "ทรัพยากรหลัก",
+            detail_section_speedups: "ตัวเร่ง",
+            essentials_shard_label: "Shard:",
+            toast_reservation_locked: "การจองวันนี้ยังถูกล็อกอยู่ในขณะนี้",
+            toast_enter_nickname: "กรุณากรอกชื่อเล่นในเกม!",
+            toast_enter_gameid: "กรุณากรอกไอดีในเกม!",
+            toast_gameid_numeric: "ไอดีเกมต้องเป็นตัวเลขเท่านั้น!",
+            toast_select_furnace: "กรุณาเลือกเลเวลเตาหลอม!",
+            toast_app_submitted: "ส่งใบสมัครสำเร็จแล้ว!",
+            toast_app_submit_failed: "ส่งใบสมัครล้มเหลว กรุณาลองอีกครั้ง",
+            confirm_accept_app: "อนุมัติใบสมัครนี้หรือไม่? การทำเช่นนี้จะล็อกช่วงเวลานี้",
+            toast_app_approved: "อนุมัติใบสมัครแล้ว!",
+            toast_app_approve_failed: "อนุมัติล้มเหลว อาจมีคนอื่นจองไปก่อนแล้ว",
+            reassign_modal_title_dyn: "ย้ายผู้สมัครที่รอ - {{time}} UTC",
+            no_more_waiting: "ไม่มีผู้สมัครที่รออยู่ในช่วงเวลานี้แล้ว",
+            no_free_slots: "ไม่มีช่วงเวลาว่าง",
+            btn_move: "ย้าย",
+            toast_no_slot_selected: "ยังไม่ได้เลือกช่วงเวลาว่าง",
+            toast_applicant_moved: "ย้ายผู้สมัครไปที่ {{time}} UTC แล้ว",
+            toast_move_failed: "ย้ายผู้สมัครล้มเหลว กรุณาลองอีกครั้ง",
+            confirm_delete_record: "ลบใบสมัครนี้ถาวรหรือไม่?",
+            toast_record_dropped: "ลบข้อมูลสำเร็จแล้ว",
+            toast_delete_failed: "ดำเนินการลบล้มเหลว",
+            toast_no_data_export: "ไม่มีข้อมูลให้ส่งออก!",
+            toast_csv_downloaded: "ดาวน์โหลดไฟล์ CSV สำเร็จแล้ว!",
+            confirm_finish_svs: "โปรดระวังในการจบ SvS!\n คุณแน่ใจหรือไม่? การทำเช่นนี้จะรีเซ็ตข้อมูลใบสมัครทั้งหมด",
+            toast_all_cleared: "ล้างข้อมูลทั้งหมดเรียบร้อยแล้ว",
+            toast_clear_failed: "ล้างข้อมูลล้มเหลว กรุณาลองอีกครั้ง",
+            your_location_suffix: " (ตำแหน่งของคุณ)",
+            toast_load_schedule_failed: "โหลดข้อมูลตารางล้มเหลว กรุณารีเฟรช",
+            toast_id_copied: "คัดลอกไอดี {{id}} ไปยังคลิปบอร์ดแล้ว!",
+            toast_id_copied_fallback: "คัดลอกไอดี {{id}} แล้ว!",
+            toast_copy_failed: "คัดลอกไอดีอัตโนมัติล้มเหลว",
+            label_additional_time_toggle: "ช่วงเวลาสำรองเพิ่มเติม",
+            desc_additional_time_toggle: "หากช่วงเวลานี้ไม่ว่าง คุณสามารถเลือกเวลาอื่นเพื่อจองได้",
+            btn_add_another_time: "+ เพิ่มเวลาอีก?",
+            option_select_additional_time: "เลือกช่วงเวลา",
+            stat_additional_time_slots: "เวลาสำรองเพิ่มเติม:"
         }
     };
 
     // Position display-name translations. Internal English keys (used as
     // DB values / currentPosition) never change — only the label shown.
     const POSITION_NAMES = {
-        'Vice President D1': { en: 'Vice President D1', cn: '副会长 D1', id: 'Wakil Presiden H+1', ph: 'Bise Presidente H+1' },
-        'Vice President D2': { en: 'Vice President D2', cn: '副会长 D2', id: 'Wakil Presiden H+2', ph: 'Bise Presidente H+2' },
-        'Minister of Education D4': { en: 'Minister of Education D4', cn: '教育部长 D4', id: 'Menteri Pendidikan H+4', ph: 'Minister ng Edukasyon H+4' },
-        'Vice President D5': { en: 'Vice President D5', cn: '副会长 D5', id: 'Wakil Presiden H+5', ph: 'Bise Presidente H+5' }
+        'Vice President D1': { en: 'Vice President D1', cn: '副会长 D1', id: 'Wakil Presiden H+1', ph: 'Bise Presidente H+1', th: 'รองประธาน D1' },
+        'Vice President D2': { en: 'Vice President D2', cn: '副会长 D2', id: 'Wakil Presiden H+2', ph: 'Bise Presidente H+2', th: 'รองประธาน D2' },
+        'Minister of Education D4': { en: 'Minister of Education D4', cn: '教育部长 D4', id: 'Menteri Pendidikan H+4', ph: 'Minister ng Edukasyon H+4', th: 'รัฐมนตรีศึกษาธิการ D4' },
+        'Vice President D5': { en: 'Vice President D5', cn: '副会长 D5', id: 'Wakil Presiden H+5', ph: 'Bise Presidente H+5', th: 'รองประธาน D5' }
     };
     const POSITION_SHORT_LABELS = {
-        'Vice President D1': { en: 'VP D1', cn: '副D1', id: 'WP H+1', ph: 'BP H+1' },
-        'Vice President D2': { en: 'VP D2', cn: '副D2', id: 'WP H+2', ph: 'BP H+2' },
-        'Minister of Education D4': { en: 'Edu D4', cn: '教D4', id: 'Pendidikan H+4', ph: 'Edu H+4' },
-        'Vice President D5': { en: 'VP D5', cn: '副D5', id: 'WP H+5', ph: 'BP H+5' }
+        'Vice President D1': { en: 'VP D1', cn: '副D1', id: 'WP H+1', ph: 'BP H+1', th: 'รป D1' },
+        'Vice President D2': { en: 'VP D2', cn: '副D2', id: 'WP H+2', ph: 'BP H+2', th: 'รป D2' },
+        'Minister of Education D4': { en: 'Edu D4', cn: '教D4', id: 'Pendidikan H+4', ph: 'Edu H+4', th: 'ศธ D4' },
+        'Vice President D5': { en: 'VP D5', cn: '副D5', id: 'WP H+5', ph: 'BP H+5', th: 'รป D5' }
     };
 
-    let currentLang = ['en', 'cn', 'id', 'ph'].includes(localStorage.getItem(LANG_STORAGE_KEY)) ? localStorage.getItem(LANG_STORAGE_KEY) : 'en';
+    let currentLang = ['en', 'cn', 'id', 'ph', 'th'].includes(localStorage.getItem(LANG_STORAGE_KEY)) ? localStorage.getItem(LANG_STORAGE_KEY) : 'en';
 
     function t(key, vars) {
         const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
@@ -874,7 +1078,7 @@
     function getLang() { return currentLang; }
 
     function applyStaticTranslations() {
-        document.documentElement.lang = currentLang === 'cn' ? 'zh' : (currentLang === 'id' ? 'id' : (currentLang === 'ph' ? 'tl' : 'en'));
+        document.documentElement.lang = currentLang === 'cn' ? 'zh' : (currentLang === 'id' ? 'id' : (currentLang === 'ph' ? 'tl' : (currentLang === 'th' ? 'th' : 'en')));
         document.title = t('doc_title');
 
         document.querySelectorAll('[data-i18n]').forEach(function (el) {
@@ -891,7 +1095,14 @@
         const toggleBtn = document.getElementById('lang-toggle-btn');
         if (toggleBtn) {
             toggleBtn.setAttribute('data-lang', currentLang);
-            toggleBtn.setAttribute('aria-label', currentLang === 'en' ? 'Switch to Chinese, Indonesian, or Filipino' : (currentLang === 'cn' ? '切换为英语、印尼语或菲律宾语' : (currentLang === 'id' ? 'Ganti ke Bahasa Inggris, Mandarin, atau Filipino' : 'Lumipat sa English, Mandarin, o Bahasa Indonesia')));
+            const switchLabels = {
+                en: 'Switch to Chinese, Indonesian, Filipino, or Thai',
+                cn: '切换为英语、印尼语、菲律宾语或泰语',
+                id: 'Ganti ke Bahasa Inggris, Mandarin, Filipino, atau Thailand',
+                ph: 'Lumipat sa English, Mandarin, Bahasa Indonesia, o Thai',
+                th: 'เปลี่ยนเป็นภาษาอังกฤษ จีน อินโดนีเซีย หรือฟิลิปปินส์'
+            };
+            toggleBtn.setAttribute('aria-label', switchLabels[currentLang] || switchLabels.en);
         }
     }
 
@@ -956,7 +1167,7 @@
     }
 
     function setLanguage(lang) {
-        if (!['en', 'cn', 'id', 'ph'].includes(lang)) return;
+        if (!['en', 'cn', 'id', 'ph', 'th'].includes(lang)) return;
         currentLang = lang;
         localStorage.setItem(LANG_STORAGE_KEY, lang);
         applyStaticTranslations();
@@ -965,7 +1176,9 @@
     }
 
     function toggleLanguage() {
-        setLanguage(currentLang === 'en' ? 'cn' : (currentLang === 'cn' ? 'id' : (currentLang === 'id' ? 'ph' : 'en')));
+        const order = ['en', 'cn', 'id', 'ph', 'th'];
+        const nextIndex = (order.indexOf(currentLang) + 1) % order.length;
+        setLanguage(order[nextIndex]);
     }
 
     // ================= LANGUAGE DROPDOWN OPEN/CLOSE =================
