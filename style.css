@@ -1032,6 +1032,7 @@ th:first-child {
     color: #fff;
     text-align: center;
     letter-spacing: 2px;
+    white-space: pre-line;
     text-shadow: 0 0 5px #ff005e, 0 0 10px #ff005e, 0 0 20px #ff005e;
     animation: glow 1.5s infinite alternate;
 }

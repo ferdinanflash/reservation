@@ -125,7 +125,7 @@
             label_unknown: "Unknown",
             applicants_list_title: "Applicants List",
             btn_close: "Close",
-            created_by: "Created By : ACE aka DEMON",
+            created_by: "Made With ♥️ By :\n[IDN] - ACĒ",
 
             // dynamic strings (used from script.js / common.js via t())
             confirm_toggle_reservation: "Are you sure to {{action}} reservation for {{position}}?",
@@ -324,7 +324,7 @@
             label_unknown: "Tidak Diketahui",
             applicants_list_title: "Daftar Pemohon",
             btn_close: "Tutup",
-            created_by: "Dibuat Oleh : ACE aka DEMON",
+            created_by: "Made With ♥️ By :\n[IDN] - ACĒ",
             confirm_toggle_reservation: "Apakah Anda yakin ingin {{action}} reservasi untuk {{position}}?",
             action_open: "membuka",
             action_close: "menutup",
@@ -521,7 +521,7 @@
             label_unknown: "Hindi Alam",
             applicants_list_title: "Listahan ng mga Aplikante",
             btn_close: "Isara",
-            created_by: "Ginawa Ni : ACE aka DEMON",
+            created_by: "Made With ♥️ By :\n[IDN] - ACĒ",
             confirm_toggle_reservation: "Sigurado ka bang {{action}} ang reservation para sa {{position}}?",
             action_open: "buksan",
             action_close: "isara",
@@ -718,7 +718,7 @@
             label_unknown: "未知",
             applicants_list_title: "申请人列表",
             btn_close: "关闭",
-            created_by: "创建者：ACE aka DEMON",
+            created_by: "Made With ♥️ By :\n[IDN] - ACĒ",
 
             confirm_toggle_reservation: "确定要{{action}}「{{position}}」的预约吗？",
             action_open: "开启",
