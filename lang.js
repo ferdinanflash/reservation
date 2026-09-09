@@ -19,7 +19,7 @@
     const TRANSLATIONS = {
         en: {
             doc_title: "3475 SvS Minister Reservation",
-            admin_login_btn: "President Login",
+            admin_login_btn: "President 👑",
             admin_logout_btn: "Logout President",
             admin_logout_named: "Logout ({{name}})",
             page_title: "SvS Minister Position",
@@ -218,7 +218,7 @@
         },
         id: {
             doc_title: "3475 SvS Menteri Reservasi",
-            admin_login_btn: "Login Presiden",
+            admin_login_btn: "Presiden 👑",
             admin_logout_btn: "Logout Presiden",
             admin_logout_named: "Logout ({{name}})",
             page_title: "Posisi Menteri SvS",
@@ -415,7 +415,7 @@
         },
         ph: {
             doc_title: "3475 SvS Minister Reservation",
-            admin_login_btn: "Login ng Pangulo",
+            admin_login_btn: "Pangulo 👑",
             admin_logout_btn: "Logout ng Pangulo",
             admin_logout_named: "Logout ({{name}})",
             page_title: "Posisyon ng SvS Minister",
@@ -612,7 +612,7 @@
         },
         cn: {
             doc_title: "3475 SvS 部长预约系统",
-            admin_login_btn: "会长登录",
+            admin_login_btn: "会长 👑",
             admin_logout_btn: "退出会长模式",
             admin_logout_named: "退出会长模式（{{name}}）",
             page_title: "SvS 部长职位",
