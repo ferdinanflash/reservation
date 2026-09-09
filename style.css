@@ -530,6 +530,29 @@ body {
     transform: scale(1.02);
 }
 
+.btn-discord {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #5865F2;
+    color: white;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(88, 101, 242, 0.25);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.btn-discord:hover {
+    background: #4752C4;
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.02);
+}
+
 .btn-apply {
     background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     color: white;
