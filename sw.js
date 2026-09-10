@@ -81,8 +81,52 @@ self.addEventListener('fetch', (event) => {
 
 
 // ================= NOTIFICATION HANDLING =================
-// The page/Supabase Realtime listener decides WHEN a notification should be
-// shown. The service worker only displays it and focuses the app on click.
+// Two sources can trigger a notification:
+//  1) Web Push ('push' event, below) — delivered by the browser's push
+//     service even when the app/tab/browser is completely closed.
+//  2) The page's own Supabase Realtime listener (app-notifications.js),
+//     which only updates the on-screen status while the tab is open and no
+//     longer shows a duplicate local notification (push covers that now).
+self.addEventListener('push', (event) => {
+    let payload = {};
+    try {
+        payload = event.data ? event.data.json() : {};
+    } catch (error) {
+        payload = { title: 'Reservation Update', body: event.data ? event.data.text() : '' };
+    }
+
+    const title = payload.title || 'Reservation Update';
+    const options = {
+        body: payload.body || '',
+        icon: './icon-192.png',
+        badge: './icon-192.png',
+        tag: `reservation-${payload.application_id || 'update'}`,
+        renotify: true,
+        data: { application_id: payload.application_id || null, status: payload.status || null }
+    };
+
+    event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// Rare: the browser/OS rotates the push subscription on its own (e.g. after
+// a long time or a security event). Re-subscribe immediately and hand the
+// new subscription to any open page so it can be re-saved to Supabase —
+// otherwise future pushes would silently stop arriving for this device.
+self.addEventListener('pushsubscriptionchange', (event) => {
+    event.waitUntil(
+        self.registration.pushManager
+            .subscribe(event.oldSubscription ? event.oldSubscription.options : { userVisibleOnly: true })
+            .then(async (subscription) => {
+                const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+                clientList.forEach((client) => client.postMessage({
+                    type: 'PUSH_SUBSCRIPTION_CHANGED',
+                    subscription: subscription.toJSON()
+                }));
+            })
+            .catch(() => undefined)
+    );
+});
+
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
     event.waitUntil(

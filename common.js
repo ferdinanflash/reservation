@@ -15,6 +15,16 @@ const SUPABASE_URL = 'https://pwqkpeykjyujhnreleax.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWtwZXlranl1amhucmVsZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMzgxNDgsImV4cCI6MjA5ODgxNDE0OH0.6u2CKOPHcMtVeA2ph0QWTqgtvs-4BQJpsz6v2kCyOEY';
 // =================================================================
 
+// ================= WEB PUSH PUBLIC CONFIGURATION =================
+// Public VAPID key used by the browser to create a push subscription so
+// notifications can be delivered even when the app/tab/browser is closed.
+// Safe to expose client-side (same trust level as SUPABASE_ANON_KEY above).
+// The matching PRIVATE key lives ONLY in the Supabase Edge Function's
+// environment secrets (`supabase secrets set VAPID_PRIVATE_KEY=...`) — never
+// put the private key in this file or commit it to git.
+const PUSH_VAPID_PUBLIC_KEY = 'BOdByEDiZ7bmzBUBUrto18EX8KbFE1R7yQKOCXxLjNVQsQOEtkO-z9OJPzWgqV23pMYfInBVTajCJ2IX0JYAWAE';
+// =================================================================
+
 // Supabase Auth requires an email address, but this app only wants a plain
 // username + password. Both pages share the same email domain so accounts
 // can be shared across them — but each page still only grants admin access
