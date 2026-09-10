@@ -617,12 +617,23 @@ async function submitApplication() {
     if (!furnaceLevel) { showToast(t("toast_select_furnace"), "warning"); return; }
 
     const additionalTimeSlots = collectAdditionalTimeSlots();
+    const getNotificationEl = document.getElementById('input-get-notification');
+    const wantsNotifications = !!getNotificationEl?.checked;
+
+    // Ask permission while the submit action is still a direct user gesture.
+    // If the user declines, the reservation itself is still submitted.
+    if (wantsNotifications && typeof requestGuestNotificationPermission === 'function') {
+        const permissionGranted = await requestGuestNotificationPermission();
+        if (!permissionGranted) {
+            getNotificationEl.checked = false;
+        }
+    }
 
     const submitBtn = document.querySelector('#apply-modal .btn-apply');
     setButtonBusy(submitBtn, true, 'Submitting...');
 
     try {
-        const { error } = await client
+        const { data: insertedApplication, error } = await client
             .from('reservation_slots')
             .insert({ 
                 time_slot: selectedTimeSlot, position: currentPosition, nickname: nickname, game_id: gameId, 
@@ -631,9 +642,20 @@ async function submitApplication() {
                 status: 'Waiting',
                 additional_time_slots: additionalTimeSlots,
                 time_log: [{ action: 'created', at: new Date().toISOString(), actor: 'Applicant', detail: `${selectedTimeSlot} UTC` }]
-            });
+            })
+            .select('id')
+            .single();
 
         if (error) throw error;
+        if (!insertedApplication?.id) throw new Error('Supabase did not return the new application id');
+
+        // Guest identity = the returned application id stored only in this
+        // browser. The realtime listener will subscribe to this exact row.
+        if (typeof setupGuestNotificationsAfterSubmission === 'function') {
+            await setupGuestNotificationsAfterSubmission(String(insertedApplication.id), wantsNotifications && getNotificationEl?.checked);
+        } else {
+            localStorage.setItem('my_application_id', String(insertedApplication.id));
+        }
 
         showToast(t("toast_app_submitted"), "success");
         closeApplyModal();
