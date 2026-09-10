@@ -1,6 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<script>
+		(function () {
+			// ============================================================
+			// SAFARI / iOS CACHE-BUST GUARD
+			// Safari on Mac and iOS (including "Add to Home Screen" apps)
+			// aggressively caches the HTML page itself, not just the JS
+			// files. That means bumping "?v=" on the <script> tags below
+			// has no effect there, because Safari never even re-fetches
+			// THIS index.html to see the new version numbers.
+			//
+			// This runs before anything else loads. It compares a build
+			// string you control (APP_BUILD) against what's saved in
+			// localStorage. If it changed (new deploy), it forces exactly
+			// one real network reload with a cache-busting query param,
+			// which Safari/WebKit treats as a new URL it can't serve from
+			// its stale page cache.
+			//
+			// >>> Bump APP_BUILD every time you deploy a fix. <<<
+			// ============================================================
+			var APP_BUILD = '2026-09-10-1';
+
+			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
+			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
+
+			try {
+				var stored = localStorage.getItem('__app_build');
+
+				if (!stored) {
+					// First ever visit on this device — nothing stale to bust.
+					localStorage.setItem('__app_build', APP_BUILD);
+					return;
+				}
+				if (stored === APP_BUILD) return; // already on the latest build
+
+				localStorage.setItem('__app_build', APP_BUILD);
+
+				if (window.caches && caches.keys) {
+					caches.keys().then(function (keys) {
+						keys.forEach(function (key) { caches.delete(key); });
+					});
+				}
+
+				var url = new URL(window.location.href);
+				url.searchParams.set('_cb', APP_BUILD);
+				window.location.replace(url.toString());
+			} catch (e) {
+				// localStorage unavailable (e.g. Private Browsing) — fail
+				// silently, normal caching behavior just applies.
+			}
+		})();
+		</script>
 		<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<title>3475 SvS Minister Reservation</title>
