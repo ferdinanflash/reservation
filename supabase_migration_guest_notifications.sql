@@ -1,0 +1,16 @@
+-- No new column is required for guest notifications.
+--
+-- The browser stores the reservation_slots.id in localStorage and the client
+-- subscribes to only that row with:
+--   filter: `id=eq.<saved_application_id>`
+--
+-- IMPORTANT SECURITY NOTE:
+-- Supabase Realtime/Postgres Changes is subject to the table's RLS policies.
+-- The guest client must be allowed to SELECT the reservation row for the
+-- Realtime event to be delivered. If your current public SELECT policy already
+-- permits the schedule to load, no additional policy is needed.
+--
+-- If you do NOT already have a public SELECT policy, create one appropriate
+-- to your application's security model. Do not expose sensitive applicant
+-- fields unnecessarily. A stronger production design is a dedicated public
+-- status view/table containing only id, status and time_slot.

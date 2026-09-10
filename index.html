@@ -76,6 +76,7 @@
 					<script src="js/app-applications.js?v=42" defer=""></script>
 					<script src="js/app-waiting.js?v=42" defer=""></script>
 					<script src="js/app-extras.js?v=42" defer=""></script>
+					<script src="js/app-notifications.js?v=1" defer=""></script>
 					<script src="fire-banner.js" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
@@ -378,6 +379,14 @@
 						<span data-i18n="label_additional_time_toggle">Additional Preferred Time Slot</span>
 					</label>
 					<small class="field-hint" data-i18n="desc_additional_time_toggle">If this time slot not available, you can pick another time to reservation</small>
+				</div>
+
+				<div class="form-group notification-toggle-group">
+					<label class="checkbox-label">
+						<input type="checkbox" id="input-get-notification">
+						<span>Get Notification ?</span>
+					</label>
+					<small class="field-hint">Receive a browser notification when your reservation status changes.</small>
 				</div>
 
 				<div id="additional-time-slots-container" class="additional-time-slots-container hidden"></div>

@@ -6,7 +6,7 @@
 //   - everything else (Supabase, CDN): never touched, always straight to network
 //
 // >>> Bump CACHE_VERSION on every deploy so old files are dropped. <<<
-const CACHE_VERSION = '2026-09-11-1';
+const CACHE_VERSION = '2026-09-11-2';
 const CACHE_NAME = `svs-${CACHE_VERSION}`;
 const PRECACHE = [
     './',
@@ -21,6 +21,7 @@ const PRECACHE = [
     './js/app-applications.js',
     './js/app-waiting.js',
     './js/app-extras.js',
+    './js/app-notifications.js',
     './fire-banner.js',
     './opening-animation.js',
     './site.webmanifest',
@@ -75,5 +76,21 @@ self.addEventListener('fetch', (event) => {
             }
             return response;
         }))
+    );
+});
+
+
+// ================= NOTIFICATION HANDLING =================
+// The page/Supabase Realtime listener decides WHEN a notification should be
+// shown. The service worker only displays it and focuses the app on click.
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+                if ('focus' in client) return client.focus();
+            }
+            if (clients.openWindow) return clients.openWindow('./');
+        })
     );
 });
