@@ -742,7 +742,7 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">${t("local_prefix", { time: localTimeStr })}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">${t("status_accepted")}</span>${leftoverBadge}</td>
-                <td>${escapeHtml(acceptedApp.nickname)}</td>
+                <td>${escapeHtml(capZalgo(acceptedApp.nickname))}</td>
                 <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
                 <td>${escapeHtml(acceptedApp.furnace_level) || '-'}</td>
             `;
@@ -1025,7 +1025,7 @@ function buildStatDetailsHtml(app, compact = false) {
             <div class="player-info-row">
                 <div class="player-avatar">🔥</div>
                 <div class="player-info-text">
-                    <div>${t("stat_nickname")} <strong>${escapeHtml(app.nickname) || '-'}</strong></div>
+                    <div>${t("stat_nickname")} <strong>${escapeHtml(capZalgo(app.nickname)) || '-'}</strong></div>
                     <div>${t("stat_game_id")} <strong class="game-id-copy" title="${t('title_view_details')}" onclick="copyToClipboard('${gameId}')">${gameId} <span class="copy-icon">📋</span></strong></div>
                     ${additionalRowFull}
                 </div>
@@ -1126,7 +1126,7 @@ function openWaitingModal(timeStr) {
 
         mainRow.innerHTML = `
             <td style="padding: 5px 10px; text-align: left; font-weight: 500; white-space: nowrap;">
-                <span class="icon-tap-target" style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${escapeHtml(app.nickname)}
+                <span class="icon-tap-target" style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${escapeHtml(capZalgo(app.nickname))}
             </td>
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
                 <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
@@ -1519,7 +1519,7 @@ function renderReassignRows(originTime) {
             : `<option value="">${t("no_free_slots")}</option>`;
 
         row.innerHTML = `
-            <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">${escapeHtml(app.nickname)}</td>
+            <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">${escapeHtml(capZalgo(app.nickname))}</td>
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
                 <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
             </td>
@@ -1806,7 +1806,7 @@ async function loadRecentAccepts() {
             card.className = 'rar-card';
             card.innerHTML = `
                 <div class="rar-info">
-                    <div class="rar-name">${escapeHtml(item.nickname)} ${buildRarFurnaceLabel(item)}</div>
+                    <div class="rar-name">${escapeHtml(capZalgo(item.nickname))} ${buildRarFurnaceLabel(item)}</div>
                     <div class="rar-pos">[${escapeHtml(shortPos)}]</div>
                 </div>
                 <div class="rar-right">

@@ -52,6 +52,33 @@ function escapeHtml(value) {
         .replace(/'/g, '&#039;');
 }
 
+// ================= DISPLAY SAFETY: ZALGO / COMBINING-MARK CAPPING =================
+// Some nicknames stack many Unicode combining marks (accents/diacritics, i.e.
+// "Zalgo" style text) on top of a single base character. Those characters are
+// perfectly valid text, but a long stack of marks makes the browser expand the
+// line height around them, which pushes the rest of that table row/modal out
+// of alignment (e.g. the Waiting List modal). This function is display-only:
+// it never touches the nickname that's stored in the DB, exported to CSV, or
+// used for copy-to-clipboard/lookup — it only caps what gets rendered on screen
+// so the nickname still shows, just without breaking the surrounding layout.
+function capZalgo(value, maxMarksPerChar = 2) {
+    if (value === null || value === undefined) return '';
+    const str = String(value);
+    let result = '';
+    let combiningStreak = 0;
+    for (const ch of str) {
+        // \p{M} = Unicode "Mark" category: combining accents, diacritics, etc.
+        if (/\p{M}/u.test(ch)) {
+            combiningStreak++;
+            if (combiningStreak > maxMarksPerChar) continue; // drop marks past the cap
+        } else {
+            combiningStreak = 0;
+        }
+        result += ch;
+    }
+    return result;
+}
+
 // ================= SHARED SUPABASE CLIENT =================
 let supabaseClient = null;
 function getSupabase() {
