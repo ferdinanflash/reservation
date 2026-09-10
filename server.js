@@ -21,7 +21,8 @@ async function fetchFromGitHub() {
         headers: {
             'Authorization': `Bearer ${GITHUB_TOKEN}`,
             'Accept': 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28'
+            'X-GitHub-Api-Version': '2022-11-28',
+            'User-Agent': 'SVS-Ministry-App'
         }
     });
 
@@ -52,7 +53,8 @@ async function pushToGitHub(content, sha, message) {
             'Authorization': `Bearer ${GITHUB_TOKEN}`,
             'Content-Type': 'application/json',
             'Accept': 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28'
+            'X-GitHub-Api-Version': '2022-11-28',
+            'User-Agent': 'SVS-Ministry-App'
         },
         body: JSON.stringify(body)
     });
@@ -137,39 +139,3 @@ app.post('/api/applications/remove', async (req, res) => {
 });
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000 - Connected to GitHub tree'));
-
-let slots = (result && result.applications && result.applications.slot) || [];
-if (!Array.isArray(slots)) slots = [slots];
-
-
-if (!result || !result.applications) result = { applications: { slot: [] } };
-let slots = result.applications.slot || [];
-if (!Array.isArray(slots)) slots = [slots];
-// ... slots.findIndex is called here ...
-result.applications.slot = slots; 
-// This is what the 'result' variable looks like inside your app.get() or app.post() endpoints:
-{ 
-  applications: { 
-    slot: { 
-      time: "00:00", 
-      nickname: "Player1" 
-    } 
-  } 
-}
-
-// Inside fetchFromGitHub():
-headers: {
-    'Authorization': `Bearer ${GITHUB_TOKEN}`,
-    'Accept': 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28',
-    'User-Agent': 'SVS-Ministry-App' // <-- ADD THIS LINE
-}
-
-// Inside pushToGitHub():
-headers: {
-    'Authorization': `Bearer ${GITHUB_TOKEN}`,
-    'Content-Type': 'application/json',
-    'Accept': 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28',
-    'User-Agent': 'SVS-Ministry-App' // <-- ADD THIS LINE
-}

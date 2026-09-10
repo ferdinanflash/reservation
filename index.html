@@ -69,9 +69,25 @@
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=1" defer=""></script>
 		<script src="lang.js?v=1" defer=""></script>
-					<script src="script.js?v=42" defer=""></script>
+					<script src="js/app-core.js?v=42" defer=""></script>
+					<script src="js/app-auth.js?v=42" defer=""></script>
+					<script src="js/app-notes.js?v=42" defer=""></script>
+					<script src="js/app-schedule.js?v=42" defer=""></script>
+					<script src="js/app-applications.js?v=42" defer=""></script>
+					<script src="js/app-waiting.js?v=42" defer=""></script>
+					<script src="js/app-extras.js?v=42" defer=""></script>
 					<script src="fire-banner.js" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
+
+		<script>
+		// Register the service worker so the app is installable and still opens
+		// when the connection drops. See sw.js for the caching rules.
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', function () {
+				navigator.serviceWorker.register('sw.js').catch(function () {});
+			});
+		}
+		</script>
 				</head>
 	<body>
 		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
@@ -392,7 +408,7 @@
 					<div class="log-item-empty" data-i18n="log_empty">No recent activity</div>
 				</div>
 			</div>
-			<!-- rar-* markup for each row is generated dynamically by loadRecentAccepts() in script.js -->
+			<!-- rar-* markup for each row is generated dynamically by loadRecentAccepts() in js/app-extras.js -->
 
 			<div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
 				<button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="handleEditFooter()" data-i18n="btn_edit_footer">Edit President Info</button>
