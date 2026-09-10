@@ -842,25 +842,33 @@ th {
     line-height: 1;
 }
 
-/* Kolom pertama (ACTION) tetap terlihat saat tabel discroll horizontal di mobile */
-th:first-child,
-td:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    background-color: #1c1d22;
-    box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.5);
-    /* Tambahan padding kiri: kolom ini persis menempel di tepi kliping
-       container (overflow-x: auto). Tanpa jarak ini, glyph emoji ikon
-       kaca pembesar (🔍) yang sedikit "bleed" ke kiri dari kotak inline-nya
-       akan terpotong oleh tepi sticky/scroll, terlihat sebagai serpihan
-       kecil di sebelah kiri tombol Remove pada tampilan desktop. */
-    padding-left: 10px;
-}
+/* Kolom pertama (ACTION) tetap terlihat saat tabel discroll horizontal di
+   mobile/tablet. Ini HANYA diaktifkan di bawah 769px (lihat media query di
+   bawah): di desktop tabel tidak pernah perlu discroll secara horizontal,
+   jadi "position: sticky" pada kolom ini tidak berguna sama sekali di sana
+   dan justru memaksa Chrome membuat compositing layer terpisah untuk sel
+   tersebut. Layer terpisah itu, dikombinasikan dengan box-shadow di kolom
+   ini, adalah penyebab bug lama: glyph emoji kaca pembesar (🔍) terlihat
+   terpotong/ada serpihan kecil di sebelah kiri tombol Remove pada tampilan
+   desktop (padding-left saja tidak konsisten menutupi ini karena akar
+   masalahnya adalah layer compositing, bukan ruang kosong di dalam sel).
+   Solusinya: jangan aktifkan sticky/box-shadow/z-index sama sekali di
+   desktop, cukup di lebar layar yang benar-benar butuh scroll. */
+@media screen and (max-width: 768px) {
+    th:first-child,
+    td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background-color: #1c1d22;
+        box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.5);
+        padding-left: 10px;
+    }
 
-th:first-child {
-    background-color: #24262e;
-    z-index: 2;
+    th:first-child {
+        background-color: #24262e;
+        z-index: 2;
+    }
 }
 
 .modal {
