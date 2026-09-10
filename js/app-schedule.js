@@ -138,10 +138,24 @@ function renderTimeSlots() {
         const row = document.createElement('tr');
         if (acceptedApp) {
             let detailBtn = `<span class="icon-tap-target" style="cursor:pointer; font-size: 1rem; vertical-align: middle;" title="${t("title_view_details")}" onclick="openDetailsModal(${acceptedApp.id})">🔍</span>`;
+            // PENTING: bungkus ikon+tombol ini pakai display:inline-flex, BUKAN
+            // display:flex. Sebagai <div> block-level biasa, display:flex akan
+            // otomatis melebar mengikuti lebar KOLOM tabel (bukan lebar
+            // kontennya sendiri) — dan karena table-layout:auto + table
+            // width:100% bisa menghitung kolom ACTION lebih sempit dari total
+            // lebar ikon+gap+tombol, item flex (yang defaultnya flex-shrink:1)
+            // jadi "diperas" sampai ikon kaca pembesar terdorong keluar batas
+            // kiri kolom sticky lalu terpotong. Ini hanya kejadian di mode
+            // admin karena hanya di sini ikon & tombol digabung dalam satu div
+            // flex; mode biasa cuma me-render ikon sendirian. inline-flex
+            // membuat div ini shrink-to-fit ke lebar kontennya sendiri (sama
+            // seperti span/inline-block), jadi kolom otomatis melebar untuk
+            // menampung isinya dan tidak ada lagi yang diperas/terpotong.
+            // flex-shrink:0 pada kedua child jadi jaring pengaman tambahan.
             let actionBtn = isAdmin
-                ? `<div style="display:flex; align-items:center; justify-content:center; gap:6px;">
-                     ${detailBtn}
-                     <button class="btn-apply btn-danger btn-compact" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeApp(${acceptedApp.id})">${t("btn_remove")}</button>
+                ? `<div style="display:inline-flex; flex-wrap:nowrap; align-items:center; justify-content:center; gap:6px;">
+                     <span style="flex-shrink:0;">${detailBtn}</span>
+                     <button class="btn-apply btn-danger btn-compact" style="padding: 4px 8px; font-size: 0.75rem; flex-shrink:0; white-space:nowrap;" onclick="removeApp(${acceptedApp.id})">${t("btn_remove")}</button>
                    </div>`
                 : detailBtn;
 
