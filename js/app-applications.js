@@ -654,6 +654,7 @@ async function submitApplication() {
         if (typeof setupGuestNotificationsAfterSubmission === 'function') {
             await setupGuestNotificationsAfterSubmission(String(insertedApplication.id), wantsNotifications && getNotificationEl?.checked);
         } else {
+            // Fallback for older builds: retain the newest ID.
             localStorage.setItem('my_application_id', String(insertedApplication.id));
         }
 
