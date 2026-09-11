@@ -34,6 +34,17 @@ const WEBHOOK_SECRET = Deno.env.get("WEBHOOK_SECRET") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
+// IMPORTANT: web-push must be initialized with the VAPID identity before
+// sendNotification() is called. Without this, every push send can fail even
+// though subscriptions, the webhook, and the service worker are configured.
+if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
+    webpush.setVapidDetails(
+        VAPID_SUBJECT,
+        VAPID_PUBLIC_KEY,
+        VAPID_PRIVATE_KEY
+    );
+}
+
 const FINAL_STATUSES = ["accepted", "approved", "rejected"];
 const WAITING_STATUSES = ["waiting", "pending"];
 
@@ -198,9 +209,9 @@ Deno.serve(async (req: Request) => {
         return new Response("Forbidden", { status: 403 });
     }
 
-    if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
-        console.error("VAPID keys are not configured.");
-        return new Response("Server misconfigured", { status: 500 });
+    if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY || !VAPID_SUBJECT) {
+        console.error("VAPID configuration is incomplete. Required: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT.");
+        return new Response("Server misconfigured: VAPID configuration is incomplete", { status: 500 });
     }
 
     let payload: any;
