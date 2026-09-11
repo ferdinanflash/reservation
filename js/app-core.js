@@ -263,6 +263,68 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
+// ================= CROSS-DEVICE REASON MODAL =================
+// Avoids window.prompt(), whose behavior can be inconsistent in Chrome/PWA
+// on some Android devices (including Samsung). This HTML modal is controlled
+// entirely by the page, so it works consistently across Android/iOS/PWA.
+function showReasonModal(label, defaultValue = '') {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('reason-modal');
+        const titleEl = document.getElementById('reason-modal-title');
+        const labelEl = document.getElementById('reason-modal-label');
+        const input = document.getElementById('reason-modal-input');
+        const okBtn = document.getElementById('reason-modal-ok-btn');
+        const cancelBtn = document.getElementById('reason-modal-cancel-btn');
+        if (!modal || !input || !okBtn || !cancelBtn) {
+            resolve('');
+            return;
+        }
+
+        if (titleEl) titleEl.innerText = t('reason_modal_title');
+        if (labelEl) labelEl.innerText = label || t('reason_modal_label');
+        input.value = defaultValue || '';
+        input.placeholder = t('reason_modal_placeholder');
+        modal.classList.remove('hidden');
+
+        let settled = false;
+        const finish = (value) => {
+            if (settled) return;
+            settled = true;
+            modal.classList.add('hidden');
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+            modal.removeEventListener('click', onBackdrop);
+            input.removeEventListener('keydown', onKeyDown);
+            resolve(String(value || '').trim());
+        };
+        const onOk = () => finish(input.value);
+        const onCancel = () => finish('');
+        const onBackdrop = (event) => {
+            if (event.target === modal) onCancel();
+        };
+        const onKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                onCancel();
+            }
+        };
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+        modal.addEventListener('click', onBackdrop);
+        input.addEventListener('keydown', onKeyDown);
+
+        // Focus after the modal is painted so mobile browsers reliably open
+        // the keyboard when the dialog is triggered by a user action.
+        setTimeout(() => {
+            try {
+                input.focus();
+                input.setSelectionRange(input.value.length, input.value.length);
+            } catch (_) {}
+        }, 50);
+    });
+}
+
 function showCustomConfirm(message, onConfirm, buttonColor = '#ef4444') {
     const modal = document.getElementById('confirm-modal');
     const msgEl = document.getElementById('confirm-message');

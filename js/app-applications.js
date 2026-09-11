@@ -150,7 +150,7 @@ async function saveAdminApplicationChanges(id) {
     const now = new Date().toISOString();
     let changeReason = '';
     if (newTime !== oldTime) {
-        changeReason = window.prompt('Reason / keterangan perubahan slot (opsional):', '')?.trim() || '';
+        changeReason = await showReasonModal(t('reason_slot_change'));
     }
     const action = newTime !== oldTime && newStatus !== oldStatus ? 'updated' : (newTime !== oldTime ? 'moved' : 'status_changed');
     const detail = detailParts.join('; ') + (changeReason ? `; Reason: ${changeReason}` : '');
@@ -427,7 +427,7 @@ async function moveWaitingListApp(id, newTimeSlot, originTime) {
     const btn = document.querySelector(`#waiting-move-select-${id}`)?.nextElementSibling;
     setButtonBusy(btn, true, t("saving"));
     try {
-        const moveReason = window.prompt('Reason / keterangan perpindahan slot (opsional):', '')?.trim() || '';
+        const moveReason = await showReasonModal(t('reason_slot_move'));
         const nextLog = [...getApplicationTimeLog(app), {
             action: 'moved',
             at: new Date().toISOString(),
