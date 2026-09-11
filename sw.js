@@ -6,7 +6,7 @@
 //   - everything else (Supabase, CDN): never touched, always straight to network
 //
 // >>> Bump CACHE_VERSION on every deploy so old files are dropped. <<<
-const CACHE_VERSION = '2026-09-12-2';
+const CACHE_VERSION = '2026-09-12-3';
 const CACHE_NAME = `svs-${CACHE_VERSION}`;
 const PRECACHE = [
     './',
@@ -25,8 +25,12 @@ const PRECACHE = [
     './fire-banner.js',
     './opening-animation.js',
     './site.webmanifest',
-    './icon-192.png',
-    './icon-512.png'
+    './pwa-icon-192-v8.png',
+    './pwa-icon-512-v8.png',
+    './apple-touch-icon-v8.png',
+    './favicon-32-v8.png',
+    './favicon-16-v8.png',
+    './favicon-v8.ico'
 ];
 
 self.addEventListener('install', (event) => {
@@ -98,8 +102,8 @@ self.addEventListener('push', (event) => {
     const title = payload.title || 'Reservation Update';
     const options = {
         body: payload.body || '',
-        icon: './icon-192.png',
-        badge: './icon-192.png',
+        icon: './pwa-icon-192-v8.png',
+        badge: './pwa-icon-192-v8.png',
         tag: `reservation-${payload.application_id || 'update'}`,
         renotify: true,
         data: {

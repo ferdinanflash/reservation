@@ -95,3 +95,8 @@ This project is proprietary and maintained for **3475.web.id**.
 - Replaced native `window.prompt()` reason dialogs with a responsive HTML modal for consistent Android/PWA/iOS behavior.
 - Reason modal is used for slot changes, slot moves, and rejection reasons.
 - Build/cache versions bumped to force clients to receive the new UI.
+
+## V8 update
+- Replaced the PWA/app icon with a custom Frost/Ice Flame shield design inspired by the project's winter-survival theme.
+- Added versioned PWA, Apple Touch, favicon, and notification icon assets to reduce stale-icon caching on existing devices.
+- Bumped Safari build and Service Worker cache versions.
