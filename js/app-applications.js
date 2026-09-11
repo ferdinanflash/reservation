@@ -148,11 +148,18 @@ async function saveAdminApplicationChanges(id) {
     if (newStatus !== oldStatus) detailParts.push(`${oldStatus} → ${newStatus}`);
 
     const now = new Date().toISOString();
+    let changeReason = '';
+    if (newTime !== oldTime) {
+        changeReason = window.prompt('Reason / keterangan perubahan slot (opsional):', '')?.trim() || '';
+    }
+    const action = newTime !== oldTime && newStatus !== oldStatus ? 'updated' : (newTime !== oldTime ? 'moved' : 'status_changed');
+    const detail = detailParts.join('; ') + (changeReason ? `; Reason: ${changeReason}` : '');
     const nextLog = [...getApplicationTimeLog(app), {
-        action: newTime !== oldTime && newStatus !== oldStatus ? 'updated' : (newTime !== oldTime ? 'moved' : 'status_changed'),
+        action,
         at: now,
         actor: currentStaffUsername || 'President',
-        detail: detailParts.join('; ')
+        detail,
+        ...(newTime !== oldTime ? { old_time: oldTime, new_time: newTime, reason: changeReason } : {})
     }];
     changes.time_log = nextLog;
 
@@ -420,11 +427,15 @@ async function moveWaitingListApp(id, newTimeSlot, originTime) {
     const btn = document.querySelector(`#waiting-move-select-${id}`)?.nextElementSibling;
     setButtonBusy(btn, true, t("saving"));
     try {
+        const moveReason = window.prompt('Reason / keterangan perpindahan slot (opsional):', '')?.trim() || '';
         const nextLog = [...getApplicationTimeLog(app), {
             action: 'moved',
             at: new Date().toISOString(),
             actor: currentStaffUsername || 'President',
-            detail: `${oldTime} UTC → ${String(newTimeSlot).trim()} UTC`
+            detail: `Slot moved: ${oldTime} UTC → ${String(newTimeSlot).trim()} UTC${moveReason ? `; Reason: ${moveReason}` : ''}`,
+            old_time: oldTime,
+            new_time: String(newTimeSlot).trim(),
+            reason: moveReason
         }];
         const { error } = await client.from('reservation_slots').update({
             time_slot: String(newTimeSlot).trim(),

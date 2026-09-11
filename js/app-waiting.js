@@ -110,11 +110,15 @@ async function moveAppToSlot(id, newTimeSlot, originTime) {
         const app = savedApplications.find(a => a.id === id);
         if (!app) throw new Error('Application not found');
         const oldTime = String(app.time_slot).trim();
+        const moveReason = window.prompt('Reason / keterangan perpindahan slot (opsional):', '')?.trim() || '';
         const nextLog = [...getApplicationTimeLog(app), {
             action: 'moved',
             at: new Date().toISOString(),
             actor: currentStaffUsername || 'President',
-            detail: `${oldTime} UTC → ${newTimeSlot} UTC`
+            detail: `Slot moved: ${oldTime} UTC → ${newTimeSlot} UTC${moveReason ? `; Reason: ${moveReason}` : ''}`,
+            old_time: oldTime,
+            new_time: String(newTimeSlot).trim(),
+            reason: moveReason
         }];
         const { error } = await client
             .from('reservation_slots')
@@ -131,18 +135,31 @@ async function moveAppToSlot(id, newTimeSlot, originTime) {
 }
 
 async function removeApp(id) {
-    showCustomConfirm("Delete this application record permanently?", async () => {
+    showCustomConfirm("Reject this reservation application?", async () => {
         const client = getSupabase();
         if (!client) return;
-        closeModal(); 
+        const app = savedApplications.find(a => a.id === id);
+        if (!app) return;
+        const rejectionReason = window.prompt('Reason / keterangan penolakan (opsional):', '')?.trim() || '';
+        closeModal();
         try {
-            const { error } = await client.from('reservation_slots').delete().eq('id', id);
+            const nextLog = [...getApplicationTimeLog(app), {
+                action: 'rejected',
+                at: new Date().toISOString(),
+                actor: currentStaffUsername || 'President',
+                detail: `Waiting → Rejected${rejectionReason ? `; Reason: ${rejectionReason}` : ''}`,
+                reason: rejectionReason
+            }];
+            const { error } = await client.from('reservation_slots').update({
+                status: 'Rejected',
+                time_log: nextLog
+            }).eq('id', id);
             if (error) throw error;
             showToast(t("toast_record_dropped"), "success");
-            loadApplications();
-            loadRecentAccepts(); 
+            await loadApplications();
+            loadRecentAccepts();
         } catch (err) {
-            console.error("Failed to delete application:", err);
+            console.error("Failed to reject application:", err);
             showToast(t("toast_delete_failed"), "error");
         }
     }, '#ef4444');
