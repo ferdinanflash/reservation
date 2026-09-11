@@ -18,6 +18,21 @@ function isPushSupported() {
     return typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window;
 }
 
+// ================= TEMPORARY PUSH DEBUG MODE =================
+// Open the app with ?pushdebug=1 appended to the URL (e.g.
+// https://yoursite.com/?pushdebug=1) to see exactly where push subscription
+// setup succeeds or fails, as a plain alert() popup on the device itself —
+// no desktop/USB debugging needed. Does nothing unless that query param is
+// present, so it's safe to leave in. Remove this whole block (and the
+// pushDebugAlert(...) calls below) once the issue is found and fixed.
+function pushDebugEnabled() {
+    return typeof location !== 'undefined' && /(?:\?|&)pushdebug=1(?:&|$)/.test(location.search);
+}
+function pushDebugAlert(message) {
+    if (pushDebugEnabled()) alert('[Push Debug] ' + message);
+}
+// =================================================================
+
 // Standard helper: VAPID public key is base64url, pushManager.subscribe()
 // needs it as a Uint8Array.
 function urlBase64ToUint8Array(base64String) {
@@ -36,22 +51,36 @@ function urlBase64ToUint8Array(base64String) {
 // unlike Supabase Realtime, delivery is handled by the OS/browser push
 // service, not by any JS running on the page.
 async function ensurePushSubscriptionForApplication(applicationId) {
-    if (!isPushSupported() || !isValidApplicationId(applicationId)) return null;
+    if (!isPushSupported()) {
+        pushDebugAlert(`isPushSupported() = false for reservation ${applicationId} — this browser/context has no serviceWorker or PushManager.`);
+        return null;
+    }
+    if (!isValidApplicationId(applicationId)) {
+        pushDebugAlert(`isValidApplicationId() rejected "${applicationId}" — not attempting push subscription.`);
+        return null;
+    }
 
     try {
+        pushDebugAlert(`Waiting for navigator.serviceWorker.ready (reservation ${applicationId})...`);
         const registration = await navigator.serviceWorker.ready;
+        pushDebugAlert(`Service worker ready. Checking for existing subscription...`);
         let subscription = await registration.pushManager.getSubscription();
 
         if (!subscription) {
+            pushDebugAlert(`No existing subscription. Calling pushManager.subscribe()...`);
             subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: urlBase64ToUint8Array(PUSH_VAPID_PUBLIC_KEY)
             });
+            pushDebugAlert(`subscribe() succeeded. Endpoint: ${subscription.endpoint.slice(0, 60)}...`);
+        } else {
+            pushDebugAlert(`Reusing existing subscription. Endpoint: ${subscription.endpoint.slice(0, 60)}...`);
         }
 
         await savePushSubscriptionRow(String(applicationId), subscription);
         return subscription;
     } catch (error) {
+        pushDebugAlert(`FAILED for reservation ${applicationId}: ${error && error.name ? error.name : ''} ${error && error.message ? error.message : String(error)}`);
         console.warn(`Push subscription failed for reservation ${applicationId}:`, error);
         return null;
     }
@@ -59,23 +88,44 @@ async function ensurePushSubscriptionForApplication(applicationId) {
 
 async function savePushSubscriptionRow(applicationId, subscription) {
     const client = typeof getSupabase === 'function' ? getSupabase() : null;
-    if (!client) return;
+    if (!client) {
+        pushDebugAlert(`savePushSubscriptionRow: getSupabase() returned null — cannot save.`);
+        return;
+    }
 
     const json = subscription.toJSON();
     try {
-        await client.from('push_subscriptions').upsert({
+        pushDebugAlert(`Saving subscription to Supabase for reservation ${applicationId}...`);
+        const { error } = await client.from('push_subscriptions').upsert({
             application_id: applicationId,
             endpoint: json.endpoint,
             subscription: json
         }, { onConflict: 'application_id,endpoint' });
+
+        if (error) {
+            pushDebugAlert(`Supabase upsert error: ${error.message || JSON.stringify(error)}`);
+            console.warn('Could not save push subscription:', error);
+        } else {
+            pushDebugAlert(`Saved to Supabase successfully for reservation ${applicationId}!`);
+        }
     } catch (error) {
+        pushDebugAlert(`Supabase upsert threw: ${error && error.message ? error.message : String(error)}`);
         console.warn('Could not save push subscription:', error);
     }
 }
 
 async function subscribeAllSavedApplicationsToPush() {
-    if (!isPushSupported() || !areGuestNotificationsEnabled()) return;
-    for (const id of getSavedApplicationIds()) await ensurePushSubscriptionForApplication(id);
+    if (!isPushSupported()) {
+        pushDebugAlert('subscribeAllSavedApplicationsToPush: isPushSupported() = false, stopping.');
+        return;
+    }
+    if (!areGuestNotificationsEnabled()) {
+        pushDebugAlert('subscribeAllSavedApplicationsToPush: notifications are not enabled (localStorage flag is false), stopping.');
+        return;
+    }
+    const ids = getSavedApplicationIds();
+    pushDebugAlert(`subscribeAllSavedApplicationsToPush: found ${ids.length} saved application id(s): ${ids.join(', ') || '(none)'}`);
+    for (const id of ids) await ensurePushSubscriptionForApplication(id);
 }
 
 // Unsubscribes this device entirely (used when the user turns notifications
@@ -412,6 +462,7 @@ async function setupGuestNotificationsAfterSubmission(applicationId, enabled) {
 window.cleanupGuestApplicationNotificationIds = cleanupExpiredGuestApplicationIds;
 
 document.addEventListener('DOMContentLoaded', () => {
+    pushDebugAlert('app-notifications.js (debug build) loaded and DOMContentLoaded fired.');
     cleanupExpiredGuestApplicationIds();
     startAllGuestApplicationRealtime();
     // Also re-establishes the push subscription on every load. Cheap no-op
