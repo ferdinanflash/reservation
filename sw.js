@@ -6,7 +6,7 @@
 //   - everything else (Supabase, CDN): never touched, always straight to network
 //
 // >>> Bump CACHE_VERSION on every deploy so old files are dropped. <<<
-const CACHE_VERSION = '2026-09-11-3';
+const CACHE_VERSION = '2026-09-11-4';
 const CACHE_NAME = `svs-${CACHE_VERSION}`;
 const PRECACHE = [
     './',
@@ -102,7 +102,14 @@ self.addEventListener('push', (event) => {
         badge: './icon-192.png',
         tag: `reservation-${payload.application_id || 'update'}`,
         renotify: true,
-        data: { application_id: payload.application_id || null, status: payload.status || null }
+        data: {
+            application_id: payload.application_id || null,
+            status: payload.status || null,
+            nickname: payload.nickname || null,
+            old_time_slot: payload.old_time_slot || null,
+            new_time_slot: payload.new_time_slot || null,
+            original_time_slot: payload.original_time_slot || null
+        }
     };
 
     event.waitUntil(self.registration.showNotification(title, options));
