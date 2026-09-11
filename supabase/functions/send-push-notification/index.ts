@@ -35,35 +35,101 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
 const FINAL_STATUSES = ["accepted", "approved", "rejected"];
+const WAITING_STATUSES = ["waiting", "pending"];
 
-if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
-    webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+function normalizeStatus(status: unknown) {
+    return String(status ?? "").trim().toLowerCase();
 }
 
 function statusText(status: string) {
-    const normalized = String(status || "").toLowerCase();
+    const normalized = normalizeStatus(status);
     if (normalized === "accepted" || normalized === "approved") return "Approved";
     if (normalized === "rejected") return "Rejected";
+    if (normalized === "waiting" || normalized === "pending") return "Waiting";
     return String(status || "Updated");
 }
 
-function buildNotification(status: string) {
-    const normalized = String(status || "").toLowerCase();
-    if (normalized === "accepted" || normalized === "approved") {
+// time_log is kept as JSONB and records the original submission as:
+// { action: "created", detail: "HH:MM UTC", ... }.
+// Reading it here lets us tell the applicant when an accepted reservation
+// ended up in a different slot from the slot they originally requested.
+function getTimeLog(record: any): any[] {
+    let log = record?.time_log;
+    if (typeof log === "string") {
+        try { log = JSON.parse(log); } catch (_) { log = []; }
+    }
+    return Array.isArray(log) ? log : [];
+}
+
+function getOriginalTimeSlot(record: any, fallback = "") {
+    const created = getTimeLog(record).find((entry) => String(entry?.action || "").toLowerCase() === "created");
+    const detail = String(created?.detail || "");
+    const match = detail.match(/\b([01]\d|2[0-3]):[0-5]\d\b/);
+    return match ? match[0] : fallback;
+}
+
+function displayPlayerName(record: any) {
+    const nickname = String(record?.nickname ?? "").trim();
+    return nickname || "Player";
+}
+
+function buildNotification(record: any, oldRecord: any) {
+    const status = normalizeStatus(record?.status);
+    const oldStatus = normalizeStatus(oldRecord?.status);
+    const player = displayPlayerName(record);
+    const oldTime = String(oldRecord?.time_slot ?? "").trim();
+    const newTime = String(record?.time_slot ?? "").trim();
+    const originalTime = getOriginalTimeSlot(record, oldTime);
+
+    // 1) A Waiting reservation was moved to another slot.
+    if (
+        WAITING_STATUSES.includes(status) &&
+        WAITING_STATUSES.includes(oldStatus) &&
+        oldTime &&
+        newTime &&
+        oldTime !== newTime
+    ) {
         return {
-            title: "Reservation Approved \u{1F389}",
-            body: "Your reservation has been approved. Please check the reservation schedule for the latest details."
+            title: `${player} — Reservation Time Moved`,
+            body: `Your reservation slot was moved from ${oldTime} UTC to ${newTime} UTC. Your reservation is still Waiting. ${newTime} UTC is the new slot assigned to your application.`
         };
     }
-    if (normalized === "rejected") {
+
+    // 2) Reservation accepted, but the final slot differs from the original
+    //    slot submitted by the player.
+    if (
+        (status === "accepted" || status === "approved") &&
+        newTime &&
+        originalTime &&
+        newTime !== originalTime
+    ) {
         return {
-            title: "Reservation Rejected",
-            body: "Your reservation has been rejected. Please check the reservation details for the latest information."
+            title: `${player} — Reservation Approved 🎉`,
+            body: `Your reservation has been approved, but the time slot was changed from your original request (${originalTime} UTC) to ${newTime} UTC. Please use ${newTime} UTC as your confirmed slot.`
         };
     }
+
+    // 3) Reservation rejected.
+    if (status === "rejected") {
+        return {
+            title: `${player} — Reservation Rejected`,
+            body: `Your reservation request has been rejected. Please check the reservation details for more information.`
+        };
+    }
+
+    // Normal acceptance / other status changes.
+    if (status === "accepted" || status === "approved") {
+        return {
+            title: `${player} — Reservation Approved 🎉`,
+            body: newTime
+                ? `Your reservation has been approved for ${newTime} UTC.`
+                : "Your reservation has been approved. Please check the reservation schedule for the latest details."
+        };
+    }
+
     return {
-        title: "Reservation Update",
-        body: `Your reservation status is now ${statusText(status)}.`
+        title: `${player} — Reservation Update`,
+        body: `Your reservation status is now ${statusText(record?.status)}.`
     };
 }
 
@@ -127,11 +193,26 @@ Deno.serve(async (req: Request) => {
 
     const record = payload.record;
     const oldRecord = payload.old_record ?? {};
-    const newStatus = String(record.status ?? "").toLowerCase();
-    const oldStatus = String(oldRecord.status ?? "").toLowerCase();
+    const newStatus = normalizeStatus(record.status);
+    const oldStatus = normalizeStatus(oldRecord.status);
+    const oldTime = String(oldRecord.time_slot ?? "").trim();
+    const newTime = String(record.time_slot ?? "").trim();
 
-    if (newStatus === oldStatus || !FINAL_STATUSES.includes(newStatus)) {
-        return new Response("Ignored (no notifiable status change)", { status: 200 });
+    const statusChanged = newStatus !== oldStatus;
+    const timeChanged = oldTime !== newTime;
+    const waitingTimeMoved =
+        WAITING_STATUSES.includes(newStatus) &&
+        WAITING_STATUSES.includes(oldStatus) &&
+        timeChanged;
+
+    // Notify on final status changes OR a slot move while still Waiting.
+    // This intentionally does not notify unrelated field edits.
+    const shouldNotify =
+        (statusChanged && FINAL_STATUSES.includes(newStatus)) ||
+        waitingTimeMoved;
+
+    if (!shouldNotify) {
+        return new Response("Ignored (no notifiable reservation change)", { status: 200 });
     }
 
     const applicationId = String(record.id);
@@ -141,12 +222,16 @@ Deno.serve(async (req: Request) => {
         return new Response("No subscriptions for this application", { status: 200 });
     }
 
-    const notification = buildNotification(record.status);
+    const notification = buildNotification(record, oldRecord);
     const notificationPayload = JSON.stringify({
         title: notification.title,
         body: notification.body,
         application_id: applicationId,
-        status: record.status
+        status: record.status,
+        nickname: displayPlayerName(record),
+        old_time_slot: oldTime || null,
+        new_time_slot: newTime || null,
+        original_time_slot: getOriginalTimeSlot(record, oldTime) || null
     });
 
     const staleIds: string[] = [];
