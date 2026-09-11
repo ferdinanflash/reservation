@@ -2323,6 +2323,91 @@ th {
     }
 }
 
+/* ================= Cross-device Reason Modal ================= */
+.reason-modal-content {
+    width: min(92vw, 460px);
+    max-width: 460px;
+    background: #151821;
+    padding: 22px;
+    box-sizing: border-box;
+}
+
+.reason-modal-content h2 {
+    margin: 0 30px 16px 0;
+    font-size: 1.2rem;
+    line-height: 1.3;
+}
+
+.reason-modal-group {
+    margin-bottom: 14px;
+}
+
+.reason-modal-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #e5e7eb;
+    font-size: 0.92rem;
+    line-height: 1.4;
+}
+
+#reason-modal-input {
+    display: block;
+    width: 100%;
+    min-height: 120px;
+    box-sizing: border-box;
+    resize: vertical;
+    background: #1e2230;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: #f1f5f9;
+    outline: none;
+    font: inherit;
+    line-height: 1.45;
+}
+
+#reason-modal-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+#reason-modal-input::placeholder {
+    color: #8a8d98;
+}
+
+.reason-modal-actions {
+    margin-top: 0;
+    gap: 10px;
+}
+
+.reason-modal-actions button {
+    flex: 1;
+    margin-bottom: 0;
+    padding: 11px 14px;
+}
+
+#reason-modal .close-modal {
+    right: 8px;
+    top: 4px;
+}
+
+@media screen and (max-width: 480px) {
+    .reason-modal-content {
+        width: calc(100% - 24px);
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    #reason-modal-input {
+        min-height: 110px;
+        font-size: 16px; /* prevents iOS auto-zoom on focus */
+    }
+
+    .reason-modal-actions button {
+        padding: 12px 10px;
+    }
+}
+
 /* ================= Additional Preferred Time Slot (Apply Form) ================= */
 .additional-time-toggle-group {
     margin-bottom: 10px;

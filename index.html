@@ -67,16 +67,16 @@
 				<link rel="stylesheet" href="style.css?v=43">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
-		<script src="common.js?v=3" defer=""></script>
-		<script src="lang.js?v=2" defer=""></script>
-					<script src="js/app-core.js?v=43" defer=""></script>
-					<script src="js/app-auth.js?v=43" defer=""></script>
-					<script src="js/app-notes.js?v=43" defer=""></script>
-					<script src="js/app-schedule.js?v=43" defer=""></script>
-					<script src="js/app-applications.js?v=43" defer=""></script>
-					<script src="js/app-waiting.js?v=43" defer=""></script>
-					<script src="js/app-extras.js?v=43" defer=""></script>
-					<script src="js/app-notifications.js?v=4" defer=""></script>
+		<script src="common.js?v=4" defer=""></script>
+		<script src="lang.js?v=3" defer=""></script>
+					<script src="js/app-core.js?v=44" defer=""></script>
+					<script src="js/app-auth.js?v=44" defer=""></script>
+					<script src="js/app-notes.js?v=44" defer=""></script>
+					<script src="js/app-schedule.js?v=44" defer=""></script>
+					<script src="js/app-applications.js?v=44" defer=""></script>
+					<script src="js/app-waiting.js?v=44" defer=""></script>
+					<script src="js/app-extras.js?v=44" defer=""></script>
+					<script src="js/app-notifications.js?v=5" defer=""></script>
 					<script src="fire-banner.js" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
@@ -467,6 +467,22 @@
 				<div class="form-actions">
 					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeEditFooterModal()" data-i18n="btn_cancel">Cancel</button>
 					<button id="edit-footer-save-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="saveEditFooter()" data-i18n="btn_save">Save</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal Reason (replaces native window.prompt for reliable Android/PWA behavior) -->
+		<div id="reason-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="reason-modal-title">
+			<div class="modal-content custom-form-modal reason-modal-content">
+				<button type="button" class="close-modal" id="reason-modal-close-btn" aria-label="Close" data-i18n-aria-label="btn_close" onclick="document.getElementById('reason-modal-cancel-btn').click()">&times;</button>
+				<h2 id="reason-modal-title" data-i18n="reason_modal_title">Reason / Keterangan</h2>
+				<div class="form-group reason-modal-group">
+					<label id="reason-modal-label" for="reason-modal-input" data-i18n="reason_modal_label">Reason / keterangan (optional):</label>
+					<textarea id="reason-modal-input" maxlength="500" rows="5" data-i18n-placeholder="reason_modal_placeholder" placeholder="Enter reason / keterangan..." spellcheck="true"></textarea>
+				</div>
+				<div class="form-actions reason-modal-actions">
+					<button type="button" class="btn-back" id="reason-modal-cancel-btn" data-i18n="btn_cancel">Cancel</button>
+					<button type="button" class="btn-apply" id="reason-modal-ok-btn" data-i18n="btn_ok">OK</button>
 				</div>
 			</div>
 		</div>

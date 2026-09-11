@@ -90,3 +90,8 @@ reservation-main/
 ## 📄 License
 
 This project is proprietary and maintained for **3475.web.id**.
+
+## V7 update
+- Replaced native `window.prompt()` reason dialogs with a responsive HTML modal for consistent Android/PWA/iOS behavior.
+- Reason modal is used for slot changes, slot moves, and rejection reasons.
+- Build/cache versions bumped to force clients to receive the new UI.
