@@ -299,19 +299,43 @@ function updateGuestApplicationStatusUI(status, application) {
     }));
 }
 
+function getOriginalTimeSlotFromApplication(application, fallback = '') {
+    let log = application?.time_log;
+    if (typeof log === 'string') {
+        try { log = JSON.parse(log); } catch (_) { log = []; }
+    }
+    if (!Array.isArray(log)) return fallback;
+    const created = log.find(entry => String(entry?.action || '').toLowerCase() === 'created');
+    const match = String(created?.detail || '').match(/\b([01]\d|2[0-3]):[0-5]\d\b/);
+    return match ? match[0] : fallback;
+}
+
 async function showGuestStatusNotification(status, application) {
     if (!isGuestNotificationSupported() || Notification.permission !== 'granted') return;
 
     const normalized = String(status || '').toLowerCase();
-    let title = 'Reservation Update';
+    const player = String(application?.nickname || 'Player').trim() || 'Player';
+    const oldTime = String(application?.__old_time_slot || '').trim();
+    const newTime = String(application?.time_slot || '').trim();
+    const originalTime = String(application?.__original_time_slot || '').trim();
+
+    let title = `${player} — Reservation Update`;
     let body = `Your reservation status is now ${getNotificationStatusText(status)}.`;
 
-    if (normalized === 'accepted' || normalized === 'approved') {
-        title = 'Reservation Approved 🎉';
-        body = 'Your reservation has been approved. Please check the reservation schedule for the latest details.';
+    if ((normalized === 'accepted' || normalized === 'approved') && newTime && originalTime && newTime !== originalTime) {
+        title = `${player} — Reservation Approved 🎉`;
+        body = `Your reservation has been approved, but the time slot was changed from your original request (${originalTime} UTC) to ${newTime} UTC. Please use ${newTime} UTC as your confirmed slot.`;
+    } else if (normalized === 'accepted' || normalized === 'approved') {
+        title = `${player} — Reservation Approved 🎉`;
+        body = newTime
+            ? `Your reservation has been approved for ${newTime} UTC.`
+            : 'Your reservation has been approved. Please check the reservation schedule for the latest details.';
     } else if (normalized === 'rejected') {
-        title = 'Reservation Rejected';
-        body = 'Your reservation has been rejected. Please check the reservation details for the latest information.';
+        title = `${player} — Reservation Rejected`;
+        body = 'Your reservation request has been rejected. Please check the reservation details for more information.';
+    } else if ((normalized === 'waiting' || normalized === 'pending') && oldTime && newTime && oldTime !== newTime) {
+        title = `${player} — Reservation Time Moved`;
+        body = `Your reservation slot was moved from ${oldTime} UTC to ${newTime} UTC. Your reservation is still Waiting. ${newTime} UTC is the new slot assigned to your application.`;
     }
 
     const applicationId = application?.id ? String(application.id) : null;
@@ -393,7 +417,21 @@ async function startGuestApplicationRealtime(savedAppId) {
                 if (!isPushSupported()) {
                     const changed = String(previousStatus || '').toLowerCase() !== String(newStatus || '').toLowerCase();
                     const finalStatus = ['accepted', 'approved', 'rejected'].includes(String(newStatus || '').toLowerCase());
-                    if (changed && finalStatus) await showGuestStatusNotification(newStatus, payload.new);
+                    const oldTime = String(payload.old?.time_slot || '').trim();
+                    const newTime = String(payload.new?.time_slot || '').trim();
+                    const waitingTimeMoved =
+                        ['waiting', 'pending'].includes(String(newStatus || '').toLowerCase()) &&
+                        ['waiting', 'pending'].includes(String(previousStatus || payload.old?.status || '').toLowerCase()) &&
+                        oldTime && newTime && oldTime !== newTime;
+
+                    if ((changed && finalStatus) || waitingTimeMoved) {
+                        const enrichedApplication = {
+                            ...payload.new,
+                            __old_time_slot: oldTime,
+                            __original_time_slot: getOriginalTimeSlotFromApplication(payload.new, oldTime)
+                        };
+                        await showGuestStatusNotification(newStatus, enrichedApplication);
+                    }
                 }
 
                 myApplicationLastStatuses.set(id, newStatus);
