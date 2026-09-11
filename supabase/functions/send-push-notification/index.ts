@@ -73,62 +73,87 @@ function displayPlayerName(record: any) {
     return nickname || "Player";
 }
 
+function cleanDetail(value: unknown) {
+    return String(value ?? "").trim();
+}
+
+function getLatestLogEntry(record: any, actions: string[]) {
+    const wanted = new Set(actions.map((a) => a.toLowerCase()));
+    const log = getTimeLog(record);
+    for (let i = log.length - 1; i >= 0; i--) {
+        const action = String(log[i]?.action ?? "").trim().toLowerCase();
+        if (wanted.has(action)) return log[i];
+    }
+    return null;
+}
+
+function extractReason(entry: any) {
+    if (!entry) return "";
+    const explicit = cleanDetail(entry.reason);
+    if (explicit) return explicit;
+    const detail = cleanDetail(entry.detail);
+    const match = detail.match(/(?:reason|keterangan)\s*:\s*(.+)$/i);
+    return match ? match[1].trim() : "";
+}
+
 function buildNotification(record: any, oldRecord: any) {
     const status = normalizeStatus(record?.status);
     const oldStatus = normalizeStatus(oldRecord?.status);
     const player = displayPlayerName(record);
     const oldTime = String(oldRecord?.time_slot ?? "").trim();
     const newTime = String(record?.time_slot ?? "").trim();
-    const originalTime = getOriginalTimeSlot(record, oldTime);
+    const originalTime = getOriginalTimeSlot(record, getOriginalTimeSlot(oldRecord, oldTime));
+    const latestMove = getLatestLogEntry(record, ["moved", "updated"]);
+    const moveReason = extractReason(latestMove);
+    const latestRejected = getLatestLogEntry(record, ["rejected", "status_rejected"]);
+    const rejectionReason = extractReason(latestRejected);
 
-    // 1) A Waiting reservation was moved to another slot.
+    // 1) Waiting -> Waiting with a slot move.
     if (
         WAITING_STATUSES.includes(status) &&
         WAITING_STATUSES.includes(oldStatus) &&
-        oldTime &&
-        newTime &&
-        oldTime !== newTime
+        oldTime && newTime && oldTime !== newTime
     ) {
+        const reasonLine = moveReason ? ` Reason: ${moveReason}` : "";
         return {
-            title: `${player} — Reservation Time Moved`,
-            body: `Your reservation slot was moved from ${oldTime} UTC to ${newTime} UTC. Your reservation is still Waiting. ${newTime} UTC is the new slot assigned to your application.`
+            title: `🎾 ${player} — Reservation Time Changed`,
+            body: `Your reservation is still Waiting.\nSlot changed: ${oldTime} UTC → ${newTime} UTC.\nNew assigned slot: ${newTime} UTC.${reasonLine}`
         };
     }
 
-    // 2) Reservation accepted, but the final slot differs from the original
-    //    slot submitted by the player.
+    // 2) Accepted with a slot different from the original submission.
     if (
         (status === "accepted" || status === "approved") &&
-        newTime &&
-        originalTime &&
-        newTime !== originalTime
+        newTime && originalTime && newTime !== originalTime
     ) {
+        const reasonLine = moveReason ? ` Reason: ${moveReason}` : "";
         return {
-            title: `${player} — Reservation Approved 🎉`,
-            body: `Your reservation has been approved, but the time slot was changed from your original request (${originalTime} UTC) to ${newTime} UTC. Please use ${newTime} UTC as your confirmed slot.`
+            title: `🎉 ${player} — Reservation Approved`,
+            body: `Your reservation has been approved with a different time slot.\nRequested slot: ${originalTime} UTC.\nConfirmed slot: ${newTime} UTC.${reasonLine}`
         };
     }
 
-    // 3) Reservation rejected.
+    // 3) Rejected.
     if (status === "rejected") {
+        const reasonLine = rejectionReason ? ` Reason: ${rejectionReason}` : " Please check the reservation details for more information.";
         return {
-            title: `${player} — Reservation Rejected`,
-            body: `Your reservation request has been rejected. Please check the reservation details for more information.`
+            title: `❌ ${player} — Reservation Rejected`,
+            body: `Your reservation request has been rejected.${reasonLine}`
         };
     }
 
-    // Normal acceptance / other status changes.
+    // Normal acceptance.
     if (status === "accepted" || status === "approved") {
         return {
-            title: `${player} — Reservation Approved 🎉`,
+            title: `🎉 ${player} — Reservation Approved`,
             body: newTime
-                ? `Your reservation has been approved for ${newTime} UTC.`
+                ? `Your reservation has been approved.\nConfirmed slot: ${newTime} UTC.`
                 : "Your reservation has been approved. Please check the reservation schedule for the latest details."
         };
     }
 
     return {
-        title: `${player} — Reservation Update`,
+        title: `🎾 ${player} — Reservation Update`,
         body: `Your reservation status is now ${statusText(record?.status)}.`
     };
 }
@@ -231,7 +256,8 @@ Deno.serve(async (req: Request) => {
         nickname: displayPlayerName(record),
         old_time_slot: oldTime || null,
         new_time_slot: newTime || null,
-        original_time_slot: getOriginalTimeSlot(record, oldTime) || null
+        original_time_slot: getOriginalTimeSlot(record, oldTime) || null,
+        reason: extractReason(getLatestLogEntry(record, ["rejected", "status_rejected", "moved", "updated"])) || null
     });
 
     const staleIds: string[] = [];
