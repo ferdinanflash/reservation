@@ -111,6 +111,8 @@ async function moveAppToSlot(id, newTimeSlot, originTime) {
         if (!app) throw new Error('Application not found');
         const oldTime = String(app.time_slot).trim();
         const moveReason = await showReasonModal(t('reason_slot_move'));
+        // Cancel the reason dialog => do not move the applicant.
+        if (moveReason === null) return;
         const nextLog = [...getApplicationTimeLog(app), {
             action: 'moved',
             at: new Date().toISOString(),
@@ -141,6 +143,8 @@ async function removeApp(id) {
         const app = savedApplications.find(a => a.id === id);
         if (!app) return;
         const rejectionReason = await showReasonModal(t('reason_rejection'));
+        // Cancel the reason dialog => do not reject the application.
+        if (rejectionReason === null) return;
         closeModal();
         try {
             const nextLog = [...getApplicationTimeLog(app), {

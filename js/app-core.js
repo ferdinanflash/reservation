@@ -295,10 +295,10 @@ function showReasonModal(label, defaultValue = '') {
             cancelBtn.removeEventListener('click', onCancel);
             modal.removeEventListener('click', onBackdrop);
             input.removeEventListener('keydown', onKeyDown);
-            resolve(String(value || '').trim());
+            resolve(value === null ? null : String(value || '').trim());
         };
         const onOk = () => finish(input.value);
-        const onCancel = () => finish('');
+        const onCancel = () => finish(null);
         const onBackdrop = (event) => {
             if (event.target === modal) onCancel();
         };

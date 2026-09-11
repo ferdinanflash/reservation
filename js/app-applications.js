@@ -151,6 +151,8 @@ async function saveAdminApplicationChanges(id) {
     let changeReason = '';
     if (newTime !== oldTime) {
         changeReason = await showReasonModal(t('reason_slot_change'));
+        // Cancel means cancel the entire edit; an empty string means OK with no reason.
+        if (changeReason === null) return;
     }
     const action = newTime !== oldTime && newStatus !== oldStatus ? 'updated' : (newTime !== oldTime ? 'moved' : 'status_changed');
     const detail = detailParts.join('; ') + (changeReason ? `; Reason: ${changeReason}` : '');
@@ -428,6 +430,11 @@ async function moveWaitingListApp(id, newTimeSlot, originTime) {
     setButtonBusy(btn, true, t("saving"));
     try {
         const moveReason = await showReasonModal(t('reason_slot_move'));
+        // Cancel the reason dialog => do not move the applicant.
+        if (moveReason === null) {
+            setButtonBusy(btn, false);
+            return;
+        }
         const nextLog = [...getApplicationTimeLog(app), {
             action: 'moved',
             at: new Date().toISOString(),
