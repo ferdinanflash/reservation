@@ -202,8 +202,34 @@ async function handleFinishSVS() {
         const finishBtn = document.getElementById('finish-svs-btn');
         setButtonBusy(finishBtn, true, 'Clearing...');
         try {
-            const { error } = await client.from('reservation_slots').delete().neq('id', 0); 
+            // Preserve the browser/OS push permission and the device's PushManager
+            // subscription. We only remove the old application mappings. A new
+            // submission will re-use the existing browser subscription without
+            // asking the guest for notification permission again.
+            const { data: oldApplications, error: fetchOldError } = await client
+                .from('reservation_slots')
+                .select('id');
+            if (fetchOldError) throw fetchOldError;
+
+            const oldApplicationIds = (oldApplications || [])
+                .map(row => String(row.id))
+                .filter(Boolean);
+
+            const { error } = await client.from('reservation_slots').delete().neq('id', 0);
             if (error) throw error;
+
+            // Clean stale server-side application mappings, but DO NOT unsubscribe
+            // the device. The notification permission remains granted on iOS/Android.
+            if (oldApplicationIds.length) {
+                const { error: pushCleanupError } = await client
+                    .from('push_subscriptions')
+                    .delete()
+                    .in('application_id', oldApplicationIds);
+                if (pushCleanupError) {
+                    console.warn('SVS reset: could not clean old push mappings:', pushCleanupError);
+                }
+            }
+
             showToast(t("toast_all_cleared"), "success");
             loadApplications();
             loadRecentAccepts(); 

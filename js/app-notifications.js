@@ -114,6 +114,46 @@ async function savePushSubscriptionRow(applicationId, subscription) {
     }
 }
 
+async function cleanupOrphanedGuestApplicationIds() {
+    const client = typeof getSupabase === 'function' ? getSupabase() : null;
+    if (!client) return;
+
+    const records = readGuestApplicationRecords();
+    const ids = records.map(item => String(item.id)).filter(isValidApplicationId);
+    if (!ids.length) return;
+
+    try {
+        // Reset SVS removes reservation rows but cannot directly clear another
+        // device's localStorage. Verify which saved IDs still exist before
+        // re-registering push subscriptions. This prevents old application IDs
+        // from being resurrected after an SVS reset.
+        const { data, error } = await client
+            .from('reservation_slots')
+            .select('id')
+            .in('id', ids);
+        if (error) {
+            console.warn('Could not validate saved application IDs:', error);
+            return;
+        }
+
+        const activeIds = new Set((data || []).map(row => String(row.id)));
+        const activeRecords = records.filter(item => activeIds.has(String(item.id)));
+        const orphanedRecords = records.filter(item => !activeIds.has(String(item.id)));
+
+        for (const item of orphanedRecords) {
+            stopGuestApplicationRealtime(item.id);
+            await removePushSubscriptionForApplication(item.id);
+        }
+
+        if (orphanedRecords.length) {
+            writeGuestApplicationRecords(activeRecords);
+            pushDebugAlert(`Removed ${orphanedRecords.length} orphaned application ID(s) after SVS reset.`);
+        }
+    } catch (error) {
+        console.warn('Could not clean orphaned guest application IDs:', error);
+    }
+}
+
 async function subscribeAllSavedApplicationsToPush() {
     if (!isPushSupported()) {
         pushDebugAlert('subscribeAllSavedApplicationsToPush: isPushSupported() = false, stopping.');
@@ -450,6 +490,7 @@ async function startGuestApplicationRealtime(savedAppId) {
 
 async function startAllGuestApplicationRealtime() {
     cleanupExpiredGuestApplicationIds();
+    await cleanupOrphanedGuestApplicationIds();
     if (!areGuestNotificationsEnabled()) return;
     for (const id of getSavedApplicationIds()) await startGuestApplicationRealtime(id);
 }
@@ -499,10 +540,11 @@ async function setupGuestNotificationsAfterSubmission(applicationId, enabled) {
 // Expose cleanup for optional admin/debug UI and run it once per page load.
 window.cleanupGuestApplicationNotificationIds = cleanupExpiredGuestApplicationIds;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     pushDebugAlert('app-notifications.js (debug build) loaded and DOMContentLoaded fired.');
     cleanupExpiredGuestApplicationIds();
-    startAllGuestApplicationRealtime();
+    await cleanupOrphanedGuestApplicationIds();
+    await startAllGuestApplicationRealtime();
     // Also re-establishes the push subscription on every load. Cheap no-op
     // if one already exists; important for devices that enabled
     // notifications before Web Push support was added.
