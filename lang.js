@@ -228,6 +228,215 @@
             option_select_additional_time: "Select time slot",
             stat_additional_time_slots: "Additional Preferred:"
         },
+        it: {
+            doc_title: "3475 SvS Minister Reservation",
+            admin_login_btn: "Presidente 👑",
+            admin_logout_btn: "Esci Presidente",
+            admin_logout_named: "Esci ({{name}})",
+            page_title: "Posizione Ministro SvS",
+            page_subtitle: "Seleziona una posizione per prenotare",
+            selected_position_title: "Titolo della Posizione",
+            pos_vp_d1: "Vicepresidente D1 (Lunedì)",
+            pos_vp_d2: "Vicepresidente D2 (Martedì)",
+            pos_edu_d4: "Ministro dell'Istruzione D4 (Giovedì)",
+            pos_vp_d5: "Vicepresidente D5 (Venerdì)",
+            link_leaderboard: "Classifica degli Eventi",
+            link_tal: "Tundra Arm League",
+            link_transfer_portal: "Portale Trasferimenti",
+            btn_back: "< Torna alle posizioni",
+            btn_export_csv: "Esporta CSV",
+            btn_close_reservation: "Chiudi Prenotazione",
+            btn_open_reservation: "Apri Prenotazione",
+            btn_how_to_use: "Come usare",
+            how_to_use_title: "Come usare",
+            how_to_use_description: "Note per l'utilizzo di questa pagina di prenotazione. Il Presidente può modificare e salvare queste note.",
+            how_to_use_placeholder: "Scrivi qui le note d'uso...",
+            saving_text: "Salvataggio...",
+            toast_how_to_use_empty: "Le note non possono essere vuote.",
+            toast_how_to_use_saved: "Note salvate con successo.",
+            toast_how_to_use_save_failed: "Impossibile salvare le note. Riprova.",
+            schedule_opening: "Apertura...",
+            schedule_closing: "Chiusura...",
+            schedule_heading: "Programma delle Fasce Orarie",
+            admin_mode_indicator: "(MODALITÀ PRESIDENTE)",
+            label_timezone: "Fuso Orario Visualizzato:",
+            th_action: "AZIONE",
+            th_preferred_time: "FASCIA ORARIA (UTC+0)",
+            th_status: "STATO",
+            th_nickname: "NICKNAME IN-GAME",
+            th_gameid: "ID IN-GAME",
+            th_fc: "FC",
+            modal_nickname_short: "NICKNAME",
+            modal_id_short: "ID",
+            reassign_modal_title: "Sposta Candidati in Attesa",
+            reassign_desc: "Questo slot ora ha una candidatura Accettata. I candidati sottostanti NON vengono eliminati: scegli uno slot libero per ciascuno e clicca Sposta.",
+            th_move_to: "SPOSTA A",
+             th_actions: "AZIONI",
+            details_modal_title: "Dettagli Candidatura",
+            admin_application_controls: "Controlli del Presidente",
+            admin_status_label: "Stato",
+            admin_time_label: "Fascia Oraria",
+            status_waiting: "In attesa",
+            btn_save_changes: "Salva Modifiche",
+            time_log_title: "Registro Orario",
+            time_log_empty: "Nessuna cronologia oraria registrata.",
+            time_log_created: "Creato",
+            time_log_moved: "Spostato",
+            time_log_status_changed: "Stato Modificato",
+            time_log_updated: "Aggiornato",
+            toast_no_changes: "Nessuna modifica da salvare.",
+            toast_slot_already_accepted: "Quella fascia oraria ha già una candidatura Accettata.",
+            toast_application_updated: "Candidatura aggiornata con successo.",
+            toast_application_update_failed: "Impossibile aggiornare la candidatura. Riprova.",
+            apply_modal_title: "Candidati per la Fascia Oraria",
+            apply_position_label: "Posizione:",
+            apply_time_label: "Ora:",
+            label_nickname: "Nickname In-Game",
+            placeholder_nickname: "Inserisci il tuo nickname",
+            label_gameid: "ID In-Game",
+            placeholder_gameid: "Inserisci il tuo ID di gioco",
+            label_furnace: "Livello Fornace",
+            option_select_furnace: "Seleziona Livello Fornace",
+            label_fc: "Quantità di Fire Crystal",
+            placeholder_fc: "Fire Crystal",
+            label_rfc: "Quantità di Refined Fire Crystal",
+            placeholder_rfc: "Refined Fire Crystal",
+            label_shard: "Quantità di Fire Crystal Shard",
+            placeholder_shard: "Fire Crystal Shard",
+            label_gensp: "Speedup Generali (Giorni)",
+            placeholder_gensp: "Speedup Generale in Giorni",
+            label_constsp: "Speedup Costruzione (Giorni)",
+            placeholder_constsp: "Speedup Costruzione in Giorni",
+            label_ressp: "Speedup Ricerca (Giorni)",
+            placeholder_ressp: "Speedup Ricerca in Giorni",
+            label_trainsp: "Speedup Addestramento Truppe (Giorni)",
+            placeholder_trainsp: "Speedup Addestramento in Giorni",
+            btn_cancel: "Annulla",
+
+            reason_modal_title: "Motivo / Dettagli",
+            reason_modal_label: "Motivo / dettagli (opzionale):",
+            reason_modal_placeholder: "Inserisci motivo / dettagli...",
+            reason_slot_change: "Motivo / dettagli per il cambio di slot (opzionale):",
+            reason_slot_move: "Motivo / dettagli per lo spostamento dello slot (opzionale):",
+            reason_rejection: "Motivo / dettagli per il rifiuto (opzionale):",
+            btn_submit_application: "Invia Candidatura",
+            footer_current_president: "Presidente Attuale",
+            footer_recent_log_title: "📢 PRENOTAZIONI RECENTEMENTE ACCETTATE",
+            log_empty: "Nessuna attività recente",
+            btn_edit_footer: "Modifica Info Presidente",
+            btn_finish_svs: "TERMINA SvS",
+            login_modal_title: "Accesso Presidente",
+            label_username: "Nome utente",
+            placeholder_username: "Inserisci nome utente",
+            label_password: "Password",
+            placeholder_password: "Inserisci password",
+            btn_signin: "Accedi",
+            edit_footer_modal_title: "Modifica Info Presidente",
+            label_president_name: "Nome del Presidente",
+            placeholder_president_name: "Inserisci il nome del presidente",
+            label_guild_name: "Nome della Gilda",
+            placeholder_guild_name: "Inserisci il nome della gilda",
+            btn_save: "Salva",
+            confirm_default_message: "Sei sicuro?",
+            btn_ok: "OK",
+            title_view_details: "Visualizza Dettagli",
+            label_unknown: "Sconosciuto",
+            applicants_list_title: "Elenco Candidati",
+            btn_close: "Chiudi",
+            created_by: "Made With ♥️ By :\n[IDN] - ACĒ",
+            confirm_toggle_reservation: "Sei sicuro di voler {{action}} la prenotazione per {{position}}?",
+            action_open: "aprire",
+            action_close: "chiudere",
+            toast_reservation_now: "La prenotazione di {{position}} è ora {{status}}!",
+            status_word_open: "aperta",
+            status_word_close: "chiusa",
+            toast_update_reservation_failed: "Impossibile aggiornare lo stato della prenotazione. Riprova.",
+            please_wait: "Attendere prego...",
+            saving: "Salvataggio...",
+            loading_schedule: "Caricamento programma...",
+            signing_in: "Accesso in corso...",
+            submitting: "Invio in corso...",
+            clearing: "Cancellazione...",
+            toast_name_guild_empty: "Nome e Gilda non possono essere vuoti!",
+            toast_president_updated: "Info del Presidente aggiornata globalmente!",
+            toast_update_db_failed: "Impossibile aggiornare il database: {{detail}}",
+            toast_enter_both: "Inserisci sia nome utente che password!",
+            toast_president_only: "Questa pagina è riservata all'account del Presidente.",
+            toast_login_failed: "Accesso fallito: nome utente o password errati",
+            toast_welcome_back: "Bentornato, Presidente!",
+            toast_logged_out: "Disconnesso dalla Modalità Presidente.",
+            local_label: "LOCALE:",
+            utc_label: "UTC-0:",
+            status_accepted: "Accettato",
+            status_no_applications: "Nessuna Candidatura",
+            status_waiting_count: "In attesa ({{count}})",
+            btn_remove: "Rimuovi",
+            move_waiting_count: "⚠️ Sposta In Attesa ({{count}})",
+            local_prefix: "Locale: {{time}}",
+            btn_apply_action: "Candidati",
+            waiting_list_title: "Lista d'Attesa - {{time}} UTC",
+            btn_accept: "Accetta",
+            btn_drop: "Rimuovi",
+            stat_furnace_lvl: "Liv. Fornace:",
+            stat_fc: "FC:",
+            stat_rfc: "RFC:",
+            stat_shard: "FC Shard:",
+            stat_general: "Generale:",
+            stat_const: "Costruz.:",
+            stat_research: "Ricerca:",
+            stat_train: "Addestr.:",
+            stat_nickname: "Nickname:",
+            stat_game_id: "ID di gioco:",
+            stat_furnace_level: "Livello Fornace:",
+            stat_fire_crystals: "Fire Crystals (FC):",
+            stat_refined_fire_crystals: "Refined Fire Crystals (RFC):",
+            stat_fire_crystal_shard: "Fire Crystal Shard:",
+            stat_general_speedup: "Speedup Generale:",
+            stat_construction_speedup: "Speedup Costruzione:",
+            stat_research_speedup: "Speedup Ricerca:",
+            stat_training_speedup: "Speedup Addestramento:",
+            days_suffix: "Giorni",
+            detail_section_player_info: "Info Giocatore",
+            detail_section_city_power: "Città e Potenza",
+            detail_section_essentials: "Elementi Essenziali",
+            detail_section_speedups: "Speedup",
+            essentials_shard_label: "Shard:",
+            toast_reservation_locked: "La prenotazione per questo giorno è ancora bloccata",
+            toast_enter_nickname: "Inserisci il Nickname In-Game!",
+            toast_enter_gameid: "Inserisci l'ID In-Game!",
+            toast_gameid_numeric: "L'ID di gioco deve contenere solo numeri!",
+            toast_select_furnace: "Seleziona il Livello Fornace!",
+            toast_app_submitted: "Candidatura inviata con successo!",
+            toast_app_submit_failed: "Impossibile inviare la candidatura. Riprova.",
+            confirm_accept_app: "Accettare questa candidatura? Questo bloccherà la fascia oraria.",
+            toast_app_approved: "Candidatura Approvata!",
+            toast_app_approve_failed: "Impossibile approvare. Potrebbe essere stata appena presa da qualcun altro.",
+            reassign_modal_title_dyn: "Sposta Candidati in Attesa - {{time}} UTC",
+            no_more_waiting: "Nessun altro candidato in attesa in questo slot.",
+            no_free_slots: "Nessuno slot libero",
+            btn_move: "Sposta",
+            toast_no_slot_selected: "Nessuno slot disponibile selezionato.",
+            toast_applicant_moved: "Candidato spostato a {{time}} UTC.",
+            toast_move_failed: "Impossibile spostare il candidato. Riprova.",
+            confirm_delete_record: "Eliminare definitivamente questo record di candidatura?",
+            toast_record_dropped: "Record eliminato con successo.",
+            toast_delete_failed: "Impossibile eseguire la richiesta di eliminazione.",
+            toast_no_data_export: "Nessun dato disponibile da esportare!",
+            toast_csv_downloaded: "File CSV scaricato con successo!",
+            confirm_finish_svs: "Attenzione a terminare la SvS!\n Sei sicuro? Verranno reimpostati tutti i dati inviati",
+            toast_all_cleared: "Tutti i record sono stati cancellati.",
+            toast_clear_failed: "Impossibile cancellare i dati. Riprova.",
+            your_location_suffix: " (La tua posizione)",
+            toast_load_schedule_failed: "Impossibile caricare i dati del programma. Aggiorna la pagina.",
+            toast_id_copied: "ID {{id}} copiato negli appunti!",
+            toast_id_copied_fallback: "ID {{id}} copiato!",
+            toast_copy_failed: "Impossibile copiare automaticamente l'ID.",
+            label_additional_time_toggle: "Fascia Oraria Preferita Aggiuntiva",
+            desc_additional_time_toggle: "Se questa fascia oraria non è disponibile, puoi scegliere un altro orario per la prenotazione",
+            btn_add_another_time: "+ Aggiungi un altro orario?",
+            option_select_additional_time: "Seleziona fascia oraria",
+            stat_additional_time_slots: "Preferite Aggiuntive:"
+        },
         id: {
             doc_title: "3475 SvS Menteri Reservasi",
             admin_login_btn: "Presiden 👑",
@@ -1072,19 +1281,19 @@
     // Position display-name translations. Internal English keys (used as
     // DB values / currentPosition) never change — only the label shown.
     const POSITION_NAMES = {
-        'Vice President D1': { en: 'Vice President D1', cn: '副会长 D1', id: 'Wakil Presiden H+1', ph: 'Bise Presidente H+1', th: 'รองประธาน D1' },
-        'Vice President D2': { en: 'Vice President D2', cn: '副会长 D2', id: 'Wakil Presiden H+2', ph: 'Bise Presidente H+2', th: 'รองประธาน D2' },
-        'Minister of Education D4': { en: 'Minister of Education D4', cn: '教育部长 D4', id: 'Menteri Pendidikan H+4', ph: 'Minister ng Edukasyon H+4', th: 'รัฐมนตรีศึกษาธิการ D4' },
-        'Vice President D5': { en: 'Vice President D5', cn: '副会长 D5', id: 'Wakil Presiden H+5', ph: 'Bise Presidente H+5', th: 'รองประธาน D5' }
+        'Vice President D1': { en: 'Vice President D1', cn: '副会长 D1', id: 'Wakil Presiden H+1', ph: 'Bise Presidente H+1', th: 'รองประธาน D1', it: 'Vicepresidente D1' },
+        'Vice President D2': { en: 'Vice President D2', cn: '副会长 D2', id: 'Wakil Presiden H+2', ph: 'Bise Presidente H+2', th: 'รองประธาน D2', it: 'Vicepresidente D2' },
+        'Minister of Education D4': { en: 'Minister of Education D4', cn: '教育部长 D4', id: 'Menteri Pendidikan H+4', ph: 'Minister ng Edukasyon H+4', th: 'รัฐมนตรีศึกษาธิการ D4', it: "Ministro dell'Istruzione D4" },
+        'Vice President D5': { en: 'Vice President D5', cn: '副会长 D5', id: 'Wakil Presiden H+5', ph: 'Bise Presidente H+5', th: 'รองประธาน D5', it: 'Vicepresidente D5' }
     };
     const POSITION_SHORT_LABELS = {
-        'Vice President D1': { en: 'VP D1', cn: '副D1', id: 'WP H+1', ph: 'BP H+1', th: 'รป D1' },
-        'Vice President D2': { en: 'VP D2', cn: '副D2', id: 'WP H+2', ph: 'BP H+2', th: 'รป D2' },
-        'Minister of Education D4': { en: 'Edu D4', cn: '教D4', id: 'Pendidikan H+4', ph: 'Edu H+4', th: 'ศธ D4' },
-        'Vice President D5': { en: 'VP D5', cn: '副D5', id: 'WP H+5', ph: 'BP H+5', th: 'รป D5' }
+        'Vice President D1': { en: 'VP D1', cn: '副D1', id: 'WP H+1', ph: 'BP H+1', th: 'รป D1', it: 'VP D1' },
+        'Vice President D2': { en: 'VP D2', cn: '副D2', id: 'WP H+2', ph: 'BP H+2', th: 'รป D2', it: 'VP D2' },
+        'Minister of Education D4': { en: 'Edu D4', cn: '教D4', id: 'Pendidikan H+4', ph: 'Edu H+4', th: 'ศธ D4', it: 'Istr. D4' },
+        'Vice President D5': { en: 'VP D5', cn: '副D5', id: 'WP H+5', ph: 'BP H+5', th: 'รป D5', it: 'VP D5' }
     };
 
-    let currentLang = ['en', 'cn', 'id', 'ph', 'th'].includes(localStorage.getItem(LANG_STORAGE_KEY)) ? localStorage.getItem(LANG_STORAGE_KEY) : 'en';
+    let currentLang = ['en', 'cn', 'id', 'ph', 'th', 'it'].includes(localStorage.getItem(LANG_STORAGE_KEY)) ? localStorage.getItem(LANG_STORAGE_KEY) : 'en';
 
     function t(key, vars) {
         const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
@@ -1113,7 +1322,7 @@
     function getLang() { return currentLang; }
 
     function applyStaticTranslations() {
-        document.documentElement.lang = currentLang === 'cn' ? 'zh' : (currentLang === 'id' ? 'id' : (currentLang === 'ph' ? 'tl' : (currentLang === 'th' ? 'th' : 'en')));
+        document.documentElement.lang = currentLang === 'cn' ? 'zh' : (currentLang === 'id' ? 'id' : (currentLang === 'ph' ? 'tl' : (currentLang === 'th' ? 'th' : (currentLang === 'it' ? 'it' : 'en'))));
         document.title = t('doc_title');
 
         document.querySelectorAll('[data-i18n]').forEach(function (el) {
@@ -1131,11 +1340,12 @@
         if (toggleBtn) {
             toggleBtn.setAttribute('data-lang', currentLang);
             const switchLabels = {
-                en: 'Switch to Chinese, Indonesian, Filipino, or Thai',
-                cn: '切换为英语、印尼语、菲律宾语或泰语',
-                id: 'Ganti ke Bahasa Inggris, Mandarin, Filipino, atau Thailand',
-                ph: 'Lumipat sa English, Mandarin, Bahasa Indonesia, o Thai',
-                th: 'เปลี่ยนเป็นภาษาอังกฤษ จีน อินโดนีเซีย หรือฟิลิปปินส์'
+                en: 'Switch to Chinese, Indonesian, Filipino, Thai, or Italian',
+                cn: '切换为英语、印尼语、菲律宾语、泰语或意大利语',
+                id: 'Ganti ke Bahasa Inggris, Mandarin, Filipino, Thailand, atau Italia',
+                ph: 'Lumipat sa English, Mandarin, Bahasa Indonesia, Thai, o Italyano',
+                th: 'เปลี่ยนเป็นภาษาอังกฤษ จีน อินโดนีเซีย ฟิลิปปินส์ หรืออิตาลี',
+                it: 'Passa a inglese, cinese, indonesiano, filippino o thailandese'
             };
             toggleBtn.setAttribute('aria-label', switchLabels[currentLang] || switchLabels.en);
         }
@@ -1202,7 +1412,7 @@
     }
 
     function setLanguage(lang) {
-        if (!['en', 'cn', 'id', 'ph', 'th'].includes(lang)) return;
+        if (!['en', 'cn', 'id', 'ph', 'th', 'it'].includes(lang)) return;
         currentLang = lang;
         localStorage.setItem(LANG_STORAGE_KEY, lang);
         applyStaticTranslations();
@@ -1211,7 +1421,7 @@
     }
 
     function toggleLanguage() {
-        const order = ['en', 'cn', 'id', 'ph', 'th'];
+        const order = ['en', 'cn', 'id', 'ph', 'th', 'it'];
         const nextIndex = (order.indexOf(currentLang) + 1) % order.length;
         setLanguage(order[nextIndex]);
     }
