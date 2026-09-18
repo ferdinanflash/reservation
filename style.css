@@ -915,6 +915,131 @@ body {
     margin-bottom: 15px;
 }
 
+/* ==================== HALLOWEEN SEASONAL BUTTON THEME ====================
+   Applies automatically alongside the banner: fire-banner.js toggles a
+   "halloween-theme" class on <body> based on HALLOWEEN_SEASON (or the
+   svs_halloween_override localStorage key for testing). Every button keeps
+   its original shape, size and semantic color family (danger still reads as
+   "stop", accept still reads as "go") — only the palette shifts to
+   pumpkin-orange / witch-green / cursed-crimson. .btn-discord is left alone
+   since that's Discord's own brand color, not ours to reskin. */
+
+body.halloween-theme .btn-apply {
+    background: linear-gradient(135deg, #ff9a3c 0%, #c94e0a 100%) !important;
+    border-color: rgba(255, 205, 130, 0.35) !important;
+    animation: halloweenPumpkinPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes halloweenPumpkinPulse {
+    0% {
+        background: linear-gradient(135deg, #ff9a3c 0%, #c94e0a 100%);
+        box-shadow: 0 0 4px rgba(255, 140, 20, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #ffc35c 0%, #e2650f 100%);
+        box-shadow: 0 0 14px rgba(255, 170, 50, 0.9);
+        border-color: rgba(255, 220, 150, 0.6);
+    }
+    100% {
+        background: linear-gradient(135deg, #ff9a3c 0%, #c94e0a 100%);
+        box-shadow: 0 0 4px rgba(255, 140, 20, 0.45);
+    }
+}
+
+/* Destructive actions (Reject / Remove / Drop) — cursed crimson-violet glow,
+   still unmistakably "red / stop" but with a spookier tint. */
+body.halloween-theme .btn-danger,
+body.halloween-theme .admin-reject-btn {
+    background: linear-gradient(135deg, #d1264f 0%, #5b0e8b 100%) !important;
+    animation: halloweenCursedPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes halloweenCursedPulse {
+    0% {
+        background: linear-gradient(135deg, #d1264f 0%, #5b0e8b 100%);
+        box-shadow: 0 0 4px rgba(209, 38, 79, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #ef4d7c 0%, #7c1ec9 100%);
+        box-shadow: 0 0 14px rgba(224, 80, 150, 0.85);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        background: linear-gradient(135deg, #d1264f 0%, #5b0e8b 100%);
+        box-shadow: 0 0 4px rgba(209, 38, 79, 0.45);
+    }
+}
+
+/* Accept — witch-green glow, keeps the "go / approve" meaning */
+body.halloween-theme .admin-accept-btn {
+    background: linear-gradient(135deg, #5fd15c 0%, #1c6e2c 100%) !important;
+    box-shadow: 0 0 8px rgba(95, 209, 92, 0.45) !important;
+}
+body.halloween-theme .admin-accept-btn:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 0 14px rgba(120, 230, 120, 0.7) !important;
+}
+
+/* President / admin login button — midnight purple with a candlelit edge */
+body.halloween-theme .btn-admin {
+    background: linear-gradient(135deg, #3a1466 0%, #17082b 100%);
+    border-color: rgba(255, 170, 60, 0.4);
+    box-shadow: 0 0 8px rgba(255, 140, 20, 0.35);
+    animation: halloweenCandleFlicker 3.2s infinite ease-in-out;
+}
+body.halloween-theme .btn-admin:hover {
+    background: linear-gradient(135deg, #4c1c85 0%, #220b3d 100%);
+    border-color: rgba(255, 190, 100, 0.7);
+}
+@keyframes halloweenCandleFlicker {
+    0%, 100% { box-shadow: 0 0 8px rgba(255, 140, 20, 0.35); }
+    30%      { box-shadow: 0 0 13px rgba(255, 170, 50, 0.6); }
+    55%      { box-shadow: 0 0 6px rgba(255, 140, 20, 0.25); }
+    80%      { box-shadow: 0 0 12px rgba(255, 170, 50, 0.5); }
+}
+
+/* Back / neutral button — muted graveyard-purple outline */
+body.halloween-theme .btn-back {
+    color: #c9b3e0;
+    border-color: rgba(150, 110, 200, 0.4);
+}
+body.halloween-theme .btn-back:hover {
+    color: #ffcf8a;
+    border-color: rgba(255, 170, 60, 0.55);
+    background: rgba(255, 140, 20, 0.06);
+}
+
+/* Save button in the admin application-edit panel */
+body.halloween-theme .admin-save-application-btn {
+    background: linear-gradient(135deg, #c94e0a 0%, #5b0e8b 100%) !important;
+}
+
+/* Additional-time-slot controls on the reservation form */
+body.halloween-theme .btn-remove-additional-time {
+    color: #ff8a65;
+    border-color: rgba(255, 138, 101, 0.25);
+}
+body.halloween-theme .btn-remove-additional-time:hover {
+    background: rgba(255, 138, 101, 0.14);
+    border-color: #ff8a65;
+}
+body.halloween-theme .btn-add-another-time {
+    border-color: rgba(255, 170, 60, 0.4);
+    color: #ffb35c;
+}
+body.halloween-theme .btn-add-another-time:hover {
+    border-color: #ff8a1a;
+    color: #ffd39a;
+    background: rgba(255, 140, 20, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.halloween-theme .btn-apply,
+    body.halloween-theme .btn-danger,
+    body.halloween-theme .admin-reject-btn,
+    body.halloween-theme .btn-admin {
+        animation: none !important;
+    }
+}
+
 /* ==================== GLOWING GOLD TEXT EFFECT ==================== */
 .fire-text {
     font-weight: 900;

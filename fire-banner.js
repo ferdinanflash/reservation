@@ -41,6 +41,10 @@
 	function applySeasonalTheme(container) {
 		const active = isHalloweenSeason();
 		container.classList.toggle('halloween-theme', active);
+		// Also flag it on <body> so page-wide elements (buttons, etc.) that
+		// aren't inside the banner can react to the same season via CSS,
+		// e.g. `body.halloween-theme .btn-apply { ... }`.
+		document.body.classList.toggle('halloween-theme', active);
 		return active;
 	}
 
