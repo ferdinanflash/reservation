@@ -1294,6 +1294,73 @@ body.christmas-theme .btn-add-another-time:hover {
     }
 }
 
+/* ==================== SEASONAL GOLD-TEXT THEMES (header logo + footer names) ====================
+   The "SvS Minister" logo in the header and the President / guild names in
+   the footer all use the gold .fire-text shine. While <body> carries a
+   seasonal class (toggled by fire-banner.js by date or via the President's
+   Theme Switcher) the same shine switches to that season's palette:
+     - christmas-theme: candy-cane red / gold / holly green
+     - halloween-theme: pumpkin orange / witch violet / witch green
+   The header logo also gets a small emoji in front. Outside the seasons
+   the plain gold look shows again. */
+
+/* ---- Christmas ---- */
+body.christmas-theme .navbar .logo.fire-text,
+body.christmas-theme .site-footer .fire-text {
+    background-image: linear-gradient(
+        to right,
+        #ff4d5a 0%,
+        #fff1cf 16%,
+        #ffd25e 32%,
+        #3fd18a 50%,
+        #fff1cf 66%,
+        #ffd25e 82%,
+        #ff4d5a 100%
+    );
+    background-size: 200% auto;
+    filter: drop-shadow(0 0 6px rgba(255, 90, 90, 0.35)) drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.7));
+}
+body.christmas-theme .navbar .logo.fire-text::before {
+    content: '\1F384';           /* tree */
+    display: inline-block;
+    margin-right: 6px;
+    -webkit-text-fill-color: initial;
+    letter-spacing: 0;
+}
+
+/* ---- Halloween ---- */
+body.halloween-theme .navbar .logo.fire-text,
+body.halloween-theme .site-footer .fire-text {
+    background-image: linear-gradient(
+        to right,
+        #ff8a1f 0%,
+        #ffd08a 16%,
+        #ff8a1f 32%,
+        #b56bff 50%,
+        #6be36b 66%,
+        #ffd08a 82%,
+        #ff8a1f 100%
+    );
+    background-size: 200% auto;
+    filter: drop-shadow(0 0 6px rgba(255, 130, 30, 0.4)) drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.7));
+}
+body.halloween-theme .navbar .logo.fire-text::before {
+    content: '\1F383';           /* jack-o'-lantern */
+    display: inline-block;
+    margin-right: 6px;
+    -webkit-text-fill-color: initial;
+    letter-spacing: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.christmas-theme .navbar .logo.fire-text,
+    body.christmas-theme .site-footer .fire-text,
+    body.halloween-theme .navbar .logo.fire-text,
+    body.halloween-theme .site-footer .fire-text {
+        animation: none !important;
+    }
+}
+
 /* ==================== GLOWING GOLD TEXT EFFECT ==================== */
 .fire-text {
     font-weight: 900;
@@ -2066,6 +2133,127 @@ th {
         animation-duration: 0.01ms !important;
         animation-delay: 0ms !important;
     }
+}
+
+/* ==================== SEASONAL OPENING ANIMATION ====================
+   The intro overlay normally uses the orange fire palette. While <body> has
+   "christmas-theme" or "halloween-theme" (put there early by the inline
+   script at the top of <body>, then kept in sync by fire-banner.js) every part of it
+   — glow, sparks, rays, number, line and the "SvS MINISTER" title — switches
+   to that season's palette. Timing and layout are untouched. */
+
+/* ---------- Christmas: candy-cane red / gold / holly green ---------- */
+body.christmas-theme .svs-opening {
+    background:
+        radial-gradient(circle at 50% 48%, rgba(220, 38, 38, 0.16) 0%, rgba(22, 163, 74, 0.05) 22%, transparent 45%),
+        #050505;
+}
+body.christmas-theme .svs-opening-glow {
+    background: radial-gradient(circle, rgba(239, 68, 68, .26) 0%, rgba(22, 163, 74, .10) 22%, transparent 65%);
+}
+body.christmas-theme .svs-opening-number {
+    background: linear-gradient(180deg, #fff1cf 0%, #ffd25e 24%, #ef4444 56%, #991b1b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(255, 110, 110, .95))
+            drop-shadow(0 0 22px rgba(220, 38, 38, .7))
+            drop-shadow(0 0 55px rgba(22, 163, 74, .38));
+    animation-name: svs-number-pulse-christmas;
+}
+@keyframes svs-number-pulse-christmas {
+    0%   { filter: drop-shadow(0 0 4px rgba(255, 110, 110, .65)); }
+    100% { filter: drop-shadow(0 0 9px rgba(255, 130, 130, 1)) drop-shadow(0 0 35px rgba(220, 38, 38, .72)) drop-shadow(0 0 60px rgba(22, 163, 74, .35)); }
+}
+body.christmas-theme .svs-opening-line {
+    background: linear-gradient(90deg, transparent, #ff4d5a, #fff1cf, #3fd18a, transparent);
+    box-shadow: 0 0 10px rgba(255, 90, 90, .9), 0 0 28px rgba(22, 163, 74, .5);
+}
+body.christmas-theme .svs-opening-title,
+body.halloween-theme .svs-opening-title {
+    display: inline-block;
+    text-shadow: none;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+body.christmas-theme .svs-opening-title {
+    background-image: linear-gradient(90deg, #ff6b73 0%, #fff1cf 30%, #ffd25e 50%, #6be8a4 80%, #3fd18a 100%);
+    filter: drop-shadow(0 0 8px rgba(255, 90, 90, .45)) drop-shadow(0 0 16px rgba(63, 209, 138, .3));
+}
+body.christmas-theme .svs-opening-title::before,
+body.christmas-theme .svs-opening-title::after,
+body.halloween-theme .svs-opening-title::before,
+body.halloween-theme .svs-opening-title::after {
+    -webkit-text-fill-color: initial;
+    letter-spacing: 0;
+    display: inline-block;
+}
+body.christmas-theme .svs-opening-title::before { content: '\1F384'; margin-right: .5em; }
+body.christmas-theme .svs-opening-title::after  { content: '\1F384'; margin-left: .5em; }
+body.christmas-theme .svs-opening-sparks {
+    background-image:
+        radial-gradient(circle at 50% 50%, #fff1cf 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 35%, #ff4d5a 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #3fd18a 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 70%, #ffd25e 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, #ff8a8a 0 1px, transparent 2px);
+}
+body.christmas-theme .svs-opening-sparks::before {
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255, 200, 90, .7) 0deg 0.7deg, transparent 0.7deg 18deg);
+}
+body.christmas-theme .svs-opening-sparks::after {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 90, 90, .6) 49%, rgba(255, 241, 207, .9) 50%, rgba(63, 209, 138, .6) 51%, transparent 100%);
+    box-shadow: 0 0 18px rgba(255, 90, 90, .7);
+}
+
+/* ---------- Halloween: pumpkin orange / witch violet / witch green ---------- */
+body.halloween-theme .svs-opening {
+    background:
+        radial-gradient(circle at 50% 48%, rgba(255, 122, 0, 0.14) 0%, rgba(124, 58, 237, 0.07) 22%, transparent 45%),
+        #050307;
+}
+body.halloween-theme .svs-opening-glow {
+    background: radial-gradient(circle, rgba(255, 138, 31, .26) 0%, rgba(124, 58, 237, .12) 22%, transparent 65%);
+}
+body.halloween-theme .svs-opening-number {
+    background: linear-gradient(180deg, #ffe2b0 0%, #ffa03c 28%, #e2650f 58%, #7c2d0a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(255, 145, 0, .95))
+            drop-shadow(0 0 22px rgba(255, 100, 0, .7))
+            drop-shadow(0 0 55px rgba(124, 58, 237, .45));
+    animation-name: svs-number-pulse-halloween;
+}
+@keyframes svs-number-pulse-halloween {
+    0%   { filter: drop-shadow(0 0 4px rgba(255, 145, 0, .65)); }
+    100% { filter: drop-shadow(0 0 9px rgba(255, 145, 0, 1)) drop-shadow(0 0 35px rgba(255, 90, 0, .72)) drop-shadow(0 0 60px rgba(124, 58, 237, .45)); }
+}
+body.halloween-theme .svs-opening-line {
+    background: linear-gradient(90deg, transparent, #ff8a1f, #ffd08a, #b56bff, transparent);
+    box-shadow: 0 0 10px rgba(255, 145, 0, .9), 0 0 28px rgba(124, 58, 237, .55);
+}
+body.halloween-theme .svs-opening-title {
+    background-image: linear-gradient(90deg, #ff8a1f 0%, #ffd08a 28%, #b56bff 58%, #6be36b 100%);
+    filter: drop-shadow(0 0 8px rgba(255, 130, 30, .5)) drop-shadow(0 0 16px rgba(124, 58, 237, .35));
+}
+body.halloween-theme .svs-opening-title::before { content: '\1F383'; margin-right: .5em; }
+body.halloween-theme .svs-opening-title::after  { content: '\1F383'; margin-left: .5em; }
+body.halloween-theme .svs-opening-sparks {
+    background-image:
+        radial-gradient(circle at 50% 50%, #ffd08a 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 35%, #ff8a1f 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #b56bff 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 70%, #6be36b 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, #ff6a00 0 1px, transparent 2px);
+}
+body.halloween-theme .svs-opening-sparks::before {
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255, 145, 0, .7) 0deg 0.7deg, transparent 0.7deg 18deg);
+}
+body.halloween-theme .svs-opening-sparks::after {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 145, 0, .6) 49%, rgba(255, 208, 138, .9) 50%, rgba(181, 107, 255, .6) 51%, transparent 100%);
+    box-shadow: 0 0 18px rgba(255, 110, 0, .7);
 }
 
 /* ==================== RESPONSIVE TABLE ====================

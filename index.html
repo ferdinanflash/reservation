@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-09-20-5';
+			var APP_BUILD = '2026-09-20-8';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -64,7 +64,7 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=48">
+				<link rel="stylesheet" href="style.css?v=51">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=5" defer=""></script>
@@ -91,6 +91,27 @@
 		</script>
 				</head>
 	<body>
+		<!-- Early seasonal flag: the opening animation below is painted before the
+		     deferred scripts (Supabase, fire-banner.js) have run, so this tiny inline
+		     script puts the season class on <body> right away, using the cached
+		     theme override or the date. fire-banner.js takes over afterwards and
+		     keeps it in sync with the database. KEEP THE DATE RANGES IN SYNC with
+		     SEASONS in fire-banner.js. -->
+		<script>
+		(function () {
+			function ls(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+			var t = ls('svs_theme_override');
+			if (t !== 'halloween' && t !== 'christmas' && t !== 'none') {
+				t = 'none';
+				var d = new Date(), m = d.getMonth(), day = d.getDate();
+				var h = ls('svs_halloween_override'), c = ls('svs_christmas_override');
+				if (h !== 'off' && (h === 'on' || m === 9 || (m === 10 && day <= 2))) t = 'halloween';
+				else if (c !== 'off' && (c === 'on' || (m === 11 && day <= 30))) t = 'christmas';
+			}
+			if (t === 'halloween' || t === 'christmas') document.body.classList.add(t + '-theme');
+		})();
+		</script>
+
 		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
 		<div id="snow-container"></div>
 
