@@ -2865,32 +2865,7 @@ th {
     color: #f1f5f9;
 }
 .redeem-modal-content .close-modal { top: 2px; right: 6px; }
-/* State auto-copy bar (above the embedded gift code page) */
-.redeem-autofill-bar {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 8px 16px;
-    background: rgba(243, 217, 164, 0.06);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 0.9rem;
-    color: #cbd5e1;
-}
-.redeem-autofill-label strong { color: #f3d9a4; font-size: 1rem; letter-spacing: 0.04em; }
-.redeem-autofill-btn {
-    padding: 7px 14px;
-    border: 1px solid rgba(243, 217, 164, 0.5);
-    border-radius: 8px;
-    background: rgba(243, 217, 164, 0.12);
-    color: #f3d9a4;
-    font-size: 0.85rem;
-    font-weight: 700;
-    cursor: pointer;
-}
-.redeem-autofill-btn:hover { background: rgba(243, 217, 164, 0.22); }
-.redeem-autofill-btn:focus-visible { outline: 2px solid #f3d9a4; outline-offset: 2px; }
+/* State auto-copy notice (above the embedded gift code page) */
 .redeem-autofill-status {
     flex-shrink: 0;
     display: none;
@@ -2956,17 +2931,50 @@ th {
 /* Stop the page behind the modal from scrolling while it is open */
 body.redeem-modal-open { overflow: hidden; }
 
-/* Phones: the four navbar actions no longer fit on one row, so lay them out
-   as two deliberate rows instead of letting the last button wrap alone:
-   [ language ............ discord ]
-   [ Redeem Code  |  President      ]                                       */
+/* Phones: keep all four navbar actions on ONE row:
+   [ language ][ discord ][ Redeem Code ][ President ]
+   Language + Discord keep their natural size; the two text buttons share the
+   remaining width and shrink (smaller type/padding, ellipsis as a last
+   resort) so longer translations never force a second row. */
 @media screen and (max-width: 480px) {
-    .navbar-actions .lang-toggle { flex: 1 1 calc(100% - 44px); }
+    .navbar-actions {
+        flex-wrap: nowrap;
+        gap: 6px;
+    }
+    .navbar-actions .lang-toggle,
+    .navbar-actions .btn-discord { flex: 0 0 auto; }
+    .navbar-actions .lang-trigger {
+        padding: 7px 9px;
+        gap: 4px;
+        font-size: 0.72rem;
+    }
+    .navbar-actions .lang-globe-icon { display: none; }
+    .navbar-actions .lang-flag-emoji { font-size: 0.85rem; }
+    .navbar-actions .btn-discord { width: 34px; height: 34px; }
     .navbar-actions .btn-redeem,
     .navbar-actions .btn-admin {
-        flex: 1 1 calc(50% - 4px);
+        flex: 1 1 0;
+        min-width: 0;
         justify-content: center;
         text-align: center;
+        padding: 8px 6px;
+        font-size: 0.75rem;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
-    .btn-redeem { padding: 9px 10px; }
+    .navbar-actions .btn-redeem { gap: 4px; }
+    .navbar-actions .btn-redeem svg { width: 13px; height: 13px; }
+}
+/* Very narrow phones: drop the gift icon to buy back a little width */
+@media screen and (max-width: 380px) {
+    .navbar-actions .btn-redeem svg { display: none; }
+}
+/* Extra-small phones (~320px): slightly smaller type so labels aren't cut */
+@media screen and (max-width: 340px) {
+    .navbar-actions { gap: 4px; }
+    .navbar-actions .lang-trigger { padding: 7px 7px; }
+    .navbar-actions .btn-redeem,
+    .navbar-actions .btn-admin { font-size: 0.66rem; padding: 8px 3px; }
 }
