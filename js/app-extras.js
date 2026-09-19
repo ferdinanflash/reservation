@@ -218,6 +218,44 @@ setInterval(createSnowEffect, 200);
 // only the first time the modal opens, so visitors who never use it don't
 // load the third-party page at all.
 let redeemModalTrigger = null;
+const REDEEM_STATE_ID = '3475';
+
+// The gift code form lives in a cross-origin iframe (Century Games), so we
+// can't type into its State field from here. What we can do is put the State
+// number on the clipboard so the player only has to long-press > Paste.
+async function copyRedeemState() {
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(REDEEM_STATE_ID);
+            return true;
+        }
+    } catch (e) { /* fall through to legacy method */ }
+    try {
+        const ta = document.createElement('textarea');
+        ta.value = REDEEM_STATE_ID;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return ok;
+    } catch (e) {
+        return false;
+    }
+}
+
+async function autoFillRedeemState() {
+    const status = document.getElementById('redeem-autofill-status');
+    const ok = await copyRedeemState();
+    if (!status) return;
+    status.textContent = ok
+        ? t('redeem_copied', { state: REDEEM_STATE_ID })
+        : t('redeem_copy_failed', { state: REDEEM_STATE_ID });
+    status.classList.toggle('is-error', !ok);
+    status.classList.add('is-visible');
+}
 
 function hideRedeemLoading() {
     const loading = document.getElementById('redeem-loading');
@@ -241,6 +279,10 @@ function openRedeemModal() {
     modal.classList.remove('hidden');
     document.body.classList.add('redeem-modal-open');
 
+    // Auto copy the State number. Must run synchronously inside the click
+    // that opened the modal, otherwise browsers refuse clipboard access.
+    autoFillRedeemState();
+
     const closeBtn = modal.querySelector('.close-modal');
     if (closeBtn) closeBtn.focus();
 }
@@ -251,6 +293,8 @@ function closeRedeemModal() {
 
     modal.classList.add('hidden');
     document.body.classList.remove('redeem-modal-open');
+    const status = document.getElementById('redeem-autofill-status');
+    if (status) { status.textContent = ''; status.classList.remove('is-visible', 'is-error'); }
 
     if (redeemModalTrigger && typeof redeemModalTrigger.focus === 'function') {
         redeemModalTrigger.focus();
