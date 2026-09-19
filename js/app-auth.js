@@ -103,14 +103,20 @@ async function saveEditFooter() {
 }
 
 // ================= THEME SWITCHER (President-only) =================
-// Lets the President preview/force the seasonal banner theme (Halloween /
-// Christmas / plain fire) instead of waiting for the automatic date range.
-// Applied instantly via window.SVSSeasonalTheme, defined in fire-banner.js,
-// and persisted in localStorage on that device/browser.
+// Lets the President force the seasonal banner theme (Halloween / Christmas /
+// plain fire) instead of waiting for the automatic date range.
+// The choice is saved in the database (table theme_settings) through
+// window.SVSSeasonalTheme (fire-banner.js), so it applies to EVERYONE who
+// opens the page and updates open pages live via Supabase Realtime.
+// Requires supabase_migration_theme_settings.sql to have been run once.
 function openThemeSwitcherModal() {
     if (!isAdmin) return;
     refreshThemeSwitcherUI();
     document.getElementById('theme-switcher-modal').classList.remove('hidden');
+    // Pull the latest value from the server in case it was changed elsewhere.
+    if (window.SVSSeasonalTheme && window.SVSSeasonalTheme.refresh) {
+        window.SVSSeasonalTheme.refresh();
+    }
 }
 
 function closeThemeSwitcherModal() {
@@ -126,11 +132,19 @@ function refreshThemeSwitcherUI() {
     });
 }
 
-function selectSeasonalTheme(value) {
+// Keep the modal's highlighted option in sync when the theme changes from
+// the server (another President device changed it) or from this device.
+document.addEventListener('svs-theme-changed', refreshThemeSwitcherUI);
+
+async function selectSeasonalTheme(value) {
     if (!isAdmin || !window.SVSSeasonalTheme) return;
-    window.SVSSeasonalTheme.setTheme(value);
+    const ok = await window.SVSSeasonalTheme.setTheme(value);
     refreshThemeSwitcherUI();
-    showToast(t("toast_theme_updated"), "success");
+    if (ok) {
+        showToast(t("toast_theme_updated"), "success");
+    } else {
+        showToast(t("toast_theme_update_failed"), "error");
+    }
 }
 
 // ================= PRESIDENT LOGIN (Supabase Auth) =================
