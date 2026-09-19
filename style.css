@@ -2865,6 +2865,44 @@ th {
     color: #f1f5f9;
 }
 .redeem-modal-content .close-modal { top: 2px; right: 6px; }
+/* State auto-copy bar (above the embedded gift code page) */
+.redeem-autofill-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 16px;
+    background: rgba(243, 217, 164, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.9rem;
+    color: #cbd5e1;
+}
+.redeem-autofill-label strong { color: #f3d9a4; font-size: 1rem; letter-spacing: 0.04em; }
+.redeem-autofill-btn {
+    padding: 7px 14px;
+    border: 1px solid rgba(243, 217, 164, 0.5);
+    border-radius: 8px;
+    background: rgba(243, 217, 164, 0.12);
+    color: #f3d9a4;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+.redeem-autofill-btn:hover { background: rgba(243, 217, 164, 0.22); }
+.redeem-autofill-btn:focus-visible { outline: 2px solid #f3d9a4; outline-offset: 2px; }
+.redeem-autofill-status {
+    flex-shrink: 0;
+    display: none;
+    margin: 0;
+    padding: 6px 16px;
+    font-size: 0.8rem;
+    color: #86efac;
+    background: rgba(34, 197, 94, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.redeem-autofill-status.is-visible { display: block; }
+.redeem-autofill-status.is-error { color: #fca5a5; background: rgba(239, 68, 68, 0.08); }
 .redeem-frame-wrap {
     /* Visible height of the embedded page = width x this ratio. The official
        page lives on another domain, so we can't measure where its Confirm
