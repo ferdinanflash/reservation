@@ -2839,13 +2839,14 @@ th {
 }
 .btn-redeem svg { flex-shrink: 0; opacity: 0.9; }
 
-/* Modal: header + iframe + hint bar, sized to the viewport instead of the
-   generic 450px / 85vh modal so the embedded page has room to breathe. */
+/* Modal: header + iframe + hint bar. The iframe window is cropped so it ends
+   just below the Confirm button (see --redeem-crop-ratio below); the modal's
+   height follows from that instead of filling the screen. */
 .modal-content.redeem-modal-content {
-    max-width: 560px;
+    max-width: 440px;
     width: 95%;
-    height: min(88dvh, 800px);
-    max-height: none;
+    height: auto;
+    max-height: 94dvh;
     padding: 0;
     overflow: hidden;
     background: #151821;
@@ -2865,8 +2866,17 @@ th {
 }
 .redeem-modal-content .close-modal { top: 2px; right: 6px; }
 .redeem-frame-wrap {
+    /* Visible height of the embedded page = width x this ratio. The official
+       page lives on another domain, so we can't measure where its Confirm
+       button ends; this number was measured from a phone screenshot
+       (Confirm ends at ~1.17 x width, the Official Store banner starts at
+       ~1.33 x width). Raise it if Confirm gets cut off, lower it if the
+       banner peeks in. The page inside stays scrollable either way. */
+    --redeem-crop-ratio: 1.30;
     position: relative;
-    flex: 1 1 auto;
+    width: 100%;
+    aspect-ratio: 1 / var(--redeem-crop-ratio);
+    flex: 0 1 auto;
     min-height: 0;
     background: #0f1a2e;
 }
@@ -2882,7 +2892,8 @@ th {
     font-size: 0.9rem;
 }
 .redeem-frame {
-    position: relative;
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
