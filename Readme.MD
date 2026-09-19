@@ -91,6 +91,14 @@ reservation-main/
 
 This project is proprietary and maintained for **3475.web.id**.
 
+## V11 update
+- **Fix:** the President's Theme Switcher choice was only stored in the President's own browser (`localStorage`), so other users never saw it. The choice is now saved in Supabase (`theme_settings` table, row `main`) and applies to every visitor.
+- Visitors read the theme on load and receive changes live through Supabase Realtime, with a 60-second / tab-visible refresh as a fallback. `localStorage` (`svs_theme_override`) is now only a cache of the last server value.
+- The Theme Switcher shows an error toast if saving fails (not logged in, or migration not run) instead of silently changing only the local screen.
+- **Required:** run `supabase_migration_theme_settings.sql` once in the Supabase SQL Editor before deploying.
+- Bumped `fire-banner.js`, `app-auth.js`, `lang.js`, `APP_BUILD` and the Service Worker cache version.
+- Replaced the Christmas banner artwork with a new full-scene "3475 / Merry Christmas" illustration (`christmas-banner-v2.jpg`, ~220 KB instead of a 1.3 MB transparent PNG). It is shown whole (`background-size: cover`, no more transparent overlay on a gradient), so the Christmas banner is now taller on desktop than the other themes. The old `christmas-banner.png` was removed; the new file name also avoids stale browser/PWA caches. Bumped `style.css` and the Service Worker cache version.
+
 ## V10 update
 - Added a Christmas seasonal banner theme (active automatically every 1-30 December), alongside the existing Halloween theme, reusing the same `#fire-banner` container and embers canvas (now emitting falling gold/red/green glitter instead of embers during Christmas).
 - Unified the seasonal-theme logic in `fire-banner.js` behind a single `svs_theme_override` localStorage key (`auto` / `halloween` / `christmas` / `none`) and a public `window.SVSSeasonalTheme` API, while keeping the old Halloween-only override key working for backward compatibility.

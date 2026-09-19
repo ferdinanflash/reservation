@@ -585,14 +585,14 @@ body {
 }
 
 /* ==================== CHRISTMAS SEASONAL BANNER OVERLAY ====================
-   Layers the illustrated christmas-banner.png (a transparent "3475" built
-   from ornaments, a candy cane, a stocking, holly and a gold ribbon) over a
-   festive red/green backdrop, on top of the same #fire-banner container and
-   embers canvas used by the regular orange fire banner (the canvas switches
-   to falling gold/red/green glitter — see fire-banner.js). Active only while
-   #fire-banner also has the "christmas-theme" class, which fire-banner.js
-   toggles automatically every 1-30 December, or on demand via the
-   President's Theme Switcher (window.SVSSeasonalTheme). */
+   Shows the illustrated christmas-banner-v2.jpg (a full festive scene with a
+   "3475" built from ornaments, a candy cane, a stocking, holly and a gold
+   "Merry Christmas" ribbon) in the #fire-banner container, with twinkling
+   lights on top and the embers canvas switched to falling gold/red/green
+   glitter (see fire-banner.js). Active only while #fire-banner also has the
+   "christmas-theme" class, which fire-banner.js toggles automatically every
+   1-30 December, or on demand via the President's Theme Switcher
+   (window.SVSSeasonalTheme). */
 
 .fire-banner.christmas-theme .fire-glow-back,
 .fire-banner.christmas-theme .fire-numbers {
@@ -605,18 +605,33 @@ body {
 
 .christmas-art {
     position: absolute;
-    inset: 4%;
+    inset: -3%;
     z-index: 2;
-    background-image: url('christmas-banner.png');
-    background-size: contain;
+    background-image: url('christmas-banner-v2.jpg');
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5));
     animation: christmasSway 6s ease-in-out infinite;
 }
 @keyframes christmasSway {
     0%, 100% { transform: scale(1) translateY(0); }
     50%      { transform: scale(1.015) translateY(-4px); }
+}
+
+/* The Christmas scene is a full picture (with the "Merry Christmas" text), so
+   on desktop show it whole instead of cropping it into the 190px strip the
+   other themes use. */
+@media screen and (min-width: 769px) {
+    .fire-banner.christmas-theme {
+        width: 100%;
+        max-width: 800px;   /* raise/lower this to make the desktop banner bigger/smaller */
+        height: auto;
+        aspect-ratio: 1376 / 768;
+        margin-left: auto;
+        margin-right: auto;
+        transform: none;
+        border-radius: 10px;
+    }
 }
 
 .christmas-glow-back {

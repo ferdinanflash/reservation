@@ -14,9 +14,12 @@
 		christmas: { startMonth: 11, startDay: 1, endMonth: 11, endDay: 30 }  // 1 - 30 Des
 	};
 
-	// Kunci localStorage untuk override manual (dipakai oleh menu "Theme
-	// Switcher" di panel president, dan juga bisa diset lewat console browser
-	// untuk testing/preview tanpa perlu menunggu tanggal aslinya):
+	// Override manual dari President sekarang disimpan di DATABASE (tabel
+	// `theme_settings`, baris id='main') supaya berlaku untuk SEMUA pengguna,
+	// bukan hanya browser President. localStorage di bawah hanya berfungsi
+	// sebagai CACHE dari nilai terakhir di server (biar banner langsung benar
+	// saat halaman dibuka, tanpa menunggu jaringan). Untuk testing lokal lewat
+	// console browser (hanya di browser itu, akan tertimpa nilai server):
 	//   localStorage.setItem('svs_theme_override', 'halloween')  -> paksa Halloween
 	//   localStorage.setItem('svs_theme_override', 'christmas')  -> paksa Natal
 	//   localStorage.setItem('svs_theme_override', 'none')       -> paksa banner api biasa
@@ -222,13 +225,13 @@
 			}
 		});
 
-		// Dipanggil oleh window.SVSSeasonalTheme.setTheme() saat President
-		// mengganti tema secara manual lewat Theme Switcher, supaya banner
-		// berubah langsung tanpa reload halaman.
+		// Dipanggil setiap kali tema berubah (President mengganti lewat Theme
+		// Switcher, atau perubahan dari server diterima lewat realtime/polling),
+		// supaya banner berubah langsung tanpa reload halaman.
 		window.__svsReapplyBannerTheme = function () {
 			theme = applySeasonalTheme(container);
 			particles = [];
-			if (onThemeChangeCb) onThemeChangeCb(theme);
+			notifyThemeChanged(theme);
 		};
 	}
 
@@ -238,14 +241,113 @@
 		initFireBanner();
 	}
 
+	// ============ SINKRONISASI TEMA DENGAN DATABASE ============
+	// Sumber kebenaran tema manual = tabel `theme_settings` (baris 'main').
+	// Semua pengunjung membaca nilainya saat halaman dibuka, lalu menerima
+	// perubahan lewat Supabase Realtime (plus polling/visibility sebagai
+	// cadangan kalau koneksi realtime terputus, mis. PWA di background).
+	const THEME_TABLE = 'theme_settings';
+	const THEME_ROW_ID = 'main';
+	const THEME_POLL_MS = 60000;
+
+	function getClient() {
+		try { return (typeof getSupabase === 'function') ? getSupabase() : null; }
+		catch (e) { return null; }
+	}
+
+	function notifyThemeChanged(theme) {
+		if (onThemeChangeCb) onThemeChangeCb(theme);
+		try {
+			document.dispatchEvent(new CustomEvent('svs-theme-changed', { detail: { theme: theme } }));
+		} catch (e) { /* ignore */ }
+	}
+
+	function reapplyTheme() {
+		if (window.__svsReapplyBannerTheme) window.__svsReapplyBannerTheme();
+		else if (currentContainer) notifyThemeChanged(applySeasonalTheme(currentContainer));
+	}
+
+	// Terapkan nilai dari server: simpan ke cache lokal, dan hanya render ulang
+	// banner kalau override-nya memang berubah (hindari reset animasi tiap polling).
+	function applyRemoteValue(value) {
+		const before = getOverride();
+		setOverride(VALID_THEMES.includes(value) ? value : 'auto');
+		if (getOverride() !== before) reapplyTheme();
+	}
+
+	async function fetchRemoteTheme() {
+		const client = getClient();
+		if (!client) return;
+		try {
+			const { data, error } = await client
+				.from(THEME_TABLE)
+				.select('theme_override')
+				.eq('id', THEME_ROW_ID)
+				.maybeSingle();
+			if (error) throw error;
+			applyRemoteValue(data ? data.theme_override : 'auto');
+		} catch (err) {
+			// Offline / tabel belum dibuat: tetap pakai cache terakhir.
+			console.warn('Could not load seasonal theme from database:', err);
+		}
+	}
+
+	function subscribeRemoteTheme() {
+		const client = getClient();
+		if (!client) return;
+		try {
+			client
+				.channel('theme_settings_changes')
+				.on('postgres_changes', { event: '*', schema: 'public', table: THEME_TABLE }, (payload) => {
+					if (payload.eventType === 'DELETE') applyRemoteValue('auto');
+					else applyRemoteValue(payload.new && payload.new.theme_override);
+				})
+				.subscribe();
+		} catch (err) {
+			console.warn('Theme realtime subscription failed, relying on polling:', err);
+		}
+	}
+
+	function startRemoteThemeSync() {
+		fetchRemoteTheme();
+		subscribeRemoteTheme();
+		setInterval(fetchRemoteTheme, THEME_POLL_MS);
+		document.addEventListener('visibilitychange', function () {
+			if (document.visibilityState === 'visible') fetchRemoteTheme();
+		});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', startRemoteThemeSync);
+	} else {
+		startRemoteThemeSync();
+	}
+
 	// ============ PUBLIC API (dipakai oleh menu Theme Switcher President) ============
 	window.SVSSeasonalTheme = {
 		// 'halloween' | 'christmas' | 'none' | 'auto'
-		setTheme: function (value) {
-			setOverride(value);
-			if (window.__svsReapplyBannerTheme) window.__svsReapplyBannerTheme();
-			else if (currentContainer) applySeasonalTheme(currentContainer);
+		// Menyimpan ke database supaya berlaku untuk semua pengguna. Mengembalikan
+		// Promise<boolean>: true kalau berhasil disimpan, false kalau gagal
+		// (mis. bukan staff yang login, atau migrasi SQL belum dijalankan).
+		setTheme: async function (value) {
+			const v = (!value || value === 'auto') ? 'auto' : value;
+			if (v !== 'auto' && !VALID_THEMES.includes(v)) return false;
+			const client = getClient();
+			if (!client) return false;
+			try {
+				const { error } = await client
+					.from(THEME_TABLE)
+					.upsert({ id: THEME_ROW_ID, theme_override: v, updated_at: new Date().toISOString() }, { onConflict: 'id' });
+				if (error) throw error;
+			} catch (err) {
+				console.error('Failed to save seasonal theme:', err);
+				return false;
+			}
+			applyRemoteValue(v);
+			return true;
 		},
+		// Ambil ulang nilai terbaru dari server (dipakai saat modal dibuka).
+		refresh: fetchRemoteTheme,
 		// Tema yang benar-benar tampil sekarang (setelah override/tanggal dihitung).
 		getActiveTheme: function () {
 			return computeActiveTheme();
