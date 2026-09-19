@@ -211,3 +211,74 @@ function createSnowEffect() {
 }
 setInterval(createSnowEffect, 200);
 // ======================================================
+
+// ================= REDEEM CODE MODAL =================
+// "Redeem Code" navbar button -> popup modal that embeds the official
+// Whiteout Survival gift code page (Century Games). The iframe src is set
+// only the first time the modal opens, so visitors who never use it don't
+// load the third-party page at all.
+let redeemModalTrigger = null;
+
+function hideRedeemLoading() {
+    const loading = document.getElementById('redeem-loading');
+    if (loading) loading.classList.add('hidden');
+}
+
+function openRedeemModal() {
+    const modal = document.getElementById('redeem-modal');
+    const frame = document.getElementById('redeem-frame');
+    if (!modal || !frame) return;
+
+    redeemModalTrigger = document.activeElement;
+
+    if (!frame.getAttribute('src')) {
+        const loading = document.getElementById('redeem-loading');
+        if (loading) loading.classList.remove('hidden');
+        frame.addEventListener('load', hideRedeemLoading, { once: true });
+        frame.setAttribute('src', frame.getAttribute('data-src'));
+    }
+
+    modal.classList.remove('hidden');
+    document.body.classList.add('redeem-modal-open');
+
+    const closeBtn = modal.querySelector('.close-modal');
+    if (closeBtn) closeBtn.focus();
+}
+
+function closeRedeemModal() {
+    const modal = document.getElementById('redeem-modal');
+    if (!modal || modal.classList.contains('hidden')) return;
+
+    modal.classList.add('hidden');
+    document.body.classList.remove('redeem-modal-open');
+
+    if (redeemModalTrigger && typeof redeemModalTrigger.focus === 'function') {
+        redeemModalTrigger.focus();
+    }
+    redeemModalTrigger = null;
+}
+
+(function initRedeemModal() {
+    const modal = document.getElementById('redeem-modal');
+    if (!modal) return;
+
+    // Close on Escape
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeRedeemModal();
+        }
+    });
+
+    // Close when the dark backdrop is clicked. Requiring the press to start
+    // on the backdrop too avoids closing when someone drags a text selection
+    // out of the modal and releases the mouse outside it.
+    let pressStartedOnBackdrop = false;
+    modal.addEventListener('mousedown', (event) => {
+        pressStartedOnBackdrop = (event.target === modal);
+    });
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal && pressStartedOnBackdrop) closeRedeemModal();
+        pressStartedOnBackdrop = false;
+    });
+})();
+// ======================================================
