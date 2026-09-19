@@ -102,6 +102,37 @@ async function saveEditFooter() {
     }
 }
 
+// ================= THEME SWITCHER (President-only) =================
+// Lets the President preview/force the seasonal banner theme (Halloween /
+// Christmas / plain fire) instead of waiting for the automatic date range.
+// Applied instantly via window.SVSSeasonalTheme, defined in fire-banner.js,
+// and persisted in localStorage on that device/browser.
+function openThemeSwitcherModal() {
+    if (!isAdmin) return;
+    refreshThemeSwitcherUI();
+    document.getElementById('theme-switcher-modal').classList.remove('hidden');
+}
+
+function closeThemeSwitcherModal() {
+    document.getElementById('theme-switcher-modal').classList.add('hidden');
+}
+
+function refreshThemeSwitcherUI() {
+    if (!window.SVSSeasonalTheme) return;
+    // null override = "Auto" is the active selection.
+    const current = window.SVSSeasonalTheme.getOverride() || 'auto';
+    document.querySelectorAll('#theme-switcher-modal .theme-option-btn').forEach(function (btn) {
+        btn.classList.toggle('is-active', btn.getAttribute('data-theme-value') === current);
+    });
+}
+
+function selectSeasonalTheme(value) {
+    if (!isAdmin || !window.SVSSeasonalTheme) return;
+    window.SVSSeasonalTheme.setTheme(value);
+    refreshThemeSwitcherUI();
+    showToast(t("toast_theme_updated"), "success");
+}
+
 // ================= PRESIDENT LOGIN (Supabase Auth) =================
 // Real authentication now happens on Supabase's servers via
 // auth.signInWithPassword, which returns a verified session token. Access to

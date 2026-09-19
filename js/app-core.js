@@ -148,12 +148,14 @@ function updateAdminUI() {
     const adminBtn = document.getElementById('admin-toggle-btn');
     const adminInd = document.getElementById('admin-indicator');
     const editFooterBtn = document.getElementById('edit-footer-btn');
+    const themeSwitcherBtn = document.getElementById('theme-switcher-btn');
     const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
     const finishSvsBtn = document.getElementById('finish-svs-btn'); 
 
     if (adminBtn) adminBtn.innerText = currentStaffUsername ? t("admin_logout_named", { name: currentStaffUsername.toUpperCase() }) : t("admin_logout_btn");
     if (adminInd) adminInd.style.display = "inline";
     if (editFooterBtn) editFooterBtn.style.display = "inline-block";
+    if (themeSwitcherBtn) themeSwitcherBtn.style.display = "inline-block";
     if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
     if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; 
 }
@@ -162,12 +164,14 @@ function resetAdminUI() {
     const adminBtn = document.getElementById('admin-toggle-btn');
     const adminInd = document.getElementById('admin-indicator');
     const editFooterBtn = document.getElementById('edit-footer-btn');
+    const themeSwitcherBtn = document.getElementById('theme-switcher-btn');
     const toggleResBtn = document.getElementById('toggle-reservation-btn');
     const finishSvsBtn = document.getElementById('finish-svs-btn');
 
     if (adminBtn) adminBtn.innerText = t("admin_login_btn");
     if (adminInd) adminInd.style.display = "none";
     if (editFooterBtn) editFooterBtn.style.display = "none";
+    if (themeSwitcherBtn) themeSwitcherBtn.style.display = "none";
     if (toggleResBtn) toggleResBtn.style.display = "none";
     if (finishSvsBtn) finishSvsBtn.style.display = "none";
 }
