@@ -6,7 +6,7 @@
 //   - everything else (Supabase, CDN): never touched, always straight to network
 //
 // >>> Bump CACHE_VERSION on every deploy so old files are dropped. <<<
-const CACHE_VERSION = '2026-09-20-8';
+const CACHE_VERSION = '2026-09-20-10';
 const CACHE_NAME = `svs-${CACHE_VERSION}`;
 const PRECACHE = [
     './',
@@ -23,7 +23,8 @@ const PRECACHE = [
     './js/app-extras.js',
     './js/app-notifications.js',
     './fire-banner.js',
-    './christmas-banner-v2.jpg',
+    './christmas-banner-v3.jpg',
+    './default-banner-v2.jpg',
     './opening-animation.js',
     './site.webmanifest',
     './pwa-icon-192-v8.png',

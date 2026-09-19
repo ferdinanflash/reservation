@@ -414,6 +414,54 @@ body {
     }
 }
 
+/* ==================== DEFAULT BANNER ART (no seasonal theme) ====================
+   default-banner-v2.jpg (a flaming "3475" shield) replaces the old CSS/SVG fire
+   digits whenever #fire-banner has neither "halloween-theme" nor
+   "christmas-theme". The gold/orange embers canvas (#fire-banner-embers)
+   still floats on top of it, and a soft warm glow pulses over the flames.
+   To go back to the old animated CSS digits, delete this block and the
+   "hide old digits" rule right below it. */
+.fire-default-art {
+    position: absolute;
+    inset: -3%;
+    z-index: 2;
+    background-image: url('default-banner-v2.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: defaultFireBreathe 6s ease-in-out infinite;
+}
+.fire-default-art::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 42%, rgba(255, 150, 30, 0.26) 0%, rgba(255, 90, 0, 0.10) 32%, transparent 60%);
+    mix-blend-mode: screen;
+    animation: fireBannerPulse 3.9s ease-in-out infinite;
+}
+@keyframes defaultFireBreathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.015); }
+}
+
+/* hide old digits: the default art already contains the "3475" */
+.fire-banner:not(.halloween-theme):not(.christmas-theme) .fire-glow-back,
+.fire-banner:not(.halloween-theme):not(.christmas-theme) .fire-numbers {
+    display: none;
+}
+
+/* Seasonal themes bring their own art. */
+.fire-banner.halloween-theme .fire-default-art,
+.fire-banner.christmas-theme .fire-default-art {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fire-default-art, .fire-default-art::after {
+        animation: none !important;
+    }
+}
+
 /* ==================== HALLOWEEN SEASONAL BANNER OVERLAY ====================
    Layers the illustrated halloween-banner.png (which already contains a
    styled "3475") underneath animated fog / embers / lightning / flicker
@@ -585,7 +633,7 @@ body {
 }
 
 /* ==================== CHRISTMAS SEASONAL BANNER OVERLAY ====================
-   Shows the illustrated christmas-banner-v2.jpg (a full festive scene with a
+   Shows the illustrated christmas-banner-v3.jpg (a full festive scene with a
    "3475" built from ornaments, a candy cane, a stocking, holly and a gold
    "Merry Christmas" ribbon) in the #fire-banner container, with twinkling
    lights on top and the embers canvas switched to falling gold/red/green
@@ -607,7 +655,7 @@ body {
     position: absolute;
     inset: -3%;
     z-index: 2;
-    background-image: url('christmas-banner-v2.jpg');
+    background-image: url('christmas-banner-v3.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -618,11 +666,11 @@ body {
     50%      { transform: scale(1.015) translateY(-4px); }
 }
 
-/* The Christmas scene is a full picture (with the "Merry Christmas" text), so
-   on desktop show it whole instead of cropping it into the 190px strip the
-   other themes use. */
+/* The default and Christmas banners are full pictures (with their own
+   lettering), so on desktop show them whole instead of cropping them into
+   the 190px strip used by the Halloween theme. */
 @media screen and (min-width: 769px) {
-    .fire-banner.christmas-theme {
+    .fire-banner:not(.halloween-theme) {
         width: 100%;
         max-width: 800px;   /* raise/lower this to make the desktop banner bigger/smaller */
         height: auto;

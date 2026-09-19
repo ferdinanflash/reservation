@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-09-20-8';
+			var APP_BUILD = '2026-09-20-10';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -64,7 +64,7 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=51">
+				<link rel="stylesheet" href="style.css?v=53">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=5" defer=""></script>
@@ -165,6 +165,11 @@
 								</linearGradient>
 							</defs>
 						</svg>
+						<!-- DEFAULT (non-seasonal) BANNER ART: default-banner-v2.jpg, shown whenever
+						     neither the Halloween nor the Christmas theme is active. The older
+						     CSS/SVG fire digits below (.fire-glow-back / .fire-numbers) are kept
+						     in the page but hidden by style.css while this art is in use. -->
+						<div class="fire-default-art"></div>
 						<div class="fire-glow-back"></div>
 						<div class="fire-numbers">
 							<div class="fire-digit-wrap">
@@ -215,7 +220,7 @@
 						<div class="halloween-lightning"></div>
 
 						<!-- ============ CHRISTMAS SEASONAL OVERLAY ============
-						     Layered on top of the base illustration (christmas-banner-v2.jpg).
+						     Layered on top of the base illustration (christmas-banner-v3.jpg).
 						     Active automatically 1-30 December every year, or on demand via
 						     the President's Theme Switcher (window.SVSSeasonalTheme). To
 						     revert to the plain orange fire banner outside the season:
