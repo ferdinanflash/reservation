@@ -584,6 +584,122 @@ body {
     }
 }
 
+/* ==================== CHRISTMAS SEASONAL BANNER OVERLAY ====================
+   Layers the illustrated christmas-banner.png (a transparent "3475" built
+   from ornaments, a candy cane, a stocking, holly and a gold ribbon) over a
+   festive red/green backdrop, on top of the same #fire-banner container and
+   embers canvas used by the regular orange fire banner (the canvas switches
+   to falling gold/red/green glitter — see fire-banner.js). Active only while
+   #fire-banner also has the "christmas-theme" class, which fire-banner.js
+   toggles automatically every 1-30 December, or on demand via the
+   President's Theme Switcher (window.SVSSeasonalTheme). */
+
+.fire-banner.christmas-theme .fire-glow-back,
+.fire-banner.christmas-theme .fire-numbers {
+    display: none;
+}
+
+.fire-banner.christmas-theme {
+    background: radial-gradient(ellipse at 50% 65%, #7a0e18 0%, #2c0a10 55%, #08050a 100%);
+}
+
+.christmas-art {
+    position: absolute;
+    inset: 4%;
+    z-index: 2;
+    background-image: url('christmas-banner.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5));
+    animation: christmasSway 6s ease-in-out infinite;
+}
+@keyframes christmasSway {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50%      { transform: scale(1.015) translateY(-4px); }
+}
+
+.christmas-glow-back {
+    position: absolute;
+    left: 8%; top: 12%;
+    width: 84%; height: 70%;
+    z-index: 1;
+    background: radial-gradient(ellipse at center, rgba(255,215,120,0.28), rgba(180,20,30,0.14) 45%, transparent 72%);
+    filter: blur(10px);
+    animation: christmasGlowPulse 4.2s ease-in-out infinite;
+}
+@keyframes christmasGlowPulse {
+    0%, 100% { opacity: .7; transform: scale(1); }
+    50%      { opacity: 1;  transform: scale(1.05); }
+}
+
+.christmas-glow-spot {
+    position: absolute;
+    z-index: 3;
+    width: 2.4%; height: 4.6%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,235,150,0.95), rgba(255,180,60,0.2) 60%, transparent 75%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    animation: christmasTwinkle 2.2s ease-in-out infinite;
+}
+.christmas-glow-spot:nth-child(odd) {
+    background: radial-gradient(circle, rgba(140,255,170,0.9), rgba(30,160,80,0.2) 60%, transparent 75%);
+}
+@keyframes christmasTwinkle {
+    0%, 100% { opacity: .4; transform: scale(0.85); }
+    30%      { opacity: 1;  transform: scale(1.1); }
+    55%      { opacity: .5; transform: scale(0.9); }
+    80%      { opacity: .9; transform: scale(1.05); }
+}
+
+.christmas-deco {
+    position: absolute;
+    z-index: 4;
+    font-size: 16px;
+    opacity: .92;
+    filter: drop-shadow(0 0 4px rgba(0,0,0,.55));
+    pointer-events: none;
+}
+.christmas-deco1 { top: 8%;  animation: christmasFloatRight 13s linear infinite; }
+.christmas-deco2 { top: 15%; animation: christmasFloatLeft 15s linear infinite; animation-delay: 4s; font-size: 13px; }
+.christmas-deco3 { top: 5%;  animation: christmasFloatRight 17s linear infinite; animation-delay: 8s; }
+
+@keyframes christmasFloatRight {
+    0%   { left: -5%;  transform: translateY(0) rotate(-6deg); }
+    50%  { transform: translateY(-3%) rotate(6deg); }
+    100% { left: 105%; transform: translateY(2%) rotate(-6deg); }
+}
+@keyframes christmasFloatLeft {
+    0%   { left: 105%; transform: translateY(0) rotate(6deg); }
+    50%  { transform: translateY(-3%) rotate(-6deg); }
+    100% { left: -5%;  transform: translateY(2%) rotate(6deg); }
+}
+
+/* Overlay elements only render while #fire-banner carries the
+   "christmas-theme" class. That class is added/removed automatically by
+   fire-banner.js based on the current date (or the President's Theme
+   Switcher) — outside the season these stay hidden and the plain orange
+   fire banner (.fire-glow-back / .fire-numbers, un-hidden above) shows
+   instead. */
+.christmas-art, .christmas-glow-back, .christmas-glow-spot, .christmas-deco {
+    display: none;
+}
+.fire-banner.christmas-theme .christmas-art,
+.fire-banner.christmas-theme .christmas-glow-back,
+.fire-banner.christmas-theme .christmas-glow-spot {
+    display: block;
+}
+.fire-banner.christmas-theme .christmas-deco {
+    display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .christmas-art, .christmas-glow-back, .christmas-glow-spot, .christmas-deco {
+        animation: none !important;
+    }
+}
+
 .page-subtitle {
     text-align: center;
     margin-top: 6px;       
@@ -1040,6 +1156,129 @@ body.halloween-theme .btn-add-another-time:hover {
     }
 }
 
+/* ==================== CHRISTMAS SEASONAL BUTTON THEME ====================
+   Same idea as the Halloween button theme above: fire-banner.js toggles a
+   "christmas-theme" class on <body> every 1-30 December (or via the
+   President's Theme Switcher). Buttons keep their shape/size/semantic color
+   family — only the palette shifts to holly-green / candy-cane-red / gold.
+   .btn-discord is left alone since that's Discord's own brand color. */
+
+body.christmas-theme .btn-apply {
+    background: linear-gradient(135deg, #2fae5c 0%, #0e6b34 100%) !important;
+    border-color: rgba(180, 255, 200, 0.35) !important;
+    animation: christmasHollyPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes christmasHollyPulse {
+    0% {
+        background: linear-gradient(135deg, #2fae5c 0%, #0e6b34 100%);
+        box-shadow: 0 0 4px rgba(50, 180, 100, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #4fd67f 0%, #14824a 100%);
+        box-shadow: 0 0 14px rgba(90, 220, 140, 0.9);
+        border-color: rgba(210, 255, 220, 0.6);
+    }
+    100% {
+        background: linear-gradient(135deg, #2fae5c 0%, #0e6b34 100%);
+        box-shadow: 0 0 4px rgba(50, 180, 100, 0.45);
+    }
+}
+
+/* Destructive actions (Reject / Remove / Drop) — candy-cane crimson pulse,
+   still unmistakably "red / stop". */
+body.christmas-theme .btn-danger,
+body.christmas-theme .admin-reject-btn {
+    background: linear-gradient(135deg, #d81b3a 0%, #7a0e1e 100%) !important;
+    animation: christmasCandyPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes christmasCandyPulse {
+    0% {
+        background: linear-gradient(135deg, #d81b3a 0%, #7a0e1e 100%);
+        box-shadow: 0 0 4px rgba(216, 27, 58, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #f14d64 0%, #a01530 100%);
+        box-shadow: 0 0 14px rgba(240, 90, 110, 0.85);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        background: linear-gradient(135deg, #d81b3a 0%, #7a0e1e 100%);
+        box-shadow: 0 0 4px rgba(216, 27, 58, 0.45);
+    }
+}
+
+/* Accept — gold glow, keeps the "go / approve" meaning */
+body.christmas-theme .admin-accept-btn {
+    background: linear-gradient(135deg, #ffd76a 0%, #c98a1c 100%) !important;
+    box-shadow: 0 0 8px rgba(255, 215, 106, 0.5) !important;
+}
+body.christmas-theme .admin-accept-btn:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 0 14px rgba(255, 225, 140, 0.75) !important;
+}
+
+/* President / admin login button — deep pine green with a gold ornament glow */
+body.christmas-theme .btn-admin {
+    background: linear-gradient(135deg, #0e5c34 0%, #0a2416 100%);
+    border-color: rgba(255, 215, 110, 0.45);
+    box-shadow: 0 0 8px rgba(255, 200, 80, 0.35);
+    animation: christmasOrnamentGlint 3.2s infinite ease-in-out;
+}
+body.christmas-theme .btn-admin:hover {
+    background: linear-gradient(135deg, #147a44 0%, #0e2f1c 100%);
+    border-color: rgba(255, 225, 140, 0.75);
+}
+@keyframes christmasOrnamentGlint {
+    0%, 100% { box-shadow: 0 0 8px rgba(255, 200, 80, 0.35); }
+    30%      { box-shadow: 0 0 13px rgba(255, 220, 120, 0.6); }
+    55%      { box-shadow: 0 0 6px rgba(255, 200, 80, 0.25); }
+    80%      { box-shadow: 0 0 12px rgba(255, 220, 120, 0.5); }
+}
+
+/* Back / neutral button — frosted silver-blue outline */
+body.christmas-theme .btn-back {
+    color: #cfe6ea;
+    border-color: rgba(150, 200, 210, 0.4);
+}
+body.christmas-theme .btn-back:hover {
+    color: #ffd76a;
+    border-color: rgba(255, 215, 110, 0.55);
+    background: rgba(255, 200, 80, 0.06);
+}
+
+/* Save button in the admin application-edit panel */
+body.christmas-theme .admin-save-application-btn {
+    background: linear-gradient(135deg, #0e6b34 0%, #7a0e1e 100%) !important;
+}
+
+/* Additional-time-slot controls on the reservation form */
+body.christmas-theme .btn-remove-additional-time {
+    color: #f16a7a;
+    border-color: rgba(241, 106, 122, 0.25);
+}
+body.christmas-theme .btn-remove-additional-time:hover {
+    background: rgba(241, 106, 122, 0.14);
+    border-color: #f16a7a;
+}
+body.christmas-theme .btn-add-another-time {
+    border-color: rgba(90, 220, 140, 0.4);
+    color: #6adf9a;
+}
+body.christmas-theme .btn-add-another-time:hover {
+    border-color: #2fae5c;
+    color: #a6f0c2;
+    background: rgba(50, 180, 100, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.christmas-theme .btn-apply,
+    body.christmas-theme .btn-danger,
+    body.christmas-theme .admin-reject-btn,
+    body.christmas-theme .btn-admin {
+        animation: none !important;
+    }
+}
+
 /* ==================== GLOWING GOLD TEXT EFFECT ==================== */
 .fire-text {
     font-weight: 900;
@@ -1197,6 +1436,72 @@ th {
 
 .custom-form-modal { max-width: 420px; background: #151821; padding: 24px; }
 .custom-confirm-box { max-width: 320px; background: #151821; padding: 20px; text-align: center; }
+
+/* ==================== THEME SWITCHER (President panel) ====================
+   Lets the President preview or force a seasonal banner theme instead of
+   waiting for the automatic date range. Choices are applied instantly via
+   window.SVSSeasonalTheme (see fire-banner.js) and persisted in
+   localStorage, so they also stick across page reloads on that device. */
+.theme-switcher-hint {
+    font-size: 0.8rem;
+    color: #8a8d98;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+.theme-switcher-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.theme-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    background: #1e2026;
+    color: #e5e7eb;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: all 0.18s ease;
+}
+.theme-option-btn:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: #24262e;
+}
+.theme-option-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.theme-option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.theme-option-sub {
+    font-size: 0.74rem;
+    font-weight: 400;
+    color: #8a8d98;
+}
+.theme-option-btn.is-active {
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.12);
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.35) inset;
+}
+.theme-option-btn.is-active .theme-option-sub { color: #fbbf24; }
+.theme-option-check {
+    margin-left: auto;
+    color: #f59e0b;
+    font-size: 1rem;
+    visibility: hidden;
+}
+.theme-option-btn.is-active .theme-option-check { visibility: visible; }
 
 /* Layar pendek (mis. HP landscape): kecilkan padding modal & jarak form
    supaya tombol submit tetap terjangkau dan tidak tertutup keyboard */

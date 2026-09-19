@@ -64,20 +64,20 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=46">
+				<link rel="stylesheet" href="style.css?v=47">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=5" defer=""></script>
-		<script src="lang.js?v=5" defer=""></script>
-					<script src="js/app-core.js?v=46" defer=""></script>
-					<script src="js/app-auth.js?v=44" defer=""></script>
+		<script src="lang.js?v=6" defer=""></script>
+					<script src="js/app-core.js?v=47" defer=""></script>
+					<script src="js/app-auth.js?v=45" defer=""></script>
 					<script src="js/app-notes.js?v=44" defer=""></script>
 					<script src="js/app-schedule.js?v=44" defer=""></script>
 					<script src="js/app-applications.js?v=45" defer=""></script>
 					<script src="js/app-waiting.js?v=45" defer=""></script>
 					<script src="js/app-extras.js?v=45" defer=""></script>
 					<script src="js/app-notifications.js?v=5" defer=""></script>
-					<script src="fire-banner.js" defer=""></script>
+					<script src="fire-banner.js?v=2" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
 		<script>
@@ -192,6 +192,27 @@
 						<div class="halloween-fog"></div>
 						<div class="halloween-fog halloween-fog2"></div>
 						<div class="halloween-lightning"></div>
+
+						<!-- ============ CHRISTMAS SEASONAL OVERLAY ============
+						     Layered on top of the base illustration (christmas-banner.png).
+						     Active automatically 1-30 December every year, or on demand via
+						     the President's Theme Switcher (window.SVSSeasonalTheme). To
+						     revert to the plain orange fire banner outside the season:
+						     nothing to do, fire-banner.js handles it — this block just
+						     needs to stay in the markup. -->
+						<div class="christmas-glow-back"></div>
+						<div class="christmas-art"></div>
+
+						<div class="christmas-glow-spot" style="left:18%; top:28%; animation-delay:.2s;"></div>
+						<div class="christmas-glow-spot" style="left:37%; top:20%; animation-delay:.9s;"></div>
+						<div class="christmas-glow-spot" style="left:62%; top:24%; animation-delay:1.4s;"></div>
+						<div class="christmas-glow-spot" style="left:80%; top:30%; animation-delay:.5s;"></div>
+						<div class="christmas-glow-spot" style="left:70%; top:62%; animation-delay:1.1s;"></div>
+						<div class="christmas-glow-spot" style="left:28%; top:66%; animation-delay:1.8s;"></div>
+
+						<span class="christmas-deco christmas-deco1" aria-hidden="true">🎅</span>
+						<span class="christmas-deco christmas-deco2" aria-hidden="true">🔔</span>
+						<span class="christmas-deco christmas-deco3" aria-hidden="true">🎁</span>
 					</div>
             </div>
 
@@ -462,6 +483,7 @@
 
 			<div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
 				<button id="edit-footer-btn" class="btn-apply" style="background:#f59e0b; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="handleEditFooter()" data-i18n="btn_edit_footer">Edit President Info</button>
+				<button id="theme-switcher-btn" class="btn-apply" style="background:#6d28d9; font-size:0.75rem; padding:6px 12px; display:none; margin: 0;" onclick="openThemeSwitcherModal()" data-i18n="btn_theme_switcher">🎨 Theme Switcher</button>
 				<button id="finish-svs-btn" class="btn-apply" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); font-size:0.75rem; padding:6px 12px; display:none; margin: 0; font-weight: bold;" onclick="handleFinishSVS()" data-i18n="btn_finish_svs">FINISH SvS</button>
 			</div>
 
@@ -508,6 +530,54 @@
 				<div class="form-actions">
 					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeEditFooterModal()" data-i18n="btn_cancel">Cancel</button>
 					<button id="edit-footer-save-btn" class="btn-apply" style="flex: 1; padding: 12px;" onclick="saveEditFooter()" data-i18n="btn_save">Save</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal Theme Switcher (President-only) — force/preview the seasonal
+		     banner theme instead of waiting for the automatic date range.
+		     Applied instantly via window.SVSSeasonalTheme (fire-banner.js). -->
+		<div id="theme-switcher-modal" class="modal hidden">
+			<div class="modal-content custom-form-modal" style="max-width: 380px;">
+				<button type="button" class="close-modal" onclick="closeThemeSwitcherModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 data-i18n="theme_switcher_modal_title" style="margin-bottom: 10px; font-size: 1.2rem;">🎨 Theme Switcher</h2>
+				<p class="theme-switcher-hint" data-i18n="theme_switcher_hint">Choose which banner theme is shown to everyone. "Auto" follows the calendar (Halloween: Oct 1 - Nov 2, Christmas: Dec 1 - 30).</p>
+				<div class="theme-switcher-options">
+					<button type="button" class="theme-option-btn" data-theme-value="auto" onclick="selectSeasonalTheme('auto')">
+						<span class="theme-option-icon">🗓️</span>
+						<span class="theme-option-text">
+							<span data-i18n="theme_option_auto">Auto (by date)</span>
+							<span class="theme-option-sub" data-i18n="theme_option_auto_sub">Follows the calendar automatically</span>
+						</span>
+						<span class="theme-option-check">✓</span>
+					</button>
+					<button type="button" class="theme-option-btn" data-theme-value="none" onclick="selectSeasonalTheme('none')">
+						<span class="theme-option-icon">🔥</span>
+						<span class="theme-option-text">
+							<span data-i18n="theme_option_none">Default (Fire)</span>
+							<span class="theme-option-sub" data-i18n="theme_option_none_sub">The regular orange fire banner</span>
+						</span>
+						<span class="theme-option-check">✓</span>
+					</button>
+					<button type="button" class="theme-option-btn" data-theme-value="halloween" onclick="selectSeasonalTheme('halloween')">
+						<span class="theme-option-icon">🎃</span>
+						<span class="theme-option-text">
+							<span data-i18n="theme_option_halloween">Halloween</span>
+							<span class="theme-option-sub" data-i18n="theme_option_halloween_sub">Force the Halloween banner on</span>
+						</span>
+						<span class="theme-option-check">✓</span>
+					</button>
+					<button type="button" class="theme-option-btn" data-theme-value="christmas" onclick="selectSeasonalTheme('christmas')">
+						<span class="theme-option-icon">🎄</span>
+						<span class="theme-option-text">
+							<span data-i18n="theme_option_christmas">Christmas</span>
+							<span class="theme-option-sub" data-i18n="theme_option_christmas_sub">Force the Christmas banner on</span>
+						</span>
+						<span class="theme-option-check">✓</span>
+					</button>
+				</div>
+				<div class="form-actions">
+					<button class="btn-back" style="margin-bottom: 0; flex: 1; padding: 12px;" onclick="closeThemeSwitcherModal()" data-i18n="btn_close">Close</button>
 				</div>
 			</div>
 		</div>

@@ -91,6 +91,14 @@ reservation-main/
 
 This project is proprietary and maintained for **3475.web.id**.
 
+## V10 update
+- Added a Christmas seasonal banner theme (active automatically every 1-30 December), alongside the existing Halloween theme, reusing the same `#fire-banner` container and embers canvas (now emitting falling gold/red/green glitter instead of embers during Christmas).
+- Unified the seasonal-theme logic in `fire-banner.js` behind a single `svs_theme_override` localStorage key (`auto` / `halloween` / `christmas` / `none`) and a public `window.SVSSeasonalTheme` API, while keeping the old Halloween-only override key working for backward compatibility.
+- Added a **Theme Switcher** menu to the President panel (footer, admin-only) so the President can preview or force a specific banner theme instantly, without waiting for the calendar or editing localStorage by hand.
+- Added `christmas-banner.png` artwork and matching festive (holly-green / candy-cane-red / gold) button re-skinning via `body.christmas-theme`, mirroring the existing Halloween button theme.
+- Added i18n strings for the Theme Switcher across all 6 supported languages (EN/CN/ID/PH/TH/IT).
+- Bumped `style.css`, `lang.js`, `app-core.js`, `app-auth.js`, `fire-banner.js` and the Service Worker cache versions to force clients to receive the new UI.
+
 ## V7 update
 - Replaced native `window.prompt()` reason dialogs with a responsive HTML modal for consistent Android/PWA/iOS behavior.
 - Reason modal is used for slot changes, slot moves, and rejection reasons.
