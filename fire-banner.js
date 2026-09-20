@@ -84,6 +84,35 @@
 	let currentContainer = null;
 	let onThemeChangeCb = null;
 
+	// ============ CADANGAN JIKA GAMBAR BANNER GAGAL DIMUAT ============
+	// Tiap tema punya gambar banner sendiri. Kalau gambar tema yang AKTIF gagal
+	// dimuat (file belum diupload, offline, dsb.), #fire-banner diberi class
+	// 'art-failed' dan CSS memunculkan kembali angka api animasi yang lama,
+	// supaya banner tidak kosong. Gambar tiap tema hanya dicek saat tema itu aktif.
+	const ART_FILES = {
+		none: 'default-banner-v2.jpg',
+		christmas: 'christmas-banner-v3.jpg',
+		halloween: 'halloween-banner.png'
+	};
+	const artState = {}; // tema -> 'loading' | 'ok' | 'failed'
+
+	function checkArt(container, theme) {
+		const file = ART_FILES[theme];
+		if (file && !artState[theme]) {
+			artState[theme] = 'loading';
+			const img = new Image();
+			img.onload = function () { artState[theme] = 'ok'; };
+			img.onerror = function () {
+				artState[theme] = 'failed';
+				if (currentContainer && computeActiveTheme() === theme) {
+					currentContainer.classList.add('art-failed');
+				}
+			};
+			img.src = file;
+		}
+		container.classList.toggle('art-failed', artState[theme] === 'failed');
+	}
+
 	function applySeasonalTheme(container) {
 		const theme = computeActiveTheme();
 		container.classList.toggle('halloween-theme', theme === 'halloween');
@@ -93,6 +122,7 @@
 		// e.g. `body.christmas-theme .btn-apply { ... }`.
 		document.body.classList.toggle('halloween-theme', theme === 'halloween');
 		document.body.classList.toggle('christmas-theme', theme === 'christmas');
+		checkArt(container, theme);
 		return theme;
 	}
 
@@ -142,8 +172,10 @@
 					colorPick: Math.random(), sway: Math.random() * Math.PI * 2
 				});
 			} else {
-				const x = w * (0.15 + Math.random() * 0.7);
-				const y = h * (0.35 + Math.random() * 0.4);
+				// Default banner: sparks rise from around the flaming shield, which
+				// sits in the middle of the picture (not across the whole width).
+				const x = w * (0.30 + Math.random() * 0.40);
+				const y = h * (0.45 + Math.random() * 0.35);
 				const speed = 0.3 + Math.random() * 0.7;
 				const size = 0.6 + Math.random() * 1.4;
 				particles.push({
@@ -208,6 +240,9 @@
 
 		resize();
 		window.addEventListener('resize', resize);
+		// Also follow any change of the banner's own size (theme switch, images or
+		// fonts finishing loading), not just window resizes.
+		if (window.ResizeObserver) new ResizeObserver(resize).observe(container);
 
 		// Hormati preferensi reduced motion pengguna.
 		const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -231,6 +266,7 @@
 		window.__svsReapplyBannerTheme = function () {
 			theme = applySeasonalTheme(container);
 			particles = [];
+			resize(); // the banner height differs per theme on desktop
 			notifyThemeChanged(theme);
 		};
 	}

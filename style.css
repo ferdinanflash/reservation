@@ -450,6 +450,19 @@ body {
     display: none;
 }
 
+/* Fallback: if the active theme's banner picture fails to load (file missing,
+   offline...), fire-banner.js adds "art-failed" to #fire-banner and the
+   old animated CSS fire digits come back instead of a blank banner. */
+.fire-banner.art-failed .fire-glow-back {
+    display: block !important;
+}
+.fire-banner.art-failed .fire-numbers {
+    display: flex !important;
+}
+.fire-banner.art-failed .fire-default-art {
+    display: none;
+}
+
 /* Seasonal themes bring their own art. */
 .fire-banner.halloween-theme .fire-default-art,
 .fire-banner.christmas-theme .fire-default-art {
@@ -682,83 +695,38 @@ body {
     }
 }
 
-.christmas-glow-back {
-    position: absolute;
-    left: 8%; top: 12%;
-    width: 84%; height: 70%;
-    z-index: 1;
-    background: radial-gradient(ellipse at center, rgba(255,215,120,0.28), rgba(180,20,30,0.14) 45%, transparent 72%);
-    filter: blur(10px);
-    animation: christmasGlowPulse 4.2s ease-in-out infinite;
-}
-@keyframes christmasGlowPulse {
-    0%, 100% { opacity: .7; transform: scale(1); }
-    50%      { opacity: 1;  transform: scale(1.05); }
-}
-
+/* Twinkling highlights placed on the picture's real lights. They are children
+   of .christmas-art (see index.html), so they sway together with the picture;
+   left/top are set inline as % of the picture. */
 .christmas-glow-spot {
     position: absolute;
-    z-index: 3;
-    width: 2.4%; height: 4.6%;
+    width: 2.4%; height: 4.3%;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,235,150,0.95), rgba(255,180,60,0.2) 60%, transparent 75%);
+    background: radial-gradient(circle, rgba(255,240,190,0.95), rgba(255,190,70,0.22) 60%, transparent 75%);
     mix-blend-mode: screen;
     pointer-events: none;
     animation: christmasTwinkle 2.2s ease-in-out infinite;
 }
-.christmas-glow-spot:nth-child(odd) {
-    background: radial-gradient(circle, rgba(140,255,170,0.9), rgba(30,160,80,0.2) 60%, transparent 75%);
-}
 @keyframes christmasTwinkle {
-    0%, 100% { opacity: .4; transform: scale(0.85); }
-    30%      { opacity: 1;  transform: scale(1.1); }
-    55%      { opacity: .5; transform: scale(0.9); }
-    80%      { opacity: .9; transform: scale(1.05); }
+    0%, 100% { opacity: .35; transform: scale(0.85); }
+    30%      { opacity: 1;   transform: scale(1.15); }
+    55%      { opacity: .5;  transform: scale(0.9); }
+    80%      { opacity: .9;  transform: scale(1.05); }
 }
 
-.christmas-deco {
-    position: absolute;
-    z-index: 4;
-    font-size: 16px;
-    opacity: .92;
-    filter: drop-shadow(0 0 4px rgba(0,0,0,.55));
-    pointer-events: none;
-}
-.christmas-deco1 { top: 8%;  animation: christmasFloatRight 13s linear infinite; }
-.christmas-deco2 { top: 15%; animation: christmasFloatLeft 15s linear infinite; animation-delay: 4s; font-size: 13px; }
-.christmas-deco3 { top: 5%;  animation: christmasFloatRight 17s linear infinite; animation-delay: 8s; }
-
-@keyframes christmasFloatRight {
-    0%   { left: -5%;  transform: translateY(0) rotate(-6deg); }
-    50%  { transform: translateY(-3%) rotate(6deg); }
-    100% { left: 105%; transform: translateY(2%) rotate(-6deg); }
-}
-@keyframes christmasFloatLeft {
-    0%   { left: 105%; transform: translateY(0) rotate(6deg); }
-    50%  { transform: translateY(-3%) rotate(-6deg); }
-    100% { left: -5%;  transform: translateY(2%) rotate(6deg); }
-}
-
-/* Overlay elements only render while #fire-banner carries the
-   "christmas-theme" class. That class is added/removed automatically by
-   fire-banner.js based on the current date (or the President's Theme
-   Switcher) — outside the season these stay hidden and the plain orange
-   fire banner (.fire-glow-back / .fire-numbers, un-hidden above) shows
-   instead. */
-.christmas-art, .christmas-glow-back, .christmas-glow-spot, .christmas-deco {
+/* The picture (and the twinkles inside it) only render while #fire-banner
+   carries the "christmas-theme" class. That class is added/removed
+   automatically by fire-banner.js based on the current date (or the
+   President's Theme Switcher) — outside the season it stays hidden. */
+.christmas-art {
     display: none;
 }
-.fire-banner.christmas-theme .christmas-art,
-.fire-banner.christmas-theme .christmas-glow-back,
-.fire-banner.christmas-theme .christmas-glow-spot {
+.fire-banner.christmas-theme .christmas-art {
     display: block;
-}
-.fire-banner.christmas-theme .christmas-deco {
-    display: inline-block;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .christmas-art, .christmas-glow-back, .christmas-glow-spot, .christmas-deco {
+    .christmas-art, .christmas-glow-spot {
         animation: none !important;
     }
 }

@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-09-20-10';
+			var APP_BUILD = '2026-09-20-12';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -64,7 +64,7 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=53">
+				<link rel="stylesheet" href="style.css?v=55">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=5" defer=""></script>
@@ -77,7 +77,7 @@
 					<script src="js/app-waiting.js?v=45" defer=""></script>
 					<script src="js/app-extras.js?v=45" defer=""></script>
 					<script src="js/app-notifications.js?v=5" defer=""></script>
-					<script src="fire-banner.js?v=3" defer=""></script>
+					<script src="fire-banner.js?v=5" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
 		<script>
@@ -220,25 +220,24 @@
 						<div class="halloween-lightning"></div>
 
 						<!-- ============ CHRISTMAS SEASONAL OVERLAY ============
-						     Layered on top of the base illustration (christmas-banner-v3.jpg).
-						     Active automatically 1-30 December every year, or on demand via
-						     the President's Theme Switcher (window.SVSSeasonalTheme). To
-						     revert to the plain orange fire banner outside the season:
-						     nothing to do, fire-banner.js handles it — this block just
-						     needs to stay in the markup. -->
-						<div class="christmas-glow-back"></div>
-						<div class="christmas-art"></div>
-
-						<div class="christmas-glow-spot" style="left:18%; top:28%; animation-delay:.2s;"></div>
-						<div class="christmas-glow-spot" style="left:37%; top:20%; animation-delay:.9s;"></div>
-						<div class="christmas-glow-spot" style="left:62%; top:24%; animation-delay:1.4s;"></div>
-						<div class="christmas-glow-spot" style="left:80%; top:30%; animation-delay:.5s;"></div>
-						<div class="christmas-glow-spot" style="left:70%; top:62%; animation-delay:1.1s;"></div>
-						<div class="christmas-glow-spot" style="left:28%; top:66%; animation-delay:1.8s;"></div>
-
-						<span class="christmas-deco christmas-deco1" aria-hidden="true">🎅</span>
-						<span class="christmas-deco christmas-deco2" aria-hidden="true">🔔</span>
-						<span class="christmas-deco christmas-deco3" aria-hidden="true">🎁</span>
+						     christmas-banner-v3.jpg with twinkling highlights on its real
+						     lights (bulbs, stars, gold sparkles). The twinkles sit INSIDE
+						     .christmas-art so they move with the picture; their left/top
+						     are % of the picture. Active automatically 1-30 December, or
+						     on demand via the President's Theme Switcher
+						     (window.SVSSeasonalTheme); fire-banner.js handles the rest. -->
+						<div class="christmas-art">
+							<span class="christmas-glow-spot" style="left:40.2%; top:6.7%; animation-delay:0.2s; animation-duration:2.2s;"></span>
+							<span class="christmas-glow-spot" style="left:64.5%; top:10.5%; animation-delay:0.9s; animation-duration:2.6s;"></span>
+							<span class="christmas-glow-spot" style="left:73.9%; top:18.0%; animation-delay:1.4s; animation-duration:2.0s;"></span>
+							<span class="christmas-glow-spot" style="left:22.6%; top:31.2%; animation-delay:0.5s; animation-duration:2.4s;"></span>
+							<span class="christmas-glow-spot" style="left:36.4%; top:31.2%; animation-delay:1.1s; animation-duration:2.8s;"></span>
+							<span class="christmas-glow-spot" style="left:52.6%; top:45.0%; animation-delay:1.8s; animation-duration:2.1s;"></span>
+							<span class="christmas-glow-spot" style="left:11.3%; top:48.6%; animation-delay:0.7s; animation-duration:2.5s;"></span>
+							<span class="christmas-glow-spot" style="left:81.4%; top:47.9%; animation-delay:1.5s; animation-duration:2.3s;"></span>
+							<span class="christmas-glow-spot" style="left:35.7%; top:63.9%; animation-delay:0.3s; animation-duration:2.7s;"></span>
+							<span class="christmas-glow-spot" style="left:63.7%; top:64.5%; animation-delay:1.2s; animation-duration:2.2s;"></span>
+						</div>
 					</div>
             </div>
 
