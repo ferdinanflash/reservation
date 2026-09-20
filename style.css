@@ -417,7 +417,7 @@ body {
 /* ==================== DEFAULT BANNER ART (no seasonal theme) ====================
    default-banner-v2.jpg (a flaming "3475" shield) replaces the old CSS/SVG fire
    digits whenever #fire-banner has none of "halloween-theme",
-   "christmas-theme" or "valentine-theme". The gold/orange embers canvas (#fire-banner-embers)
+   "christmas-theme", "valentine-theme" or "cny-theme". The gold/orange embers canvas (#fire-banner-embers)
    still floats on top of it, and a soft warm glow pulses over the flames.
    To go back to the old animated CSS digits, delete this block and the
    "hide old digits" rule right below it. */
@@ -445,8 +445,8 @@ body {
 }
 
 /* hide old digits: the default art already contains the "3475" */
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme) .fire-glow-back,
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme) .fire-numbers {
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme) .fire-glow-back,
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme) .fire-numbers {
     display: none;
 }
 
@@ -466,7 +466,8 @@ body {
 /* Seasonal themes bring their own art. */
 .fire-banner.halloween-theme .fire-default-art,
 .fire-banner.christmas-theme .fire-default-art,
-.fire-banner.valentine-theme .fire-default-art {
+.fire-banner.valentine-theme .fire-default-art,
+.fire-banner.cny-theme .fire-default-art {
     display: none;
 }
 
@@ -793,6 +794,91 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
     .valentine-art, .valentine-glow-spot {
+        animation: none !important;
+    }
+}
+
+/* ==================== CHINESE NEW YEAR (IMLEK) SEASONAL BANNER OVERLAY ====================
+   Shows the illustrated cny-banner-v1.jpg (a red and gold "3475" wrapped by a
+   dragon, with lanterns, gold clouds, lucky coins, cherry blossoms and a
+   "Chinese New Year" ribbon) in the #fire-banner container, with twinkling
+   lights and flickering lanterns on top, and the embers canvas switched to
+   rising gold / red sparks plus drifting blossom petals (see fire-banner.js).
+   Active only while #fire-banner also has the "cny-theme" class, which
+   fire-banner.js toggles automatically on the dates listed in CNY_DATES
+   (2027: 6 - 13 Feb), or on demand via the President's Theme Switcher
+   (window.SVSSeasonalTheme). The desktop sizing comes from the shared
+   ".fire-banner:not(.halloween-theme)" rule above. */
+
+.fire-banner.cny-theme .fire-glow-back,
+.fire-banner.cny-theme .fire-numbers {
+    display: none;
+}
+
+.fire-banner.cny-theme {
+    background: radial-gradient(ellipse at 50% 65%, #5c0a10 0%, #1f0508 55%, #070304 100%);
+}
+
+.cny-art {
+    position: absolute;
+    inset: -3%;
+    z-index: 2;
+    background-image: url('cny-banner-v1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: cnySway 6s ease-in-out infinite;
+    display: none;
+}
+.fire-banner.cny-theme .cny-art {
+    display: block;
+}
+@keyframes cnySway {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50%      { transform: scale(1.015) translateY(-4px); }
+}
+
+/* Twinkling highlights placed on the picture's real lights (fireworks, gold
+   stars, coins, dragon eye). They are children of .cny-art (see index.html),
+   so they sway together with the picture; left/top (inline, % of the picture)
+   mark the CENTER of each twinkle. */
+.cny-glow-spot {
+    position: absolute;
+    width: 2.4%; height: 4.3%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,246,210,0.95), rgba(255,200,80,0.26) 60%, transparent 75%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: cnyTwinkle 2.2s ease-in-out infinite;
+}
+@keyframes cnyTwinkle {
+    0%, 100% { opacity: .35; transform: translate(-50%, -50%) scale(0.85); }
+    30%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+    55%      { opacity: .5;  transform: translate(-50%, -50%) scale(0.9); }
+    80%      { opacity: .9;  transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* Warm, slow flicker over the three red lanterns. */
+.cny-lantern-glow {
+    position: absolute;
+    width: 8%; height: 14%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,175,70,0.5), rgba(255,90,25,0.18) 55%, transparent 72%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: cnyLanternFlicker 3.2s ease-in-out infinite;
+}
+@keyframes cnyLanternFlicker {
+    0%, 100% { opacity: .45; transform: translate(-50%, -50%) scale(0.95); }
+    25%      { opacity: .9;  transform: translate(-50%, -50%) scale(1.08); }
+    50%      { opacity: .6;  transform: translate(-50%, -50%) scale(1); }
+    75%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cny-art, .cny-glow-spot, .cny-lantern-glow {
         animation: none !important;
     }
 }
@@ -1499,6 +1585,131 @@ body.valentine-theme .btn-add-another-time:hover {
     }
 }
 
+/* ==================== CHINESE NEW YEAR (IMLEK) SEASONAL BUTTON THEME ====================
+   Same idea as the other seasonal button themes: fire-banner.js toggles a
+   "cny-theme" class on <body> on the dates in CNY_DATES (or via the
+   President's Theme Switcher). Buttons keep their shape/size and their
+   meaning — Apply becomes imperial gold, Accept stays green (jade), Reject /
+   Remove stays red — only the palette shifts to lacquer red / gold.
+   .btn-discord is left alone since that's Discord's own brand color. */
+
+body.cny-theme .btn-apply {
+    background: linear-gradient(135deg, #ffd76a 0%, #d99a1c 100%) !important;
+    color: #3b0a0a !important;
+    border-color: rgba(255, 244, 200, 0.55) !important;
+    animation: cnyGoldPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes cnyGoldPulse {
+    0% {
+        background: linear-gradient(135deg, #ffd76a 0%, #d99a1c 100%);
+        box-shadow: 0 0 4px rgba(255, 200, 80, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #ffe596 0%, #eab030 100%);
+        box-shadow: 0 0 14px rgba(255, 215, 106, 0.9);
+        border-color: rgba(255, 250, 225, 0.7);
+    }
+    100% {
+        background: linear-gradient(135deg, #ffd76a 0%, #d99a1c 100%);
+        box-shadow: 0 0 4px rgba(255, 200, 80, 0.45);
+    }
+}
+
+/* Destructive actions (Reject / Remove / Drop) — lucky-red pulse, still
+   unmistakably "red / stop". */
+body.cny-theme .btn-danger,
+body.cny-theme .admin-reject-btn {
+    background: linear-gradient(135deg, #e0202e 0%, #8a0b16 100%) !important;
+    animation: cnyRedPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes cnyRedPulse {
+    0% {
+        background: linear-gradient(135deg, #e0202e 0%, #8a0b16 100%);
+        box-shadow: 0 0 4px rgba(224, 32, 46, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #f44a58 0%, #a3101d 100%);
+        box-shadow: 0 0 14px rgba(244, 80, 92, 0.85);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        background: linear-gradient(135deg, #e0202e 0%, #8a0b16 100%);
+        box-shadow: 0 0 4px rgba(224, 32, 46, 0.45);
+    }
+}
+
+/* Accept — jade green glow, keeps the "go / approve" meaning */
+body.cny-theme .admin-accept-btn {
+    background: linear-gradient(135deg, #22c58a 0%, #0d7a4e 100%) !important;
+    box-shadow: 0 0 8px rgba(60, 220, 160, 0.4) !important;
+}
+body.cny-theme .admin-accept-btn:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 0 14px rgba(90, 235, 180, 0.65) !important;
+}
+
+/* President / admin login button — red lacquer with a gold glow */
+body.cny-theme .btn-admin {
+    background: linear-gradient(135deg, #9b0f1c 0%, #330409 100%);
+    border-color: rgba(255, 215, 110, 0.5);
+    box-shadow: 0 0 8px rgba(255, 200, 80, 0.35);
+    animation: cnyGoldGlint 3.2s infinite ease-in-out;
+}
+body.cny-theme .btn-admin:hover {
+    background: linear-gradient(135deg, #b8152a 0%, #45060d 100%);
+    border-color: rgba(255, 225, 140, 0.8);
+}
+@keyframes cnyGoldGlint {
+    0%, 100% { box-shadow: 0 0 8px rgba(255, 200, 80, 0.35); }
+    30%      { box-shadow: 0 0 13px rgba(255, 220, 120, 0.6); }
+    55%      { box-shadow: 0 0 6px rgba(255, 200, 80, 0.25); }
+    80%      { box-shadow: 0 0 12px rgba(255, 220, 120, 0.5); }
+}
+
+/* Back / neutral button — champagne gold outline */
+body.cny-theme .btn-back {
+    color: #f6dcae;
+    border-color: rgba(255, 205, 120, 0.4);
+}
+body.cny-theme .btn-back:hover {
+    color: #ffd76a;
+    border-color: rgba(255, 215, 110, 0.6);
+    background: rgba(255, 200, 80, 0.07);
+}
+
+/* Save button in the admin application-edit panel */
+body.cny-theme .admin-save-application-btn {
+    background: linear-gradient(135deg, #b5121f 0%, #6b0a12 100%) !important;
+}
+
+/* Additional-time-slot controls on the reservation form */
+body.cny-theme .btn-remove-additional-time {
+    color: #f16a7a;
+    border-color: rgba(241, 106, 122, 0.25);
+}
+body.cny-theme .btn-remove-additional-time:hover {
+    background: rgba(241, 106, 122, 0.14);
+    border-color: #f16a7a;
+}
+body.cny-theme .btn-add-another-time {
+    border-color: rgba(255, 205, 110, 0.4);
+    color: #ffd98a;
+}
+body.cny-theme .btn-add-another-time:hover {
+    border-color: #ffc94d;
+    color: #ffe9b8;
+    background: rgba(255, 200, 80, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.cny-theme .btn-apply,
+    body.cny-theme .btn-danger,
+    body.cny-theme .admin-reject-btn,
+    body.cny-theme .btn-admin {
+        animation: none !important;
+    }
+}
+
 /* ==================== SEASONAL GOLD-TEXT THEMES (header logo + footer names) ====================
    The "SvS Minister" logo in the header and the President / guild names in
    the footer all use the gold .fire-text shine. While <body> carries a
@@ -1506,6 +1717,7 @@ body.valentine-theme .btn-add-another-time:hover {
    Theme Switcher) the same shine switches to that season's palette:
      - christmas-theme: candy-cane red / gold / holly green
      - valentine-theme: rose pink / crimson / gold
+     - cny-theme: lucky red / gold / champagne
      - halloween-theme: pumpkin orange / witch violet / witch green
    The header logo also gets a small emoji in front. Outside the seasons
    the plain gold look shows again. */
@@ -1558,6 +1770,30 @@ body.valentine-theme .navbar .logo.fire-text::before {
     letter-spacing: 0;
 }
 
+/* ---- Chinese New Year ---- */
+body.cny-theme .navbar .logo.fire-text,
+body.cny-theme .site-footer .fire-text {
+    background-image: linear-gradient(
+        to right,
+        #ff4a3d 0%,
+        #fff0c8 16%,
+        #ffd25e 32%,
+        #ff3326 50%,
+        #fff0c8 66%,
+        #ffd25e 82%,
+        #ff4a3d 100%
+    );
+    background-size: 200% auto;
+    filter: drop-shadow(0 0 6px rgba(255, 90, 50, 0.4)) drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.7));
+}
+body.cny-theme .navbar .logo.fire-text::before {
+    content: '\1F3EE';           /* red paper lantern */
+    display: inline-block;
+    margin-right: 6px;
+    -webkit-text-fill-color: initial;
+    letter-spacing: 0;
+}
+
 /* ---- Halloween ---- */
 body.halloween-theme .navbar .logo.fire-text,
 body.halloween-theme .site-footer .fire-text {
@@ -1587,6 +1823,8 @@ body.halloween-theme .navbar .logo.fire-text::before {
     body.christmas-theme .site-footer .fire-text,
     body.valentine-theme .navbar .logo.fire-text,
     body.valentine-theme .site-footer .fire-text,
+    body.cny-theme .navbar .logo.fire-text,
+    body.cny-theme .site-footer .fire-text,
     body.halloween-theme .navbar .logo.fire-text,
     body.halloween-theme .site-footer .fire-text {
         animation: none !important;
@@ -2369,7 +2607,7 @@ th {
 
 /* ==================== SEASONAL OPENING ANIMATION ====================
    The intro overlay normally uses the orange fire palette. While <body> has
-   "christmas-theme", "valentine-theme" or "halloween-theme" (put there early by the inline
+   "christmas-theme", "valentine-theme", "cny-theme" or "halloween-theme" (put there early by the inline
    script at the top of <body>, then kept in sync by fire-banner.js) every part of it
    — glow, sparks, rays, number, line and the "SvS MINISTER" title — switches
    to that season's palette. Timing and layout are untouched. */
@@ -2403,6 +2641,7 @@ body.christmas-theme .svs-opening-line {
 }
 body.christmas-theme .svs-opening-title,
 body.valentine-theme .svs-opening-title,
+body.cny-theme .svs-opening-title,
 body.halloween-theme .svs-opening-title {
     display: inline-block;
     text-shadow: none;
@@ -2418,6 +2657,8 @@ body.christmas-theme .svs-opening-title::before,
 body.christmas-theme .svs-opening-title::after,
 body.valentine-theme .svs-opening-title::before,
 body.valentine-theme .svs-opening-title::after,
+body.cny-theme .svs-opening-title::before,
+body.cny-theme .svs-opening-title::after,
 body.halloween-theme .svs-opening-title::before,
 body.halloween-theme .svs-opening-title::after {
     -webkit-text-fill-color: initial;
@@ -2489,6 +2730,55 @@ body.valentine-theme .svs-opening-sparks::before {
 body.valentine-theme .svs-opening-sparks::after {
     background: linear-gradient(90deg, transparent 0%, rgba(255, 90, 160, .6) 49%, rgba(255, 227, 239, .9) 50%, rgba(255, 210, 94, .6) 51%, transparent 100%);
     box-shadow: 0 0 18px rgba(255, 90, 160, .7);
+}
+
+/* ---------- Chinese New Year: lucky red / gold ---------- */
+body.cny-theme .svs-opening {
+    background:
+        radial-gradient(circle at 50% 48%, rgba(220, 38, 38, 0.18) 0%, rgba(245, 180, 40, 0.06) 22%, transparent 45%),
+        #060304;
+}
+body.cny-theme .svs-opening-glow {
+    background: radial-gradient(circle, rgba(239, 68, 50, .28) 0%, rgba(245, 180, 40, .11) 22%, transparent 65%);
+}
+body.cny-theme .svs-opening-number {
+    background: linear-gradient(180deg, #fff0c8 0%, #ffd25e 24%, #ef3b2d 56%, #8f0d16 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(255, 190, 90, .95))
+            drop-shadow(0 0 22px rgba(239, 68, 50, .7))
+            drop-shadow(0 0 55px rgba(245, 180, 40, .38));
+    animation-name: svs-number-pulse-cny;
+}
+@keyframes svs-number-pulse-cny {
+    0%   { filter: drop-shadow(0 0 4px rgba(255, 190, 90, .65)); }
+    100% { filter: drop-shadow(0 0 9px rgba(255, 210, 120, 1)) drop-shadow(0 0 35px rgba(239, 68, 50, .72)) drop-shadow(0 0 60px rgba(245, 180, 40, .35)); }
+}
+body.cny-theme .svs-opening-line {
+    background: linear-gradient(90deg, transparent, #ff4a3d, #fff0c8, #ffd25e, transparent);
+    box-shadow: 0 0 10px rgba(255, 90, 60, .9), 0 0 28px rgba(245, 180, 40, .5);
+}
+body.cny-theme .svs-opening-title {
+    background-image: linear-gradient(90deg, #ff5a4a 0%, #fff0c8 30%, #ffd25e 50%, #ffb347 80%, #ff4a3d 100%);
+    filter: drop-shadow(0 0 8px rgba(255, 90, 60, .45)) drop-shadow(0 0 16px rgba(245, 180, 40, .3));
+}
+body.cny-theme .svs-opening-title::before { content: '\1F3EE'; margin-right: .5em; }
+body.cny-theme .svs-opening-title::after  { content: '\1F3EE'; margin-left: .5em; }
+body.cny-theme .svs-opening-sparks {
+    background-image:
+        radial-gradient(circle at 50% 50%, #fff0c8 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 35%, #ff4a3d 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #ffd25e 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 70%, #ff8a3d 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, #ffe08a 0 1px, transparent 2px);
+}
+body.cny-theme .svs-opening-sparks::before {
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255, 200, 100, .7) 0deg 0.7deg, transparent 0.7deg 18deg);
+}
+body.cny-theme .svs-opening-sparks::after {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 90, 60, .6) 49%, rgba(255, 240, 200, .9) 50%, rgba(255, 210, 94, .6) 51%, transparent 100%);
+    box-shadow: 0 0 18px rgba(255, 90, 60, .7);
 }
 
 /* ---------- Halloween: pumpkin orange / witch violet / witch green ---------- */

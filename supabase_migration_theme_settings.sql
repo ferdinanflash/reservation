@@ -6,16 +6,17 @@
 -- choice now lives in this single-row table: every visitor reads it on load
 -- and receives changes instantly through Supabase Realtime.
 --
---   theme_override = 'auto'       -> follow the calendar (Halloween / Christmas / Valentine)
+--   theme_override = 'auto'       -> follow the calendar (Halloween / Christmas / Valentine / Chinese New Year)
 --                    'halloween'  -> force Halloween for everyone
 --                    'christmas'  -> force Christmas for everyone
 --                    'valentine'  -> force Valentine for everyone
+--                    'cny'        -> force Chinese New Year (Imlek) for everyone
 --                    'none'       -> force the plain fire banner for everyone
 
 CREATE TABLE IF NOT EXISTS public.theme_settings (
     id text PRIMARY KEY,
     theme_override text NOT NULL DEFAULT 'auto'
-        CHECK (theme_override IN ('auto', 'halloween', 'christmas', 'valentine', 'none')),
+        CHECK (theme_override IN ('auto', 'halloween', 'christmas', 'valentine', 'cny', 'none')),
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 

@@ -39,7 +39,7 @@ reservation-main/
 ├── sw.js                                  # Service Worker for PWA functionality
 ├── site.webmanifest                       # Web app manifest configuration
 ├── opening-animation.js                   # Visual opening sequence
-├── fire-banner.js                         # Custom animated banner UI element + seasonal themes (Halloween / Christmas / Valentine)
+├── fire-banner.js                         # Custom animated banner UI element + seasonal themes (Halloween / Christmas / Valentine / Chinese New Year)
 ├── js/
 │   ├── app-auth.js                        # Authentication & role authorization
 │   ├── app-applications.js                # Application submission & President review
@@ -90,6 +90,15 @@ reservation-main/
 ## 📄 License
 
 This project is proprietary and maintained for **3475.web.id**.
+
+## V13 update
+- Added a **Chinese New Year (Imlek)** seasonal theme (`cny`), on demand from the President's Theme Switcher (new 🏮 Chinese New Year option, translated in all 6 languages) or automatically on the dates listed in `CNY_DATES` in `fire-banner.js`. Chinese New Year follows the lunar calendar, so the dates are listed per year; a year that is not listed simply has no automatic Imlek banner. **2027: 6 - 13 Feb** (Imlek falls on 6 Feb 2027).
+  - **No clash with Valentine:** the Chinese New Year check runs BEFORE the Valentine check, so on overlapping days Imlek wins and Valentine yields. In 2027 the automatic sequence is Valentine 1 - 5 Feb, Chinese New Year 6 - 13 Feb, Valentine again on 14 Feb (Valentine's Day itself). In years without a `CNY_DATES` entry, Valentine runs 1 - 14 Feb as before. For a later year add one line to `CNY_DATES` (months are 0-based, Feb = 1) and to the matching inline script at the top of `<body>` in `index.html` (keep the two in sync).
+  - New banner artwork `cny-banner-v1.jpg` (red / gold "3475" wrapped by a dragon, lanterns, gold clouds, lucky coins, cherry blossoms and a "Chinese New Year" ribbon), with 16 twinkles on its real lights (`.cny-art` / `.cny-glow-spot`), a warm flicker on the three lanterns (`.cny-lantern-glow`) and the embers canvas emitting rising gold / red sparks plus drifting blossom petals. Shown whole on desktop, like the default, Christmas and Valentine banners.
+  - The small generator sparkle watermark in the bottom-right corner of the picture was removed (only that area of the image was touched).
+  - Buttons re-skinned via `body.cny-theme` (gold Apply with dark text, red Reject/Remove, jade-green Accept, red-lacquer President button); the header "SvS Minister" logo (🏮 in front) and footer names use a red / gold shine; the opening (intro) animation follows the palette (🏮 around the title).
+- **Required:** run `supabase_migration_theme_cny.sql` once in the Supabase SQL Editor, otherwise saving "Chinese New Year" from the Theme Switcher is rejected by the `theme_override` CHECK constraint (the automatic dates work either way). `supabase_migration_theme_settings.sql` was updated for fresh installs.
+- Added the image to the Service Worker precache; bumped `style.css`, `lang.js`, `fire-banner.js`, `APP_BUILD` and the cache version.
 
 ## V12 update
 - Added a **Valentine** seasonal theme, active automatically every 1-14 February (see `SEASONS` in `fire-banner.js`) or on demand from the President's Theme Switcher (new 💖 Valentine option, translated in all 6 languages). It mirrors the Christmas / Halloween themes:
