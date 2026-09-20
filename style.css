@@ -445,8 +445,8 @@ body {
 }
 
 /* hide old digits: the default art already contains the "3475" */
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme) .fire-glow-back,
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme) .fire-numbers {
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme) .fire-glow-back,
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme) .fire-numbers {
     display: none;
 }
 
@@ -468,7 +468,8 @@ body {
 .fire-banner.christmas-theme .fire-default-art,
 .fire-banner.valentine-theme .fire-default-art,
 .fire-banner.cny-theme .fire-default-art,
-.fire-banner.eid-theme .fire-default-art {
+.fire-banner.eid-theme .fire-default-art,
+.fire-banner.midautumn-theme .fire-default-art {
     display: none;
 }
 
@@ -964,6 +965,107 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
     .eid-art, .eid-glow-spot, .eid-lantern-glow {
+        animation: none !important;
+    }
+}
+
+/* ==================== MID-AUTUMN FESTIVAL SEASONAL BANNER OVERLAY ====================
+   Shows the illustrated midautumn-banner-v1.jpg (a jade / red / gold "3475"
+   under a full moon with jade rabbits, phoenixes, osmanthus blossoms,
+   mooncakes, fireworks and sky / string lanterns, with a "Mid-Autumn
+   Festival" ribbon) in the #fire-banner container, with a slow breathing
+   glow on the moon, twinkles on the fireworks, a warm flicker on the lanterns
+   and the embers canvas switched to rising gold / orange / lilac sparkles
+   (see fire-banner.js). Active only while #fire-banner also has the
+   "midautumn-theme" class, which fire-banner.js toggles automatically every
+   19-27 September, or on demand via the President's Theme Switcher
+   (window.SVSSeasonalTheme). The desktop sizing comes from the shared
+   ".fire-banner:not(.halloween-theme)" rule above. */
+
+.fire-banner.midautumn-theme .fire-glow-back,
+.fire-banner.midautumn-theme .fire-numbers {
+    display: none;
+}
+
+.fire-banner.midautumn-theme {
+    background: radial-gradient(ellipse at 50% 65%, #3d1c70 0%, #170a3a 55%, #07041a 100%);
+}
+
+.midautumn-art {
+    position: absolute;
+    inset: -3%;
+    z-index: 2;
+    background-image: url('midautumn-banner-v1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: midautumnSway 6s ease-in-out infinite;
+    display: none;
+}
+.fire-banner.midautumn-theme .midautumn-art {
+    display: block;
+}
+@keyframes midautumnSway {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50%      { transform: scale(1.015) translateY(-4px); }
+}
+
+/* Soft breathing glow over the full moon (left/top = the moon's center). */
+.midautumn-moon-glow {
+    position: absolute;
+    width: 32%; height: 57%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,240,180,0.34), rgba(255,215,120,0.12) 55%, transparent 72%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: midautumnMoonBreathe 5s ease-in-out infinite;
+}
+@keyframes midautumnMoonBreathe {
+    0%, 100% { opacity: .55; transform: translate(-50%, -50%) scale(0.97); }
+    50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* Twinkles on the fireworks. Children of .midautumn-art (see index.html), so
+   they sway with the picture; left/top (inline, % of the picture) mark the
+   CENTER of each one. */
+.midautumn-glow-spot {
+    position: absolute;
+    width: 2.6%; height: 4.6%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,250,225,0.95), rgba(255,215,120,0.26) 60%, transparent 75%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: midautumnTwinkle 2.2s ease-in-out infinite;
+}
+@keyframes midautumnTwinkle {
+    0%, 100% { opacity: .35; transform: translate(-50%, -50%) scale(0.85); }
+    30%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+    55%      { opacity: .5;  transform: translate(-50%, -50%) scale(0.9); }
+    80%      { opacity: .9;  transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* Warm, slow flicker inside the sky lanterns and the string lanterns. */
+.midautumn-lantern-glow {
+    position: absolute;
+    width: 5%; height: 9%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,205,110,0.5), rgba(255,140,50,0.18) 55%, transparent 72%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: midautumnLanternFlicker 3.2s ease-in-out infinite;
+}
+@keyframes midautumnLanternFlicker {
+    0%, 100% { opacity: .4;  transform: translate(-50%, -50%) scale(0.95); }
+    25%      { opacity: .85; transform: translate(-50%, -50%) scale(1.08); }
+    50%      { opacity: .55; transform: translate(-50%, -50%) scale(1); }
+    75%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .midautumn-art, .midautumn-moon-glow, .midautumn-glow-spot, .midautumn-lantern-glow {
         animation: none !important;
     }
 }
@@ -1918,6 +2020,129 @@ body.eid-theme .btn-add-another-time:hover {
     }
 }
 
+/* ==================== MID-AUTUMN FESTIVAL SEASONAL BUTTON THEME ====================
+   fire-banner.js toggles a "midautumn-theme" class on <body> every 19-27
+   September (or via the President's Theme Switcher). Buttons keep their
+   shape/size and their meaning — Apply becomes moon-gold with dark text,
+   Accept stays green, Reject / Remove stays red — only the palette shifts
+   to gold / midnight purple. .btn-discord is left alone (Discord's brand color). */
+
+body.midautumn-theme .btn-apply {
+    background: linear-gradient(135deg, #ffd76a 0%, #d99a1c 100%) !important;
+    color: #2a1250 !important;
+    border-color: rgba(255, 244, 200, 0.55) !important;
+    animation: midautumnGoldPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes midautumnGoldPulse {
+    0% {
+        background: linear-gradient(135deg, #ffd76a 0%, #d99a1c 100%);
+        box-shadow: 0 0 4px rgba(255, 200, 80, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #ffe596 0%, #eab030 100%);
+        box-shadow: 0 0 14px rgba(255, 215, 106, 0.9);
+        border-color: rgba(255, 250, 225, 0.7);
+    }
+    100% {
+        background: linear-gradient(135deg, #ffd76a 0%, #d99a1c 100%);
+        box-shadow: 0 0 4px rgba(255, 200, 80, 0.45);
+    }
+}
+
+/* Destructive actions (Reject / Remove / Drop) — still unmistakably red. */
+body.midautumn-theme .btn-danger,
+body.midautumn-theme .admin-reject-btn {
+    background: linear-gradient(135deg, #e0202e 0%, #8a0b16 100%) !important;
+    animation: midautumnRedPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes midautumnRedPulse {
+    0% {
+        background: linear-gradient(135deg, #e0202e 0%, #8a0b16 100%);
+        box-shadow: 0 0 4px rgba(224, 32, 46, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #f44a58 0%, #a3101d 100%);
+        box-shadow: 0 0 14px rgba(244, 80, 92, 0.85);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        background: linear-gradient(135deg, #e0202e 0%, #8a0b16 100%);
+        box-shadow: 0 0 4px rgba(224, 32, 46, 0.45);
+    }
+}
+
+/* Accept — jade green glow, keeps the "go / approve" meaning */
+body.midautumn-theme .admin-accept-btn {
+    background: linear-gradient(135deg, #22c5a0 0%, #0d7a63 100%) !important;
+    box-shadow: 0 0 8px rgba(60, 220, 190, 0.4) !important;
+}
+body.midautumn-theme .admin-accept-btn:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 0 14px rgba(90, 235, 205, 0.65) !important;
+}
+
+/* President / admin login button — midnight purple with a gold glow */
+body.midautumn-theme .btn-admin {
+    background: linear-gradient(135deg, #4a1f8c 0%, #170a3a 100%);
+    border-color: rgba(255, 215, 110, 0.5);
+    box-shadow: 0 0 8px rgba(255, 200, 80, 0.35);
+    animation: midautumnGoldGlint 3.2s infinite ease-in-out;
+}
+body.midautumn-theme .btn-admin:hover {
+    background: linear-gradient(135deg, #5d2aa8 0%, #22104d 100%);
+    border-color: rgba(255, 225, 140, 0.8);
+}
+@keyframes midautumnGoldGlint {
+    0%, 100% { box-shadow: 0 0 8px rgba(255, 200, 80, 0.35); }
+    30%      { box-shadow: 0 0 13px rgba(255, 220, 120, 0.6); }
+    55%      { box-shadow: 0 0 6px rgba(255, 200, 80, 0.25); }
+    80%      { box-shadow: 0 0 12px rgba(255, 220, 120, 0.5); }
+}
+
+/* Back / neutral button — soft lilac / gold outline */
+body.midautumn-theme .btn-back {
+    color: #e3d4ff;
+    border-color: rgba(190, 160, 255, 0.4);
+}
+body.midautumn-theme .btn-back:hover {
+    color: #ffd76a;
+    border-color: rgba(255, 215, 110, 0.6);
+    background: rgba(255, 200, 80, 0.07);
+}
+
+/* Save button in the admin application-edit panel */
+body.midautumn-theme .admin-save-application-btn {
+    background: linear-gradient(135deg, #6a2fc0 0%, #2d1163 100%) !important;
+}
+
+/* Additional-time-slot controls on the reservation form */
+body.midautumn-theme .btn-remove-additional-time {
+    color: #f16a7a;
+    border-color: rgba(241, 106, 122, 0.25);
+}
+body.midautumn-theme .btn-remove-additional-time:hover {
+    background: rgba(241, 106, 122, 0.14);
+    border-color: #f16a7a;
+}
+body.midautumn-theme .btn-add-another-time {
+    border-color: rgba(255, 205, 110, 0.4);
+    color: #ffd98a;
+}
+body.midautumn-theme .btn-add-another-time:hover {
+    border-color: #ffc94d;
+    color: #ffe9b8;
+    background: rgba(255, 200, 80, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.midautumn-theme .btn-apply,
+    body.midautumn-theme .btn-danger,
+    body.midautumn-theme .admin-reject-btn,
+    body.midautumn-theme .btn-admin {
+        animation: none !important;
+    }
+}
+
 /* ==================== SEASONAL GOLD-TEXT THEMES (header logo + footer names) ====================
    The "SvS Minister" logo in the header and the President / guild names in
    the footer all use the gold .fire-text shine. While <body> carries a
@@ -1927,6 +2152,7 @@ body.eid-theme .btn-add-another-time:hover {
      - valentine-theme: rose pink / crimson / gold
      - cny-theme: lucky red / gold / champagne
      - eid-theme: emerald / gold / cream
+     - midautumn-theme: moon gold / lantern orange / lilac
      - halloween-theme: pumpkin orange / witch violet / witch green
    The header logo also gets a small emoji in front. Outside the seasons
    the plain gold look shows again. */
@@ -2027,6 +2253,30 @@ body.eid-theme .navbar .logo.fire-text::before {
     letter-spacing: 0;
 }
 
+/* ---- Mid-Autumn Festival ---- */
+body.midautumn-theme .navbar .logo.fire-text,
+body.midautumn-theme .site-footer .fire-text {
+    background-image: linear-gradient(
+        to right,
+        #ffb347 0%,
+        #fff4d0 16%,
+        #ffd25e 32%,
+        #c9a0ff 50%,
+        #fff4d0 66%,
+        #ffd25e 82%,
+        #ffb347 100%
+    );
+    background-size: 200% auto;
+    filter: drop-shadow(0 0 6px rgba(255, 190, 90, 0.4)) drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.7));
+}
+body.midautumn-theme .navbar .logo.fire-text::before {
+    content: '\1F315';           /* full moon */
+    display: inline-block;
+    margin-right: 6px;
+    -webkit-text-fill-color: initial;
+    letter-spacing: 0;
+}
+
 /* ---- Halloween ---- */
 body.halloween-theme .navbar .logo.fire-text,
 body.halloween-theme .site-footer .fire-text {
@@ -2060,6 +2310,8 @@ body.halloween-theme .navbar .logo.fire-text::before {
     body.cny-theme .site-footer .fire-text,
     body.eid-theme .navbar .logo.fire-text,
     body.eid-theme .site-footer .fire-text,
+    body.midautumn-theme .navbar .logo.fire-text,
+    body.midautumn-theme .site-footer .fire-text,
     body.halloween-theme .navbar .logo.fire-text,
     body.halloween-theme .site-footer .fire-text {
         animation: none !important;
@@ -2842,7 +3094,7 @@ th {
 
 /* ==================== SEASONAL OPENING ANIMATION ====================
    The intro overlay normally uses the orange fire palette. While <body> has
-   "christmas-theme", "valentine-theme", "cny-theme", "eid-theme" or "halloween-theme" (put there early by the inline
+   "christmas-theme", "valentine-theme", "cny-theme", "eid-theme", "midautumn-theme" or "halloween-theme" (put there early by the inline
    script at the top of <body>, then kept in sync by fire-banner.js) every part of it
    — glow, sparks, rays, number, line and the "SvS MINISTER" title — switches
    to that season's palette. Timing and layout are untouched. */
@@ -2878,6 +3130,7 @@ body.christmas-theme .svs-opening-title,
 body.valentine-theme .svs-opening-title,
 body.cny-theme .svs-opening-title,
 body.eid-theme .svs-opening-title,
+body.midautumn-theme .svs-opening-title,
 body.halloween-theme .svs-opening-title {
     display: inline-block;
     text-shadow: none;
@@ -2897,6 +3150,8 @@ body.cny-theme .svs-opening-title::before,
 body.cny-theme .svs-opening-title::after,
 body.eid-theme .svs-opening-title::before,
 body.eid-theme .svs-opening-title::after,
+body.midautumn-theme .svs-opening-title::before,
+body.midautumn-theme .svs-opening-title::after,
 body.halloween-theme .svs-opening-title::before,
 body.halloween-theme .svs-opening-title::after {
     -webkit-text-fill-color: initial;
@@ -3066,6 +3321,55 @@ body.eid-theme .svs-opening-sparks::before {
 body.eid-theme .svs-opening-sparks::after {
     background: linear-gradient(90deg, transparent 0%, rgba(80, 220, 150, .6) 49%, rgba(255, 244, 208, .9) 50%, rgba(255, 210, 94, .6) 51%, transparent 100%);
     box-shadow: 0 0 18px rgba(80, 220, 150, .6);
+}
+
+/* ---------- Mid-Autumn Festival: moon gold / lantern orange / lilac ---------- */
+body.midautumn-theme .svs-opening {
+    background:
+        radial-gradient(circle at 50% 48%, rgba(140, 90, 230, 0.2) 0%, rgba(255, 190, 70, 0.07) 22%, transparent 45%),
+        #05030c;
+}
+body.midautumn-theme .svs-opening-glow {
+    background: radial-gradient(circle, rgba(255, 210, 110, .26) 0%, rgba(150, 100, 240, .12) 22%, transparent 65%);
+}
+body.midautumn-theme .svs-opening-number {
+    background: linear-gradient(180deg, #fff6d8 0%, #ffd25e 30%, #ff9a3c 58%, #7a3fd0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 120, .95))
+            drop-shadow(0 0 22px rgba(255, 170, 60, .65))
+            drop-shadow(0 0 55px rgba(140, 90, 230, .42));
+    animation-name: svs-number-pulse-midautumn;
+}
+@keyframes svs-number-pulse-midautumn {
+    0%   { filter: drop-shadow(0 0 4px rgba(255, 215, 120, .65)); }
+    100% { filter: drop-shadow(0 0 9px rgba(255, 230, 150, 1)) drop-shadow(0 0 35px rgba(255, 170, 60, .7)) drop-shadow(0 0 60px rgba(140, 90, 230, .4)); }
+}
+body.midautumn-theme .svs-opening-line {
+    background: linear-gradient(90deg, transparent, #ffb347, #fff4d0, #c9a0ff, transparent);
+    box-shadow: 0 0 10px rgba(255, 190, 90, .8), 0 0 28px rgba(150, 100, 240, .5);
+}
+body.midautumn-theme .svs-opening-title {
+    background-image: linear-gradient(90deg, #ffb347 0%, #fff4d0 30%, #ffd25e 50%, #d9b8ff 80%, #ff9a3c 100%);
+    filter: drop-shadow(0 0 8px rgba(255, 190, 90, .4)) drop-shadow(0 0 16px rgba(150, 100, 240, .3));
+}
+body.midautumn-theme .svs-opening-title::before { content: '\1F315'; margin-right: .5em; }
+body.midautumn-theme .svs-opening-title::after  { content: '\1F315'; margin-left: .5em; }
+body.midautumn-theme .svs-opening-sparks {
+    background-image:
+        radial-gradient(circle at 50% 50%, #fff4d0 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 35%, #ffb347 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #c9a0ff 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 70%, #ffd25e 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, #ff9a3c 0 1px, transparent 2px);
+}
+body.midautumn-theme .svs-opening-sparks::before {
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255, 215, 130, .7) 0deg 0.7deg, transparent 0.7deg 18deg);
+}
+body.midautumn-theme .svs-opening-sparks::after {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 170, 60, .6) 49%, rgba(255, 244, 208, .9) 50%, rgba(170, 120, 255, .6) 51%, transparent 100%);
+    box-shadow: 0 0 18px rgba(255, 170, 60, .6);
 }
 
 /* ---------- Halloween: pumpkin orange / witch violet / witch green ---------- */

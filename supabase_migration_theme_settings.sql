@@ -12,12 +12,13 @@
 --                    'valentine'  -> force Valentine for everyone
 --                    'cny'        -> force Chinese New Year (Imlek) for everyone
 --                    'eid'        -> force Eid al-Fitr (Idul Fitri) for everyone (manual only, never automatic)
+--                    'midautumn'  -> force Mid-Autumn Festival for everyone
 --                    'none'       -> force the plain fire banner for everyone
 
 CREATE TABLE IF NOT EXISTS public.theme_settings (
     id text PRIMARY KEY,
     theme_override text NOT NULL DEFAULT 'auto'
-        CHECK (theme_override IN ('auto', 'halloween', 'christmas', 'valentine', 'cny', 'eid', 'none')),
+        CHECK (theme_override IN ('auto', 'halloween', 'christmas', 'valentine', 'cny', 'eid', 'midautumn', 'none')),
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 

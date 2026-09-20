@@ -39,7 +39,7 @@ reservation-main/
 ├── sw.js                                  # Service Worker for PWA functionality
 ├── site.webmanifest                       # Web app manifest configuration
 ├── opening-animation.js                   # Visual opening sequence
-├── fire-banner.js                         # Custom animated banner UI element + seasonal themes (Halloween / Christmas / Valentine / Chinese New Year / Eid al-Fitr)
+├── fire-banner.js                         # Custom animated banner UI element + seasonal themes (Halloween / Christmas / Valentine / Chinese New Year / Eid al-Fitr / Mid-Autumn)
 ├── js/
 │   ├── app-auth.js                        # Authentication & role authorization
 │   ├── app-applications.js                # Application submission & President review
@@ -90,6 +90,14 @@ reservation-main/
 ## 📄 License
 
 This project is proprietary and maintained for **3475.web.id**.
+
+## V15 update
+- Added a **Mid-Autumn Festival** seasonal theme (`midautumn`), active automatically every **19-27 September** (see `SEASONS.midautumn` in `fire-banner.js`; the inline script at the top of `<body>` in `index.html` has the same dates, keep them in sync) or on demand from the President's Theme Switcher (new 🌕 option, translated in all 6 languages). The dates are fixed each year; the festival itself follows the lunar calendar (25 Sep in 2026), so shift the range if you want it to follow the real date. It does not overlap any other automatic season.
+  - New banner artwork `midautumn-banner-v1.jpg` (jade / red / gold "3475" under a full moon with rabbits, phoenixes, osmanthus, mooncakes, fireworks and lanterns), with 9 firework twinkles (`.midautumn-glow-spot`), 18 lantern flickers (`.midautumn-lantern-glow`), a slow breathing glow on the moon (`.midautumn-moon-glow`) and the embers canvas emitting rising gold / orange / lilac sparkles and 4-point stars.
+  - The generator sparkle watermark in the bottom-right corner was removed by reversing its semi-transparent overlay, so the lantern and flowers underneath are restored (only that area was touched).
+  - Buttons re-skinned via `body.midautumn-theme` (gold Apply with dark text, red Reject/Remove, jade Accept, midnight-purple President button); the header logo (🌕 in front) and footer names use a gold / cream / lilac shine; the opening animation follows the palette (🌕 around the title).
+- **Required:** run `supabase_migration_theme_midautumn.sql` once in the Supabase SQL Editor (it keeps `cny` and `eid`); without it, saving "Mid-Autumn Festival" from the Theme Switcher is rejected by the `theme_override` CHECK constraint (the automatic dates work either way). `supabase_migration_theme_settings.sql` was updated for fresh installs.
+- Added the image to the Service Worker precache; bumped `style.css`, `lang.js`, `fire-banner.js`, `APP_BUILD` and the cache version.
 
 ## V14 update
 - Added an **Eid al-Fitr (Idul Fitri)** seasonal theme (`eid`). **It is never automatic**: it has no date range and is not part of the Auto calendar, so it only appears when the President picks it in the Theme Switcher (new 🌙 Eid al-Fitr option, translated in all 6 languages; the hint text says it is manual only). Choosing "Auto" or another theme switches it off again.
