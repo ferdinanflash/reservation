@@ -165,26 +165,26 @@ function renderTimeSlots() {
             // only right after clicking Accept.
             let leftoverCount = appsInSlot.filter(a => a.status === 'Waiting').length;
             let leftoverBadge = (isAdmin && leftoverCount > 0)
-                ? `<br><span style="color:#f59e0b; font-size:0.75rem; cursor:pointer; text-decoration:underline;" onclick="openReassignModal('${utcTimeStr}')">${t("move_waiting_count", { count: leftoverCount })}</span>`
+                ? `<br><span style="color:var(--t-amber, #f59e0b); font-size:0.75rem; cursor:pointer; text-decoration:underline;" onclick="openReassignModal('${utcTimeStr}')">${t("move_waiting_count", { count: leftoverCount })}</span>`
                 : '';
 
             row.innerHTML = `
                 <td>${actionBtn}</td>
-                <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">${t("local_prefix", { time: localTimeStr })}</small></td>
+                <td><strong>${utcTimeStr} UTC</strong><br><small style="color:var(--t-muted, #8a8d98);">${t("local_prefix", { time: localTimeStr })}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">${t("status_accepted")}</span>${leftoverBadge}</td>
                 <td>${escapeHtml(capZalgo(acceptedApp.nickname))}</td>
-                <td><span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
+                <td><span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
                 <td>${escapeHtml(acceptedApp.furnace_level) || '-'}</td>
             `;
         } else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">${t("btn_apply_action")}</button>`;
             let statusText = `<span class="no-apps">${t("status_no_applications")}</span>`;
             if (countWaiting > 0) {
-                statusText = `<span style="color:#f59e0b; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openWaitingModal('${utcTimeStr}')">${t("status_waiting_count", { count: countWaiting })}</span>`;
+                statusText = `<span style="color:var(--t-amber, #f59e0b); font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openWaitingModal('${utcTimeStr}')">${t("status_waiting_count", { count: countWaiting })}</span>`;
             }
             row.innerHTML = `
                 <td>${actionBtn}</td>
-                <td><strong>${utcTimeStr} UTC</strong><br><small style="color:#8a8d98;">${t("local_prefix", { time: localTimeStr })}</small></td>
+                <td><strong>${utcTimeStr} UTC</strong><br><small style="color:var(--t-muted, #8a8d98);">${t("local_prefix", { time: localTimeStr })}</small></td>
                 <td>${statusText}</td>
                 <td>-</td>
                 <td>-</td>

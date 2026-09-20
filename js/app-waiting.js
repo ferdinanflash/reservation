@@ -64,7 +64,7 @@ function renderReassignRows(originTime) {
 
     const leftovers = getLeftoverWaitingApps(originTime);
     if (leftovers.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="padding:12px; text-align:center; color:#8a8d98;">${t("no_more_waiting")}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="padding:12px; text-align:center; color:var(--t-muted, #8a8d98);">${t("no_more_waiting")}</td></tr>`;
         return;
     }
 
@@ -80,7 +80,7 @@ function renderReassignRows(originTime) {
         row.innerHTML = `
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">${escapeHtml(capZalgo(app.nickname))}</td>
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
-                <span style="cursor:pointer; color:#3b82f6; text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
+                <span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
             </td>
             <td style="padding: 5px 10px; text-align: left;">
                 <select id="${selectId}" style="max-width: 140px;" ${availableSlots.length === 0 ? 'disabled' : ''}>${options}</select>
