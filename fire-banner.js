@@ -5,7 +5,8 @@
 // banner berganti ke tema Valentine. Selama Tahun Baru Imlek (tanggalnya
 // berbeda tiap tahun, lihat CNY_DATES di bawah) banner berganti ke tema Imlek;
 // tema Imlek diprioritaskan di atas Valentine sehingga durasinya tidak
-// pernah bentrok. Presiden (admin) juga bisa memaksa
+// pernah bentrok. Tema Idul Fitri ('eid') TIDAK pernah aktif otomatis: hanya
+// muncul kalau Presiden memilihnya manual di Theme Switcher. Presiden (admin) juga bisa memaksa
 // tema tertentu lewat menu "Theme Switcher" di panel president — lihat
 // window.SVSSeasonalTheme di paling bawah file ini.
 (function () {
@@ -42,10 +43,11 @@
 	//   localStorage.setItem('svs_theme_override', 'christmas')  -> paksa Natal
 	//   localStorage.setItem('svs_theme_override', 'valentine')  -> paksa Valentine
 	//   localStorage.setItem('svs_theme_override', 'cny')        -> paksa Tahun Baru Imlek
+	//   localStorage.setItem('svs_theme_override', 'eid')        -> paksa Idul Fitri (hanya bisa manual)
 	//   localStorage.setItem('svs_theme_override', 'none')       -> paksa banner api biasa
 	//   localStorage.removeItem('svs_theme_override')            -> ikut tanggal asli (Auto)
 	const OVERRIDE_KEY = 'svs_theme_override';
-	const VALID_THEMES = ['halloween', 'christmas', 'valentine', 'cny', 'none'];
+	const VALID_THEMES = ['halloween', 'christmas', 'valentine', 'cny', 'eid', 'none'];
 
 	// Kunci lama (per-musim on/off) tetap didukung untuk kompatibilitas
 	// mundur, tapi override terpadu di atas selalu diprioritaskan.
@@ -104,6 +106,9 @@
 		if (legacyOverride('christmas') === 'off') { /* dipaksa mati, lewati */ }
 		else if (legacyOverride('christmas') === 'on' || isInSeason(d, SEASONS.christmas)) return 'christmas';
 
+		// CATATAN: tema Idul Fitri ('eid') sengaja TIDAK dicek di sini. Ia tidak
+		// punya rentang tanggal otomatis; hanya aktif lewat override manual di atas.
+
 		// Imlek dicek SEBELUM Valentine: pada hari yang beririsan Imlek menang,
 		// jadi kedua tema tidak pernah tampil/bentrok bersamaan.
 		if (isInCny(d)) return 'cny';
@@ -126,6 +131,7 @@
 		christmas: 'christmas-banner-v3.jpg',
 		valentine: 'valentine-banner-v1.jpg',
 		cny: 'cny-banner-v1.jpg',
+		eid: 'eid-banner-v1.jpg',
 		halloween: 'halloween-banner.png'
 	};
 	const artState = {}; // tema -> 'loading' | 'ok' | 'failed'
@@ -153,6 +159,7 @@
 		container.classList.toggle('christmas-theme', theme === 'christmas');
 		container.classList.toggle('valentine-theme', theme === 'valentine');
 		container.classList.toggle('cny-theme', theme === 'cny');
+		container.classList.toggle('eid-theme', theme === 'eid');
 		// Also flag it on <body> so page-wide elements (buttons, etc.) that
 		// aren't inside the banner can react to the same season via CSS,
 		// e.g. `body.christmas-theme .btn-apply { ... }`.
@@ -160,6 +167,7 @@
 		document.body.classList.toggle('christmas-theme', theme === 'christmas');
 		document.body.classList.toggle('valentine-theme', theme === 'valentine');
 		document.body.classList.toggle('cny-theme', theme === 'cny');
+		document.body.classList.toggle('eid-theme', theme === 'eid');
 		checkArt(container, theme);
 		return theme;
 	}
@@ -244,6 +252,18 @@
 						colorPick: Math.random(), sway: Math.random() * Math.PI * 2
 					});
 				}
+			} else if (theme === 'eid') {
+				// Golden lantern-light sparkles (some 4-point stars) with a touch of
+				// emerald and pearl white, floating gently upward.
+				particles.push({
+					x: w * (0.04 + Math.random() * 0.92),
+					y: h * (0.75 + Math.random() * 0.3),
+					size: 0.8 + Math.random() * 1.9, vy: -(0.22 + Math.random() * 0.35),
+					vx: (Math.random() - 0.5) * 0.2,
+					life: 0, maxLife: 160 + Math.random() * 130,
+					colorPick: Math.random(), sway: Math.random() * Math.PI * 2,
+					star: Math.random() < 0.3
+				});
 			} else {
 				// Default banner: sparks rise from around the flaming shield, which
 				// sits in the middle of the picture (not across the whole width).
@@ -271,6 +291,8 @@
 				if (Math.random() < 0.5) spawnParticle();
 			} else if (theme === 'cny') {
 				if (Math.random() < 0.55) spawnParticle();
+			} else if (theme === 'eid') {
+				if (Math.random() < 0.5) spawnParticle();
 			} else {
 				if (Math.random() < 0.85) spawnParticle();
 				if (Math.random() < 0.35) spawnParticle();
@@ -278,7 +300,7 @@
 
 			for (let i = particles.length - 1; i >= 0; i--) {
 				const p = particles[i];
-				if (theme === 'christmas' || theme === 'valentine' || theme === 'cny') {
+				if (theme === 'christmas' || theme === 'valentine' || theme === 'cny' || theme === 'eid') {
 					p.x += p.vx + Math.sin((p.life + p.sway * 20) * 0.04) * 0.3;
 					p.y += p.vy;
 				} else {
@@ -288,7 +310,7 @@
 				}
 				p.life++;
 				const t = p.life / p.maxLife;
-				if (t >= 1 || p.y > canvas.height + 10 || ((theme === 'valentine' || theme === 'cny') && p.y < -10)) { particles.splice(i, 1); continue; }
+				if (t >= 1 || p.y > canvas.height + 10 || ((theme === 'valentine' || theme === 'cny' || theme === 'eid') && p.y < -10)) { particles.splice(i, 1); continue; }
 				const alpha = Math.sin(Math.PI * t) * 0.9;
 				let r, g, b;
 				if (theme === 'halloween') {
@@ -310,6 +332,11 @@
 					else if (p.colorPick < 0.7) { r = 240; g = 50; b = 40; }    // lucky red
 					else if (p.colorPick < 0.88) { r = 255; g = 140; b = 40; }  // orange
 					else { r = 255; g = 240; b = 200; }                         // warm white
+				} else if (theme === 'eid') {
+					if (p.colorPick < 0.5) { r = 255; g = 214; b = 110; }        // gold
+					else if (p.colorPick < 0.72) { r = 255; g = 240; b = 205; }  // warm pearl
+					else if (p.colorPick < 0.88) { r = 80; g = 220; b = 150; }   // emerald
+					else { r = 255; g = 255; b = 255; }                          // white sparkle
 				} else {
 					r = 255;
 					g = 120 + p.hueShift * 100;
@@ -317,10 +344,18 @@
 				}
 				ctx.beginPath();
 				ctx.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${alpha})`;
-				ctx.shadowColor = (theme === 'halloween' || theme === 'christmas' || theme === 'valentine' || theme === 'cny') ? `rgba(${r | 0},${g | 0},${b | 0},${alpha})` : `rgba(255,140,0,${alpha})`;
+				ctx.shadowColor = (theme === 'halloween' || theme === 'christmas' || theme === 'valentine' || theme === 'cny' || theme === 'eid') ? `rgba(${r | 0},${g | 0},${b | 0},${alpha})` : `rgba(255,140,0,${alpha})`;
 				ctx.shadowBlur = theme === 'halloween' ? 4 : 5;
 				const radius = p.size * (1 - t * 0.4);
-				if (theme === 'cny' && p.petal) {
+				if (theme === 'eid' && p.star) {
+					// Tiny 4-point sparkle star.
+					const k = radius * 2.2;
+					ctx.moveTo(p.x, p.y - k);
+					ctx.quadraticCurveTo(p.x, p.y, p.x + k, p.y);
+					ctx.quadraticCurveTo(p.x, p.y, p.x, p.y + k);
+					ctx.quadraticCurveTo(p.x, p.y, p.x - k, p.y);
+					ctx.quadraticCurveTo(p.x, p.y, p.x, p.y - k);
+				} else if (theme === 'cny' && p.petal) {
 					// Blossom petal: a small tilted ellipse that slowly turns as it falls.
 					ctx.ellipse(p.x, p.y, radius * 1.7, radius * 0.95, p.rot + p.life * 0.03, 0, Math.PI * 2);
 				} else if (theme === 'valentine' && p.heart) {
@@ -461,7 +496,7 @@
 
 	// ============ PUBLIC API (dipakai oleh menu Theme Switcher President) ============
 	window.SVSSeasonalTheme = {
-		// 'halloween' | 'christmas' | 'valentine' | 'cny' | 'none' | 'auto'
+		// 'halloween' | 'christmas' | 'valentine' | 'cny' | 'eid' | 'none' | 'auto'
 		// Menyimpan ke database supaya berlaku untuk semua pengguna. Mengembalikan
 		// Promise<boolean>: true kalau berhasil disimpan, false kalau gagal
 		// (mis. bukan staff yang login, atau migrasi SQL belum dijalankan).
@@ -488,7 +523,7 @@
 		getActiveTheme: function () {
 			return computeActiveTheme();
 		},
-		// 'halloween' | 'christmas' | 'valentine' | 'cny' | 'none' jika dipaksa manual, atau null jika Auto.
+		// 'halloween' | 'christmas' | 'valentine' | 'cny' | 'eid' | 'none' jika dipaksa manual, atau null jika Auto.
 		getOverride: getOverride,
 		onChange: function (cb) { onThemeChangeCb = cb; }
 	};

@@ -39,7 +39,7 @@ reservation-main/
 ├── sw.js                                  # Service Worker for PWA functionality
 ├── site.webmanifest                       # Web app manifest configuration
 ├── opening-animation.js                   # Visual opening sequence
-├── fire-banner.js                         # Custom animated banner UI element + seasonal themes (Halloween / Christmas / Valentine / Chinese New Year)
+├── fire-banner.js                         # Custom animated banner UI element + seasonal themes (Halloween / Christmas / Valentine / Chinese New Year / Eid al-Fitr)
 ├── js/
 │   ├── app-auth.js                        # Authentication & role authorization
 │   ├── app-applications.js                # Application submission & President review
@@ -90,6 +90,14 @@ reservation-main/
 ## 📄 License
 
 This project is proprietary and maintained for **3475.web.id**.
+
+## V14 update
+- Added an **Eid al-Fitr (Idul Fitri)** seasonal theme (`eid`). **It is never automatic**: it has no date range and is not part of the Auto calendar, so it only appears when the President picks it in the Theme Switcher (new 🌙 Eid al-Fitr option, translated in all 6 languages; the hint text says it is manual only). Choosing "Auto" or another theme switches it off again.
+  - New banner artwork `eid-banner-v1.jpg` (golden "3475" before a green mosque with crescent moon, ketupat, hanging lanterns and an "Eid al-Fitr / Idul Fitri" ribbon), with 14 twinkles on its real lights (`.eid-art` / `.eid-glow-spot`), a warm flicker on the four hanging lanterns (`.eid-lantern-glow`) and the embers canvas emitting rising golden sparkles / 4-point stars. Shown whole on desktop like the other banners.
+  - The small generator sparkle watermark in the bottom-right corner of the picture was removed (only that area of the image was touched).
+  - Buttons re-skinned via `body.eid-theme` (gold Apply with dark text, red Reject/Remove, emerald Accept, deep-emerald President button); the header logo (🌙 in front) and footer names use an emerald / gold / cream shine; the opening animation follows the palette (🌙 around the title).
+- **Required:** run `supabase_migration_theme_eid.sql` once in the Supabase SQL Editor (it also keeps `cny`); without it, saving "Eid al-Fitr" from the Theme Switcher is rejected by the `theme_override` CHECK constraint. `supabase_migration_theme_settings.sql` was updated for fresh installs.
+- Added the image to the Service Worker precache; bumped `style.css`, `lang.js`, `fire-banner.js`, `APP_BUILD` and the cache version.
 
 ## V13 update
 - Added a **Chinese New Year (Imlek)** seasonal theme (`cny`), on demand from the President's Theme Switcher (new 🏮 Chinese New Year option, translated in all 6 languages) or automatically on the dates listed in `CNY_DATES` in `fire-banner.js`. Chinese New Year follows the lunar calendar, so the dates are listed per year; a year that is not listed simply has no automatic Imlek banner. **2027: 6 - 13 Feb** (Imlek falls on 6 Feb 2027).

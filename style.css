@@ -445,8 +445,8 @@ body {
 }
 
 /* hide old digits: the default art already contains the "3475" */
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme) .fire-glow-back,
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme) .fire-numbers {
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme) .fire-glow-back,
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme) .fire-numbers {
     display: none;
 }
 
@@ -467,7 +467,8 @@ body {
 .fire-banner.halloween-theme .fire-default-art,
 .fire-banner.christmas-theme .fire-default-art,
 .fire-banner.valentine-theme .fire-default-art,
-.fire-banner.cny-theme .fire-default-art {
+.fire-banner.cny-theme .fire-default-art,
+.fire-banner.eid-theme .fire-default-art {
     display: none;
 }
 
@@ -879,6 +880,90 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
     .cny-art, .cny-glow-spot, .cny-lantern-glow {
+        animation: none !important;
+    }
+}
+
+/* ==================== EID AL-FITR (IDUL FITRI) SEASONAL BANNER OVERLAY ====================
+   Shows the illustrated eid-banner-v1.jpg (a golden "3475" in front of a
+   green mosque with a crescent moon, ketupat, hanging lanterns and an
+   "Eid al-Fitr / Idul Fitri" ribbon) in the #fire-banner container, with
+   twinkling lights and flickering lanterns on top, and the embers canvas
+   switched to rising golden sparkles (some 4-point stars, see fire-banner.js).
+   Active only while #fire-banner also has the "eid-theme" class. Unlike the
+   other seasons this one is NEVER automatic: it only turns on when the
+   President selects it in the Theme Switcher (window.SVSSeasonalTheme).
+   The desktop sizing comes from the shared ".fire-banner:not(.halloween-theme)"
+   rule above. */
+
+.fire-banner.eid-theme .fire-glow-back,
+.fire-banner.eid-theme .fire-numbers {
+    display: none;
+}
+
+.fire-banner.eid-theme {
+    background: radial-gradient(ellipse at 50% 65%, #0c3a45 0%, #061f33 55%, #030a18 100%);
+}
+
+.eid-art {
+    position: absolute;
+    inset: -3%;
+    z-index: 2;
+    background-image: url('eid-banner-v1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: eidSway 6s ease-in-out infinite;
+    display: none;
+}
+.fire-banner.eid-theme .eid-art {
+    display: block;
+}
+@keyframes eidSway {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50%      { transform: scale(1.015) translateY(-4px); }
+}
+
+/* Twinkling highlights on the picture's real lights (fireworks, stars,
+   sparkles). Children of .eid-art (see index.html), so they sway with the
+   picture; left/top (inline, % of the picture) mark the CENTER of each one. */
+.eid-glow-spot {
+    position: absolute;
+    width: 2.4%; height: 4.3%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,248,215,0.95), rgba(255,208,100,0.26) 60%, transparent 75%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: eidTwinkle 2.2s ease-in-out infinite;
+}
+@keyframes eidTwinkle {
+    0%, 100% { opacity: .35; transform: translate(-50%, -50%) scale(0.85); }
+    30%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+    55%      { opacity: .5;  transform: translate(-50%, -50%) scale(0.9); }
+    80%      { opacity: .9;  transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* Warm, slow flicker inside the four hanging lanterns. */
+.eid-lantern-glow {
+    position: absolute;
+    width: 6%; height: 11%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,120,0.55), rgba(255,170,50,0.18) 55%, transparent 72%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: eidLanternFlicker 3.2s ease-in-out infinite;
+}
+@keyframes eidLanternFlicker {
+    0%, 100% { opacity: .45; transform: translate(-50%, -50%) scale(0.95); }
+    25%      { opacity: .9;  transform: translate(-50%, -50%) scale(1.08); }
+    50%      { opacity: .6;  transform: translate(-50%, -50%) scale(1); }
+    75%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eid-art, .eid-glow-spot, .eid-lantern-glow {
         animation: none !important;
     }
 }
@@ -1710,6 +1795,129 @@ body.cny-theme .btn-add-another-time:hover {
     }
 }
 
+/* ==================== EID AL-FITR (IDUL FITRI) SEASONAL BUTTON THEME ====================
+   Applied via a "eid-theme" class on <body> (manual selection in the
+   President's Theme Switcher only). Buttons keep their shape/size and their
+   meaning — Apply becomes gold with dark text, Accept stays green, Reject /
+   Remove stays red — only the palette shifts to emerald / gold.
+   .btn-discord is left alone since that's Discord's own brand color. */
+
+body.eid-theme .btn-apply {
+    background: linear-gradient(135deg, #ffd76a 0%, #d99a1c 100%) !important;
+    color: #0b2a1a !important;
+    border-color: rgba(255, 244, 200, 0.55) !important;
+    animation: eidGoldPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes eidGoldPulse {
+    0% {
+        background: linear-gradient(135deg, #ffd76a 0%, #d99a1c 100%);
+        box-shadow: 0 0 4px rgba(255, 200, 80, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #ffe596 0%, #eab030 100%);
+        box-shadow: 0 0 14px rgba(255, 215, 106, 0.9);
+        border-color: rgba(255, 250, 225, 0.7);
+    }
+    100% {
+        background: linear-gradient(135deg, #ffd76a 0%, #d99a1c 100%);
+        box-shadow: 0 0 4px rgba(255, 200, 80, 0.45);
+    }
+}
+
+/* Destructive actions (Reject / Remove / Drop) — still unmistakably red. */
+body.eid-theme .btn-danger,
+body.eid-theme .admin-reject-btn {
+    background: linear-gradient(135deg, #e0202e 0%, #8a0b16 100%) !important;
+    animation: eidRedPulse 2.6s infinite ease-in-out !important;
+}
+@keyframes eidRedPulse {
+    0% {
+        background: linear-gradient(135deg, #e0202e 0%, #8a0b16 100%);
+        box-shadow: 0 0 4px rgba(224, 32, 46, 0.45);
+    }
+    50% {
+        background: linear-gradient(135deg, #f44a58 0%, #a3101d 100%);
+        box-shadow: 0 0 14px rgba(244, 80, 92, 0.85);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        background: linear-gradient(135deg, #e0202e 0%, #8a0b16 100%);
+        box-shadow: 0 0 4px rgba(224, 32, 46, 0.45);
+    }
+}
+
+/* Accept — emerald green glow, keeps the "go / approve" meaning */
+body.eid-theme .admin-accept-btn {
+    background: linear-gradient(135deg, #2fcf7d 0%, #0e7a44 100%) !important;
+    box-shadow: 0 0 8px rgba(60, 220, 140, 0.4) !important;
+}
+body.eid-theme .admin-accept-btn:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 0 14px rgba(90, 235, 170, 0.65) !important;
+}
+
+/* President / admin login button — deep emerald with a gold glow */
+body.eid-theme .btn-admin {
+    background: linear-gradient(135deg, #0f6b48 0%, #062a1e 100%);
+    border-color: rgba(255, 215, 110, 0.5);
+    box-shadow: 0 0 8px rgba(255, 200, 80, 0.35);
+    animation: eidGoldGlint 3.2s infinite ease-in-out;
+}
+body.eid-theme .btn-admin:hover {
+    background: linear-gradient(135deg, #16875c 0%, #0a3a2a 100%);
+    border-color: rgba(255, 225, 140, 0.8);
+}
+@keyframes eidGoldGlint {
+    0%, 100% { box-shadow: 0 0 8px rgba(255, 200, 80, 0.35); }
+    30%      { box-shadow: 0 0 13px rgba(255, 220, 120, 0.6); }
+    55%      { box-shadow: 0 0 6px rgba(255, 200, 80, 0.25); }
+    80%      { box-shadow: 0 0 12px rgba(255, 220, 120, 0.5); }
+}
+
+/* Back / neutral button — soft mint / gold outline */
+body.eid-theme .btn-back {
+    color: #d3f1e0;
+    border-color: rgba(150, 220, 190, 0.4);
+}
+body.eid-theme .btn-back:hover {
+    color: #ffd76a;
+    border-color: rgba(255, 215, 110, 0.6);
+    background: rgba(255, 200, 80, 0.07);
+}
+
+/* Save button in the admin application-edit panel */
+body.eid-theme .admin-save-application-btn {
+    background: linear-gradient(135deg, #12805a 0%, #084a34 100%) !important;
+}
+
+/* Additional-time-slot controls on the reservation form */
+body.eid-theme .btn-remove-additional-time {
+    color: #f16a7a;
+    border-color: rgba(241, 106, 122, 0.25);
+}
+body.eid-theme .btn-remove-additional-time:hover {
+    background: rgba(241, 106, 122, 0.14);
+    border-color: #f16a7a;
+}
+body.eid-theme .btn-add-another-time {
+    border-color: rgba(255, 205, 110, 0.4);
+    color: #ffd98a;
+}
+body.eid-theme .btn-add-another-time:hover {
+    border-color: #ffc94d;
+    color: #ffe9b8;
+    background: rgba(255, 200, 80, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.eid-theme .btn-apply,
+    body.eid-theme .btn-danger,
+    body.eid-theme .admin-reject-btn,
+    body.eid-theme .btn-admin {
+        animation: none !important;
+    }
+}
+
 /* ==================== SEASONAL GOLD-TEXT THEMES (header logo + footer names) ====================
    The "SvS Minister" logo in the header and the President / guild names in
    the footer all use the gold .fire-text shine. While <body> carries a
@@ -1718,6 +1926,7 @@ body.cny-theme .btn-add-another-time:hover {
      - christmas-theme: candy-cane red / gold / holly green
      - valentine-theme: rose pink / crimson / gold
      - cny-theme: lucky red / gold / champagne
+     - eid-theme: emerald / gold / cream
      - halloween-theme: pumpkin orange / witch violet / witch green
    The header logo also gets a small emoji in front. Outside the seasons
    the plain gold look shows again. */
@@ -1794,6 +2003,30 @@ body.cny-theme .navbar .logo.fire-text::before {
     letter-spacing: 0;
 }
 
+/* ---- Eid al-Fitr ---- */
+body.eid-theme .navbar .logo.fire-text,
+body.eid-theme .site-footer .fire-text {
+    background-image: linear-gradient(
+        to right,
+        #7be3a8 0%,
+        #fff4d0 16%,
+        #ffd25e 32%,
+        #3fd18a 50%,
+        #fff4d0 66%,
+        #ffd25e 82%,
+        #7be3a8 100%
+    );
+    background-size: 200% auto;
+    filter: drop-shadow(0 0 6px rgba(80, 220, 150, 0.4)) drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.7));
+}
+body.eid-theme .navbar .logo.fire-text::before {
+    content: '\1F319';           /* crescent moon */
+    display: inline-block;
+    margin-right: 6px;
+    -webkit-text-fill-color: initial;
+    letter-spacing: 0;
+}
+
 /* ---- Halloween ---- */
 body.halloween-theme .navbar .logo.fire-text,
 body.halloween-theme .site-footer .fire-text {
@@ -1825,6 +2058,8 @@ body.halloween-theme .navbar .logo.fire-text::before {
     body.valentine-theme .site-footer .fire-text,
     body.cny-theme .navbar .logo.fire-text,
     body.cny-theme .site-footer .fire-text,
+    body.eid-theme .navbar .logo.fire-text,
+    body.eid-theme .site-footer .fire-text,
     body.halloween-theme .navbar .logo.fire-text,
     body.halloween-theme .site-footer .fire-text {
         animation: none !important;
@@ -2607,7 +2842,7 @@ th {
 
 /* ==================== SEASONAL OPENING ANIMATION ====================
    The intro overlay normally uses the orange fire palette. While <body> has
-   "christmas-theme", "valentine-theme", "cny-theme" or "halloween-theme" (put there early by the inline
+   "christmas-theme", "valentine-theme", "cny-theme", "eid-theme" or "halloween-theme" (put there early by the inline
    script at the top of <body>, then kept in sync by fire-banner.js) every part of it
    — glow, sparks, rays, number, line and the "SvS MINISTER" title — switches
    to that season's palette. Timing and layout are untouched. */
@@ -2642,6 +2877,7 @@ body.christmas-theme .svs-opening-line {
 body.christmas-theme .svs-opening-title,
 body.valentine-theme .svs-opening-title,
 body.cny-theme .svs-opening-title,
+body.eid-theme .svs-opening-title,
 body.halloween-theme .svs-opening-title {
     display: inline-block;
     text-shadow: none;
@@ -2659,6 +2895,8 @@ body.valentine-theme .svs-opening-title::before,
 body.valentine-theme .svs-opening-title::after,
 body.cny-theme .svs-opening-title::before,
 body.cny-theme .svs-opening-title::after,
+body.eid-theme .svs-opening-title::before,
+body.eid-theme .svs-opening-title::after,
 body.halloween-theme .svs-opening-title::before,
 body.halloween-theme .svs-opening-title::after {
     -webkit-text-fill-color: initial;
@@ -2779,6 +3017,55 @@ body.cny-theme .svs-opening-sparks::before {
 body.cny-theme .svs-opening-sparks::after {
     background: linear-gradient(90deg, transparent 0%, rgba(255, 90, 60, .6) 49%, rgba(255, 240, 200, .9) 50%, rgba(255, 210, 94, .6) 51%, transparent 100%);
     box-shadow: 0 0 18px rgba(255, 90, 60, .7);
+}
+
+/* ---------- Eid al-Fitr: emerald / gold ---------- */
+body.eid-theme .svs-opening {
+    background:
+        radial-gradient(circle at 50% 48%, rgba(16, 150, 100, 0.18) 0%, rgba(245, 190, 60, 0.06) 22%, transparent 45%),
+        #030807;
+}
+body.eid-theme .svs-opening-glow {
+    background: radial-gradient(circle, rgba(40, 190, 130, .26) 0%, rgba(245, 190, 60, .11) 22%, transparent 65%);
+}
+body.eid-theme .svs-opening-number {
+    background: linear-gradient(180deg, #fff4d0 0%, #ffd25e 30%, #d9a02a 58%, #0f8a5a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(255, 210, 110, .95))
+            drop-shadow(0 0 22px rgba(245, 190, 60, .65))
+            drop-shadow(0 0 55px rgba(16, 150, 100, .4));
+    animation-name: svs-number-pulse-eid;
+}
+@keyframes svs-number-pulse-eid {
+    0%   { filter: drop-shadow(0 0 4px rgba(255, 210, 110, .65)); }
+    100% { filter: drop-shadow(0 0 9px rgba(255, 225, 140, 1)) drop-shadow(0 0 35px rgba(245, 190, 60, .7)) drop-shadow(0 0 60px rgba(16, 150, 100, .4)); }
+}
+body.eid-theme .svs-opening-line {
+    background: linear-gradient(90deg, transparent, #3fd18a, #fff4d0, #ffd25e, transparent);
+    box-shadow: 0 0 10px rgba(80, 220, 150, .8), 0 0 28px rgba(245, 190, 60, .5);
+}
+body.eid-theme .svs-opening-title {
+    background-image: linear-gradient(90deg, #7be3a8 0%, #fff4d0 30%, #ffd25e 50%, #ffe08a 80%, #3fd18a 100%);
+    filter: drop-shadow(0 0 8px rgba(80, 220, 150, .4)) drop-shadow(0 0 16px rgba(245, 190, 60, .3));
+}
+body.eid-theme .svs-opening-title::before { content: '\1F319'; margin-right: .5em; }
+body.eid-theme .svs-opening-title::after  { content: '\1F319'; margin-left: .5em; }
+body.eid-theme .svs-opening-sparks {
+    background-image:
+        radial-gradient(circle at 50% 50%, #fff4d0 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 35%, #ffd25e 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #3fd18a 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 70%, #ffe08a 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, #7be3a8 0 1px, transparent 2px);
+}
+body.eid-theme .svs-opening-sparks::before {
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255, 215, 120, .7) 0deg 0.7deg, transparent 0.7deg 18deg);
+}
+body.eid-theme .svs-opening-sparks::after {
+    background: linear-gradient(90deg, transparent 0%, rgba(80, 220, 150, .6) 49%, rgba(255, 244, 208, .9) 50%, rgba(255, 210, 94, .6) 51%, transparent 100%);
+    box-shadow: 0 0 18px rgba(80, 220, 150, .6);
 }
 
 /* ---------- Halloween: pumpkin orange / witch violet / witch green ---------- */
