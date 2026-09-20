@@ -20,7 +20,7 @@
     border: 1px solid rgba(245, 197, 107, 0.55);
     border-radius: 999px;
     padding: 7px 12px;
-    color: #f3d9a4;
+    color: var(--t-gold, #f3d9a4);
     font-weight: 800;
     font-size: 0.78rem;
     letter-spacing: 0.03em;
@@ -88,13 +88,13 @@
     align-items: center;
     gap: 3px;
     cursor: pointer;
-    color: #c9cdd6;
+    color: var(--t-soft, #c9cdd6);
     transition: all 0.18s ease;
 }
 .lang-option:hover {
     background: rgba(245, 158, 11, 0.14);
     border-color: rgba(245, 158, 11, 0.45);
-    color: #fff;
+    color: var(--t-strong, #fff);
     transform: translateY(-2px);
 }
 .lang-option .lang-flag-emoji { font-size: 1.25rem; }
@@ -124,12 +124,157 @@
 
 body {
     background-color: #121316;
-    color: #ffffff;
+    color: var(--t-strong, #ffffff);
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
     padding: 20px 0;
+}
+
+/* ==================== SEASONAL TEXT COLORS ====================
+   Every piece of text reads its color from the --t-* "roles" below instead of
+   a fixed hex. Outside a season (no theme class on <body>) the variables are
+   simply not defined, so each rule falls back to its original color and the
+   normal look is unchanged.
+
+   While <body> carries a seasonal class (toggled by fire-banner.js by date or
+   via the President's Theme Switcher) the roles are re-pointed to that
+   season's palette:
+     --t-strong          page / heading text (was white)
+     --t-primary         main text: list items, values, inputs
+     --t-soft            secondary body text
+     --t-secondary       form labels, small descriptions
+     --t-muted           captions, table headers, footer
+     --t-faint           hints, arrows, empty states
+     --t-accent          section titles ("Recently accepted...")
+     --t-accent-strong   player names in the activity feed
+     --t-link, -link-hi  clickable IDs / card titles
+     --t-gold, -gold-hi  gold call-outs (Redeem, language button, links)
+     --t-amber           counters (UTC clock, waiting count)
+     --t-glow            "r, g, b" of the text glow
+     --t-neon-a / -b     the two colors of the animated footer credit
+   Semantic colors are intentionally NOT themed: green = accepted / success,
+   red = reject / error, and the per-resource colors of the stat bars. */
+
+/* ---- Christmas ---- */
+body.christmas-theme {
+    --t-strong: #fffaf5;
+    --t-primary: #fff2ea;
+    --t-soft: #d6f0e2;
+    --t-secondary: #aad5bd;
+    --t-muted: #93b8a3;
+    --t-faint: #688a76;
+    --t-accent: #ff8a94;
+    --t-accent-strong: #ff5a66;
+    --t-link: #ffd25e;
+    --t-link-hi: #ffe89a;
+    --t-gold: #ffd25e;
+    --t-gold-hi: #ffe89a;
+    --t-amber: #ffd25e;
+    --t-glow: 255, 90, 90;
+    --t-neon-a: #ff4d5a;
+    --t-neon-b: #3fd18a;
+}
+
+/* ---- Valentine ---- */
+body.valentine-theme {
+    --t-strong: #fff7fa;
+    --t-primary: #ffeaf2;
+    --t-soft: #ffd6e6;
+    --t-secondary: #eeaac6;
+    --t-muted: #cf93ad;
+    --t-faint: #9b6c82;
+    --t-accent: #ff9cc2;
+    --t-accent-strong: #ff5c9a;
+    --t-link: #ffb3d1;
+    --t-link-hi: #ffd6e6;
+    --t-gold: #ffd25e;
+    --t-gold-hi: #ffe89a;
+    --t-amber: #ffc94d;
+    --t-glow: 255, 90, 160;
+    --t-neon-a: #ff3d6e;
+    --t-neon-b: #ffd25e;
+}
+
+/* ---- Chinese New Year ---- */
+body.cny-theme {
+    --t-strong: #fffaf0;
+    --t-primary: #fff0c8;
+    --t-soft: #ffe2a8;
+    --t-secondary: #e9c98e;
+    --t-muted: #cdae75;
+    --t-faint: #957f54;
+    --t-accent: #ffd25e;
+    --t-accent-strong: #ff6a4d;
+    --t-link: #ff9a80;
+    --t-link-hi: #ffc2b0;
+    --t-gold: #ffd25e;
+    --t-gold-hi: #fff0c8;
+    --t-amber: #ffb347;
+    --t-glow: 255, 90, 50;
+    --t-neon-a: #ff3326;
+    --t-neon-b: #ffd25e;
+}
+
+/* ---- Eid al-Fitr ---- */
+body.eid-theme {
+    --t-strong: #fffdf5;
+    --t-primary: #effaf2;
+    --t-soft: #d2efdf;
+    --t-secondary: #a6d9bd;
+    --t-muted: #93b8a5;
+    --t-faint: #6a8a7b;
+    --t-accent: #7be3a8;
+    --t-accent-strong: #3fd18a;
+    --t-link: #ffd98a;
+    --t-link-hi: #ffe9b8;
+    --t-gold: #ffd98a;
+    --t-gold-hi: #ffe9b8;
+    --t-amber: #ffc94d;
+    --t-glow: 80, 220, 150;
+    --t-neon-a: #3fd18a;
+    --t-neon-b: #ffd25e;
+}
+
+/* ---- Mid-Autumn Festival ---- */
+body.midautumn-theme {
+    --t-strong: #fffaf0;
+    --t-primary: #fff1d6;
+    --t-soft: #eadcff;
+    --t-secondary: #cdb8e6;
+    --t-muted: #b0a1c6;
+    --t-faint: #8577a0;
+    --t-accent: #ffd76a;
+    --t-accent-strong: #ffb347;
+    --t-link: #c9a0ff;
+    --t-link-hi: #e3d4ff;
+    --t-gold: #ffd98a;
+    --t-gold-hi: #ffe9b8;
+    --t-amber: #ffb347;
+    --t-glow: 255, 190, 90;
+    --t-neon-a: #ffb347;
+    --t-neon-b: #c9a0ff;
+}
+
+/* ---- Halloween ---- */
+body.halloween-theme {
+    --t-strong: #fff7ee;
+    --t-primary: #ffe9d2;
+    --t-soft: #e9d7ff;
+    --t-secondary: #c6aaf2;
+    --t-muted: #a88fd2;
+    --t-faint: #8873ad;
+    --t-accent: #ffa54d;
+    --t-accent-strong: #ff8a1f;
+    --t-link: #c99bff;
+    --t-link-hi: #dfc4ff;
+    --t-gold: #ffd08a;
+    --t-gold-hi: #ffe4bd;
+    --t-amber: #ff8a1f;
+    --t-glow: 255, 130, 30;
+    --t-neon-a: #ff8a1f;
+    --t-neon-b: #b56bff;
 }
 
 /* ==================== NAVBAR & LIVE CLOCK ==================== */
@@ -171,12 +316,12 @@ body {
 }
 
 .clock-label {
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-weight: bold;
 }
 
 .clock-time {
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
     font-weight: bold;
 }
 
@@ -1075,7 +1220,7 @@ body {
     margin-top: 6px;       
     margin-bottom: 12px;   
     font-size: 0.85rem;    
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
 }
 
 /* ==================== LIST ITEM / BUTTON POSISI ==================== */
@@ -1094,7 +1239,7 @@ body {
     align-items: center;
     cursor: pointer;
     font-weight: 600;
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
     border: 1px solid rgba(255, 255, 255, 0.08); 
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
     transition: all 0.25s ease;
@@ -1121,13 +1266,13 @@ body {
 }
 
 .arrow {
-    color: #626773;
+    color: var(--t-faint, #626773);
 }
 
 /* ==================== LOADING & DISABLED STATES ==================== */
 .loading-row td {
     text-align: center;
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-style: italic;
     padding: 20px 4px;
 }
@@ -1391,7 +1536,7 @@ body {
 
 .btn-back {
     background: transparent;
-    color: #94a3b8;
+    color: var(--t-secondary, #94a3b8);
     border: 1px solid rgba(148, 163, 184, 0.3);
     padding: 6px 12px;
     border-radius: 6px;
@@ -2354,7 +2499,7 @@ body.halloween-theme .navbar .logo.fire-text::before {
     padding-bottom: 15px;
     text-align: center;
     border-top: 1px solid #2b2f3a;
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-size: 0.9rem;
 }
 
@@ -2400,7 +2545,7 @@ th, td {
 
 th {
     background-color: #24262e;
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-size: 0.75rem;
     letter-spacing: 0.5px;
 }
@@ -2461,7 +2606,7 @@ th {
 
 .modal-content {
     background-color: #1e2026;
-    color: #ffffff;
+    color: var(--t-strong, #ffffff);
     padding: 20px;
     border-radius: 12px;
     width: 95%;          
@@ -2483,7 +2628,7 @@ th {
    localStorage, so they also stick across page reloads on that device. */
 .theme-switcher-hint {
     font-size: 0.8rem;
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     margin-bottom: 16px;
     line-height: 1.4;
 }
@@ -2502,7 +2647,7 @@ th {
     border-radius: 10px;
     border: 1.5px solid rgba(255, 255, 255, 0.1);
     background: #1e2026;
-    color: #e5e7eb;
+    color: var(--t-primary, #e5e7eb);
     cursor: pointer;
     text-align: left;
     font-size: 0.92rem;
@@ -2526,17 +2671,17 @@ th {
 .theme-option-sub {
     font-size: 0.74rem;
     font-weight: 400;
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
 }
 .theme-option-btn.is-active {
     border-color: #f59e0b;
     background: rgba(245, 158, 11, 0.12);
     box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.35) inset;
 }
-.theme-option-btn.is-active .theme-option-sub { color: #fbbf24; }
+.theme-option-btn.is-active .theme-option-sub { color: var(--t-amber, #fbbf24); }
 .theme-option-check {
     margin-left: auto;
-    color: #f59e0b;
+    color: var(--t-amber, #f59e0b);
     font-size: 1rem;
     visibility: hidden;
 }
@@ -2567,7 +2712,7 @@ th {
     top: 4px;
     font-size: 1.8rem;
     cursor: pointer;
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     background: none;
     border: none;
     padding: 10px;
@@ -2576,18 +2721,18 @@ th {
 }
 
 .close-modal:hover {
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
 }
 
 .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; text-align: left; }
-.form-group label { font-size: 0.85rem; color: #94a3b8; }
-.form-group input { background: #1e2230; border: 1px solid rgba(255, 255, 255, 0.1); padding: 11px 14px; border-radius: 8px; color: #f1f5f9; outline: none; }
+.form-group label { font-size: 0.85rem; color: var(--t-secondary, #94a3b8); }
+.form-group input { background: #1e2230; border: 1px solid rgba(255, 255, 255, 0.1); padding: 11px 14px; border-radius: 8px; color: var(--t-primary, #f1f5f9); outline: none; }
 .form-group input:focus { border-color: #2563eb; }
-.form-group select { background: #1e2230; border: 1px solid rgba(255, 255, 255, 0.1); padding: 11px 14px; border-radius: 8px; color: #f1f5f9; outline: none; cursor: pointer; }
+.form-group select { background: #1e2230; border: 1px solid rgba(255, 255, 255, 0.1); padding: 11px 14px; border-radius: 8px; color: var(--t-primary, #f1f5f9); outline: none; cursor: pointer; }
 .form-group select:focus { border-color: #2563eb; }
 
 .toast-notification {
-    background: #1e2230; color: #f1f5f9; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem;
+    background: #1e2230; color: var(--t-primary, #f1f5f9); padding: 12px 20px; border-radius: 8px; font-size: 0.9rem;
     border-left: 4px solid #3b82f6; animation: slideInToast 0.3s ease forwards; min-width: 200px;
 }
 
@@ -2606,13 +2751,13 @@ th {
 .log-title {
     font-size: 0.85rem;
     font-weight: 800;
-    color: #67e8f9;
+    color: var(--t-accent, #67e8f9);
     margin-bottom: 10px;
     letter-spacing: 1.5px;
     border-bottom: 1px solid rgba(103, 232, 249, 0.15);
     padding-bottom: 8px;
     text-align: center;
-    text-shadow: 0 0 10px rgba(34, 211, 238, 0.6), 0 0 20px rgba(34, 211, 238, 0.25);
+    text-shadow: 0 0 10px rgba(var(--t-glow, 34, 211, 238), 0.6), 0 0 20px rgba(var(--t-glow, 34, 211, 238), 0.25);
     text-transform: uppercase;
 }
 
@@ -2626,7 +2771,7 @@ th {
 
 .log-item-empty {
     font-size: 0.75rem;
-    color: #4b5563;
+    color: var(--t-faint, #4b5563);
     text-align: center;
     padding: 10px 0;
     font-style: italic;
@@ -2659,10 +2804,10 @@ th {
 }
 
 .rar-name {
-    color: #22d3ee;
+    color: var(--t-accent-strong, #22d3ee);
     font-weight: 800;
     font-size: 0.85rem;
-    text-shadow: 0 0 8px rgba(34, 211, 238, 0.5);
+    text-shadow: 0 0 8px rgba(var(--t-glow, 34, 211, 238), 0.5);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2670,7 +2815,7 @@ th {
 }
 
 .rar-furnace {
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-weight: 600;
     font-size: 0.75rem;
     text-shadow: none;
@@ -2678,7 +2823,7 @@ th {
 }
 
 .rar-pos {
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-size: 0.68rem;
     font-weight: 600;
 }
@@ -2697,7 +2842,7 @@ th {
     align-items: center;
     gap: 6px;
     font-size: 0.72rem;
-    color: #cbd5e1;
+    color: var(--t-soft, #cbd5e1);
     white-space: nowrap;
 }
 
@@ -2735,11 +2880,11 @@ th {
 }
 
 .rar-stat-label {
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
 }
 
 .rar-stat-value {
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
     font-weight: 700;
 }
 
@@ -2904,20 +3049,20 @@ th {
     
     font-size: clamp(1rem, 2.5vw, 1.5rem); /* Ukuran disesuaikan untuk teks footer */
     font-weight: bold;
-    color: #fff;
+    color: var(--t-strong, #fff);
     text-align: center;
     letter-spacing: 2px;
     white-space: pre-line;
-    text-shadow: 0 0 5px #ff005e, 0 0 10px #ff005e, 0 0 20px #ff005e;
+    text-shadow: 0 0 5px var(--t-neon-a, #ff005e), 0 0 10px var(--t-neon-a, #ff005e), 0 0 20px var(--t-neon-a, #ff005e);
     animation: glow 1.5s infinite alternate;
 }
 
 @keyframes glow {
     0% {
-        text-shadow: 0 0 5px #ff005e, 0 0 10px #ff005e, 0 0 20px #ff005e;
+        text-shadow: 0 0 5px var(--t-neon-a, #ff005e), 0 0 10px var(--t-neon-a, #ff005e), 0 0 20px var(--t-neon-a, #ff005e);
     }
     100% {
-        text-shadow: 0 0 5px #00d4ff, 0 0 15px #00d4ff, 0 0 30px #00d4ff;
+        text-shadow: 0 0 5px var(--t-neon-b, #00d4ff), 0 0 15px var(--t-neon-b, #00d4ff), 0 0 30px var(--t-neon-b, #00d4ff);
     }
 }
 
@@ -3534,7 +3679,7 @@ body.halloween-theme .svs-opening-sparks::after {
 .waiting-time-log .application-time-log-title {
     margin-bottom: 6px;
     font-size: 0.82rem;
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
 }
 
 .waiting-time-log .application-time-log-list {
@@ -3552,7 +3697,7 @@ body.halloween-theme .svs-opening-sparks::after {
 .application-time-log-title,
 .admin-control-title {
     font-weight: 700;
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
     margin-bottom: 8px;
     font-size: 0.9rem;
 }
@@ -3573,23 +3718,23 @@ body.halloween-theme .svs-opening-sparks::after {
 }
 
 .time-log-main {
-    color: #e5e7eb;
+    color: var(--t-primary, #e5e7eb);
     font-size: 0.78rem;
     line-height: 1.35;
 }
 
 .time-log-meta {
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-size: 0.7rem;
     margin-top: 2px;
 }
 
 .time-log-actor {
-    color: #60a5fa;
+    color: var(--t-link, #60a5fa);
 }
 
 .application-time-log-empty {
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-size: 0.78rem;
 }
 
@@ -3627,7 +3772,7 @@ body.halloween-theme .svs-opening-sparks::after {
 }
 
 .admin-control-grid label {
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-size: 0.72rem;
     display: flex;
     flex-direction: column;
@@ -3642,7 +3787,7 @@ body.halloween-theme .svs-opening-sparks::after {
     border-radius: 6px;
     border: 1px solid #475569;
     background: #0f172a;
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
     font-size: 0.78rem;
 }
 
@@ -3677,7 +3822,7 @@ body.halloween-theme .svs-opening-sparks::after {
     font-weight: 800;
     letter-spacing: 2.5px;
     text-transform: uppercase;
-    color: #e8ecf3;
+    color: var(--t-primary, #e8ecf3);
     margin: 2px 0 14px;
 }
 
@@ -3687,7 +3832,7 @@ body.halloween-theme .svs-opening-sparks::after {
     width: 34px;
     height: 34px;
     font-size: 1.15rem;
-    color: #fde68a;
+    color: var(--t-gold, #fde68a);
     background: radial-gradient(circle at 32% 28%, #f87171 0%, #b91c1c 55%, #7f1d1d 100%);
     border: 2px solid #fbbf24;
     border-radius: 50%;
@@ -3699,7 +3844,7 @@ body.halloween-theme .svs-opening-sparks::after {
 }
 
 #details-modal .close-modal:hover {
-    color: #fff7d6;
+    color: var(--t-gold-hi, #fff7d6);
     filter: brightness(1.08);
 }
 
@@ -3729,7 +3874,7 @@ body.halloween-theme .svs-opening-sparks::after {
     font-weight: 700;
     letter-spacing: 1.6px;
     text-transform: uppercase;
-    color: #93c5fd;
+    color: var(--t-link-hi, #93c5fd);
     margin-bottom: 9px;
 }
 
@@ -3741,7 +3886,7 @@ body.halloween-theme .svs-opening-sparks::after {
 .detail-extra-row {
     margin-top: 6px;
     font-size: 0.78rem;
-    color: #cbd5e1;
+    color: var(--t-soft, #cbd5e1);
 }
 
 /* -- Player Info -- */
@@ -3770,17 +3915,17 @@ body.halloween-theme .svs-opening-sparks::after {
     flex-direction: column;
     gap: 3px;
     font-size: 0.84rem;
-    color: #94a3b8;
+    color: var(--t-secondary, #94a3b8);
     min-width: 0;
 }
 
 .player-info-text strong {
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
 }
 
 .game-id-copy {
     cursor: pointer;
-    color: #60a5fa !important;
+    color: var(--t-link, #60a5fa) !important;
 }
 
 .game-id-copy:hover {
@@ -3802,11 +3947,11 @@ body.halloween-theme .svs-opening-sparks::after {
 
 .city-power-text {
     font-size: 0.84rem;
-    color: #94a3b8;
+    color: var(--t-secondary, #94a3b8);
 }
 
 .city-power-text strong {
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
 }
 
 .furnace-gauge-svg {
@@ -3827,7 +3972,7 @@ body.halloween-theme .svs-opening-sparks::after {
     padding: 6px 11px;
     border-radius: 999px;
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: var(--t-secondary, #94a3b8);
     background: rgba(15, 17, 23, 0.6);
     border: 1px solid #334155;
 }
@@ -3892,20 +4037,20 @@ body.halloween-theme .svs-opening-sparks::after {
 .ring-value {
     font-size: 0.82rem;
     font-weight: 800;
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
     line-height: 1.1;
 }
 
 .ring-unit {
     font-size: 0.48rem;
     letter-spacing: 0.5px;
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     text-transform: uppercase;
 }
 
 .speedup-ring-label {
     font-size: 0.66rem;
-    color: #94a3b8;
+    color: var(--t-secondary, #94a3b8);
     text-align: center;
     white-space: nowrap;
 }
@@ -3929,7 +4074,7 @@ body.halloween-theme .svs-opening-sparks::after {
     font-weight: 700;
     letter-spacing: 1.6px;
     text-transform: uppercase;
-    color: #93c5fd;
+    color: var(--t-link-hi, #93c5fd);
     margin-bottom: 9px;
 }
 
@@ -3958,7 +4103,7 @@ body.halloween-theme .svs-opening-sparks::after {
     font-weight: 700;
     letter-spacing: 1.6px;
     text-transform: uppercase;
-    color: #fbbf24;
+    color: var(--t-amber, #fbbf24);
     margin-bottom: 10px;
 }
 
@@ -4019,7 +4164,7 @@ body.halloween-theme .svs-opening-sparks::after {
 }
 
 .how-to-use-description {
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
     font-size: 0.85rem;
     line-height: 1.45;
     margin: 0 0 12px;
@@ -4034,7 +4179,7 @@ body.halloween-theme .svs-opening-sparks::after {
     border: 1px solid #334155;
     border-radius: 8px;
     background: #121316;
-    color: #cbd5e1;
+    color: var(--t-soft, #cbd5e1);
     padding: 12px;
     font: inherit;
     font-size: 0.88rem;
@@ -4315,7 +4460,7 @@ body.halloween-theme .svs-opening-sparks::after {
 .reason-modal-group label {
     display: block;
     margin-bottom: 8px;
-    color: #e5e7eb;
+    color: var(--t-primary, #e5e7eb);
     font-size: 0.92rem;
     line-height: 1.4;
 }
@@ -4330,7 +4475,7 @@ body.halloween-theme .svs-opening-sparks::after {
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
     padding: 12px 14px;
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
     outline: none;
     font: inherit;
     line-height: 1.45;
@@ -4342,7 +4487,7 @@ body.halloween-theme .svs-opening-sparks::after {
 }
 
 #reason-modal-input::placeholder {
-    color: #8a8d98;
+    color: var(--t-muted, #8a8d98);
 }
 
 .reason-modal-actions {
@@ -4389,7 +4534,7 @@ body.halloween-theme .svs-opening-sparks::after {
     gap: 9px;
     cursor: pointer;
     font-size: 0.85rem;
-    color: #e2e8f0;
+    color: var(--t-primary, #e2e8f0);
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -4401,7 +4546,7 @@ body.halloween-theme .svs-opening-sparks::after {
 }
 
 .additional-time-toggle-group .field-hint {
-    color: #64748b;
+    color: var(--t-faint, #64748b);
     font-size: 0.74rem;
     line-height: 1.4;
     padding-left: 26px;
@@ -4427,7 +4572,7 @@ body.halloween-theme .svs-opening-sparks::after {
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 11px 14px;
     border-radius: 8px;
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
     outline: none;
     cursor: pointer;
 }
@@ -4460,7 +4605,7 @@ body.halloween-theme .svs-opening-sparks::after {
     width: 100%;
     background: transparent;
     border: 1px dashed #475569;
-    color: #60a5fa;
+    color: var(--t-link, #60a5fa);
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 0.8rem;
@@ -4471,7 +4616,7 @@ body.halloween-theme .svs-opening-sparks::after {
 
 .btn-add-another-time:hover {
     border-color: #2563eb;
-    color: #93c5fd;
+    color: var(--t-link-hi, #93c5fd);
     background: rgba(37, 99, 235, 0.08);
 }
 
@@ -4494,7 +4639,7 @@ body.halloween-theme .svs-opening-sparks::after {
     border: 1px solid rgba(245, 197, 107, 0.55);
     border-radius: 8px;
     padding: 7px 12px;
-    color: #f3d9a4;
+    color: var(--t-gold, #f3d9a4);
     font-weight: 700;
     font-size: 0.85rem;
     cursor: pointer;
@@ -4535,7 +4680,7 @@ body.halloween-theme .svs-opening-sparks::after {
 .redeem-modal-header h2 {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #f1f5f9;
+    color: var(--t-primary, #f1f5f9);
 }
 .redeem-modal-content .close-modal { top: 2px; right: 6px; }
 /* State auto-copy notice (above the embedded gift code page) */
@@ -4574,7 +4719,7 @@ body.halloween-theme .svs-opening-sparks::after {
     justify-content: center;
     padding: 20px;
     text-align: center;
-    color: #94a3b8;
+    color: var(--t-secondary, #94a3b8);
     font-size: 0.9rem;
 }
 .redeem-frame {
@@ -4592,15 +4737,15 @@ body.halloween-theme .svs-opening-sparks::after {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     text-align: center;
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: var(--t-secondary, #94a3b8);
 }
 .redeem-hint a {
     margin-left: 4px;
-    color: #f3d9a4;
+    color: var(--t-gold, #f3d9a4);
     text-decoration: underline;
     text-underline-offset: 2px;
 }
-.redeem-hint a:hover { color: #ffe9bd; }
+.redeem-hint a:hover { color: var(--t-gold-hi, #ffe9bd); }
 /* Stop the page behind the modal from scrolling while it is open */
 body.redeem-modal-open { overflow: hidden; }
 
@@ -4650,319 +4795,4 @@ body.redeem-modal-open { overflow: hidden; }
     .navbar-actions .lang-trigger { padding: 7px 7px; }
     .navbar-actions .btn-redeem,
     .navbar-actions .btn-admin { font-size: 0.66rem; padding: 8px 3px; }
-}
-
-
-/* ================================================================
-   THEME-AWARE TYPOGRAPHY
-   All normal UI text follows the currently active seasonal theme.
-   The body theme class is managed by fire-banner.js, so this also
-   updates globally when the President changes the theme.
-   ================================================================ */
-
-body.halloween-theme {
-    --theme-text-main: #ffe9c7;
-    --theme-text-soft: #d8c7e8;
-    --theme-text-muted: #b7a8c9;
-    --theme-text-accent: #ff9d2e;
-    --theme-text-heading: #ffc15a;
-    --theme-text-link: #ffb84d;
-    --theme-text-glow: rgba(255, 145, 30, .42);
-}
-
-body.christmas-theme {
-    --theme-text-main: #fff3dc;
-    --theme-text-soft: #d9f2e3;
-    --theme-text-muted: #b9d5c4;
-    --theme-text-accent: #ffd25e;
-    --theme-text-heading: #ffe7a3;
-    --theme-text-link: #7ee2a6;
-    --theme-text-glow: rgba(255, 205, 80, .38);
-}
-
-body.valentine-theme {
-    --theme-text-main: #ffe8f1;
-    --theme-text-soft: #f8c7d9;
-    --theme-text-muted: #d6aabd;
-    --theme-text-accent: #ff79ae;
-    --theme-text-heading: #ffb1ce;
-    --theme-text-link: #ff8fbc;
-    --theme-text-glow: rgba(255, 90, 160, .38);
-}
-
-body.cny-theme {
-    --theme-text-main: #fff2d0;
-    --theme-text-soft: #f6d8c5;
-    --theme-text-muted: #d7b6a8;
-    --theme-text-accent: #ffd25e;
-    --theme-text-heading: #ffe49a;
-    --theme-text-link: #ff9b70;
-    --theme-text-glow: rgba(255, 190, 60, .4);
-}
-
-body.eid-theme {
-    --theme-text-main: #effff4;
-    --theme-text-soft: #c9ead7;
-    --theme-text-muted: #a8cdb8;
-    --theme-text-accent: #ffd66b;
-    --theme-text-heading: #ffe9a8;
-    --theme-text-link: #72e0a5;
-    --theme-text-glow: rgba(80, 220, 150, .34);
-}
-
-body.midautumn-theme {
-    --theme-text-main: #fff1d2;
-    --theme-text-soft: #e2d2f2;
-    --theme-text-muted: #c0aecf;
-    --theme-text-accent: #ffbf63;
-    --theme-text-heading: #ffe3a0;
-    --theme-text-link: #c9a0ff;
-    --theme-text-glow: rgba(190, 130, 255, .34);
-}
-
-/* Main readable text */
-body.halloween-theme,
-body.christmas-theme,
-body.valentine-theme,
-body.cny-theme,
-body.eid-theme,
-body.midautumn-theme {
-    color: var(--theme-text-main);
-}
-
-body.halloween-theme p,
-body.halloween-theme span,
-body.halloween-theme label,
-body.halloween-theme small,
-body.halloween-theme li,
-body.halloween-theme td,
-body.halloween-theme th,
-body.halloween-theme .form-label,
-body.halloween-theme .clock-label,
-body.halloween-theme .page-subtitle,
-body.christmas-theme p,
-body.christmas-theme span,
-body.christmas-theme label,
-body.christmas-theme small,
-body.christmas-theme li,
-body.christmas-theme td,
-body.christmas-theme th,
-body.christmas-theme .form-label,
-body.christmas-theme .clock-label,
-body.christmas-theme .page-subtitle,
-body.valentine-theme p,
-body.valentine-theme span,
-body.valentine-theme label,
-body.valentine-theme small,
-body.valentine-theme li,
-body.valentine-theme td,
-body.valentine-theme th,
-body.valentine-theme .form-label,
-body.valentine-theme .clock-label,
-body.valentine-theme .page-subtitle,
-body.cny-theme p,
-body.cny-theme span,
-body.cny-theme label,
-body.cny-theme small,
-body.cny-theme li,
-body.cny-theme td,
-body.cny-theme th,
-body.cny-theme .form-label,
-body.cny-theme .clock-label,
-body.cny-theme .page-subtitle,
-body.eid-theme p,
-body.eid-theme span,
-body.eid-theme label,
-body.eid-theme small,
-body.eid-theme li,
-body.eid-theme td,
-body.eid-theme th,
-body.eid-theme .form-label,
-body.eid-theme .clock-label,
-body.eid-theme .page-subtitle,
-body.midautumn-theme p,
-body.midautumn-theme span,
-body.midautumn-theme label,
-body.midautumn-theme small,
-body.midautumn-theme li,
-body.midautumn-theme td,
-body.midautumn-theme th,
-body.midautumn-theme .form-label,
-body.midautumn-theme .clock-label,
-body.midautumn-theme .page-subtitle {
-    color: var(--theme-text-main) !important;
-}
-
-/* Headings / titles use the brighter theme accent. */
-body.halloween-theme h1,
-body.halloween-theme h2,
-body.halloween-theme h3,
-body.halloween-theme h4,
-body.halloween-theme h5,
-body.halloween-theme h6,
-body.halloween-theme .page-title,
-body.halloween-theme .section-title,
-body.halloween-theme .modal-title,
-body.christmas-theme h1,
-body.christmas-theme h2,
-body.christmas-theme h3,
-body.christmas-theme h4,
-body.christmas-theme h5,
-body.christmas-theme h6,
-body.christmas-theme .page-title,
-body.christmas-theme .section-title,
-body.christmas-theme .modal-title,
-body.valentine-theme h1,
-body.valentine-theme h2,
-body.valentine-theme h3,
-body.valentine-theme h4,
-body.valentine-theme h5,
-body.valentine-theme h6,
-body.valentine-theme .page-title,
-body.valentine-theme .section-title,
-body.valentine-theme .modal-title,
-body.cny-theme h1,
-body.cny-theme h2,
-body.cny-theme h3,
-body.cny-theme h4,
-body.cny-theme h5,
-body.cny-theme h6,
-body.cny-theme .page-title,
-body.cny-theme .section-title,
-body.cny-theme .modal-title,
-body.eid-theme h1,
-body.eid-theme h2,
-body.eid-theme h3,
-body.eid-theme h4,
-body.eid-theme h5,
-body.eid-theme h6,
-body.eid-theme .page-title,
-body.eid-theme .section-title,
-body.eid-theme .modal-title,
-body.midautumn-theme h1,
-body.midautumn-theme h2,
-body.midautumn-theme h3,
-body.midautumn-theme h4,
-body.midautumn-theme h5,
-body.midautumn-theme h6,
-body.midautumn-theme .page-title,
-body.midautumn-theme .section-title,
-body.midautumn-theme .modal-title {
-    color: var(--theme-text-heading) !important;
-    text-shadow: 0 0 10px var(--theme-text-glow);
-}
-
-/* Links and interactive text. */
-body.halloween-theme a,
-body.christmas-theme a,
-body.valentine-theme a,
-body.cny-theme a,
-body.eid-theme a,
-body.midautumn-theme a {
-    color: var(--theme-text-link) !important;
-}
-
-body.halloween-theme button,
-body.halloween-theme .btn,
-body.christmas-theme button,
-body.christmas-theme .btn,
-body.valentine-theme button,
-body.valentine-theme .btn,
-body.cny-theme button,
-body.cny-theme .btn,
-body.eid-theme button,
-body.eid-theme .btn,
-body.midautumn-theme button,
-body.midautumn-theme .btn {
-    color: var(--theme-text-main);
-}
-
-/* Form controls: typed/selected text and placeholders follow the theme. */
-body.halloween-theme input,
-body.halloween-theme textarea,
-body.halloween-theme select,
-body.christmas-theme input,
-body.christmas-theme textarea,
-body.christmas-theme select,
-body.valentine-theme input,
-body.valentine-theme textarea,
-body.valentine-theme select,
-body.cny-theme input,
-body.cny-theme textarea,
-body.cny-theme select,
-body.eid-theme input,
-body.eid-theme textarea,
-body.eid-theme select,
-body.midautumn-theme input,
-body.midautumn-theme textarea,
-body.midautumn-theme select {
-    color: var(--theme-text-main) !important;
-}
-
-body.halloween-theme input::placeholder,
-body.halloween-theme textarea::placeholder,
-body.christmas-theme input::placeholder,
-body.christmas-theme textarea::placeholder,
-body.valentine-theme input::placeholder,
-body.valentine-theme textarea::placeholder,
-body.cny-theme input::placeholder,
-body.cny-theme textarea::placeholder,
-body.eid-theme input::placeholder,
-body.eid-theme textarea::placeholder,
-body.cny-theme select::placeholder,
-body.midautumn-theme input::placeholder,
-body.midautumn-theme textarea::placeholder {
-    color: var(--theme-text-muted) !important;
-    opacity: 1;
-}
-
-/* Navbar / clock / navigation labels. */
-body.halloween-theme .navbar,
-body.halloween-theme #live-clock-container,
-body.christmas-theme .navbar,
-body.christmas-theme #live-clock-container,
-body.valentine-theme .navbar,
-body.valentine-theme #live-clock-container,
-body.cny-theme .navbar,
-body.cny-theme #live-clock-container,
-body.eid-theme .navbar,
-body.eid-theme #live-clock-container,
-body.midautumn-theme .navbar,
-body.midautumn-theme #live-clock-container {
-    color: var(--theme-text-main);
-}
-
-body.halloween-theme .clock-time,
-body.christmas-theme .clock-time,
-body.valentine-theme .clock-time,
-body.cny-theme .clock-time,
-body.eid-theme .clock-time,
-body.midautumn-theme .clock-time {
-    color: var(--theme-text-accent) !important;
-}
-
-/* Table headers and important labels use the accent without changing layout. */
-body.halloween-theme th,
-body.christmas-theme th,
-body.valentine-theme th,
-body.cny-theme th,
-body.eid-theme th,
-body.midautumn-theme th {
-    color: var(--theme-text-accent) !important;
-}
-
-/* Disabled text remains readable while still belonging to the theme. */
-body.halloween-theme .muted,
-body.halloween-theme .text-muted,
-body.christmas-theme .muted,
-body.christmas-theme .text-muted,
-body.valentine-theme .muted,
-body.valentine-theme .text-muted,
-body.cny-theme .muted,
-body.cny-theme .text-muted,
-body.eid-theme .muted,
-body.eid-theme .text-muted,
-body.midautumn-theme .muted,
-body.midautumn-theme .text-muted {
-    color: var(--theme-text-muted) !important;
 }

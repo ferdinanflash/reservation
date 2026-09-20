@@ -91,6 +91,14 @@ reservation-main/
 
 This project is proprietary and maintained for **3475.web.id**.
 
+## V16 update
+- **All text now follows the active seasonal theme** (Halloween, Christmas, Valentine, Chinese New Year, Eid al-Fitr, Mid-Autumn Festival). Before this, only the buttons, the header logo and the footer names changed color; headings, labels, table text, modal text, the activity feed, links and the footer credit stayed white / grey / cyan.
+  - `style.css` has a new "SEASONAL TEXT COLORS" block near the top: each theme defines a small set of `--t-*` color roles (`--t-strong`, `--t-primary`, `--t-soft`, `--t-secondary`, `--t-muted`, `--t-faint`, `--t-accent`, `--t-link`, `--t-gold`, `--t-amber`, ...). Text rules read them as `var(--t-muted, #8a8d98)`, so **outside a season nothing changes** (the fallback is the original color; verified identical computed colors on all elements).
+  - Also themed: the cyan glow on the activity-feed title / names, the animated footer credit ("Made With ♥ By"), the Theme Switcher modal text, and the colors written inline in `index.html`, `app-applications.js`, `app-schedule.js`, `app-waiting.js`.
+  - To tune a season's text colors, edit only its `body.<season>-theme { --t-... }` block.
+  - Intentionally NOT themed: green (Accepted / success), red (Reject / error / President mode), the per-resource colors of the stat bars, the Discord button, and the opening animation (it already has its own per-season palette).
+- Bumped `style.css`, `app-applications.js`, `app-schedule.js`, `app-waiting.js`, `APP_BUILD` and the cache version.
+
 ## V15 update
 - Added a **Mid-Autumn Festival** seasonal theme (`midautumn`), active automatically every **19-27 September** (see `SEASONS.midautumn` in `fire-banner.js`; the inline script at the top of `<body>` in `index.html` has the same dates, keep them in sync) or on demand from the President's Theme Switcher (new 🌕 option, translated in all 6 languages). The dates are fixed each year; the festival itself follows the lunar calendar (25 Sep in 2026), so shift the range if you want it to follow the real date. It does not overlap any other automatic season.
   - New banner artwork `midautumn-banner-v1.jpg` (jade / red / gold "3475" under a full moon with rabbits, phoenixes, osmanthus, mooncakes, fireworks and lanterns), with 9 firework twinkles (`.midautumn-glow-spot`), 18 lantern flickers (`.midautumn-lantern-glow`), a slow breathing glow on the moon (`.midautumn-moon-glow`) and the embers canvas emitting rising gold / orange / lilac sparkles and 4-point stars.
