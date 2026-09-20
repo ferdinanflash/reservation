@@ -39,7 +39,7 @@ reservation-main/
 ├── sw.js                                  # Service Worker for PWA functionality
 ├── site.webmanifest                       # Web app manifest configuration
 ├── opening-animation.js                   # Visual opening sequence
-├── fire-banner.js                         # Custom animated banner UI element
+├── fire-banner.js                         # Custom animated banner UI element + seasonal themes (Halloween / Christmas / Valentine)
 ├── js/
 │   ├── app-auth.js                        # Authentication & role authorization
 │   ├── app-applications.js                # Application submission & President review
@@ -90,6 +90,15 @@ reservation-main/
 ## 📄 License
 
 This project is proprietary and maintained for **3475.web.id**.
+
+## V12 update
+- Added a **Valentine** seasonal theme, active automatically every 1-14 February (see `SEASONS` in `fire-banner.js`) or on demand from the President's Theme Switcher (new 💖 Valentine option, translated in all 6 languages). It mirrors the Christmas / Halloween themes:
+  - New banner artwork `valentine-banner-v1.jpg` (glittery pink / gold "3475" with cupid wings, roses, fireworks and a "Happy Celebration / Festival of Love" ribbon), with 18 twinkles placed on its real lights (`.valentine-art` / `.valentine-glow-spot`) and the embers canvas emitting softly rising pink / red / gold sparkles and tiny hearts. Shown whole on desktop, like the default and Christmas banners.
+  - The small generator sparkle watermark in the bottom-right corner of the picture was removed (only that area of the image was touched).
+  - Buttons re-skinned via `body.valentine-theme` (rose-pink Apply, crimson Reject/Remove, gold Accept, wine President button); the header "SvS Minister" logo (💖 in front) and footer names use a rose / white / gold shine; the opening (intro) animation follows the palette (💖 around the title).
+  - The inline script at the top of `<body>` in `index.html` also knows the Valentine dates; keep them in sync with `SEASONS`.
+- **Required:** run `supabase_migration_theme_valentine.sql` once in the Supabase SQL Editor. The `theme_override` column had a CHECK constraint that only allowed `auto` / `halloween` / `christmas` / `none`, so without it saving "Valentine" from the Theme Switcher fails (the automatic 1-14 Feb dates work either way). `supabase_migration_theme_settings.sql` was updated for fresh installs.
+- Added the image to the Service Worker precache; bumped `style.css`, `fire-banner.js`, `APP_BUILD` and the cache version.
 
 ## V11 update
 - **Fix:** the President's Theme Switcher choice was only stored in the President's own browser (`localStorage`), so other users never saw it. The choice is now saved in Supabase (`theme_settings` table, row `main`) and applies to every visitor.

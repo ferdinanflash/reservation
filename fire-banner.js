@@ -1,7 +1,8 @@
 // Animasi bara api oranye untuk banner "3475" — menggantikan gambar statis.
 // Selama musim Halloween, banner otomatis berganti ke tema labu/jack-o'-lantern.
 // Selama musim Natal (1-30 Desember setiap tahun), banner otomatis berganti
-// ke tema Natal (lihat SEASONS di bawah). Presiden (admin) juga bisa memaksa
+// ke tema Natal (lihat SEASONS di bawah). Selama musim Valentine (1-14 Februari)
+// banner berganti ke tema Valentine. Presiden (admin) juga bisa memaksa
 // tema tertentu lewat menu "Theme Switcher" di panel president — lihat
 // window.SVSSeasonalTheme di paling bawah file ini.
 (function () {
@@ -11,7 +12,8 @@
 	// Bulan pakai indeks 0 (Januari=0 ... Desember=11), sesuai Date JS.
 	const SEASONS = {
 		halloween: { startMonth: 9, startDay: 1, endMonth: 10, endDay: 2 },   // 1 Okt - 2 Nov
-		christmas: { startMonth: 11, startDay: 1, endMonth: 11, endDay: 30 }  // 1 - 30 Des
+		christmas: { startMonth: 11, startDay: 1, endMonth: 11, endDay: 30 }, // 1 - 30 Des
+		valentine: { startMonth: 1, startDay: 1, endMonth: 1, endDay: 14 }    // 1 - 14 Feb
 	};
 
 	// Override manual dari President sekarang disimpan di DATABASE (tabel
@@ -22,10 +24,11 @@
 	// console browser (hanya di browser itu, akan tertimpa nilai server):
 	//   localStorage.setItem('svs_theme_override', 'halloween')  -> paksa Halloween
 	//   localStorage.setItem('svs_theme_override', 'christmas')  -> paksa Natal
+	//   localStorage.setItem('svs_theme_override', 'valentine')  -> paksa Valentine
 	//   localStorage.setItem('svs_theme_override', 'none')       -> paksa banner api biasa
 	//   localStorage.removeItem('svs_theme_override')            -> ikut tanggal asli (Auto)
 	const OVERRIDE_KEY = 'svs_theme_override';
-	const VALID_THEMES = ['halloween', 'christmas', 'none'];
+	const VALID_THEMES = ['halloween', 'christmas', 'valentine', 'none'];
 
 	// Kunci lama (per-musim on/off) tetap didukung untuk kompatibilitas
 	// mundur, tapi override terpadu di atas selalu diprioritaskan.
@@ -78,6 +81,8 @@
 		if (legacyOverride('christmas') === 'off') { /* dipaksa mati, lewati */ }
 		else if (legacyOverride('christmas') === 'on' || isInSeason(d, SEASONS.christmas)) return 'christmas';
 
+		if (isInSeason(d, SEASONS.valentine)) return 'valentine';
+
 		return 'none';
 	}
 
@@ -92,6 +97,7 @@
 	const ART_FILES = {
 		none: 'default-banner-v2.jpg',
 		christmas: 'christmas-banner-v3.jpg',
+		valentine: 'valentine-banner-v1.jpg',
 		halloween: 'halloween-banner.png'
 	};
 	const artState = {}; // tema -> 'loading' | 'ok' | 'failed'
@@ -117,11 +123,13 @@
 		const theme = computeActiveTheme();
 		container.classList.toggle('halloween-theme', theme === 'halloween');
 		container.classList.toggle('christmas-theme', theme === 'christmas');
+		container.classList.toggle('valentine-theme', theme === 'valentine');
 		// Also flag it on <body> so page-wide elements (buttons, etc.) that
 		// aren't inside the banner can react to the same season via CSS,
 		// e.g. `body.christmas-theme .btn-apply { ... }`.
 		document.body.classList.toggle('halloween-theme', theme === 'halloween');
 		document.body.classList.toggle('christmas-theme', theme === 'christmas');
+		document.body.classList.toggle('valentine-theme', theme === 'valentine');
 		checkArt(container, theme);
 		return theme;
 	}
@@ -171,6 +179,19 @@
 					life: 0, maxLife: 170 + Math.random() * 140,
 					colorPick: Math.random(), sway: Math.random() * Math.PI * 2
 				});
+			} else if (theme === 'valentine') {
+				// Soft pink / red / gold sparkles and tiny hearts floating gently upward.
+				const x = w * (0.04 + Math.random() * 0.92);
+				const y = h * (0.75 + Math.random() * 0.3);
+				const speed = 0.25 + Math.random() * 0.4;
+				const size = 0.8 + Math.random() * 1.9;
+				particles.push({
+					x, y, size, vy: -speed,
+					vx: (Math.random() - 0.5) * 0.2,
+					life: 0, maxLife: 150 + Math.random() * 120,
+					colorPick: Math.random(), sway: Math.random() * Math.PI * 2,
+					heart: Math.random() < 0.4
+				});
 			} else {
 				// Default banner: sparks rise from around the flaming shield, which
 				// sits in the middle of the picture (not across the whole width).
@@ -194,6 +215,8 @@
 				if (Math.random() < 0.5) spawnParticle();
 			} else if (theme === 'christmas') {
 				if (Math.random() < 0.55) spawnParticle();
+			} else if (theme === 'valentine') {
+				if (Math.random() < 0.5) spawnParticle();
 			} else {
 				if (Math.random() < 0.85) spawnParticle();
 				if (Math.random() < 0.35) spawnParticle();
@@ -201,7 +224,7 @@
 
 			for (let i = particles.length - 1; i >= 0; i--) {
 				const p = particles[i];
-				if (theme === 'christmas') {
+				if (theme === 'christmas' || theme === 'valentine') {
 					p.x += p.vx + Math.sin((p.life + p.sway * 20) * 0.04) * 0.3;
 					p.y += p.vy;
 				} else {
@@ -211,7 +234,7 @@
 				}
 				p.life++;
 				const t = p.life / p.maxLife;
-				if (t >= 1 || p.y > canvas.height + 10) { particles.splice(i, 1); continue; }
+				if (t >= 1 || p.y > canvas.height + 10 || (theme === 'valentine' && p.y < -10)) { particles.splice(i, 1); continue; }
 				const alpha = Math.sin(Math.PI * t) * 0.9;
 				let r, g, b;
 				if (theme === 'halloween') {
@@ -222,6 +245,11 @@
 					else if (p.colorPick < 0.65) { r = 235; g = 60; b = 70; }   // red
 					else if (p.colorPick < 0.85) { r = 70; g = 200; b = 120; }  // green
 					else { r = 255; g = 255; b = 255; }                        // white sparkle
+				} else if (theme === 'valentine') {
+					if (p.colorPick < 0.4) { r = 255; g = 105; b = 160; }       // rose pink
+					else if (p.colorPick < 0.65) { r = 235; g = 45; b = 85; }   // crimson
+					else if (p.colorPick < 0.85) { r = 255; g = 215; b = 110; } // gold
+					else { r = 255; g = 235; b = 245; }                         // pearl white
 				} else {
 					r = 255;
 					g = 120 + p.hueShift * 100;
@@ -229,9 +257,18 @@
 				}
 				ctx.beginPath();
 				ctx.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${alpha})`;
-				ctx.shadowColor = theme === 'halloween' ? `rgba(${r | 0},${g | 0},${b | 0},${alpha})` : (theme === 'christmas' ? `rgba(${r | 0},${g | 0},${b | 0},${alpha})` : `rgba(255,140,0,${alpha})`);
-				ctx.shadowBlur = theme === 'halloween' ? 4 : (theme === 'christmas' ? 5 : 5);
-				ctx.arc(p.x, p.y, p.size * (1 - t * 0.4), 0, Math.PI * 2);
+				ctx.shadowColor = (theme === 'halloween' || theme === 'christmas' || theme === 'valentine') ? `rgba(${r | 0},${g | 0},${b | 0},${alpha})` : `rgba(255,140,0,${alpha})`;
+				ctx.shadowBlur = theme === 'halloween' ? 4 : 5;
+				const radius = p.size * (1 - t * 0.4);
+				if (theme === 'valentine' && p.heart) {
+					// Tiny heart (two lobes + point), scaled from the particle size.
+					const k = radius * 1.6;
+					ctx.moveTo(p.x, p.y + k * 0.9);
+					ctx.bezierCurveTo(p.x - k * 1.6, p.y - k * 0.2, p.x - k * 0.8, p.y - k * 1.4, p.x, p.y - k * 0.5);
+					ctx.bezierCurveTo(p.x + k * 0.8, p.y - k * 1.4, p.x + k * 1.6, p.y - k * 0.2, p.x, p.y + k * 0.9);
+				} else {
+					ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+				}
 				ctx.fill();
 			}
 
@@ -361,7 +398,7 @@
 
 	// ============ PUBLIC API (dipakai oleh menu Theme Switcher President) ============
 	window.SVSSeasonalTheme = {
-		// 'halloween' | 'christmas' | 'none' | 'auto'
+		// 'halloween' | 'christmas' | 'valentine' | 'none' | 'auto'
 		// Menyimpan ke database supaya berlaku untuk semua pengguna. Mengembalikan
 		// Promise<boolean>: true kalau berhasil disimpan, false kalau gagal
 		// (mis. bukan staff yang login, atau migrasi SQL belum dijalankan).
@@ -388,7 +425,7 @@
 		getActiveTheme: function () {
 			return computeActiveTheme();
 		},
-		// 'halloween' | 'christmas' | 'none' jika dipaksa manual, atau null jika Auto.
+		// 'halloween' | 'christmas' | 'valentine' | 'none' jika dipaksa manual, atau null jika Auto.
 		getOverride: getOverride,
 		onChange: function (cb) { onThemeChangeCb = cb; }
 	};
