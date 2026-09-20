@@ -103,7 +103,7 @@ async function saveEditFooter() {
 }
 
 // ================= THEME SWITCHER (President-only) =================
-// Lets the President force the seasonal banner theme (Halloween / Christmas /
+// Lets the President force the seasonal banner theme (Halloween / Christmas / Valentine /
 // plain fire) instead of waiting for the automatic date range.
 // The choice is saved in the database (table theme_settings) through
 // window.SVSSeasonalTheme (fire-banner.js), so it applies to EVERYONE who
