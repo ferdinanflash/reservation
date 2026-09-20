@@ -4651,3 +4651,318 @@ body.redeem-modal-open { overflow: hidden; }
     .navbar-actions .btn-redeem,
     .navbar-actions .btn-admin { font-size: 0.66rem; padding: 8px 3px; }
 }
+
+
+/* ================================================================
+   THEME-AWARE TYPOGRAPHY
+   All normal UI text follows the currently active seasonal theme.
+   The body theme class is managed by fire-banner.js, so this also
+   updates globally when the President changes the theme.
+   ================================================================ */
+
+body.halloween-theme {
+    --theme-text-main: #ffe9c7;
+    --theme-text-soft: #d8c7e8;
+    --theme-text-muted: #b7a8c9;
+    --theme-text-accent: #ff9d2e;
+    --theme-text-heading: #ffc15a;
+    --theme-text-link: #ffb84d;
+    --theme-text-glow: rgba(255, 145, 30, .42);
+}
+
+body.christmas-theme {
+    --theme-text-main: #fff3dc;
+    --theme-text-soft: #d9f2e3;
+    --theme-text-muted: #b9d5c4;
+    --theme-text-accent: #ffd25e;
+    --theme-text-heading: #ffe7a3;
+    --theme-text-link: #7ee2a6;
+    --theme-text-glow: rgba(255, 205, 80, .38);
+}
+
+body.valentine-theme {
+    --theme-text-main: #ffe8f1;
+    --theme-text-soft: #f8c7d9;
+    --theme-text-muted: #d6aabd;
+    --theme-text-accent: #ff79ae;
+    --theme-text-heading: #ffb1ce;
+    --theme-text-link: #ff8fbc;
+    --theme-text-glow: rgba(255, 90, 160, .38);
+}
+
+body.cny-theme {
+    --theme-text-main: #fff2d0;
+    --theme-text-soft: #f6d8c5;
+    --theme-text-muted: #d7b6a8;
+    --theme-text-accent: #ffd25e;
+    --theme-text-heading: #ffe49a;
+    --theme-text-link: #ff9b70;
+    --theme-text-glow: rgba(255, 190, 60, .4);
+}
+
+body.eid-theme {
+    --theme-text-main: #effff4;
+    --theme-text-soft: #c9ead7;
+    --theme-text-muted: #a8cdb8;
+    --theme-text-accent: #ffd66b;
+    --theme-text-heading: #ffe9a8;
+    --theme-text-link: #72e0a5;
+    --theme-text-glow: rgba(80, 220, 150, .34);
+}
+
+body.midautumn-theme {
+    --theme-text-main: #fff1d2;
+    --theme-text-soft: #e2d2f2;
+    --theme-text-muted: #c0aecf;
+    --theme-text-accent: #ffbf63;
+    --theme-text-heading: #ffe3a0;
+    --theme-text-link: #c9a0ff;
+    --theme-text-glow: rgba(190, 130, 255, .34);
+}
+
+/* Main readable text */
+body.halloween-theme,
+body.christmas-theme,
+body.valentine-theme,
+body.cny-theme,
+body.eid-theme,
+body.midautumn-theme {
+    color: var(--theme-text-main);
+}
+
+body.halloween-theme p,
+body.halloween-theme span,
+body.halloween-theme label,
+body.halloween-theme small,
+body.halloween-theme li,
+body.halloween-theme td,
+body.halloween-theme th,
+body.halloween-theme .form-label,
+body.halloween-theme .clock-label,
+body.halloween-theme .page-subtitle,
+body.christmas-theme p,
+body.christmas-theme span,
+body.christmas-theme label,
+body.christmas-theme small,
+body.christmas-theme li,
+body.christmas-theme td,
+body.christmas-theme th,
+body.christmas-theme .form-label,
+body.christmas-theme .clock-label,
+body.christmas-theme .page-subtitle,
+body.valentine-theme p,
+body.valentine-theme span,
+body.valentine-theme label,
+body.valentine-theme small,
+body.valentine-theme li,
+body.valentine-theme td,
+body.valentine-theme th,
+body.valentine-theme .form-label,
+body.valentine-theme .clock-label,
+body.valentine-theme .page-subtitle,
+body.cny-theme p,
+body.cny-theme span,
+body.cny-theme label,
+body.cny-theme small,
+body.cny-theme li,
+body.cny-theme td,
+body.cny-theme th,
+body.cny-theme .form-label,
+body.cny-theme .clock-label,
+body.cny-theme .page-subtitle,
+body.eid-theme p,
+body.eid-theme span,
+body.eid-theme label,
+body.eid-theme small,
+body.eid-theme li,
+body.eid-theme td,
+body.eid-theme th,
+body.eid-theme .form-label,
+body.eid-theme .clock-label,
+body.eid-theme .page-subtitle,
+body.midautumn-theme p,
+body.midautumn-theme span,
+body.midautumn-theme label,
+body.midautumn-theme small,
+body.midautumn-theme li,
+body.midautumn-theme td,
+body.midautumn-theme th,
+body.midautumn-theme .form-label,
+body.midautumn-theme .clock-label,
+body.midautumn-theme .page-subtitle {
+    color: var(--theme-text-main) !important;
+}
+
+/* Headings / titles use the brighter theme accent. */
+body.halloween-theme h1,
+body.halloween-theme h2,
+body.halloween-theme h3,
+body.halloween-theme h4,
+body.halloween-theme h5,
+body.halloween-theme h6,
+body.halloween-theme .page-title,
+body.halloween-theme .section-title,
+body.halloween-theme .modal-title,
+body.christmas-theme h1,
+body.christmas-theme h2,
+body.christmas-theme h3,
+body.christmas-theme h4,
+body.christmas-theme h5,
+body.christmas-theme h6,
+body.christmas-theme .page-title,
+body.christmas-theme .section-title,
+body.christmas-theme .modal-title,
+body.valentine-theme h1,
+body.valentine-theme h2,
+body.valentine-theme h3,
+body.valentine-theme h4,
+body.valentine-theme h5,
+body.valentine-theme h6,
+body.valentine-theme .page-title,
+body.valentine-theme .section-title,
+body.valentine-theme .modal-title,
+body.cny-theme h1,
+body.cny-theme h2,
+body.cny-theme h3,
+body.cny-theme h4,
+body.cny-theme h5,
+body.cny-theme h6,
+body.cny-theme .page-title,
+body.cny-theme .section-title,
+body.cny-theme .modal-title,
+body.eid-theme h1,
+body.eid-theme h2,
+body.eid-theme h3,
+body.eid-theme h4,
+body.eid-theme h5,
+body.eid-theme h6,
+body.eid-theme .page-title,
+body.eid-theme .section-title,
+body.eid-theme .modal-title,
+body.midautumn-theme h1,
+body.midautumn-theme h2,
+body.midautumn-theme h3,
+body.midautumn-theme h4,
+body.midautumn-theme h5,
+body.midautumn-theme h6,
+body.midautumn-theme .page-title,
+body.midautumn-theme .section-title,
+body.midautumn-theme .modal-title {
+    color: var(--theme-text-heading) !important;
+    text-shadow: 0 0 10px var(--theme-text-glow);
+}
+
+/* Links and interactive text. */
+body.halloween-theme a,
+body.christmas-theme a,
+body.valentine-theme a,
+body.cny-theme a,
+body.eid-theme a,
+body.midautumn-theme a {
+    color: var(--theme-text-link) !important;
+}
+
+body.halloween-theme button,
+body.halloween-theme .btn,
+body.christmas-theme button,
+body.christmas-theme .btn,
+body.valentine-theme button,
+body.valentine-theme .btn,
+body.cny-theme button,
+body.cny-theme .btn,
+body.eid-theme button,
+body.eid-theme .btn,
+body.midautumn-theme button,
+body.midautumn-theme .btn {
+    color: var(--theme-text-main);
+}
+
+/* Form controls: typed/selected text and placeholders follow the theme. */
+body.halloween-theme input,
+body.halloween-theme textarea,
+body.halloween-theme select,
+body.christmas-theme input,
+body.christmas-theme textarea,
+body.christmas-theme select,
+body.valentine-theme input,
+body.valentine-theme textarea,
+body.valentine-theme select,
+body.cny-theme input,
+body.cny-theme textarea,
+body.cny-theme select,
+body.eid-theme input,
+body.eid-theme textarea,
+body.eid-theme select,
+body.midautumn-theme input,
+body.midautumn-theme textarea,
+body.midautumn-theme select {
+    color: var(--theme-text-main) !important;
+}
+
+body.halloween-theme input::placeholder,
+body.halloween-theme textarea::placeholder,
+body.christmas-theme input::placeholder,
+body.christmas-theme textarea::placeholder,
+body.valentine-theme input::placeholder,
+body.valentine-theme textarea::placeholder,
+body.cny-theme input::placeholder,
+body.cny-theme textarea::placeholder,
+body.eid-theme input::placeholder,
+body.eid-theme textarea::placeholder,
+body.cny-theme select::placeholder,
+body.midautumn-theme input::placeholder,
+body.midautumn-theme textarea::placeholder {
+    color: var(--theme-text-muted) !important;
+    opacity: 1;
+}
+
+/* Navbar / clock / navigation labels. */
+body.halloween-theme .navbar,
+body.halloween-theme #live-clock-container,
+body.christmas-theme .navbar,
+body.christmas-theme #live-clock-container,
+body.valentine-theme .navbar,
+body.valentine-theme #live-clock-container,
+body.cny-theme .navbar,
+body.cny-theme #live-clock-container,
+body.eid-theme .navbar,
+body.eid-theme #live-clock-container,
+body.midautumn-theme .navbar,
+body.midautumn-theme #live-clock-container {
+    color: var(--theme-text-main);
+}
+
+body.halloween-theme .clock-time,
+body.christmas-theme .clock-time,
+body.valentine-theme .clock-time,
+body.cny-theme .clock-time,
+body.eid-theme .clock-time,
+body.midautumn-theme .clock-time {
+    color: var(--theme-text-accent) !important;
+}
+
+/* Table headers and important labels use the accent without changing layout. */
+body.halloween-theme th,
+body.christmas-theme th,
+body.valentine-theme th,
+body.cny-theme th,
+body.eid-theme th,
+body.midautumn-theme th {
+    color: var(--theme-text-accent) !important;
+}
+
+/* Disabled text remains readable while still belonging to the theme. */
+body.halloween-theme .muted,
+body.halloween-theme .text-muted,
+body.christmas-theme .muted,
+body.christmas-theme .text-muted,
+body.valentine-theme .muted,
+body.valentine-theme .text-muted,
+body.cny-theme .muted,
+body.cny-theme .text-muted,
+body.eid-theme .muted,
+body.eid-theme .text-muted,
+body.midautumn-theme .muted,
+body.midautumn-theme .text-muted {
+    color: var(--theme-text-muted) !important;
+}
