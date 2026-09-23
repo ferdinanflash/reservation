@@ -91,6 +91,13 @@ reservation-main/
 
 This project is proprietary and maintained for **3475.web.id**.
 
+## V17 update
+- **`sw.js`: fixed two service-worker cache issues.**
+  1. **Self-healing cache (stale-while-revalidate).** Static assets (`js/*.js`, `style.css`, `common.js`, `lang.js`, `fire-banner.js`) used to be pure cache-first: once cached, a URL was never checked against the network again. If a deploy ever changed a file's content but forgot to bump its `?v=` (or forgot to bump `CACHE_VERSION`), that stale copy would be served forever until someone manually cleared site data. Now every request for these files still answers instantly from cache, but also fires a background fetch that refreshes the cache for next time — so a forgotten version bump self-heals within one extra visit instead of staying stale indefinitely. Verified end-to-end with a Playwright test: changed a file's content without bumping its version, confirmed visit 1 still executes the old cached code (fast-path), and visit 2 already executes the corrected code with no cache clear.
+  2. **No more wasted precache entries.** `PRECACHE` used to hardcode entries like `./js/app-core.js` (no query string), while the page actually requests `js/app-core.js?v=48`. Cache Storage keys on the full URL, so those two never matched — the no-query entry was precached on install and then never read by anyone, ever. `sw.js` now fetches `index.html` itself at install time, reads out the real `?v=`-versioned URLs it references, and precaches exactly those — no more drift, no more dead cache entries, and one less place to remember to update by hand. Verified the installed cache now holds exactly the 28 URLs the page actually requests, all with their correct `?v=`, zero no-query duplicates.
+  - Icons/images/manifest that version themselves via filename (`-v8.png` etc.) are unaffected and still listed in a small `PRECACHE_STATIC` array.
+  - Bumped `CACHE_VERSION` and `APP_BUILD` to `2026-09-21-06`.
+
 ## V16 update
 - **All text now follows the active seasonal theme** (Halloween, Christmas, Valentine, Chinese New Year, Eid al-Fitr, Mid-Autumn Festival). Before this, only the buttons, the header logo and the footer names changed color; headings, labels, table text, modal text, the activity feed, links and the footer credit stayed white / grey / cyan.
   - `style.css` has a new "SEASONAL TEXT COLORS" block near the top: each theme defines a small set of `--t-*` color roles (`--t-strong`, `--t-primary`, `--t-soft`, `--t-secondary`, `--t-muted`, `--t-faint`, `--t-accent`, `--t-link`, `--t-gold`, `--t-amber`, ...). Text rules read them as `var(--t-muted, #8a8d98)`, so **outside a season nothing changes** (the fallback is the original color; verified identical computed colors on all elements).
