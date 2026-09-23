@@ -2538,6 +2538,43 @@ body.halloween-theme .navbar .logo.fire-text::before {
     letter-spacing: 0;
 }
 
+/* ---- Blue Fire ---- */
+/* Header title + President/Guild info use the same Blue Fire palette so
+   the branding remains consistent with the active theme. */
+body.bluefire-theme .navbar .logo.fire-text,
+body.bluefire-theme .site-footer .fire-text {
+    background-image: linear-gradient(
+        to right,
+        #0b72ff 0%,
+        #bff8ff 16%,
+        #ffffff 30%,
+        #18dfff 46%,
+        #66a8ff 60%,
+        #e5fcff 76%,
+        #0b72ff 100%
+    );
+    background-size: 200% auto;
+    filter:
+        drop-shadow(0 0 6px rgba(0, 196, 255, 0.58))
+        drop-shadow(0 0 14px rgba(0, 105, 255, 0.28))
+        drop-shadow(0 2px 4px rgba(0, 0, 0, 0.78));
+}
+
+body.bluefire-theme .navbar .logo.fire-text::before {
+    content: '✦';                 /* blue-fire accent */
+    display: inline-block;
+    margin-right: 6px;
+    -webkit-text-fill-color: #8deaff;
+    color: #8deaff;
+    letter-spacing: 0;
+    filter: drop-shadow(0 0 5px rgba(0, 210, 255, 0.75));
+}
+
+body.bluefire-theme .footer-current-president {
+    color: #8deaff;
+    text-shadow: 0 0 8px rgba(0, 190, 255, 0.38);
+}
+
 @media (prefers-reduced-motion: reduce) {
     body.christmas-theme .navbar .logo.fire-text,
     body.christmas-theme .site-footer .fire-text,
@@ -2550,7 +2587,9 @@ body.halloween-theme .navbar .logo.fire-text::before {
     body.midautumn-theme .navbar .logo.fire-text,
     body.midautumn-theme .site-footer .fire-text,
     body.halloween-theme .navbar .logo.fire-text,
-    body.halloween-theme .site-footer .fire-text {
+    body.halloween-theme .site-footer .fire-text,
+    body.bluefire-theme .navbar .logo.fire-text,
+    body.bluefire-theme .site-footer .fire-text {
         animation: none !important;
     }
 }
