@@ -125,6 +125,15 @@
 
 		<!-- Opening animation: tidak mengubah layout halaman utama -->
 		<div id="svs-opening" class="svs-opening" aria-hidden="true">
+			<!-- Blue Fire intro uses the same supplied artwork/video as the main banner.
+			     It is hidden for every other theme, so the existing intros are unchanged. -->
+			<div class="svs-opening-bluefire-media" aria-hidden="true">
+				<video class="svs-opening-bluefire-video" muted playsinline loop preload="metadata" poster="bluefire-banner-v1.png">
+					<source src="bluefire-banner-v1.mp4" type="video/mp4">
+				</video>
+				<img class="svs-opening-bluefire-poster" src="bluefire-banner-v1.png" alt="">
+				<div class="svs-opening-bluefire-vignette"></div>
+			</div>
 			<div class="svs-opening-glow"></div>
 			<div class="svs-opening-sparks" aria-hidden="true"></div>
 			<div class="svs-opening-content">
