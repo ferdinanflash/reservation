@@ -2,35 +2,32 @@
 // Makes the app installable (PWA) and keeps it usable when the network is
 // slow or offline. Strategy:
 //   - navigations (the HTML page): network first, cached copy as fallback
-//   - same-origin static assets (js/css/images/icons): cache first
+//   - same-origin static assets (js/css/images/icons): stale-while-revalidate
+//     (serve the cached copy instantly, then refresh it in the background so
+//     the NEXT visit is up to date even if nobody remembered to bump a
+//     version number — see the fetch handler below for why this matters)
 //   - everything else (Supabase, CDN): never touched, always straight to network
 //
-// >>> Bump CACHE_VERSION on every deploy so old files are dropped. <<<
-const CACHE_VERSION = '2026-09-21-04';
+// >>> Still bump CACHE_VERSION on every deploy. <<<
+// It's no longer the only thing standing between users and stale files (the
+// stale-while-revalidate fetch handler below self-heals that), but it's what
+// throws away old cache namespaces on activate() and gives every user a
+// clean slate immediately instead of waiting for a background revalidation.
+const CACHE_VERSION = '2026-09-21-06';
 const CACHE_NAME = `svs-${CACHE_VERSION}`;
-const PRECACHE = [
+
+// Icons/images/manifest whose version lives in the FILENAME (e.g. "-v8.png"),
+// not a "?v=" query string. These rarely change, so listing them once here is
+// fine — when their filename changes, this list simply needs a matching edit.
+const PRECACHE_STATIC = [
     './',
     './index.html',
-    './style.css',
-    './common.js',
-    './lang.js',
-    './js/app-core.js',
-    './js/app-auth.js',
-    './js/app-notes.js',
-    './js/app-schedule.js',
-    './js/app-applications.js',
-    './js/app-waiting.js',
-    './js/app-extras.js',
-    './js/app-notifications.js',
-    './fire-banner.js',
     './christmas-banner-v3.jpg',
     './valentine-banner-v1.jpg',
     './cny-banner-v1.jpg',
     './eid-banner-v1.jpg',
     './midautumn-banner-v1.jpg',
     './default-banner-v2.jpg',
-    './opening-animation.js',
-    './site.webmanifest',
     './pwa-icon-192-v8.png',
     './pwa-icon-512-v8.png',
     './apple-touch-icon-v8.png',
@@ -39,10 +36,38 @@ const PRECACHE = [
     './favicon-v8.ico'
 ];
 
+// style.css, common.js, lang.js, the js/*.js modules, fire-banner.js and
+// site.webmanifest are instead versioned with a "?v=" query string that only
+// lives in index.html. Hardcoding those same numbers a second time here used
+// to drift out of sync with index.html (precache held "./js/app-core.js"
+// while the page actually requested "js/app-core.js?v=48" — two different
+// cache keys for one file, the first of which nothing ever read again).
+// Instead of guessing, read index.html itself at install time and precache
+// exactly the versioned URLs it references right now.
+async function getVersionedAssetUrls() {
+    try {
+        const res = await fetch('./index.html', { cache: 'no-store' });
+        const html = await res.text();
+        const urls = new Set();
+        const attrRe = /\b(?:src|href)\s*=\s*"([^"]+)"/g;
+        let match;
+        while ((match = attrRe.exec(html))) {
+            const raw = match[1];
+            if (/^([a-z]+:)?\/\//i.test(raw) || raw.startsWith('data:') || raw.startsWith('#')) continue; // skip cross-origin / inline
+            if (!/\.(js|css|webmanifest)(\?|$)/i.test(raw)) continue; // only the query-string-versioned asset types
+            urls.add(raw);
+        }
+        return [...urls];
+    } catch (error) {
+        return []; // offline on first install: static list below still works
+    }
+}
+
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => cache.addAll(PRECACHE))
+        getVersionedAssetUrls()
+            .then((versionedUrls) => caches.open(CACHE_NAME)
+                .then((cache) => cache.addAll([...PRECACHE_STATIC, ...versionedUrls])))
             .catch(() => undefined)
             .then(() => self.skipWaiting())
     );
@@ -78,14 +103,35 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // Stale-while-revalidate: answer from cache immediately when we have a
+    // copy (fast, and works offline), but ALWAYS also kick off a network
+    // fetch that refreshes the cache in the background for next time.
+    // event.waitUntil() keeps the worker alive long enough for that
+    // background fetch to finish even after we've already responded.
+    //
+    // This is the safety net for human error: if a file's content changes
+    // but its "?v=" (or CACHE_VERSION) doesn't get bumped, the OLD cache-first
+    // code below would have kept serving the stale copy forever. Now the very
+    // next request for that same URL updates the cache, so the visit after
+    // that gets the corrected file — no manual "clear site data" needed.
     event.respondWith(
-        caches.match(request).then((cached) => cached || fetch(request).then((response) => {
-            if (response.ok) {
-                const copy = response.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        caches.match(request).then((cached) => {
+            const revalidate = fetch(request)
+                .then((response) => {
+                    if (response.ok) {
+                        const copy = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+                    }
+                    return response;
+                })
+                .catch(() => undefined);
+
+            if (cached) {
+                event.waitUntil(revalidate);
+                return cached;
             }
-            return response;
-        }))
+            return revalidate.then((response) => response || caches.match(request));
+        })
     );
 });
 
