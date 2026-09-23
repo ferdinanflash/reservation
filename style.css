@@ -257,6 +257,26 @@ body.midautumn-theme {
     --t-neon-b: #c9a0ff;
 }
 
+/* ---- Blue Fire ---- */
+body.bluefire-theme {
+    --t-strong: #f4fcff;
+    --t-primary: #dff8ff;
+    --t-soft: #bdefff;
+    --t-secondary: #8bd9f5;
+    --t-muted: #6aaec8;
+    --t-faint: #4e7890;
+    --t-accent: #45dfff;
+    --t-accent-strong: #1ba8ff;
+    --t-link: #70e5ff;
+    --t-link-hi: #b9f4ff;
+    --t-gold: #9feeff;
+    --t-gold-hi: #e0fbff;
+    --t-amber: #63dfff;
+    --t-glow: 35, 190, 255;
+    --t-neon-a: #00cfff;
+    --t-neon-b: #65eaff;
+}
+
 /* ---- Halloween ---- */
 body.halloween-theme {
     --t-strong: #fff7ee;
@@ -590,8 +610,8 @@ body.halloween-theme {
 }
 
 /* hide old digits: the default art already contains the "3475" */
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme) .fire-glow-back,
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme) .fire-numbers {
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme):not(.bluefire-theme) .fire-glow-back,
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme):not(.bluefire-theme) .fire-numbers {
     display: none;
 }
 
@@ -614,7 +634,8 @@ body.halloween-theme {
 .fire-banner.valentine-theme .fire-default-art,
 .fire-banner.cny-theme .fire-default-art,
 .fire-banner.eid-theme .fire-default-art,
-.fire-banner.midautumn-theme .fire-default-art {
+.fire-banner.midautumn-theme .fire-default-art,
+.fire-banner.bluefire-theme .fire-default-art {
     display: none;
 }
 
@@ -622,6 +643,77 @@ body.halloween-theme {
     .fire-default-art, .fire-default-art::after {
         animation: none !important;
     }
+}
+
+/* ==================== BLUE FIRE SEASONAL BANNER ====================
+   The supplied 10-second Blue Fire MP4 is the primary banner. The supplied
+   PNG remains underneath as an instant poster/fallback, with a cool cyan
+   glow and a subtle breathing effect to match the Whiteout Survival style. */
+.fire-banner.bluefire-theme {
+    background: radial-gradient(ellipse at 50% 55%, #0b4e83 0%, #071c35 48%, #020913 100%);
+    box-shadow: 0 0 28px rgba(0, 174, 255, 0.32), inset 0 0 45px rgba(0, 120, 255, 0.18);
+}
+
+.fire-banner.bluefire-theme .fire-glow-back,
+.fire-banner.bluefire-theme .fire-numbers {
+    display: none;
+}
+
+.bluefire-art {
+    position: absolute;
+    inset: -2.5%;
+    z-index: 2;
+    overflow: hidden;
+    background: #061426;
+    animation: bluefireBreathe 6s ease-in-out infinite;
+}
+
+.bluefire-video,
+.bluefire-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.bluefire-video { z-index: 2; }
+.bluefire-poster { z-index: 1; }
+
+.bluefire-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 50% 45%, rgba(40, 210, 255, 0.08) 0%, transparent 56%),
+        linear-gradient(180deg, rgba(1, 9, 20, 0.10), rgba(1, 8, 18, 0.28));
+    mix-blend-mode: screen;
+    animation: bluefireGlowPulse 3.6s ease-in-out infinite;
+}
+
+@keyframes bluefireBreathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.012); }
+}
+
+@keyframes bluefireGlowPulse {
+    0%, 100% { opacity: .55; }
+    50%      { opacity: .9; }
+}
+
+.bluefire-art,
+.bluefire-art .bluefire-video,
+.bluefire-art .bluefire-poster { backface-visibility: hidden; }
+
+/* Hidden until the theme is active. */
+.bluefire-art { display: none; }
+.fire-banner.bluefire-theme .bluefire-art { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+    .bluefire-art, .bluefire-vignette { animation: none !important; }
 }
 
 /* ==================== HALLOWEEN SEASONAL BANNER OVERLAY ====================

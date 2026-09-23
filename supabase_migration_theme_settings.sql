@@ -18,7 +18,7 @@
 CREATE TABLE IF NOT EXISTS public.theme_settings (
     id text PRIMARY KEY,
     theme_override text NOT NULL DEFAULT 'auto'
-        CHECK (theme_override IN ('auto', 'halloween', 'christmas', 'valentine', 'cny', 'eid', 'midautumn', 'none')),
+        CHECK (theme_override IN ('auto', 'halloween', 'christmas', 'valentine', 'cny', 'eid', 'midautumn', 'bluefire', 'none')),
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 
