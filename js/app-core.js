@@ -147,33 +147,33 @@ function subscribeToRealtimeUpdates() {
 function updateAdminUI() {
     const adminBtn = document.getElementById('admin-toggle-btn');
     const adminInd = document.getElementById('admin-indicator');
-    const editFooterBtn = document.getElementById('edit-footer-btn');
-    const themeSwitcherBtn = document.getElementById('theme-switcher-btn');
+    const presidentPanelBtn = document.getElementById('president-panel-btn');
     const toggleResBtn = document.getElementById('toggle-reservation-btn'); 
-    const finishSvsBtn = document.getElementById('finish-svs-btn'); 
 
     if (adminBtn) adminBtn.innerText = currentStaffUsername ? t("admin_logout_named", { name: currentStaffUsername.toUpperCase() }) : t("admin_logout_btn");
     if (adminInd) adminInd.style.display = "inline";
-    if (editFooterBtn) editFooterBtn.style.display = "inline-block";
-    if (themeSwitcherBtn) themeSwitcherBtn.style.display = "inline-block";
+    if (presidentPanelBtn) presidentPanelBtn.style.display = "inline-block";
     if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
-    if (finishSvsBtn) finishSvsBtn.style.display = "inline-block"; 
 }
 
 function resetAdminUI() {
     const adminBtn = document.getElementById('admin-toggle-btn');
     const adminInd = document.getElementById('admin-indicator');
-    const editFooterBtn = document.getElementById('edit-footer-btn');
-    const themeSwitcherBtn = document.getElementById('theme-switcher-btn');
+    const presidentPanelBtn = document.getElementById('president-panel-btn');
     const toggleResBtn = document.getElementById('toggle-reservation-btn');
-    const finishSvsBtn = document.getElementById('finish-svs-btn');
 
     if (adminBtn) adminBtn.innerText = t("admin_login_btn");
     if (adminInd) adminInd.style.display = "none";
-    if (editFooterBtn) editFooterBtn.style.display = "none";
-    if (themeSwitcherBtn) themeSwitcherBtn.style.display = "none";
+    if (presidentPanelBtn) presidentPanelBtn.style.display = "none";
     if (toggleResBtn) toggleResBtn.style.display = "none";
-    if (finishSvsBtn) finishSvsBtn.style.display = "none";
+    // Closing the panel (and any modal opened from it) on logout avoids a
+    // stray open modal for President-only actions after access is revoked.
+    const panelModal = document.getElementById('president-panel-modal');
+    if (panelModal) panelModal.classList.add('hidden');
+    const editModal = document.getElementById('edit-footer-modal');
+    if (editModal) editModal.classList.add('hidden');
+    const themeModal = document.getElementById('theme-switcher-modal');
+    if (themeModal) themeModal.classList.add('hidden');
 }
 
 async function checkReservationStatus() {

@@ -43,6 +43,36 @@ async function loadFooterInfo() {
     }
 }
 
+// ================= PRESIDENT PANEL (President-only) =================
+// Single entry point in the footer that groups the three President-only
+// actions (Edit President Info, Theme Switcher, Finish SvS) behind one
+// button + modal, instead of showing three separate buttons.
+function openPresidentPanelModal() {
+    if (!isAdmin) return;
+    document.getElementById('president-panel-modal').classList.remove('hidden');
+}
+
+function closePresidentPanelModal() {
+    document.getElementById('president-panel-modal').classList.add('hidden');
+}
+
+// Each wrapper closes the panel first, then opens the existing modal for
+// that action — the underlying modals/logic are unchanged.
+function presidentPanelOpenEditFooter() {
+    closePresidentPanelModal();
+    handleEditFooter();
+}
+
+function presidentPanelOpenThemeSwitcher() {
+    closePresidentPanelModal();
+    openThemeSwitcherModal();
+}
+
+function presidentPanelFinishSVS() {
+    closePresidentPanelModal();
+    handleFinishSVS();
+}
+
 // Opens the custom modal for editing president/guild info (replacing
 // two calls to the browser's built-in prompt(), which looked inconsistent).
 function handleEditFooter() {

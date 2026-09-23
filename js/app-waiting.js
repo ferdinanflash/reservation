@@ -203,7 +203,7 @@ async function handleFinishSVS() {
     if (!client) return;
 
     showCustomConfirm("Caution to finish SvS!\n Are you sure ?, this will be reset all applied data", async () => {
-        const finishBtn = document.getElementById('finish-svs-btn');
+        const finishBtn = document.getElementById('president-panel-finish-btn');
         setButtonBusy(finishBtn, true, 'Clearing...');
         try {
             // Preserve the browser/OS push permission and the device's PushManager
