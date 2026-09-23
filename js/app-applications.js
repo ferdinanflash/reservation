@@ -519,6 +519,13 @@ function applySlot(time) {
     });
     
     document.getElementById('apply-modal').classList.remove('hidden');
+
+    // Focus the first field once the modal has actually become visible
+    // (a same-tick .focus() can be ignored while display is still "none").
+    setTimeout(() => {
+        const nicknameInput = document.getElementById('input-nickname');
+        if (nicknameInput) nicknameInput.focus();
+    }, 50);
 }
 
 function closeApplyModal() {
