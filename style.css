@@ -2731,6 +2731,43 @@ th {
 .form-group select { background: #1e2230; border: 1px solid rgba(255, 255, 255, 0.1); padding: 11px 14px; border-radius: 8px; color: var(--t-primary, #f1f5f9); outline: none; cursor: pointer; }
 .form-group select:focus { border-color: #2563eb; }
 
+/* Required-field marker (Apply form: Nickname / Game ID / Furnace Level). */
+.required-mark {
+    color: #ef4444;
+    margin-left: 3px;
+    font-weight: 700;
+}
+
+/* Section dividers inside the Apply form ("Player Info" / "Resources"),
+   so a long list of fields reads as grouped chunks instead of one wall
+   of inputs. */
+.form-section-title {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 22px 0 10px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--t-accent, #ff8a94);
+}
+.form-section-title:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+.form-section-hint {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--t-faint, #64748b);
+}
+
 .toast-notification {
     background: #1e2230; color: var(--t-primary, #f1f5f9); padding: 12px 20px; border-radius: 8px; font-size: 0.9rem;
     border-left: 4px solid #3b82f6; animation: slideInToast 0.3s ease forwards; min-width: 200px;
@@ -4545,11 +4582,15 @@ body.halloween-theme .svs-opening-sparks::after {
     accent-color: #2563eb;
 }
 
-.additional-time-toggle-group .field-hint {
+.additional-time-toggle-group .field-hint,
+.notification-toggle-group .field-hint {
     color: var(--t-faint, #64748b);
     font-size: 0.74rem;
     line-height: 1.4;
     padding-left: 26px;
+}
+.notification-toggle-group {
+    margin-bottom: 10px;
 }
 
 .additional-time-slots-container {
@@ -4796,3 +4837,213 @@ body.redeem-modal-open { overflow: hidden; }
     .navbar-actions .btn-redeem,
     .navbar-actions .btn-admin { font-size: 0.66rem; padding: 8px 3px; }
 }
+
+
+/* ==========================================================================
+   HTML inline-style cleanup
+   Keep layout/presentation in CSS so seasonal theme overrides can win cleanly.
+   ========================================================================== */
+.clock-theme-color {
+    color: var(--t-amber, #f59e0b);
+}
+
+.schedule-actions-row {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.action-no-bottom {
+    margin-bottom: 0;
+}
+
+.btn-export {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    margin-bottom: 0;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+}
+
+.btn-reservation-toggle {
+    background: #dc2626;
+    margin-bottom: 0;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    display: none;
+}
+
+.btn-schedule-small {
+    margin-bottom: 0;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+}
+
+.admin-indicator {
+    color: #ef4444;
+    font-size: 0.8rem;
+    display: none;
+}
+
+.table-cell-left-compact {
+    padding: 5px 10px;
+    text-align: left;
+}
+
+.reassign-description {
+    color: var(--t-muted, #8a8d98);
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.modal-heading-center {
+    text-align: center;
+}
+
+.howto-title {
+    margin-bottom: 8px;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.apply-title {
+    margin-bottom: 4px;
+    font-size: 1.4rem;
+}
+
+.apply-description {
+    color: var(--t-muted, #8a8d98);
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.form-position-title {
+    color: var(--t-primary, #f1f5f9);
+    font-weight: bold;
+}
+
+.form-time-title {
+    color: var(--t-link, #3b82f6);
+    font-weight: bold;
+}
+
+.modal-action-btn {
+    flex: 1;
+    padding: 12px;
+    margin-bottom: 0;
+}
+
+.modal-submit-btn {
+    flex: 1;
+    padding: 12px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.footer-current-president {
+    color: var(--t-muted, #8a8d98);
+    margin-bottom: 6px;
+}
+
+.footer-row-spacing {
+    margin-top: 4px;
+}
+
+.footer-admin-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.footer-edit-btn {
+    background: #f59e0b;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    display: none;
+    margin: 0;
+}
+
+.theme-switcher-btn {
+    background: #6d28d9;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    display: none;
+    margin: 0;
+}
+
+.finish-svs-btn {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    display: none;
+    margin: 0;
+    font-weight: bold;
+}
+
+.narrow-modal {
+    max-width: 380px;
+}
+
+.modal-title {
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+.theme-switcher-title {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.confirm-message {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: var(--t-primary, #f1f5f9);
+}
+
+.form-actions-no-top {
+    margin-top: 0;
+}
+
+.confirm-cancel-btn {
+    margin-bottom: 0;
+    flex: 1;
+    padding: 10px;
+}
+
+.confirm-ok-btn {
+    flex: 1;
+    padding: 10px;
+    background: #ef4444;
+}
+
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Seasonal decoration is generated only for the currently active theme. */
+.seasonal-decor-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.seasonal-generated {
+    left: var(--season-x);
+    top: var(--season-y);
+    animation-delay: var(--season-delay, 0s);
+    animation-duration: var(--season-duration, 2.2s);
+}
+
+.seasonal-generated.halloween-glow-spot { width: var(--season-width); height: var(--season-height); }
