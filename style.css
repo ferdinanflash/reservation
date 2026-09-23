@@ -4959,29 +4959,43 @@ body.redeem-modal-open { overflow: hidden; }
     margin-top: 12px;
 }
 
-.footer-edit-btn {
-    background: #f59e0b;
+.president-panel-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
     font-size: 0.75rem;
-    padding: 6px 12px;
-    display: none;
-    margin: 0;
-}
-
-.theme-switcher-btn {
-    background: #6d28d9;
-    font-size: 0.75rem;
-    padding: 6px 12px;
-    display: none;
-    margin: 0;
-}
-
-.finish-svs-btn {
-    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-    font-size: 0.75rem;
-    padding: 6px 12px;
+    padding: 6px 14px;
     display: none;
     margin: 0;
     font-weight: bold;
+}
+
+/* ==================== PRESIDENT PANEL MODAL ====================
+   Groups the three President-only actions (Edit President Info, Theme
+   Switcher, Finish SvS) behind the single footer button above. Each row
+   re-uses .list-item (same look as the position-select rows) and just
+   delegates to the existing handlers/modals for that action. */
+.president-panel-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.president-panel-option-btn {
+    font-size: 0.95rem;
+}
+
+.president-panel-option-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.president-panel-option-icon {
+    font-size: 1.05rem;
+}
+
+.president-panel-option-danger:hover {
+    border-color: rgba(220, 38, 38, 0.5);
 }
 
 .narrow-modal {

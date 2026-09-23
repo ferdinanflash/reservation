@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-09-23-07';
+			var APP_BUILD = '2026-09-24-01';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -64,17 +64,17 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=62">
+				<link rel="stylesheet" href="style.css?v=63">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=6" defer=""></script>
-		<script src="lang.js?v=12" defer=""></script>
-					<script src="js/app-core.js?v=48" defer=""></script>
-					<script src="js/app-auth.js?v=47" defer=""></script>
+		<script src="lang.js?v=13" defer=""></script>
+					<script src="js/app-core.js?v=49" defer=""></script>
+					<script src="js/app-auth.js?v=48" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
 					<script src="js/app-schedule.js?v=46" defer=""></script>
 					<script src="js/app-applications.js?v=48" defer=""></script>
-					<script src="js/app-waiting.js?v=47" defer=""></script>
+					<script src="js/app-waiting.js?v=48" defer=""></script>
 					<script src="js/app-extras.js?v=46" defer=""></script>
 					<script src="js/app-notifications.js?v=6" defer=""></script>
 					<script src="fire-banner.js?v=10" defer=""></script>
@@ -553,10 +553,8 @@
 			</div>
 			<!-- rar-* markup for each row is generated dynamically by loadRecentAccepts() in js/app-extras.js -->
 
-			<divclass="footer-admin-actions">
-				<button id="edit-footer-btn" class="btn-apply footer-edit-btn" onclick="handleEditFooter()" data-i18n="btn_edit_footer">Edit President Info</button>
-				<button id="theme-switcher-btn" class="btn-apply theme-switcher-btn" onclick="openThemeSwitcherModal()" data-i18n="btn_theme_switcher">🎨 Theme Switcher</button>
-				<button id="finish-svs-btn" class="btn-apply finish-svs-btn" onclick="handleFinishSVS()" data-i18n="btn_finish_svs">FINISH SvS</button>
+			<div class="footer-admin-actions">
+				<button id="president-panel-btn" class="btn-apply president-panel-btn" onclick="openPresidentPanelModal()" data-i18n="btn_president_panel">👑 President Panel</button>
 			</div>
 
 			<!-- Teks Credit Pembuat Web -->
@@ -582,6 +580,33 @@
 				<div class="form-actions">
 					<button class="btn-back modal-action-btn" onclick="closeLoginModal()" data-i18n="btn_cancel">Cancel</button>
 					<button id="login-submit-btn" class="btn-apply modal-action-btn" onclick="submitStaffLogin()" data-i18n="btn_signin">Sign In</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal President Panel (President-only) — single entry point that groups
+		     Edit President Info, Theme Switcher and Finish SvS behind one button,
+		     instead of showing three separate buttons in the footer. -->
+		<div id="president-panel-modal" class="modal hidden">
+			<div class="modal-content custom-form-modal narrow-modal">
+				<button type="button" class="close-modal" onclick="closePresidentPanelModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 data-i18n="president_panel_modal_title" class="modal-title">👑 President Panel</h2>
+				<div class="president-panel-options">
+					<button type="button" id="president-panel-edit-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenEditFooter()">
+						<span class="president-panel-option-label"><span class="president-panel-option-icon">📝</span> <span data-i18n="btn_edit_footer">Edit President Info</span></span>
+						<span class="arrow">&#8250;</span>
+					</button>
+					<button type="button" id="president-panel-theme-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenThemeSwitcher()">
+						<span class="president-panel-option-label"><span data-i18n="btn_theme_switcher">🎨 Theme Switcher</span></span>
+						<span class="arrow">&#8250;</span>
+					</button>
+					<button type="button" id="president-panel-finish-btn" class="list-item president-panel-option-btn president-panel-option-danger" onclick="presidentPanelFinishSVS()">
+						<span class="president-panel-option-label"><span class="president-panel-option-icon">🏁</span> <span data-i18n="btn_finish_svs">FINISH SvS</span></span>
+						<span class="arrow">&#8250;</span>
+					</button>
+				</div>
+				<div class="form-actions">
+					<button class="btn-back modal-action-btn" onclick="closePresidentPanelModal()" data-i18n="btn_close">Close</button>
 				</div>
 			</div>
 		</div>
