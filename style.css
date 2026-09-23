@@ -5467,3 +5467,66 @@ body.bluefire-theme .svs-opening-title::after  { content: '\1F525'; margin-left:
 @media (prefers-reduced-motion: reduce) {
     body.bluefire-theme .svs-opening-bluefire-video { display: none; }
 }
+
+/* ---------- Blue Fire: electric blue / cyan / ice ----------
+   Intro mengikuti pola tema-tema lain: hanya palette dan efek CSS yang
+   berubah. Video/foto Blue Fire tetap eksklusif untuk banner utama. */
+body.bluefire-theme .svs-opening {
+    background:
+        radial-gradient(circle at 50% 48%, rgba(0, 191, 255, 0.18) 0%, rgba(30, 100, 255, 0.08) 22%, transparent 46%),
+        #020913;
+}
+body.bluefire-theme .svs-opening-glow {
+    background: radial-gradient(circle, rgba(0, 220, 255, .30) 0%, rgba(30, 100, 255, .14) 24%, transparent 67%);
+    filter: blur(5px);
+}
+body.bluefire-theme .svs-opening-number {
+    background: linear-gradient(180deg, #f5fdff 0%, #b8f3ff 24%, #42d9ff 52%, #1479df 76%, #083b91 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(125, 240, 255, .98))
+            drop-shadow(0 0 22px rgba(0, 180, 255, .78))
+            drop-shadow(0 0 55px rgba(20, 90, 255, .48));
+    animation-name: svs-number-pulse-bluefire;
+}
+@keyframes svs-number-pulse-bluefire {
+    0%   { filter: drop-shadow(0 0 4px rgba(120, 235, 255, .68)); }
+    100% { filter: drop-shadow(0 0 9px rgba(170, 250, 255, 1)) drop-shadow(0 0 35px rgba(0, 185, 255, .78)) drop-shadow(0 0 60px rgba(30, 90, 255, .45)); }
+}
+body.bluefire-theme .svs-opening-line {
+    background: linear-gradient(90deg, transparent, #159cff, #d8fbff, #22dfff, transparent);
+    box-shadow: 0 0 10px rgba(0, 200, 255, .95), 0 0 28px rgba(30, 100, 255, .58);
+}
+body.bluefire-theme .svs-opening-title {
+    display: inline-block;
+    text-shadow: none;
+    background-image: linear-gradient(90deg, #39cfff 0%, #f2fdff 30%, #7eeeff 50%, #3e9cff 80%, #b8f8ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(0, 195, 255, .50)) drop-shadow(0 0 16px rgba(35, 95, 255, .38));
+}
+body.bluefire-theme .svs-opening-title::before,
+body.bluefire-theme .svs-opening-title::after {
+    -webkit-text-fill-color: initial;
+    letter-spacing: 0;
+    display: inline-block;
+}
+body.bluefire-theme .svs-opening-title::before { content: '\1F525'; margin-right: .5em; }
+body.bluefire-theme .svs-opening-title::after  { content: '\1F525'; margin-left: .5em; }
+body.bluefire-theme .svs-opening-sparks {
+    background-image:
+        radial-gradient(circle at 50% 50%, #e8fcff 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 35%, #25cfff 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #257fff 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 70%, #6be8ff 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, #b8f8ff 0 1px, transparent 2px);
+}
+body.bluefire-theme .svs-opening-sparks::before {
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(35, 205, 255, .76) 0deg 0.7deg, transparent 0.7deg 18deg);
+}
+body.bluefire-theme .svs-opening-sparks::after {
+    background: linear-gradient(90deg, transparent 0%, rgba(25, 165, 255, .65) 49%, rgba(225, 252, 255, .95) 50%, rgba(45, 220, 255, .65) 51%, transparent 100%);
+    box-shadow: 0 0 18px rgba(0, 190, 255, .82);
+}
