@@ -313,10 +313,13 @@ async function submitRedeemCode() {
         setRedeemStatus('redeem-player-status', t('redeem_fid_invalid'), 'error');
         return;
     }
-    if (fid !== redeemVerifiedFid) {
-        setRedeemStatus('redeem-result-status', t('redeem_check_id_first'), 'error');
-        return;
-    }
+    // NOTE: previously this required checkRedeemPlayer() to have succeeded
+    // first (fid === redeemVerifiedFid). The official Century Games page
+    // doesn't have a separate ID-check step either -- it redeems fid+cdk
+    // directly -- so that gate was removed. It was also blocking every
+    // redemption whenever the /api/player lookup got 404'd upstream (see
+    // supabase/functions/redeem-giftcode/index.ts), even for perfectly
+    // valid player IDs.
     if (!cdk) {
         setRedeemStatus('redeem-result-status', t('redeem_code_required'), 'error');
         return;
