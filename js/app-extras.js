@@ -222,7 +222,6 @@ setInterval(createSnowEffect, 200);
 // with a secret we don't want to ship in this file).
 let redeemModalTrigger = null;
 const REDEEM_STATE_ID = '3475'; // shown in the disabled State field; also hardcoded server-side as the redeem kingdom id
-let redeemVerifiedFid = null; // set once checkRedeemPlayer() succeeds; cleared whenever the FID field changes
 
 function setRedeemStatus(elId, message, type) {
     const el = document.getElementById(elId);
@@ -268,38 +267,6 @@ function redeemMessageKeyFor(upstream) {
     return map[msg] || null;
 }
 
-async function checkRedeemPlayer() {
-    const fidInput = document.getElementById('redeem-fid-input');
-    const checkBtn = document.getElementById('redeem-check-btn');
-    const fid = (fidInput?.value || '').trim();
-
-    redeemVerifiedFid = null;
-    setRedeemStatus('redeem-result-status', '', null);
-
-    if (!/^[0-9]{4,20}$/.test(fid)) {
-        setRedeemStatus('redeem-player-status', t('redeem_fid_invalid'), 'error');
-        return;
-    }
-
-    setButtonBusy(checkBtn, true, t('redeem_checking'));
-    try {
-        const result = await invokeGiftCodeApi({ action: 'login', fid });
-        const upstream = (result && result.data) || {};
-        const playerData = upstream.data || {};
-        if (result.ok && redeemUpstreamIsSuccess(upstream) && playerData.nickname) {
-            redeemVerifiedFid = fid;
-            setRedeemStatus('redeem-player-status', t('redeem_player_found', { nickname: capZalgo(playerData.nickname) }), 'success');
-        } else {
-            setRedeemStatus('redeem-player-status', t('redeem_player_not_found'), 'error');
-        }
-    } catch (e) {
-        console.error('checkRedeemPlayer failed', e);
-        setRedeemStatus('redeem-player-status', t('redeem_generic_error'), 'error');
-    } finally {
-        setButtonBusy(checkBtn, false);
-    }
-}
-
 async function submitRedeemCode() {
     const fidInput = document.getElementById('redeem-fid-input');
     const codeInput = document.getElementById('redeem-code-input');
@@ -310,16 +277,9 @@ async function submitRedeemCode() {
     setRedeemStatus('redeem-result-status', '', null);
 
     if (!/^[0-9]{4,20}$/.test(fid)) {
-        setRedeemStatus('redeem-player-status', t('redeem_fid_invalid'), 'error');
+        setRedeemStatus('redeem-result-status', t('redeem_fid_invalid'), 'error');
         return;
     }
-    // NOTE: previously this required checkRedeemPlayer() to have succeeded
-    // first (fid === redeemVerifiedFid). The official Century Games page
-    // doesn't have a separate ID-check step either -- it redeems fid+cdk
-    // directly -- so that gate was removed. It was also blocking every
-    // redemption whenever the /api/player lookup got 404'd upstream (see
-    // supabase/functions/redeem-giftcode/index.ts), even for perfectly
-    // valid player IDs.
     if (!cdk) {
         setRedeemStatus('redeem-result-status', t('redeem_code_required'), 'error');
         return;
@@ -350,8 +310,6 @@ function resetRedeemForm() {
     const codeInput = document.getElementById('redeem-code-input');
     if (fidInput) fidInput.value = '';
     if (codeInput) codeInput.value = '';
-    redeemVerifiedFid = null;
-    setRedeemStatus('redeem-player-status', '', null);
     setRedeemStatus('redeem-result-status', '', null);
 }
 
@@ -381,18 +339,6 @@ function closeRedeemModal() {
     }
     redeemModalTrigger = null;
 }
-
-// Re-checking the ID is required whenever the FID field changes after a
-// successful check, so a stale "verified" state can never be redeemed
-// against a different (unverified) Player ID.
-(function watchRedeemFidInput() {
-    document.addEventListener('input', (event) => {
-        if (event.target && event.target.id === 'redeem-fid-input') {
-            redeemVerifiedFid = null;
-            setRedeemStatus('redeem-player-status', '', null);
-        }
-    });
-})();
 
 (function initRedeemModal() {
     const modal = document.getElementById('redeem-modal');
