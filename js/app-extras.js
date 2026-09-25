@@ -251,6 +251,15 @@ function redeemUpstreamIsSuccess(upstream) {
     return upstream.err_code === 0 || upstream.code === 0 || msg === 'SUCCESS' || msg === 'SUCCESS.';
 }
 
+// Century Games occasionally answers with a plain `{ msg: "Timeout" }` (their
+// gift_code endpoint upstream call timing out). That's not a real result for
+// the FID either way, so it's handled separately from redeemMessageKeyFor
+// below and retried instead of being shown as an error.
+function redeemUpstreamIsTimeout(upstream) {
+    const msg = String((upstream && upstream.msg) || '').trim().toUpperCase();
+    return msg === 'TIMEOUT' || msg === 'TIMEOUT.';
+}
+
 function redeemMessageKeyFor(upstream) {
     const msg = String((upstream && upstream.msg) || '').trim().toUpperCase();
     const map = {
@@ -299,7 +308,22 @@ function renderRedeemResultList(rows) {
 // Games' API (their gift_code endpoint reported a "x-ratelimit-limit: 30"
 // header) or trip an anti-bot rate check.
 const REDEEM_BATCH_DELAY_MS = 1200;
+const REDEEM_TIMEOUT_RETRY_DELAY_MS = 2000;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Calls invokeGiftCodeApi for a single FID, and if the upstream reply is a
+// "Timeout" (see redeemUpstreamIsTimeout), waits 2s and retries the exact
+// same FID again — indefinitely — until a non-timeout response comes back.
+// `onRetry` lets the caller update the on-screen status row while this waits.
+async function redeemWithTimeoutRetry(fid, cdk, onRetry) {
+    for (;;) {
+        const result = await invokeGiftCodeApi({ action: 'redeem', fid, cdk });
+        const upstream = (result && result.data) || {};
+        if (!redeemUpstreamIsTimeout(upstream)) return result;
+        if (onRetry) onRetry();
+        await sleep(REDEEM_TIMEOUT_RETRY_DELAY_MS);
+    }
+}
 
 async function submitRedeemCode() {
     const fidInput = document.getElementById('redeem-fid-input');
@@ -332,7 +356,10 @@ async function submitRedeemCode() {
             null,
         );
         try {
-            const result = await invokeGiftCodeApi({ action: 'redeem', fid, cdk });
+            const result = await redeemWithTimeoutRetry(fid, cdk, () => {
+                rows[i] = { fid, status: 'pending', message: t('redeem_retrying_timeout') };
+                renderRedeemResultList(rows);
+            });
             const upstream = (result && result.data) || {};
             if (result.ok && redeemUpstreamIsSuccess(upstream)) {
                 rows[i] = { fid, status: 'success', message: t('redeem_success') };
