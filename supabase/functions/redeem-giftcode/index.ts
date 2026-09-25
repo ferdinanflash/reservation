@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
     }
 
     const { action, fid, cdk } = body;
-    const time = String(Date.now());
+    const time = String(Math.floor(Date.now() / 1000)); // Century Games expects Unix seconds, not milliseconds
 
     if (!isValidFid(fid)) {
         return jsonResponse({ ok: false, error: "invalid_fid" }, 400);
