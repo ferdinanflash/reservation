@@ -390,6 +390,85 @@ function resetRedeemForm() {
     if (codeInput) codeInput.value = '';
     setRedeemStatus('redeem-result-status', '', null);
     renderRedeemResultList([]);
+    setRedeemAllianceStatus('', null);
+    setActiveAllianceLoadButton(null);
+}
+
+// ================= PREMIUM ALLIANCE REDEEM =================
+// Reads every Player ID (`game_id`) straight from Supabase's `troops_power`
+// table for the chosen alliance (ARX / IDN / ZXC / VNX / CAT) and drops
+// them into the FID textarea, so staff can redeem a code for a whole
+// alliance in one go instead of copy-pasting IDs by hand. Same Supabase
+// project/table the 3475 Battle Events (tal) site uses for its own
+// leaderboard — nothing to deploy here, it's shared backend.
+
+function setRedeemAllianceStatus(message, type) {
+    const el = document.getElementById('redeem-alliance-status');
+    if (!el) return;
+    el.textContent = message || '';
+    el.classList.remove('is-success', 'is-error');
+    if (type) el.classList.add(type === 'success' ? 'is-success' : 'is-error');
+}
+
+function setActiveAllianceLoadButton(activeBtn) {
+    document.querySelectorAll('#redeem-alliance-quickload .btn-alliance-load').forEach((btn) => {
+        btn.classList.toggle('is-active', btn === activeBtn);
+    });
+}
+
+function setAllianceLoadButtonsBusy(isBusy) {
+    document.querySelectorAll('#redeem-alliance-quickload .btn-alliance-load').forEach((btn) => {
+        btn.disabled = isBusy;
+    });
+}
+
+async function loadAllianceFidsForRedeem(allianceCode, buttonEl) {
+    const fidInput = document.getElementById('redeem-fid-input');
+    if (!fidInput) return;
+
+    const client = getSupabase();
+    if (!client) {
+        setRedeemAllianceStatus(t('redeem_alliance_no_db'), 'error');
+        return;
+    }
+
+    setAllianceLoadButtonsBusy(true);
+    setActiveAllianceLoadButton(buttonEl || null);
+    setRedeemAllianceStatus(t('redeem_alliance_loading', { alliance: allianceCode }), null);
+
+    try {
+        const { data, error } = await client
+            .from('troops_power')
+            .select('game_id')
+            .eq('alliance', allianceCode);
+
+        if (error) throw error;
+
+        // De-dupe and drop anything that isn't a real ID (blank/malformed
+        // rows), keeping first-seen order, same rule as parseRedeemFidList.
+        const seen = new Set();
+        const fids = [];
+        for (const row of (data || [])) {
+            const fid = String(row.game_id ?? '').trim();
+            if (!fid || seen.has(fid)) continue;
+            seen.add(fid);
+            fids.push(fid);
+        }
+
+        if (fids.length === 0) {
+            fidInput.value = '';
+            setRedeemAllianceStatus(t('redeem_alliance_empty', { alliance: allianceCode }), 'error');
+            return;
+        }
+
+        fidInput.value = fids.join('\n');
+        setRedeemAllianceStatus(t('redeem_alliance_loaded', { count: fids.length, alliance: allianceCode }), 'success');
+    } catch (e) {
+        console.error('loadAllianceFidsForRedeem failed for alliance', allianceCode, e);
+        setRedeemAllianceStatus(t('redeem_alliance_load_failed', { alliance: allianceCode }), 'error');
+    } finally {
+        setAllianceLoadButtonsBusy(false);
+    }
 }
 
 function openRedeemModal() {
