@@ -213,78 +213,157 @@ setInterval(createSnowEffect, 200);
 // ======================================================
 
 // ================= REDEEM CODE MODAL =================
-// "Redeem Code" navbar button -> popup modal that embeds the official
-// Whiteout Survival gift code page (Century Games). The iframe src is set
-// only the first time the modal opens, so visitors who never use it don't
-// load the third-party page at all.
+// "Redeem Code" navbar button -> popup modal with a real Player ID check +
+// gift code form. Both actions call the `redeem-giftcode` Supabase Edge
+// Function (supabase/functions/redeem-giftcode/index.ts), which in turn
+// calls Century Games' own wos-giftcode-api.centurygame.com server-side
+// (the browser can't call it directly: that API only accepts requests from
+// wos-giftcode.centurygame.com itself, and every request must be signed
+// with a secret we don't want to ship in this file).
 let redeemModalTrigger = null;
-const REDEEM_STATE_ID = '3475';
+const REDEEM_STATE_ID = '3475'; // shown in the disabled State field; also hardcoded server-side as the redeem kingdom id
+let redeemVerifiedFid = null; // set once checkRedeemPlayer() succeeds; cleared whenever the FID field changes
 
-// The gift code form lives in a cross-origin iframe (Century Games), so we
-// can't type into its State field from here. What we can do is put the State
-// number on the clipboard so the player only has to long-press > Paste.
-async function copyRedeemState() {
-    try {
-        if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(REDEEM_STATE_ID);
-            return true;
-        }
-    } catch (e) { /* fall through to legacy method */ }
-    try {
-        const ta = document.createElement('textarea');
-        ta.value = REDEEM_STATE_ID;
-        ta.setAttribute('readonly', '');
-        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
-        document.body.appendChild(ta);
-        ta.select();
-        ta.setSelectionRange(0, ta.value.length);
-        const ok = document.execCommand('copy');
-        document.body.removeChild(ta);
-        return ok;
-    } catch (e) {
-        return false;
+function setRedeemStatus(elId, message, type) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.textContent = message || '';
+    el.classList.remove('is-success', 'is-error', 'is-visible');
+    if (message) {
+        el.classList.add('is-visible');
+        if (type) el.classList.add(type === 'success' ? 'is-success' : 'is-error');
     }
 }
 
-async function autoFillRedeemState() {
-    const status = document.getElementById('redeem-autofill-status');
-    const ok = await copyRedeemState();
-    if (!status) return;
-    status.textContent = ok
-        ? t('redeem_copied', { state: REDEEM_STATE_ID })
-        : t('redeem_copy_failed', { state: REDEEM_STATE_ID });
-    status.classList.toggle('is-error', !ok);
-    status.classList.add('is-visible');
+async function invokeGiftCodeApi(payload) {
+    const client = getSupabase();
+    if (!client) throw new Error('no-supabase-client');
+    const { data, error } = await client.functions.invoke('redeem-giftcode', { body: payload });
+    if (error) throw error;
+    return data; // { ok, status, data: <Century Games response> }
 }
 
-function hideRedeemLoading() {
-    const loading = document.getElementById('redeem-loading');
-    if (loading) loading.classList.add('hidden');
+// Century Games' response shape isn't publicly documented, so this maps the
+// known message strings and otherwise falls back to showing their raw `msg`
+// rather than a wrong-sounding generic error.
+function redeemUpstreamIsSuccess(upstream) {
+    if (!upstream) return false;
+    const msg = String(upstream.msg || '').trim().toUpperCase();
+    return upstream.err_code === 0 || upstream.code === 0 || msg === 'SUCCESS' || msg === 'SUCCESS.';
+}
+
+function redeemMessageKeyFor(upstream) {
+    const msg = String((upstream && upstream.msg) || '').trim().toUpperCase();
+    const map = {
+        'RECEIVED': 'redeem_already_used',
+        'SAME TYPE EXCHANGE': 'redeem_already_used',
+        'CDK NOT FOUND': 'redeem_code_invalid',
+        'NOT FOUND': 'redeem_code_invalid',
+        'CDK NOT FOUND.': 'redeem_code_invalid',
+        'TIME ERROR': 'redeem_code_expired',
+        'TIME ERROR.': 'redeem_code_expired',
+        'USAGE LIMIT': 'redeem_code_usage_limit',
+        'USED': 'redeem_code_usage_limit',
+    };
+    return map[msg] || null;
+}
+
+async function checkRedeemPlayer() {
+    const fidInput = document.getElementById('redeem-fid-input');
+    const checkBtn = document.getElementById('redeem-check-btn');
+    const fid = (fidInput?.value || '').trim();
+
+    redeemVerifiedFid = null;
+    setRedeemStatus('redeem-result-status', '', null);
+
+    if (!/^[0-9]{4,20}$/.test(fid)) {
+        setRedeemStatus('redeem-player-status', t('redeem_fid_invalid'), 'error');
+        return;
+    }
+
+    setButtonBusy(checkBtn, true, t('redeem_checking'));
+    try {
+        const result = await invokeGiftCodeApi({ action: 'login', fid });
+        const upstream = (result && result.data) || {};
+        const playerData = upstream.data || {};
+        if (result.ok && redeemUpstreamIsSuccess(upstream) && playerData.nickname) {
+            redeemVerifiedFid = fid;
+            setRedeemStatus('redeem-player-status', t('redeem_player_found', { nickname: capZalgo(playerData.nickname) }), 'success');
+        } else {
+            setRedeemStatus('redeem-player-status', t('redeem_player_not_found'), 'error');
+        }
+    } catch (e) {
+        console.error('checkRedeemPlayer failed', e);
+        setRedeemStatus('redeem-player-status', t('redeem_generic_error'), 'error');
+    } finally {
+        setButtonBusy(checkBtn, false);
+    }
+}
+
+async function submitRedeemCode() {
+    const fidInput = document.getElementById('redeem-fid-input');
+    const codeInput = document.getElementById('redeem-code-input');
+    const submitBtn = document.getElementById('redeem-submit-btn');
+    const fid = (fidInput?.value || '').trim();
+    const cdk = (codeInput?.value || '').trim();
+
+    setRedeemStatus('redeem-result-status', '', null);
+
+    if (!/^[0-9]{4,20}$/.test(fid)) {
+        setRedeemStatus('redeem-player-status', t('redeem_fid_invalid'), 'error');
+        return;
+    }
+    if (fid !== redeemVerifiedFid) {
+        setRedeemStatus('redeem-result-status', t('redeem_check_id_first'), 'error');
+        return;
+    }
+    if (!cdk) {
+        setRedeemStatus('redeem-result-status', t('redeem_code_required'), 'error');
+        return;
+    }
+
+    setButtonBusy(submitBtn, true, t('redeem_redeeming'));
+    try {
+        const result = await invokeGiftCodeApi({ action: 'redeem', fid, cdk });
+        const upstream = (result && result.data) || {};
+        if (result.ok && redeemUpstreamIsSuccess(upstream)) {
+            setRedeemStatus('redeem-result-status', t('redeem_success'), 'success');
+            if (codeInput) codeInput.value = '';
+        } else {
+            const key = redeemMessageKeyFor(upstream);
+            const message = key ? t(key) : (upstream.msg ? t('redeem_server_said', { msg: escapeHtml(upstream.msg) }) : t('redeem_generic_error'));
+            setRedeemStatus('redeem-result-status', message, 'error');
+        }
+    } catch (e) {
+        console.error('submitRedeemCode failed', e);
+        setRedeemStatus('redeem-result-status', t('redeem_generic_error'), 'error');
+    } finally {
+        setButtonBusy(submitBtn, false);
+    }
+}
+
+function resetRedeemForm() {
+    const fidInput = document.getElementById('redeem-fid-input');
+    const codeInput = document.getElementById('redeem-code-input');
+    if (fidInput) fidInput.value = '';
+    if (codeInput) codeInput.value = '';
+    redeemVerifiedFid = null;
+    setRedeemStatus('redeem-player-status', '', null);
+    setRedeemStatus('redeem-result-status', '', null);
 }
 
 function openRedeemModal() {
     const modal = document.getElementById('redeem-modal');
-    const frame = document.getElementById('redeem-frame');
-    if (!modal || !frame) return;
+    if (!modal) return;
 
     redeemModalTrigger = document.activeElement;
-
-    if (!frame.getAttribute('src')) {
-        const loading = document.getElementById('redeem-loading');
-        if (loading) loading.classList.remove('hidden');
-        frame.addEventListener('load', hideRedeemLoading, { once: true });
-        frame.setAttribute('src', frame.getAttribute('data-src'));
-    }
+    resetRedeemForm();
 
     modal.classList.remove('hidden');
     document.body.classList.add('redeem-modal-open');
 
-    // Auto copy the State number. Must run synchronously inside the click
-    // that opened the modal, otherwise browsers refuse clipboard access.
-    autoFillRedeemState();
-
-    const closeBtn = modal.querySelector('.close-modal');
-    if (closeBtn) closeBtn.focus();
+    const fidInput = document.getElementById('redeem-fid-input');
+    if (fidInput) fidInput.focus();
 }
 
 function closeRedeemModal() {
@@ -293,14 +372,24 @@ function closeRedeemModal() {
 
     modal.classList.add('hidden');
     document.body.classList.remove('redeem-modal-open');
-    const status = document.getElementById('redeem-autofill-status');
-    if (status) { status.textContent = ''; status.classList.remove('is-visible', 'is-error'); }
 
     if (redeemModalTrigger && typeof redeemModalTrigger.focus === 'function') {
         redeemModalTrigger.focus();
     }
     redeemModalTrigger = null;
 }
+
+// Re-checking the ID is required whenever the FID field changes after a
+// successful check, so a stale "verified" state can never be redeemed
+// against a different (unverified) Player ID.
+(function watchRedeemFidInput() {
+    document.addEventListener('input', (event) => {
+        if (event.target && event.target.id === 'redeem-fid-input') {
+            redeemVerifiedFid = null;
+            setRedeemStatus('redeem-player-status', '', null);
+        }
+    });
+})();
 
 (function initRedeemModal() {
     const modal = document.getElementById('redeem-modal');
