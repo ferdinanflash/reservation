@@ -267,16 +267,51 @@ function redeemMessageKeyFor(upstream) {
     return map[msg] || null;
 }
 
+// Parses the FID textarea: one ID per line (commas/spaces also accepted),
+// de-duplicated, keeping first-seen order.
+function parseRedeemFidList(raw) {
+    const seen = new Set();
+    const out = [];
+    for (const piece of String(raw || '').split(/[\s,]+/)) {
+        const fid = piece.trim();
+        if (!fid) continue;
+        if (!/^[0-9]{4,20}$/.test(fid)) continue;
+        if (seen.has(fid)) continue;
+        seen.add(fid);
+        out.push(fid);
+    }
+    return out;
+}
+
+function renderRedeemResultList(rows) {
+    const list = document.getElementById('redeem-result-list');
+    if (!list) return;
+    list.innerHTML = '';
+    for (const row of rows) {
+        const li = document.createElement('li');
+        li.className = `redeem-result-row is-${row.status}`;
+        li.textContent = `${row.fid} — ${row.message}`;
+        list.appendChild(li);
+    }
+}
+
+// A short pause between requests so a batch of FIDs doesn't hammer Century
+// Games' API (their gift_code endpoint reported a "x-ratelimit-limit: 30"
+// header) or trip an anti-bot rate check.
+const REDEEM_BATCH_DELAY_MS = 1200;
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function submitRedeemCode() {
     const fidInput = document.getElementById('redeem-fid-input');
     const codeInput = document.getElementById('redeem-code-input');
     const submitBtn = document.getElementById('redeem-submit-btn');
-    const fid = (fidInput?.value || '').trim();
     const cdk = (codeInput?.value || '').trim();
+    const fids = parseRedeemFidList(fidInput?.value);
 
     setRedeemStatus('redeem-result-status', '', null);
+    renderRedeemResultList([]);
 
-    if (!/^[0-9]{4,20}$/.test(fid)) {
+    if (fids.length === 0) {
         setRedeemStatus('redeem-result-status', t('redeem_fid_invalid'), 'error');
         return;
     }
@@ -286,23 +321,39 @@ async function submitRedeemCode() {
     }
 
     setButtonBusy(submitBtn, true, t('redeem_redeeming'));
-    try {
-        const result = await invokeGiftCodeApi({ action: 'redeem', fid, cdk });
-        const upstream = (result && result.data) || {};
-        if (result.ok && redeemUpstreamIsSuccess(upstream)) {
-            setRedeemStatus('redeem-result-status', t('redeem_success'), 'success');
-            if (codeInput) codeInput.value = '';
-        } else {
-            const key = redeemMessageKeyFor(upstream);
-            const message = key ? t(key) : (upstream.msg ? t('redeem_server_said', { msg: escapeHtml(upstream.msg) }) : t('redeem_generic_error'));
-            setRedeemStatus('redeem-result-status', message, 'error');
+    const rows = fids.map((fid) => ({ fid, status: 'pending', message: t('redeem_pending') }));
+    renderRedeemResultList(rows);
+
+    for (let i = 0; i < fids.length; i++) {
+        const fid = fids[i];
+        setRedeemStatus(
+            'redeem-result-status',
+            t('redeem_batch_progress', { current: i + 1, total: fids.length }),
+            null,
+        );
+        try {
+            const result = await invokeGiftCodeApi({ action: 'redeem', fid, cdk });
+            const upstream = (result && result.data) || {};
+            if (result.ok && redeemUpstreamIsSuccess(upstream)) {
+                rows[i] = { fid, status: 'success', message: t('redeem_success') };
+            } else {
+                const key = redeemMessageKeyFor(upstream);
+                const message = key ? t(key) : (upstream.msg ? t('redeem_server_said', { msg: escapeHtml(upstream.msg) }) : t('redeem_generic_error'));
+                // "Already used" isn't really a failure for this FID (the
+                // account already has the reward), so mark it distinctly.
+                rows[i] = { fid, status: key === 'redeem_already_used' ? 'info' : 'error', message };
+            }
+        } catch (e) {
+            console.error('submitRedeemCode failed for fid', fid, e);
+            rows[i] = { fid, status: 'error', message: t('redeem_generic_error') };
         }
-    } catch (e) {
-        console.error('submitRedeemCode failed', e);
-        setRedeemStatus('redeem-result-status', t('redeem_generic_error'), 'error');
-    } finally {
-        setButtonBusy(submitBtn, false);
+        renderRedeemResultList(rows);
+        if (i < fids.length - 1) await sleep(REDEEM_BATCH_DELAY_MS);
     }
+
+    const successCount = rows.filter((r) => r.status === 'success').length;
+    setRedeemStatus('redeem-result-status', t('redeem_batch_done', { success: successCount, total: fids.length }), 'success');
+    setButtonBusy(submitBtn, false);
 }
 
 function resetRedeemForm() {
@@ -311,6 +362,7 @@ function resetRedeemForm() {
     if (fidInput) fidInput.value = '';
     if (codeInput) codeInput.value = '';
     setRedeemStatus('redeem-result-status', '', null);
+    renderRedeemResultList([]);
 }
 
 function openRedeemModal() {
