@@ -4829,84 +4829,42 @@ body.halloween-theme .svs-opening-sparks::after {
 }
 .btn-redeem svg { flex-shrink: 0; opacity: 0.9; }
 
-/* Modal: header + iframe + hint bar. The iframe window is cropped so it ends
-   just below the Confirm button (see --redeem-crop-ratio below); the modal's
-   height follows from that instead of filling the screen. */
+/* Modal: native Player ID check + gift code form (replaces the old embedded
+   iframe). Reuses .custom-form-modal as its base; only what differs from
+   the other .custom-form-modal forms (apply-modal etc.) is added here. */
 .modal-content.redeem-modal-content {
-    max-width: 440px;
+    max-width: 420px;
     width: 95%;
-    height: auto;
     max-height: 94dvh;
-    padding: 0;
-    overflow: hidden;
-    background: #151821;
+    overflow-y: auto;
 }
-.redeem-modal-header {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    min-height: 52px;
-    padding: 0 56px 0 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-.redeem-modal-header h2 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--t-primary, #f1f5f9);
-}
-.redeem-modal-content .close-modal { top: 2px; right: 6px; }
-/* State auto-copy notice (above the embedded gift code page) */
-.redeem-autofill-status {
-    flex-shrink: 0;
-    display: none;
-    margin: 0;
-    padding: 6px 16px;
+#redeem-state-display { opacity: 0.6; cursor: not-allowed; }
+.redeem-check-btn {
+    margin-top: -6px;
+    margin-bottom: 15px;
     font-size: 0.8rem;
-    color: #86efac;
-    background: rgba(34, 197, 94, 0.08);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 14px;
 }
-.redeem-autofill-status.is-visible { display: block; }
-.redeem-autofill-status.is-error { color: #fca5a5; background: rgba(239, 68, 68, 0.08); }
-.redeem-frame-wrap {
-    /* Visible height of the embedded page = width x this ratio. The official
-       page lives on another domain, so we can't measure where its Confirm
-       button ends; this number was measured from a phone screenshot
-       (Confirm ends at ~1.17 x width, the Official Store banner starts at
-       ~1.33 x width). Raise it if Confirm gets cut off, lower it if the
-       banner peeks in. The page inside stays scrollable either way. */
-    --redeem-crop-ratio: 1.30;
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / var(--redeem-crop-ratio);
-    flex: 0 1 auto;
-    min-height: 0;
-    background: #0f1a2e;
+/* Player-found / not-found line under the Check ID button, and the
+   success/error line under the gift code field. Both share the same
+   collapsed-until-used look as the old .redeem-autofill-status. */
+.redeem-player-status,
+.redeem-result-status {
+    display: none;
+    margin: -6px 0 15px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    line-height: 1.4;
 }
-.redeem-loading {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    text-align: center;
-    color: var(--t-secondary, #94a3b8);
-    font-size: 0.9rem;
-}
-.redeem-frame {
-    position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    background: transparent;
-}
+.redeem-player-status.is-visible,
+.redeem-result-status.is-visible { display: block; }
+.redeem-player-status.is-success,
+.redeem-result-status.is-success { color: #86efac; background: rgba(34, 197, 94, 0.08); }
+.redeem-player-status.is-error,
+.redeem-result-status.is-error { color: #fca5a5; background: rgba(239, 68, 68, 0.08); }
 .redeem-hint {
-    flex-shrink: 0;
-    padding: 9px 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 4px;
     text-align: center;
     font-size: 0.8rem;
     color: var(--t-secondary, #94a3b8);

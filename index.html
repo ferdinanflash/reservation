@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-09-24-01';
+			var APP_BUILD = '2026-09-25-01';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -64,18 +64,18 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=64">
+				<link rel="stylesheet" href="style.css?v=65">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=6" defer=""></script>
-		<script src="lang.js?v=14" defer=""></script>
+		<script src="lang.js?v=15" defer=""></script>
 					<script src="js/app-core.js?v=49" defer=""></script>
 					<script src="js/app-auth.js?v=48" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
 					<script src="js/app-schedule.js?v=46" defer=""></script>
 					<script src="js/app-applications.js?v=48" defer=""></script>
 					<script src="js/app-waiting.js?v=48" defer=""></script>
-					<script src="js/app-extras.js?v=46" defer=""></script>
+					<script src="js/app-extras.js?v=47" defer=""></script>
 					<script src="js/app-notifications.js?v=6" defer=""></script>
 					<script src="fire-banner.js?v=11" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
@@ -433,20 +433,39 @@
 			</div>
 		</div>
 
-		<!-- Modal Redeem Code: embeds the official Whiteout Survival gift code page.
-		     The iframe src is only set the first time the modal is opened (see openRedeemModal in js/app-extras.js). -->
+		<!-- Modal Redeem Code: native form that calls the redeem-giftcode Supabase
+		     Edge Function (see js/app-extras.js), which itself calls Century Games'
+		     wos-giftcode-api.centurygame.com on the server side. -->
 		<div id="redeem-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="redeem-modal-title">
-			<div class="modal-content redeem-modal-content">
-				<div class="redeem-modal-header">
-					<h2 id="redeem-modal-title" data-i18n="redeem_code_btn">Redeem Code</h2>
-					<button type="button" class="close-modal" onclick="closeRedeemModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+			<div class="modal-content custom-form-modal redeem-modal-content">
+				<button type="button" class="close-modal" onclick="closeRedeemModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 id="redeem-modal-title" class="apply-title" data-i18n="redeem_code_btn">Redeem Code</h2>
+
+				<div class="form-group">
+					<label for="redeem-state-display" data-i18n="redeem_state_label">State</label>
+					<input type="text" id="redeem-state-display" value="3475" disabled>
 				</div>
-				<p id="redeem-autofill-status" class="redeem-autofill-status" role="status" aria-live="polite"></p>
-				<div class="redeem-frame-wrap">
-					<div id="redeem-loading" class="redeem-loading hidden" data-i18n="redeem_loading">Loading official page…</div>
-					<iframe id="redeem-frame" class="redeem-frame" data-src="https://wos-giftcode.centurygame.com/" aria-label="Whiteout Survival official gift code page" data-i18n-aria-label="redeem_frame_label" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
+
+				<div class="form-group">
+					<label for="redeem-fid-input"><span data-i18n="redeem_fid_label">Player ID (FID)</span><span class="required-mark" aria-hidden="true">*</span></label>
+					<input type="text" inputmode="numeric" pattern="[0-9]*" id="redeem-fid-input" maxlength="20" placeholder="Enter your Player ID" data-i18n-placeholder="redeem_fid_placeholder" required aria-required="true">
 				</div>
-				<p class="redeem-hint"><span data-i18n="redeem_fallback_hint">Not loading?</span> <a href="https://wos-giftcode.centurygame.com/" target="_blank" rel="noopener noreferrer" data-i18n="redeem_open_new_tab">Open in a new tab</a></p>
+				<button type="button" id="redeem-check-btn" class="btn-back modal-action-btn redeem-check-btn" onclick="checkRedeemPlayer()" data-i18n="redeem_check_btn">Check ID</button>
+				<p id="redeem-player-status" class="redeem-player-status" role="status" aria-live="polite"></p>
+
+				<div class="form-group">
+					<label for="redeem-code-input"><span data-i18n="redeem_code_label">Gift Code</span><span class="required-mark" aria-hidden="true">*</span></label>
+					<input type="text" id="redeem-code-input" maxlength="40" placeholder="Enter gift code" data-i18n-placeholder="redeem_code_placeholder" required aria-required="true">
+				</div>
+
+				<p id="redeem-result-status" class="redeem-result-status" role="status" aria-live="polite"></p>
+
+				<div class="form-actions">
+					<button type="button" class="btn-back modal-action-btn" onclick="closeRedeemModal()" data-i18n="btn_close">Close</button>
+					<button type="button" id="redeem-submit-btn" class="btn-apply modal-action-btn" onclick="submitRedeemCode()" data-i18n="redeem_submit_btn">Redeem</button>
+				</div>
+
+				<p class="redeem-hint"><span data-i18n="redeem_fallback_hint">Having trouble?</span> <a href="https://wos-giftcode.centurygame.com/" target="_blank" rel="noopener noreferrer" data-i18n="redeem_open_new_tab">Open the official page</a></p>
 			</div>
 		</div>
 
