@@ -5610,3 +5610,13 @@ body.bluefire-theme .svs-opening-sparks::after {
     background: linear-gradient(90deg, transparent 0%, rgba(25, 165, 255, .65) 49%, rgba(225, 252, 255, .95) 50%, rgba(45, 220, 255, .65) 51%, transparent 100%);
     box-shadow: 0 0 18px rgba(0, 190, 255, .82);
 }
+
+/* ==================== PAUSE ANIMATIONS WHILE APPLY MODAL IS OPEN ====================
+   Freezes every CSS keyframe animation on the page (fire banner glow/flicker,
+   seasonal decorations, spinners, pulses, etc.) at its current frame while the
+   applicant is filling in the "Apply for Time Slot" form, so nothing moves or
+   distracts behind the modal. Animations resume automatically once the class
+   is removed (see closeApplyModal() in js/app-applications.js). */
+body.svs-apply-modal-open * {
+    animation-play-state: paused !important;
+}

@@ -495,10 +495,25 @@
 			if (document.hidden) {
 				if (rafId) cancelAnimationFrame(rafId);
 				rafId = null;
-			} else if (!rafId && !prefersReducedMotion) {
+			} else if (!rafId && !prefersReducedMotion && !document.body.classList.contains('svs-apply-modal-open')) {
 				draw();
 			}
 		});
+
+		// Hentikan juga partikel canvas ini saat modal "Apply for Time Slot"
+		// sedang terbuka, lalu lanjutkan lagi begitu modal ditutup (bekerja
+		// berdampingan dengan aturan CSS animation-play-state di style.css,
+		// yang menghentikan semua animasi berbasis @keyframes).
+		const applyModalObserver = new MutationObserver(function () {
+			const paused = document.body.classList.contains('svs-apply-modal-open');
+			if (paused) {
+				if (rafId) cancelAnimationFrame(rafId);
+				rafId = null;
+			} else if (!rafId && !prefersReducedMotion && !document.hidden) {
+				draw();
+			}
+		});
+		applyModalObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
 		// Dipanggil setiap kali tema berubah (President mengganti lewat Theme
 		// Switcher, atau perubahan dari server diterima lewat realtime/polling),
