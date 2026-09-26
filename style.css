@@ -4887,6 +4887,7 @@ body.halloween-theme .svs-opening-sparks::after {
 .redeem-result-row.is-success { color: #86efac; background: rgba(34, 197, 94, 0.08); }
 .redeem-result-row.is-error { color: #fca5a5; background: rgba(239, 68, 68, 0.08); }
 .redeem-result-row.is-info { color: #93c5fd; background: rgba(37, 99, 235, 0.08); }
+.redeem-result-row.is-skipped { color: var(--t-secondary, #94a3b8); background: rgba(148, 163, 184, 0.06); font-style: italic; }
 .redeem-hint {
     margin-top: 4px;
     text-align: center;
