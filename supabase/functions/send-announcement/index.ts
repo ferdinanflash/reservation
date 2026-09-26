@@ -40,6 +40,26 @@ const DEFAULT_TITLE = "\u{1F4E2} Announcement";
 const MAX_TITLE_LENGTH = 80;
 const MAX_BODY_LENGTH = 500;
 
+// Required because — unlike send-push-notification, which is only ever
+// called server-to-server by a Supabase Database Webhook — this function is
+// called directly from the browser (js/app-auth.js -> sendAnnouncement()).
+// Without these headers the browser's CORS preflight (OPTIONS) fails before
+// the real POST is ever sent, and the client just sees a generic network
+// error ("Failed to send announcement") with nothing useful in the logs
+// beyond the boot of that rejected OPTIONS request.
+const CORS_HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+function jsonResponse(body: unknown, status = 200) {
+    return new Response(JSON.stringify(body), {
+        status,
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" }
+    });
+}
+
 type SubscriptionRow = { id: string; endpoint: string; subscription: unknown };
 
 // Confirms the incoming request carries a real signed-in session (a
@@ -107,30 +127,33 @@ async function deleteStaleSubscriptions(ids: string[]) {
 }
 
 Deno.serve(async (req: Request) => {
+    if (req.method === "OPTIONS") {
+        return new Response(null, { headers: CORS_HEADERS });
+    }
     if (req.method !== "POST") {
-        return new Response("Method Not Allowed", { status: 405 });
+        return jsonResponse({ error: "method_not_allowed" }, 405);
     }
 
     if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY || !VAPID_SUBJECT) {
         console.error("VAPID configuration is incomplete. Required: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT.");
-        return new Response("Server misconfigured: VAPID configuration is incomplete", { status: 500 });
+        return jsonResponse({ error: "server_misconfigured" }, 500);
     }
 
     const userId = await getAuthenticatedUserId(req.headers.get("Authorization"));
     if (!userId) {
-        return new Response("Forbidden: President login required", { status: 403 });
+        return jsonResponse({ error: "forbidden", message: "President login required" }, 403);
     }
 
     let payload: any;
     try {
         payload = await req.json();
     } catch {
-        return new Response("Invalid JSON", { status: 400 });
+        return jsonResponse({ error: "invalid_json" }, 400);
     }
 
     const body = String(payload?.body ?? "").trim().slice(0, MAX_BODY_LENGTH);
     if (!body) {
-        return new Response("Announcement message is required", { status: 400 });
+        return jsonResponse({ error: "empty_message", message: "Announcement message is required" }, 400);
     }
     const title = String(payload?.title ?? "").trim().slice(0, MAX_TITLE_LENGTH) || DEFAULT_TITLE;
 
@@ -138,10 +161,7 @@ Deno.serve(async (req: Request) => {
     const subscribers = groupByEndpoint(rows);
 
     if (!subscribers.length) {
-        return new Response(JSON.stringify({ sent: 0, removed_stale: 0 }), {
-            status: 200,
-            headers: { "Content-Type": "application/json" }
-        });
+        return jsonResponse({ sent: 0, removed_stale: 0 });
     }
 
     const notificationPayload = JSON.stringify({
@@ -169,8 +189,8 @@ Deno.serve(async (req: Request) => {
 
     await deleteStaleSubscriptions(staleIds);
 
-    return new Response(JSON.stringify({
+    return jsonResponse({
         sent: subscribers.length - staleIds.length,
         removed_stale: staleIds.length
-    }), { status: 200, headers: { "Content-Type": "application/json" } });
+    });
 });
