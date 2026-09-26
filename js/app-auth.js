@@ -73,6 +73,73 @@ function presidentPanelFinishSVS() {
     handleFinishSVS();
 }
 
+function presidentPanelOpenAnnouncement() {
+    closePresidentPanelModal();
+    openAnnouncementModal();
+}
+
+// ================= ANNOUNCEMENT (President-only) =================
+// Broadcasts a push notification to every player device that currently has
+// notifications enabled — unlike the per-reservation pushes in
+// app-notifications.js, this isn't tied to any single application_id.
+// Delivered via the `send-announcement` Supabase Edge Function (deployed
+// WITH JWT verification, unlike send-push-notification/redeem-giftcode: only
+// a signed-in session — i.e. a logged-in President, since login is
+// restricted to the President username — may trigger a broadcast).
+function openAnnouncementModal() {
+    if (!isAdmin) return;
+    const titleInput = document.getElementById('announcement-title-input');
+    const messageInput = document.getElementById('announcement-message-input');
+    if (titleInput) titleInput.value = '';
+    if (messageInput) messageInput.value = '';
+    document.getElementById('announcement-modal').classList.remove('hidden');
+}
+
+function closeAnnouncementModal() {
+    document.getElementById('announcement-modal').classList.add('hidden');
+}
+
+async function sendAnnouncement() {
+    if (!isAdmin) return;
+
+    const titleInput = document.getElementById('announcement-title-input');
+    const messageInput = document.getElementById('announcement-message-input');
+    const title = (titleInput?.value || '').trim();
+    const message = (messageInput?.value || '').trim();
+
+    if (!message) {
+        showToast(t('toast_announcement_empty'), 'warning');
+        return;
+    }
+
+    const client = getSupabase();
+    if (!client) return;
+
+    const sendBtn = document.getElementById('announcement-send-btn');
+    setButtonBusy(sendBtn, true, t('btn_send_announcement'));
+
+    try {
+        const { data, error } = await client.functions.invoke('send-announcement', {
+            body: { title, body: message }
+        });
+
+        if (error) throw error;
+
+        const sentCount = Number(data?.sent || 0);
+        if (sentCount > 0) {
+            showToast(t('toast_announcement_success', { count: sentCount }), 'success');
+            closeAnnouncementModal();
+        } else {
+            showToast(t('toast_announcement_none'), 'warning');
+        }
+    } catch (error) {
+        console.error('Failed to send announcement:', error);
+        showToast(t('toast_announcement_failed'), 'error');
+    } finally {
+        setButtonBusy(sendBtn, false);
+    }
+}
+
 // Opens the custom modal for editing president/guild info (replacing
 // two calls to the browser's built-in prompt(), which looked inconsistent).
 function handleEditFooter() {
