@@ -520,6 +520,10 @@ function applySlot(time) {
     
     document.getElementById('apply-modal').classList.remove('hidden');
 
+    // Pause every animation on the page (fire banner, seasonal decorations,
+    // spinners, etc.) while the applicant fills in the form.
+    document.body.classList.add('svs-apply-modal-open');
+
     // Focus the first field once the modal has actually become visible
     // (a same-tick .focus() can be ignored while display is still "none").
     setTimeout(() => {
@@ -530,6 +534,9 @@ function applySlot(time) {
 
 function closeApplyModal() {
     document.getElementById('apply-modal').classList.add('hidden');
+
+    // Resume all paused animations now that the form is closed.
+    document.body.classList.remove('svs-apply-modal-open');
 }
 
 // Called when the "Additional Preferred Time Slot" checkbox is toggled.
