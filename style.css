@@ -4875,6 +4875,7 @@ body.halloween-theme .svs-opening-sparks::after {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex-shrink: 0;
 }
 .redeem-result-row {
     padding: 6px 10px;
