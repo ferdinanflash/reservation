@@ -68,9 +68,9 @@
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=6" defer=""></script>
-		<script src="lang.js?v=17" defer=""></script>
+		<script src="lang.js?v=18" defer=""></script>
 					<script src="js/app-core.js?v=49" defer=""></script>
-					<script src="js/app-auth.js?v=48" defer=""></script>
+					<script src="js/app-auth.js?v=49" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
 					<script src="js/app-schedule.js?v=46" defer=""></script>
 					<script src="js/app-applications.js?v=48" defer=""></script>
@@ -648,6 +648,10 @@
 						<span class="president-panel-option-label"><span data-i18n="btn_theme_switcher">🎨 Theme Switcher</span></span>
 						<span class="arrow">&#8250;</span>
 					</button>
+					<button type="button" id="president-panel-announcement-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenAnnouncement()">
+						<span class="president-panel-option-label"><span data-i18n="btn_announcement">📢 Announcement</span></span>
+						<span class="arrow">&#8250;</span>
+					</button>
 					<button type="button" id="president-panel-finish-btn" class="list-item president-panel-option-btn president-panel-option-danger" onclick="presidentPanelFinishSVS()">
 						<span class="president-panel-option-label"><span class="president-panel-option-icon">🏁</span> <span data-i18n="btn_finish_svs">FINISH SvS</span></span>
 						<span class="arrow">&#8250;</span>
@@ -763,6 +767,30 @@
 				</div>
 				<div class="form-actions">
 					<button class="btn-back modal-action-btn" onclick="closeThemeSwitcherModal()" data-i18n="btn_close">Close</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal Announcement (President-only) — broadcasts a push notification
+		     to every player device that has notifications enabled, via the
+		     `send-announcement` Supabase Edge Function (independent of any
+		     single reservation's push subscriptions). -->
+		<div id="announcement-modal" class="modal hidden">
+			<div class="modal-content custom-form-modal narrow-modal">
+				<button type="button" class="close-modal" onclick="closeAnnouncementModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 data-i18n="announcement_modal_title" class="modal-title">📢 Send Announcement</h2>
+				<p class="theme-switcher-hint" data-i18n="announcement_hint">This sends a push notification to every player who has notifications enabled, even if the app is closed.</p>
+				<div class="form-group">
+					<label data-i18n="label_announcement_title">Title (optional)</label>
+					<input type="text" id="announcement-title-input" maxlength="80" placeholder="e.g. Server Maintenance" data-i18n-placeholder="placeholder_announcement_title">
+				</div>
+				<div class="form-group">
+					<label data-i18n="label_announcement_message">Message</label>
+					<textarea id="announcement-message-input" maxlength="500" rows="5" spellcheck="true" placeholder="Type your announcement to all players..." data-i18n-placeholder="placeholder_announcement_message"></textarea>
+				</div>
+				<div class="form-actions">
+					<button class="btn-back modal-action-btn" onclick="closeAnnouncementModal()" data-i18n="btn_cancel">Cancel</button>
+					<button id="announcement-send-btn" class="btn-apply modal-action-btn" onclick="sendAnnouncement()" data-i18n="btn_send_announcement">Send Announcement</button>
 				</div>
 			</div>
 		</div>

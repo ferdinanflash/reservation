@@ -13,7 +13,7 @@
 // stale-while-revalidate fetch handler below self-heals that), but it's what
 // throws away old cache namespaces on activate() and gives every user a
 // clean slate immediately instead of waiting for a background revalidation.
-const CACHE_VERSION = '2026-09-26-01';
+const CACHE_VERSION = '2026-09-26-02';
 const CACHE_NAME = `svs-${CACHE_VERSION}`;
 
 // Icons/images/manifest whose version lives in the FILENAME (e.g. "-v8.png"),
@@ -153,22 +153,31 @@ self.addEventListener('push', (event) => {
         payload = { title: 'Reservation Update', body: event.data ? event.data.text() : '' };
     }
 
-    const title = payload.title || 'Reservation Update';
+    // Announcements (President Panel -> send-announcement Edge Function) are
+    // broadcast to every subscriber and aren't tied to any one reservation,
+    // so they get their own tag — reusing the "reservation-*" tag would
+    // silently replace (or be replaced by) a real reservation-status
+    // notification sitting in the same device's notification tray.
+    const isAnnouncement = payload.type === 'announcement';
+
+    const title = payload.title || (isAnnouncement ? 'Announcement' : 'Reservation Update');
     const options = {
         body: payload.body || '',
         icon: './pwa-icon-192-v8.png',
         badge: './pwa-icon-192-v8.png',
-        tag: `reservation-${payload.application_id || 'update'}`,
+        tag: isAnnouncement ? `announcement-${Date.now()}` : `reservation-${payload.application_id || 'update'}`,
         renotify: true,
-        data: {
-            application_id: payload.application_id || null,
-            status: payload.status || null,
-            nickname: payload.nickname || null,
-            old_time_slot: payload.old_time_slot || null,
-            new_time_slot: payload.new_time_slot || null,
-            original_time_slot: payload.original_time_slot || null,
-            reason: payload.reason || null
-        }
+        data: isAnnouncement
+            ? { type: 'announcement' }
+            : {
+                application_id: payload.application_id || null,
+                status: payload.status || null,
+                nickname: payload.nickname || null,
+                old_time_slot: payload.old_time_slot || null,
+                new_time_slot: payload.new_time_slot || null,
+                original_time_slot: payload.original_time_slot || null,
+                reason: payload.reason || null
+            }
     };
 
     event.waitUntil(self.registration.showNotification(title, options));
