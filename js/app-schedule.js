@@ -4,6 +4,16 @@
 // Part of the app script, split out of the old single script.js.
 // Load order matters: see the <script> tags in index.html.
 
+function showMinisterReservationMenu() {
+    document.getElementById('main-menu-view').classList.add('hidden');
+    document.getElementById('minister-reservation-view').classList.remove('hidden');
+}
+
+function showMainMenu() {
+    document.getElementById('minister-reservation-view').classList.add('hidden');
+    document.getElementById('main-menu-view').classList.remove('hidden');
+}
+
 function showSchedule(positionName) {
     currentPosition = positionName;
     currentHowToUseNotes = '';
