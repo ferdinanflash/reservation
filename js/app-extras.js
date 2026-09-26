@@ -276,6 +276,17 @@ function redeemMessageKeyFor(upstream) {
     return map[msg] || null;
 }
 
+// These two upstream messages mean the *code itself* is bad (wrong/unknown
+// code, or expired) rather than something specific to one FID — every
+// remaining FID in the batch would fail the exact same way. So once one of
+// these comes back, the rest of the batch is skipped instead of firing
+// requests that can't possibly succeed, to avoid hammering the server (and
+// Century Games' own rate limit) for nothing.
+function redeemCodeIsFatalForBatch(upstream) {
+    const msg = String((upstream && upstream.msg) || '').trim().toUpperCase();
+    return ['CDK NOT FOUND', 'CDK NOT FOUND.', 'NOT FOUND', 'TIME ERROR', 'TIME ERROR.'].includes(msg);
+}
+
 // Parses the FID textarea: one ID per line (commas/spaces also accepted),
 // de-duplicated, keeping first-seen order.
 function parseRedeemFidList(raw) {
@@ -369,6 +380,19 @@ async function submitRedeemCode() {
                 // "Already used" isn't really a failure for this FID (the
                 // account already has the reward), so mark it distinctly.
                 rows[i] = { fid, status: key === 'redeem_already_used' ? 'info' : 'error', message };
+
+                // Code is invalid/expired: every FID after this one would
+                // get the exact same answer, so stop the batch here instead
+                // of burning through the rest of the list for nothing.
+                if (redeemCodeIsFatalForBatch(upstream)) {
+                    for (let j = i + 1; j < fids.length; j++) {
+                        rows[j] = { fid: fids[j], status: 'skipped', message: t('redeem_skipped') };
+                    }
+                    renderRedeemResultList(rows);
+                    setRedeemStatus('redeem-result-status', t('redeem_batch_stopped', { message, checked: i + 1, total: fids.length }), 'error');
+                    setButtonBusy(submitBtn, false);
+                    return;
+                }
             }
         } catch (e) {
             console.error('submitRedeemCode failed for fid', fid, e);
