@@ -294,39 +294,45 @@
 					</div>
             </div>
 
-				<p class="page-subtitle" data-i18n="page_subtitle">Select a position to make reservation</p>
-				<div class="list-container">
-					<button type="button" class="list-item" onclick="showSchedule('Vice President D1')">
-						<span data-i18n="pos_vp_d1">Vice President D1 (Monday)</span>
-						<span class="arrow">&gt;</span>
-					</button>
-					<button type="button" class="list-item" onclick="showSchedule('Vice President D2')">
-						<span data-i18n="pos_vp_d2">Vice President D2 (Tuesday)</span>
-						<span class="arrow">&gt;</span>
-					</button>
-					<button type="button" class="list-item" onclick="showSchedule('Minister of Education D4')">
-						<span data-i18n="pos_edu_d4">Minister of Education D4 (Thursday)</span>
-						<span class="arrow">&gt;</span>
-					</button>
-					<button type="button" class="list-item" onclick="showSchedule('Vice President D5')">
-						<span data-i18n="pos_vp_d5">Vice President D5 (Friday)</span>
-						<span class="arrow">&gt;</span>
-					</button>
+				<div id="main-menu-view">
+					<p class="page-subtitle" data-i18n="page_subtitle_menu">Select an option below</p>
+					<div class="external-link-container" id="main-menu-links">
+						<button type="button" class="list-item list-item-small" onclick="showMinisterReservationMenu()">
+							<span data-i18n="link_minister_reservation">Minister Reservation</span>
+						</button>
+						<a class="list-item list-item-small" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer">
+							<span data-i18n="link_leaderboard">Events Leaderboard Record</span>
+						</a>
+						<a class="list-item list-item-small" href="https://transfer.3475.web.id" target="_blank" rel="noopener noreferrer">
+							<span data-i18n="link_transfer_portal">Transfer Portal</span>
+						</a>
+						<a class="list-item list-item-small" href="https://tal.3475.web.id" target="_blank" rel="noopener noreferrer">
+							<span data-i18n="link_tal">Battle Events</span>
+						</a>
+					</div>
 				</div>
 
-				<div class="external-link-container">
-					<a class="list-item list-item-small" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer">
-						<span data-i18n="link_leaderboard">Events Leaderboard Record</span>
-						<span class="arrow">&gt;</span>
-					</a>
-					<a class="list-item list-item-small" href="https://transfer.3475.web.id" target="_blank" rel="noopener noreferrer">
-						<span data-i18n="link_transfer_portal">Transfer Portal</span>
-						<span class="arrow">&gt;</span>
-					</a>
-					<a class="list-item list-item-small" href="https://tal.3475.web.id" target="_blank" rel="noopener noreferrer">
-						<span data-i18n="link_tal">Battle Events</span>
-						<span class="arrow">&gt;</span>
-					</a>
+				<div id="minister-reservation-view" class="hidden">
+					<button type="button" class="btn-back action-no-bottom" onclick="showMainMenu()" data-i18n="btn_back_main_menu">&lt; Back to menu</button>
+					<p class="page-subtitle" data-i18n="page_subtitle">Select a position to make reservation</p>
+					<div class="list-container">
+						<button type="button" class="list-item" onclick="showSchedule('Vice President D1')">
+							<span data-i18n="pos_vp_d1">Vice President D1 (Monday)</span>
+							<span class="arrow">&gt;</span>
+						</button>
+						<button type="button" class="list-item" onclick="showSchedule('Vice President D2')">
+							<span data-i18n="pos_vp_d2">Vice President D2 (Tuesday)</span>
+							<span class="arrow">&gt;</span>
+						</button>
+						<button type="button" class="list-item" onclick="showSchedule('Minister of Education D4')">
+							<span data-i18n="pos_edu_d4">Minister of Education D4 (Thursday)</span>
+							<span class="arrow">&gt;</span>
+						</button>
+						<button type="button" class="list-item" onclick="showSchedule('Vice President D5')">
+							<span data-i18n="pos_vp_d5">Vice President D5 (Friday)</span>
+							<span class="arrow">&gt;</span>
+						</button>
+					</div>
 				</div>
 			</section>
 

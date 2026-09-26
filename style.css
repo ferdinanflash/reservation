@@ -1442,6 +1442,13 @@ body.halloween-theme {
     box-shadow: 0 0 16px rgba(167,139,250,0.15), inset 0 0 12px rgba(167,139,250,0.04);
 }
 
+.external-link-container .list-item-small:nth-child(4) {
+    border-radius: 4px 14px 4px 14px;
+    background: linear-gradient(#171a22, #171a22) padding-box,
+                linear-gradient(135deg, #34d399, #a7f3d0, #047857) border-box;
+    box-shadow: 0 0 16px rgba(52,211,153,0.16), inset 0 0 12px rgba(52,211,153,0.04);
+}
+
 .external-link-container .list-item-small:hover {
     transform: translateY(-3px);
     filter: brightness(1.12);
@@ -1457,6 +1464,10 @@ body.halloween-theme {
 
 .external-link-container .list-item-small:nth-child(3):hover {
     box-shadow: 0 0 26px rgba(167,139,250,0.30), 0 8px 18px rgba(0,0,0,0.35);
+}
+
+.external-link-container .list-item-small:nth-child(4):hover {
+    box-shadow: 0 0 26px rgba(52,211,153,0.32), 0 8px 18px rgba(0,0,0,0.35);
 }
 
 .list-item-small .arrow {
