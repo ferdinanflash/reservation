@@ -133,8 +133,21 @@ async function sendAnnouncement() {
             showToast(t('toast_announcement_none'), 'warning');
         }
     } catch (error) {
-        console.error('Failed to send announcement:', error);
-        showToast(t('toast_announcement_failed'), 'error');
+        // error.context is the raw Response for a FunctionsHttpError (a
+        // non-2xx reply from the function itself, e.g. VAPID misconfigured
+        // or a stale/expired session) — surface its message when present
+        // instead of only ever showing the generic fallback toast.
+        let detail = '';
+        try {
+            const context = error?.context;
+            if (context && typeof context.clone === 'function') {
+                const body = await context.clone().json();
+                detail = body?.message || body?.error || '';
+            }
+        } catch (_) { /* response wasn't JSON — ignore */ }
+
+        console.error('Failed to send announcement:', detail || error);
+        showToast(detail ? `${t('toast_announcement_failed')} (${detail})` : t('toast_announcement_failed'), 'error');
     } finally {
         setButtonBusy(sendBtn, false);
     }
