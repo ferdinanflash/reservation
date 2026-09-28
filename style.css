@@ -1396,10 +1396,17 @@ body.halloween-theme {
 
 /* ==================== EXTERNAL LINK BUTTONS (SMALLER) ==================== */
 .external-link-container {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     margin-top: 16px;
+}
+
+/* Minister Reservation = main action: full-width; the 4 portals sit in a 2x2 grid below. */
+.external-link-container .list-item-small:nth-child(1) {
+    grid-column: 1 / -1;
+    padding: 14px 16px;
+    font-size: 0.95rem;
 }
 
 .list-item-small {
@@ -1436,7 +1443,7 @@ body.halloween-theme {
 }
 
 .external-link-container .list-item-small:nth-child(3) {
-    border-radius: 14px 4px 14px 4px;
+    border-radius: 4px 14px 4px 14px;
     background: linear-gradient(#171a22, #171a22) padding-box,
                 linear-gradient(135deg, #a78bfa, #e9d5ff, #6d28d9) border-box;
     box-shadow: 0 0 16px rgba(167,139,250,0.15), inset 0 0 12px rgba(167,139,250,0.04);
@@ -1447,6 +1454,13 @@ body.halloween-theme {
     background: linear-gradient(#171a22, #171a22) padding-box,
                 linear-gradient(135deg, #34d399, #a7f3d0, #047857) border-box;
     box-shadow: 0 0 16px rgba(52,211,153,0.16), inset 0 0 12px rgba(52,211,153,0.04);
+}
+
+.external-link-container .list-item-small:nth-child(5) {
+    border-radius: 14px 4px 14px 4px;
+    background: linear-gradient(#171a22, #171a22) padding-box,
+                linear-gradient(135deg, #fb7185, #fecdd3, #be123c) border-box;
+    box-shadow: 0 0 16px rgba(251,113,133,0.16), inset 0 0 12px rgba(251,113,133,0.04);
 }
 
 .external-link-container .list-item-small:hover {
@@ -1470,13 +1484,17 @@ body.halloween-theme {
     box-shadow: 0 0 26px rgba(52,211,153,0.32), 0 8px 18px rgba(0,0,0,0.35);
 }
 
+.external-link-container .list-item-small:nth-child(5):hover {
+    box-shadow: 0 0 26px rgba(251,113,133,0.32), 0 8px 18px rgba(0,0,0,0.35);
+}
+
 .list-item-small .arrow {
     display: none;
 }
 
 @media screen and (max-width: 380px) {
     .external-link-container {
-        flex-direction: column;
+        grid-template-columns: 1fr;
     }
 }
 
@@ -4812,33 +4830,108 @@ body.halloween-theme .svs-opening-sparks::after {
 /* ==================== REDEEM CODE (navbar button + modal) ==================== */
 /* Gold-on-dark, same family as the language toggle, so it reads as a
    secondary action next to the blue President button. */
-.btn-redeem {
+/* Navbar "Menu" dropdown: Discord + Redeem Code + President login.
+   Gold-on-dark, same family as the language toggle. */
+.nav-menu { position: relative; display: inline-flex; }
+.nav-menu-trigger {
     appearance: none;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     white-space: nowrap;
     background: linear-gradient(180deg, rgba(32, 27, 17, 0.92) 0%, rgba(12, 10, 6, 0.95) 100%);
     border: 1px solid rgba(245, 197, 107, 0.55);
-    border-radius: 8px;
-    padding: 7px 12px;
+    border-radius: 999px;
+    padding: 7px 14px;
     color: var(--t-gold, #f3d9a4);
-    font-weight: 700;
+    font-family: inherit;
+    font-weight: 800;
     font-size: 0.85rem;
+    letter-spacing: 0.03em;
     cursor: pointer;
     box-shadow: 0 0 10px rgba(245, 158, 11, 0.18), inset 0 0 8px rgba(245, 158, 11, 0.06);
     transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
-.btn-redeem:hover {
+.nav-menu-trigger:hover,
+.nav-menu.nav-menu-open .nav-menu-trigger {
     border-color: rgba(245, 197, 107, 0.9);
     box-shadow: 0 0 16px rgba(245, 158, 11, 0.35), inset 0 0 10px rgba(245, 158, 11, 0.1);
-    transform: translateY(-1px);
 }
-.btn-redeem:focus-visible {
-    outline: 2px solid #f5c56b;
-    outline-offset: 2px;
+.nav-menu-trigger:hover { transform: translateY(-1px); }
+.nav-menu-trigger:focus-visible { outline: 2px solid #f5c56b; outline-offset: 2px; }
+.nav-menu-icon { flex-shrink: 0; opacity: 0.9; }
+.nav-menu-chevron { font-size: 0.62rem; opacity: 0.7; transition: transform 0.25s ease; }
+.nav-menu.nav-menu-open .nav-menu-chevron { transform: rotate(180deg); }
+
+.nav-menu-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 210px;
+    max-width: calc(100vw - 24px);
+    padding: 8px;
+    background: linear-gradient(180deg, rgba(26, 22, 15, 0.98) 0%, rgba(10, 9, 6, 0.98) 100%);
+    border: 1px solid rgba(245, 197, 107, 0.5);
+    border-radius: 14px;
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.2), 0 8px 22px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.96);
+    transform-origin: top right;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+    z-index: 41;
 }
-.btn-redeem svg { flex-shrink: 0; opacity: 0.9; }
+.nav-menu.nav-menu-open .nav-menu-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+.nav-menu-item {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: var(--t-soft, #e5e7eb);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.nav-menu-item svg { flex-shrink: 0; }
+.nav-menu-item:hover,
+.nav-menu-item:focus-visible {
+    background: rgba(245, 158, 11, 0.14);
+    border-color: rgba(245, 158, 11, 0.45);
+    color: var(--t-strong, #fff);
+    outline: none;
+}
+.nav-menu-discord svg { color: #8b95ff; }
+.nav-menu-redeem svg { color: #f5c56b; }
+.nav-menu-item.nav-menu-admin {
+    background: rgba(37, 99, 235, 0.16);
+    border-color: rgba(59, 130, 246, 0.4);
+}
+.nav-menu-item.nav-menu-admin:hover,
+.nav-menu-item.nav-menu-admin:focus-visible {
+    background: rgba(59, 130, 246, 0.28);
+    border-color: rgba(96, 165, 250, 0.7);
+}
+.nav-menu-divider { height: 1px; margin: 4px 2px; background: rgba(245, 197, 107, 0.2); }
 
 /* Modal: native Player ID check + gift code form (replaces the old embedded
    iframe). Reuses .custom-form-modal as its base; only what differs from
@@ -4962,52 +5055,15 @@ body.redeem-modal-open { overflow: hidden; }
 .redeem-alliance-status.is-error { color: #fca5a5; }
 .redeem-alliance-status.is-success { color: #86efac; }
 
-/* Phones: keep all four navbar actions on ONE row:
-   [ language ][ discord ][ Redeem Code ][ President ]
-   Language + Discord keep their natural size; the two text buttons share the
-   remaining width and shrink (smaller type/padding, ellipsis as a last
-   resort) so longer translations never force a second row. */
+/* Phones: keep the navbar actions on ONE row: [ language ][ Menu ] */
 @media screen and (max-width: 480px) {
-    .navbar-actions {
-        flex-wrap: nowrap;
-        gap: 6px;
-    }
+    .navbar-actions { flex-wrap: nowrap; gap: 6px; }
     .navbar-actions .lang-toggle,
-    .navbar-actions .btn-discord { flex: 0 0 auto; }
-    .navbar-actions .lang-trigger {
-        padding: 7px 9px;
-        gap: 4px;
-        font-size: 0.72rem;
-    }
+    .navbar-actions .nav-menu { flex: 0 0 auto; }
+    .navbar-actions .lang-trigger { padding: 7px 9px; gap: 4px; font-size: 0.72rem; }
     .navbar-actions .lang-globe-icon { display: none; }
     .navbar-actions .lang-flag-emoji { font-size: 0.85rem; }
-    .navbar-actions .btn-discord { width: 34px; height: 34px; }
-    .navbar-actions .btn-redeem,
-    .navbar-actions .btn-admin {
-        flex: 1 1 0;
-        min-width: 0;
-        justify-content: center;
-        text-align: center;
-        padding: 8px 6px;
-        font-size: 0.75rem;
-        line-height: 1.1;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .navbar-actions .btn-redeem { gap: 4px; }
-    .navbar-actions .btn-redeem svg { width: 13px; height: 13px; }
-}
-/* Very narrow phones: drop the gift icon to buy back a little width */
-@media screen and (max-width: 380px) {
-    .navbar-actions .btn-redeem svg { display: none; }
-}
-/* Extra-small phones (~320px): slightly smaller type so labels aren't cut */
-@media screen and (max-width: 340px) {
-    .navbar-actions { gap: 4px; }
-    .navbar-actions .lang-trigger { padding: 7px 7px; }
-    .navbar-actions .btn-redeem,
-    .navbar-actions .btn-admin { font-size: 0.66rem; padding: 8px 3px; }
+    .nav-menu-trigger { padding: 7px 12px; font-size: 0.78rem; }
 }
 
 

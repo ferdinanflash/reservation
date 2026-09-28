@@ -138,3 +138,33 @@ function copyToClipboard(text) {
         document.body.removeChild(textArea);
     });
 }
+
+
+// ================= NAVBAR "MENU" DROPDOWN =================
+// Groups Discord, Redeem Code and President login behind one button.
+function toggleNavMenu(event) {
+    if (event) event.stopPropagation();
+    const menu = document.getElementById('nav-menu');
+    if (!menu) return;
+    const isOpen = menu.classList.toggle('nav-menu-open');
+    const trigger = menu.querySelector('.nav-menu-trigger');
+    if (trigger) trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+
+function closeNavMenu() {
+    const menu = document.getElementById('nav-menu');
+    if (!menu) return;
+    menu.classList.remove('nav-menu-open');
+    const trigger = menu.querySelector('.nav-menu-trigger');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+}
+
+// Close after picking an item, on outside click, or on Escape.
+document.addEventListener('click', function (e) {
+    const menu = document.getElementById('nav-menu');
+    if (!menu) return;
+    if (!menu.contains(e.target) || e.target.closest('.nav-menu-item')) closeNavMenu();
+});
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeNavMenu();
+});
