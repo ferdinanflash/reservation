@@ -111,9 +111,6 @@
     display: none;
 }
 
-@media screen and (max-width: 480px) {
-    .navbar-actions { width: 100%; justify-content: space-between; }
-}
 /* ==================== RESET AND BASE STYLES ==================== */
 * {
     box-sizing: border-box;
@@ -5741,4 +5738,21 @@ body.svs-apply-modal-open * {
    !important, so this needs the higher-specificity id selector). */
 #export-csv-btn.btn-apply.btn-export {
     animation: none !important;
+}
+
+
+
+/* ==================== NAVBAR: title + [language][Menu] on ONE row (phones) ====================
+   Placed after the base .navbar rule so it actually wins the cascade. */
+@media screen and (max-width: 480px) {
+    .navbar { flex-wrap: nowrap; gap: 8px; padding: 12px 12px; }
+    .navbar .logo { flex: 0 1 auto; min-width: 0; white-space: nowrap; }
+    .navbar-actions { width: auto; flex: 0 0 auto; justify-content: flex-end; }
+}
+@media screen and (max-width: 360px) {
+    .navbar { gap: 6px; padding: 10px 8px; }
+    .navbar .logo { font-size: 1.05rem; letter-spacing: 0.05em; }
+    .navbar-actions { gap: 4px; }
+    .navbar-actions .lang-trigger { padding: 6px 7px; }
+    .nav-menu-trigger { padding: 6px 9px; gap: 5px; }
 }
