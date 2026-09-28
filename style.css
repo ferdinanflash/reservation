@@ -5676,3 +5676,60 @@ body.bluefire-theme .svs-opening-sparks::after {
 body.svs-apply-modal-open * {
     animation-play-state: paused !important;
 }
+
+
+/* ==================== MAIN MENU: RUNNING BORDER LIGHT ====================
+   A bright "comet" of color circles the border of each of the 5 main menu
+   buttons. Each button keeps its own palette (--c1/--c2) and starts at a
+   different point of the loop so they never pulse in sync. Browsers without
+   @property support simply show the dim static border. */
+@property --nav-ang {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+@keyframes navBorderRun {
+    to { --nav-ang: 360deg; }
+}
+
+.external-link-container .list-item-small {
+    --c1: #94a3b8;
+    --c2: #e2e8f0;
+    --nav-ang: 0deg;
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
+    background:
+        linear-gradient(#171a22, #171a22) padding-box,
+        conic-gradient(from var(--nav-ang),
+            transparent 0deg 215deg,
+            var(--c1) 285deg,
+            var(--c2) 340deg,
+            #ffffff 358deg,
+            transparent 360deg) border-box,
+        linear-gradient(135deg, var(--c1), var(--c2), var(--c1)) border-box;
+    background-color: transparent;
+    animation: navBorderRun 4s linear infinite;
+}
+/* dim base ring (third layer) so the border never disappears between passes */
+.external-link-container .list-item-small:nth-child(1) { --c1: #f59e0b; --c2: #fde68a; animation-delay: 0s;     }
+.external-link-container .list-item-small:nth-child(2) { --c1: #22d3ee; --c2: #a5f3fc; animation-delay: -0.8s;  }
+.external-link-container .list-item-small:nth-child(3) { --c1: #a78bfa; --c2: #e9d5ff; animation-delay: -1.6s;  }
+.external-link-container .list-item-small:nth-child(4) { --c1: #34d399; --c2: #a7f3d0; animation-delay: -2.4s;  }
+.external-link-container .list-item-small:nth-child(5) { --c1: #fb7185; --c2: #fecdd3; animation-delay: -3.2s;  }
+
+.external-link-container .list-item-small:nth-child(n) {
+    background:
+        linear-gradient(#171a22, #171a22) padding-box,
+        conic-gradient(from var(--nav-ang),
+            transparent 0deg 215deg,
+            var(--c1) 285deg,
+            var(--c2) 340deg,
+            #ffffff 358deg,
+            transparent 360deg) border-box,
+        linear-gradient(135deg, color-mix(in srgb, var(--c1) 35%, transparent), color-mix(in srgb, var(--c2) 20%, transparent)) border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .external-link-container .list-item-small { animation: none; }
+}
