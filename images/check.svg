@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="120" height="120">
+  <defs>
+    <!-- Gradasi Lingkaran Utama -->
+    <radialGradient id="sphereGrad" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="60%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#064E3B" />
+    </radialGradient>
+
+    <!-- Gradasi Permukaan Atas Ceklis -->
+    <linearGradient id="checkTop" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E5E7EB" />
+    </linearGradient>
+
+    <!-- Filter Bayangan Halus -->
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="3.5" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Bayangan Dasar / Lantai -->
+  <ellipse cx="50" cy="88" rx="32" ry="7" fill="#000000" opacity="0.22" />
+
+  <!-- Bola Utama (Tanpa Highlight Putih) -->
+  <circle cx="50" cy="46" r="36" fill="url(#sphereGrad)" filter="url(#shadow)" />
+
+  <!-- CEKLIS 3D EMBOSSED / EXTRUDED -->
+  <g filter="url(#shadow)">
+    <!-- 1. Sisi Kiri / Bawah 3D (Ketebalan Fisik Ceklis) -->
+    <path d="M34 49.5 L45 60.5 L67 36.5"
+          fill="none"
+          stroke="#047857"
+          stroke-width="7"
+          stroke-linecap="round"
+          stroke-linejoin="round" />
+
+    <!-- 2. Sisi Depan / Atas Ceklis (Terkena Cahaya) -->
+    <path d="M34 46 L45 57 L67 33"
+          fill="none"
+          stroke="url(#checkTop)"
+          stroke-width="7"
+          stroke-linecap="round"
+          stroke-linejoin="round" />
+  </g>
+</svg>
