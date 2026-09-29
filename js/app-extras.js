@@ -89,7 +89,7 @@ function getRarVisibleStats(item) {
 
 function buildRarStatHtml(stat) {
     const value = parseInt(stat.value, 10) || 0;
-    const label = `${stat.icon} ${t(stat.labelKey)}`;
+    const label = `${statIconHtml(stat.key) || stat.icon} ${t(stat.labelKey)}`;
     const indicator = stat.style === 'dots'
         ? `<div class="rar-stat-dots">${[0, 1, 2].map(() => `<span class="rar-dot-on" style="color:${stat.color}; background:${stat.color};"></span>`).join('')}</div>`
         : `<div class="rar-stat-bar"><span style="background:${stat.color};"></span></div>`;

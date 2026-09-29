@@ -12,6 +12,30 @@
 // copyToClipboard are all defined once in common.js and shared with
 // script.js. Make sure this page's HTML loads common.js BEFORE this file.
 
+
+// ================= STAT ICONS (image assets) =================
+// Maps each resource / speedup field to its artwork in images/. Used by the
+// application form, the detail modal, the compact stat rows and the
+// "recently accepted" banner so every place shows the same icons.
+// Extra artwork already shipped in images/ but not yet tied to a field:
+// resources/{coal,iron,wood,meat}, speedups/{learning,troop-healing},
+// charms/, hero-gear/, chief-gear/.
+const STAT_ICON_SRC = {
+    fire_crystal:         'images/resources/fire-crystal.webp',
+    refined_fire_crystal: 'images/resources/refined-fire-crystal.webp',
+    fire_crystal_shard:   'images/resources/fire-crystal-shard.webp',
+    general_speedup:      'images/speedups/general.webp',
+    construction_speedup: 'images/speedups/construction.webp',
+    research_speedup:     'images/speedups/research.webp',
+    training_speedup:     'images/speedups/troop-training.webp'
+};
+
+function statIconHtml(key, extraClass = '') {
+    const src = STAT_ICON_SRC[key];
+    if (!src) return '';
+    return `<img class="stat-icon ${extraClass}" src="${src}" alt="" width="20" height="20" loading="lazy" decoding="async" draggable="false">`;
+}
+
 let isAdmin = false;
 let currentStaffUsername = null;
 let savedApplications = [];

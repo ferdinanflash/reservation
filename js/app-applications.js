@@ -217,6 +217,7 @@ function buildSpeedupRing(value, maxValue, colorKey, label) {
     const ringColors = { general: '#22d3ee', construction: '#a78bfa', research: '#34d399', training: '#f59e0b' };
     const color = ringColors[colorKey] || '#3b82f6';
     const pct = maxValue > 0 ? Math.min(100, Math.round((value / maxValue) * 100)) : 0;
+    const iconKey = { general: 'general_speedup', construction: 'construction_speedup', research: 'research_speedup', training: 'training_speedup' }[colorKey];
     return `
         <div class="speedup-ring-wrap">
             <div class="speedup-ring-outer" style="background: conic-gradient(${color} 0% ${pct}%, #262a35 ${pct}% 100%);">
@@ -225,7 +226,7 @@ function buildSpeedupRing(value, maxValue, colorKey, label) {
                     <span class="ring-unit">${escapeHtml(t('days_suffix'))}</span>
                 </div>
             </div>
-            <div class="speedup-ring-label">${escapeHtml(label)}</div>
+            <div class="speedup-ring-label">${statIconHtml(iconKey)}${escapeHtml(label)}</div>
         </div>
     `;
 }
@@ -247,13 +248,13 @@ function buildStatDetailsHtml(app, compact = false) {
         return `
             <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_furnace_lvl")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.furnace_level) || '-'}</strong></div>
             ${additionalRowCompact}
-            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_fc")}</span> <strong style="color:var(--t-amber, #f59e0b);">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
-            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_rfc")}</span> <strong style="color:var(--t-amber, #f59e0b);">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
-            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_shard")}</span> <strong style="color:var(--t-amber, #f59e0b);">${escapeHtml(app.fire_crystal_shard) || '0'}</strong></div>
-            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_general")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.general_speedup) || '0'}</strong></div>
-            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_const")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.construction_speedup) || '0'}</strong></div>
-            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_research")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.research_speedup) || '0'}</strong></div>
-            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_train")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.training_speedup) || '0'}</strong></div>
+            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${statIconHtml('fire_crystal')}${t("stat_fc")}</span> <strong style="color:var(--t-amber, #f59e0b);">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
+            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${statIconHtml('refined_fire_crystal')}${t("stat_rfc")}</span> <strong style="color:var(--t-amber, #f59e0b);">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
+            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${statIconHtml('fire_crystal_shard')}${t("stat_shard")}</span> <strong style="color:var(--t-amber, #f59e0b);">${escapeHtml(app.fire_crystal_shard) || '0'}</strong></div>
+            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${statIconHtml('general_speedup')}${t("stat_general")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.general_speedup) || '0'}</strong></div>
+            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${statIconHtml('construction_speedup')}${t("stat_const")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.construction_speedup) || '0'}</strong></div>
+            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${statIconHtml('research_speedup')}${t("stat_research")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.research_speedup) || '0'}</strong></div>
+            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${statIconHtml('training_speedup')}${t("stat_train")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.training_speedup) || '0'}</strong></div>
         `;
     }
 
@@ -292,9 +293,9 @@ function buildStatDetailsHtml(app, compact = false) {
         <div class="detail-card">
             <div class="detail-card-title"><span class="detail-card-icon">💎</span>${t("detail_section_essentials")}</div>
             <div class="essentials-badges">
-                <span class="essential-badge essential-fc">🔥 ${t("stat_fc")} <strong>${fc}</strong></span>
-                <span class="essential-badge essential-rfc">🔥 ${t("stat_rfc")} <strong>${rfc}</strong></span>
-                <span class="essential-badge essential-shard">💠 ${t("essentials_shard_label")} <strong>${shard}</strong></span>
+                <span class="essential-badge essential-fc">${statIconHtml('fire_crystal')}${t("stat_fc")} <strong>${fc}</strong></span>
+                <span class="essential-badge essential-rfc">${statIconHtml('refined_fire_crystal')}${t("stat_rfc")} <strong>${rfc}</strong></span>
+                <span class="essential-badge essential-shard">${statIconHtml('fire_crystal_shard')}${t("essentials_shard_label")} <strong>${shard}</strong></span>
             </div>
         </div>
 
