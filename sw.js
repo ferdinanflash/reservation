@@ -13,7 +13,7 @@
 // stale-while-revalidate fetch handler below self-heals that), but it's what
 // throws away old cache namespaces on activate() and gives every user a
 // clean slate immediately instead of waiting for a background revalidation.
-const CACHE_VERSION = '2026-09-29-06';
+const CACHE_VERSION = '2026-09-29-07';
 const CACHE_NAME = `svs-${CACHE_VERSION}`;
 
 // Icons/images/manifest whose version lives in the FILENAME (e.g. "-v8.png"),
@@ -30,6 +30,13 @@ const PRECACHE_STATIC = [
     './bluefire-banner-v1.mp4',
     './bluefire-banner-v1.png',
     './default-banner-v2.jpg',
+    './images/resources/fire-crystal.webp',
+    './images/resources/refined-fire-crystal.webp',
+    './images/resources/fire-crystal-shard.webp',
+    './images/speedups/general.webp',
+    './images/speedups/construction.webp',
+    './images/speedups/research.webp',
+    './images/speedups/troop-training.webp',
     './pwa-icon-192-v8.png',
     './pwa-icon-512-v8.png',
     './apple-touch-icon-v8.png',

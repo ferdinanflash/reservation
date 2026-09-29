@@ -5756,3 +5756,26 @@ body.svs-apply-modal-open * {
     .navbar-actions .lang-trigger { padding: 6px 7px; }
     .nav-menu-trigger { padding: 6px 9px; gap: 5px; }
 }
+
+
+/* ================= STAT ICONS (image assets) ================= */
+.stat-icon {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    object-fit: contain;
+    vertical-align: middle;
+    flex: 0 0 auto;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.form-group label.label-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.form-group label.label-with-icon .stat-icon { width: 24px; height: 24px; }
+.stat-compact-label .stat-icon { width: 1.35em; height: 1.35em; margin-right: 5px; margin-top: -2px; }
+.essential-badge .stat-icon { width: 20px; height: 20px; }
+.speedup-ring-label .stat-icon { display: block; width: 22px; height: 22px; margin: 0 auto 2px; }
+.rar-stat-label .stat-icon { width: 1.3em; height: 1.3em; margin-top: -2px; }
