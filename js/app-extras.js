@@ -173,7 +173,7 @@ async function loadRecentAccepts() {
                     <div class="rar-pos">[${escapeHtml(shortPos)}]</div>
                 </div>
                 <div class="rar-right">
-                    <div class="rar-top"><span class="rar-check">✅</span><span class="rar-time">${escapeHtml(item.time_slot)} UTC</span></div>
+                    <div class="rar-top"><span class="rar-check"><img class="check-icon" src="images/check.svg" alt="" width="20" height="20" decoding="async" draggable="false"></span><span class="rar-time">${escapeHtml(item.time_slot)} UTC</span></div>
                     <div class="rar-stats"></div>
                 </div>
             `;
