@@ -74,7 +74,7 @@ const RAR_STAT_POOL = [
 // RAR_STAT_POOL entirely and rendered separately in loadRecentAccepts().
 function buildRarFurnaceLabel(item) {
     const level = String(item.furnace_level || '').trim();
-    return level ? `<span class="rar-furnace">(FC ${escapeHtml(level)})</span>` : '';
+    return level ? `<span class="rar-furnace">${furnaceIconHtml(level, 'furnace-badge-sm')}</span>` : '';
 }
 
 // Returns only the stats that are (a) not hidden for this app's position and

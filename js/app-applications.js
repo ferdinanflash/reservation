@@ -246,7 +246,7 @@ function buildStatDetailsHtml(app, compact = false) {
 
     if (compact) {
         return `
-            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_furnace_lvl")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${escapeHtml(app.furnace_level) || '-'}</strong></div>
+            <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${t("stat_furnace_lvl")}</span> <strong style="color:var(--t-primary, #f1f5f9);">${furnaceIconHtml(app.furnace_level)}</strong></div>
             ${additionalRowCompact}
             <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${statIconHtml('fire_crystal')}${t("stat_fc")}</span> <strong style="color:var(--t-amber, #f59e0b);">${escapeHtml(app.fire_crystal) || '0'}</strong></div>
             <div class="stat-compact-row"><span class="stat-compact-label" style="color:var(--t-muted, #8a8d98);">${statIconHtml('refined_fire_crystal')}${t("stat_rfc")}</span> <strong style="color:var(--t-amber, #f59e0b);">${escapeHtml(app.refined_fire_crystal) || '0'}</strong></div>
@@ -285,7 +285,7 @@ function buildStatDetailsHtml(app, compact = false) {
         <div class="detail-card">
             <div class="detail-card-title"><span class="detail-card-icon">🏰</span>${t("detail_section_city_power")}</div>
             <div class="city-power-row">
-                <div class="city-power-text">${t("stat_furnace_level")} <strong>${furnaceLevel || '-'}</strong></div>
+                <div class="city-power-text">${t("stat_furnace_level")} <strong>${furnaceIconHtml(furnaceLevel, 'furnace-badge-md')}</strong></div>
                 ${buildFurnaceGaugeSvg(furnaceLevel)}
             </div>
         </div>
@@ -486,7 +486,7 @@ function applySlot(time) {
     
     document.getElementById('input-nickname').value = "";
     document.getElementById('input-gameid').value = "";
-    document.getElementById('input-furnace').value = "";
+    setFurnaceLevel('');
     document.getElementById('input-fc').value = "";
     document.getElementById('input-rfc').value = "";
     document.getElementById('input-shard').value = "";
@@ -647,7 +647,7 @@ async function submitApplication() {
     if (!nickname) { showToast(t("toast_enter_nickname"), "warning"); return; }
     if (!gameId) { showToast(t("toast_enter_gameid"), "warning"); return; }
     if (!/^\d+$/.test(gameId)) { showToast(t("toast_gameid_numeric"), "warning"); return; }
-    if (!furnaceLevel) { showToast(t("toast_select_furnace"), "warning"); return; }
+    if (!furnaceLevel) { const fp = document.getElementById('furnace-picker'); if (fp) { fp.classList.add('invalid'); fp.scrollIntoView({ block: 'center', behavior: 'smooth' }); } showToast(t("toast_select_furnace"), "warning"); return; }
 
     const additionalTimeSlots = collectAdditionalTimeSlots();
     const getNotificationEl = document.getElementById('input-get-notification');

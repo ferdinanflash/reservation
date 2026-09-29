@@ -184,7 +184,7 @@ function renderTimeSlots() {
                 <td><span style="color:#22c55e; font-weight:bold;">${t("status_accepted")}</span>${leftoverBadge}</td>
                 <td>${escapeHtml(capZalgo(acceptedApp.nickname))}</td>
                 <td><span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
-                <td>${escapeHtml(acceptedApp.furnace_level) || '-'}</td>
+                <td>${furnaceIconHtml(acceptedApp.furnace_level)}</td>
             `;
         } else {
             let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">${t("btn_apply_action")}</button>`;

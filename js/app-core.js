@@ -36,6 +36,63 @@ function statIconHtml(key, extraClass = '') {
     return `<img class="stat-icon ${extraClass}" src="${src}" alt="" width="20" height="20" loading="lazy" decoding="async" draggable="false">`;
 }
 
+// ================= FURNACE LEVEL BADGES (image assets) =================
+// One badge per furnace level (1-10) in images/furnace/fc-N.webp. Anywhere the
+// app used to print the level as a plain number, it now prints this badge.
+// If a file is ever missing the <img>
+// swaps itself for a plain numbered badge, so nothing ever shows a broken image.
+const FURNACE_MAX_LEVEL = 10;
+
+function furnaceIconHtml(level, extraClass = '') {
+    const n = parseInt(level, 10);
+    if (!n || n < 1 || n > FURNACE_MAX_LEVEL) return '-';
+    return `<img class="furnace-badge ${extraClass}" src="images/furnace/fc-${n}.webp" alt="FC ${n}" title="FC ${n}" width="32" height="32" loading="lazy" decoding="async" draggable="false" data-level="${n}" onerror="furnaceBadgeFallback(this)">`;
+}
+
+function furnaceBadgeFallback(img) {
+    const span = document.createElement('span');
+    span.className = 'furnace-badge furnace-badge-fallback ' + (img.className.replace(/\bfurnace-badge\b/, '').trim());
+    span.textContent = img.dataset.level;
+    span.title = img.title;
+    span.setAttribute('aria-label', img.alt);
+    img.replaceWith(span);
+}
+
+// Icon picker used by the application form. The hidden #input-furnace keeps
+// holding the chosen level, so submit/reset code that reads .value still works.
+function buildFurnacePicker() {
+    const grid = document.getElementById('furnace-picker');
+    if (!grid || grid.dataset.built) return;
+    grid.dataset.built = '1';
+    for (let n = 1; n <= FURNACE_MAX_LEVEL; n++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'furnace-option';
+        btn.dataset.level = String(n);
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', 'false');
+        btn.setAttribute('aria-label', 'FC ' + n);
+        btn.title = 'FC ' + n;
+        btn.innerHTML = furnaceIconHtml(n, 'furnace-badge-lg');
+        btn.addEventListener('click', () => setFurnaceLevel(n));
+        grid.appendChild(btn);
+    }
+}
+
+function setFurnaceLevel(level) {
+    const input = document.getElementById('input-furnace');
+    if (!input) return;
+    const value = level ? String(level) : '';
+    input.value = value;
+    document.querySelectorAll('#furnace-picker .furnace-option').forEach(btn => {
+        const on = btn.dataset.level === value;
+        btn.classList.toggle('selected', on);
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+    const picker = document.getElementById('furnace-picker');
+    if (picker) picker.classList.remove('invalid');
+}
+
 let isAdmin = false;
 let currentStaffUsername = null;
 let savedApplications = [];
@@ -72,6 +129,7 @@ function getPositionConfig(positionName) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    buildFurnacePicker();
     const client = getSupabase();
     if (client) {
         // Restore session from Supabase's own encrypted storage instead of
