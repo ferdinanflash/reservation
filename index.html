@@ -64,7 +64,7 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=73">
+				<link rel="stylesheet" href="style.css?v=74">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
@@ -75,7 +75,7 @@
 					<script src="js/app-schedule.js?v=47" defer=""></script>
 					<script src="js/app-applications.js?v=50" defer=""></script>
 					<script src="js/app-waiting.js?v=49" defer=""></script>
-					<script src="js/app-extras.js?v=51" defer=""></script>
+					<script src="js/app-extras.js?v=52" defer=""></script>
 					<script src="js/app-notifications.js?v=6" defer=""></script>
 					<script src="fire-banner.js?v=11" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
@@ -690,7 +690,7 @@
 							<span data-i18n="theme_option_auto">Auto (by date)</span>
 							<span class="theme-option-sub" data-i18n="theme_option_auto_sub">Follows the calendar automatically</span>
 						</span>
-						<span class="theme-option-check">✓</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
 					<button type="button" class="theme-option-btn" data-theme-value="none" onclick="selectSeasonalTheme('none')">
 						<span class="theme-option-icon">🔥</span>
@@ -698,7 +698,7 @@
 							<span data-i18n="theme_option_none">Default (Fire)</span>
 							<span class="theme-option-sub" data-i18n="theme_option_none_sub">The regular orange fire banner</span>
 						</span>
-						<span class="theme-option-check">✓</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
 					<button type="button" class="theme-option-btn" data-theme-value="halloween" onclick="selectSeasonalTheme('halloween')">
 						<span class="theme-option-icon">🎃</span>
@@ -706,7 +706,7 @@
 							<span data-i18n="theme_option_halloween">Halloween</span>
 							<span class="theme-option-sub" data-i18n="theme_option_halloween_sub">Force the Halloween banner on</span>
 						</span>
-						<span class="theme-option-check">✓</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
 					<button type="button" class="theme-option-btn" data-theme-value="christmas" onclick="selectSeasonalTheme('christmas')">
 						<span class="theme-option-icon">🎄</span>
@@ -714,7 +714,7 @@
 							<span data-i18n="theme_option_christmas">Christmas</span>
 							<span class="theme-option-sub" data-i18n="theme_option_christmas_sub">Force the Christmas banner on</span>
 						</span>
-						<span class="theme-option-check">✓</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
 					<button type="button" class="theme-option-btn" data-theme-value="valentine" onclick="selectSeasonalTheme('valentine')">
 						<span class="theme-option-icon">💖</span>
@@ -722,7 +722,7 @@
 							<span data-i18n="theme_option_valentine">Valentine</span>
 							<span class="theme-option-sub" data-i18n="theme_option_valentine_sub">Force the Valentine banner on</span>
 						</span>
-						<span class="theme-option-check">✓</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
 					<button type="button" class="theme-option-btn" data-theme-value="cny" onclick="selectSeasonalTheme('cny')">
 						<span class="theme-option-icon">🏮</span>
@@ -730,7 +730,7 @@
 							<span data-i18n="theme_option_cny">Chinese New Year</span>
 							<span class="theme-option-sub" data-i18n="theme_option_cny_sub">Force the Chinese New Year banner on</span>
 						</span>
-						<span class="theme-option-check">✓</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
 					<button type="button" class="theme-option-btn" data-theme-value="eid" onclick="selectSeasonalTheme('eid')">
 						<span class="theme-option-icon">🌙</span>
@@ -738,7 +738,7 @@
 							<span data-i18n="theme_option_eid">Eid al-Fitr</span>
 							<span class="theme-option-sub" data-i18n="theme_option_eid_sub">Force the Eid al-Fitr banner on (manual only)</span>
 						</span>
-						<span class="theme-option-check">✓</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
 					<button type="button" class="theme-option-btn" data-theme-value="bluefire" onclick="selectSeasonalTheme('bluefire')">
 						<span class="theme-option-icon">🔥</span>
@@ -746,7 +746,7 @@
 							<span data-i18n="theme_option_bluefire">Blue Fire</span>
 							<span class="theme-option-sub" data-i18n="theme_option_bluefire_sub">Force the Blue Fire banner on</span>
 						</span>
-						<span class="theme-option-check">✓</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
 					<button type="button" class="theme-option-btn" data-theme-value="midautumn" onclick="selectSeasonalTheme('midautumn')">
 						<span class="theme-option-icon">🌕</span>
@@ -754,7 +754,7 @@
 							<span data-i18n="theme_option_midautumn">Mid-Autumn Festival</span>
 							<span class="theme-option-sub" data-i18n="theme_option_midautumn_sub">Force the Mid-Autumn Festival banner on</span>
 						</span>
-						<span class="theme-option-check">✓</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
 				</div>
 				<div class="form-actions">

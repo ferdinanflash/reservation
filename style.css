@@ -5835,3 +5835,16 @@ body.svs-apply-modal-open * {
 }
 .furnace-picker.invalid { outline: 2px solid #ef4444; outline-offset: 4px; border-radius: 12px; }
 @media (max-width: 380px) { .furnace-picker { gap: 5px; } .furnace-option { padding: 4px; } }
+
+
+/* ================= CHECK ICON (images/check.svg) ================= */
+.check-icon {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.theme-option-check { width: 26px; height: 26px; flex: 0 0 auto; line-height: 0; }
+.rar-check { display: inline-block; width: 1.4em; height: 1.4em; line-height: 0; font-size: 0.85rem; filter: none; }
