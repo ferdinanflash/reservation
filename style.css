@@ -5848,3 +5848,135 @@ body.svs-apply-modal-open * {
 }
 .theme-option-check { width: 26px; height: 26px; flex: 0 0 auto; line-height: 0; }
 .rar-check { display: inline-block; width: 1.4em; height: 1.4em; line-height: 0; font-size: 0.85rem; filter: none; }
+
+/* ================= FURNACE BADGE IN SCHEDULE TABLE (no clipping) =================
+   On phones the FC column used to be only 5% wide (~17px) while the badge is
+   32px, so overflow-x:hidden on .table-container cut it off. The column now
+   gets enough width, and the badge shrinks to whatever room its cell has. */
+.table-container > table td:nth-child(6) .furnace-badge {
+    width: 32px;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+}
+.table-container > table td:nth-child(6) .furnace-badge-fallback {
+    font-size: 0.7rem;
+}
+
+@media screen and (max-width: 480px) {
+    /* ACTION column: narrow, and the Apply / Remove buttons fill it at one
+       uniform width. Font size follows the viewport so the longest labels
+       (Candidati, Mag-apply, Rimuovi) still fit on one line. */
+    .table-container > table th:nth-child(1),
+    .table-container > table td:nth-child(1) { width: 16%; min-width: 0; }
+    .table-container > table th:nth-child(2),
+    .table-container > table td:nth-child(2) { width: 17%; }
+    .table-container > table th:nth-child(3),
+    .table-container > table td:nth-child(3) { width: 17%; }
+    .table-container > table th:nth-child(4),
+    .table-container > table td:nth-child(4) { width: 18%; }
+    .table-container > table th:nth-child(5),
+    .table-container > table td:nth-child(5) { width: 22%; }
+    .table-container > table th:nth-child(6),
+    .table-container > table td:nth-child(6) { width: 10%; padding-left: 1px; padding-right: 1px; }
+    .table-container > table td:nth-child(6) .furnace-badge { width: 28px; }
+
+    .table-container > table th:first-child,
+    .table-container > table td:first-child { padding-left: 3px; padding-right: 3px; }
+
+    .table-container > table td:first-child .btn-apply,
+    .table-container > table td:first-child .btn-danger {
+        display: block;
+        width: 100%;
+        max-width: none !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 6px 1px !important;
+        font-size: clamp(0.54rem, 2.7vw, 0.66rem) !important;
+        line-height: 1.15;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .table-container > table td:first-child .btn-label-long {
+        font-size: clamp(0.46rem, 2.3vw, 0.56rem) !important;
+        letter-spacing: -0.2px;
+    }
+}
+
+/* Tablets / large phones (481-768px): the ACTION column was only 9% wide, so
+   longer labels overflowed. Same idea as on phones: a modest column and
+   buttons that fill it at one uniform width in every language. */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    .table-container > table th:nth-child(1),
+    .table-container > table td:nth-child(1) { width: 15%; }
+    .table-container > table th:nth-child(2),
+    .table-container > table td:nth-child(2) { width: 17%; }
+    .table-container > table th:nth-child(3),
+    .table-container > table td:nth-child(3) { width: 16%; }
+    .table-container > table th:nth-child(4),
+    .table-container > table td:nth-child(4) { width: 18%; }
+    .table-container > table th:nth-child(5),
+    .table-container > table td:nth-child(5) { width: 24%; }
+    .table-container > table th:nth-child(6),
+    .table-container > table td:nth-child(6) { width: 10%; }
+
+    .table-container > table th:first-child,
+    .table-container > table td:first-child { padding-left: 4px; padding-right: 4px; }
+
+    .table-container > table td:first-child > div {
+        flex-direction: column !important;
+        gap: 4px !important;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .table-container > table td:first-child .btn-apply,
+    .table-container > table td:first-child .btn-danger {
+        display: block;
+        width: 100%;
+        max-width: none !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 6px 2px !important;
+        font-size: 0.72rem !important;
+        line-height: 1.15;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .table-container > table td:first-child .btn-label-long {
+        font-size: 0.62rem !important;
+        letter-spacing: -0.2px;
+    }
+}
+
+/* Desktop (>=769px): the ACTION column (9%) was narrower than the widest
+   labels (Candidati, Mag-apply, Rimuovi). Give it enough room and make the
+   Apply / Remove buttons one uniform width in every language. */
+@media screen and (min-width: 769px) {
+    .table-container > table th:nth-child(1),
+    .table-container > table td:nth-child(1) { width: 16%; }
+    .table-container > table th:nth-child(2),
+    .table-container > table td:nth-child(2) { width: 16%; }
+    .table-container > table th:nth-child(3),
+    .table-container > table td:nth-child(3) { width: 15%; }
+    .table-container > table th:nth-child(4),
+    .table-container > table td:nth-child(4) { width: 17%; }
+    .table-container > table th:nth-child(5),
+    .table-container > table td:nth-child(5) { width: 26%; }
+    .table-container > table th:nth-child(6),
+    .table-container > table td:nth-child(6) { width: 10%; }
+
+    .table-container > table td:first-child .btn-apply {
+        min-width: 84px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}
