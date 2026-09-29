@@ -93,6 +93,13 @@ function setFurnaceLevel(level) {
     if (picker) picker.classList.remove('invalid');
 }
 
+// Long button labels (e.g. "Candidati", "Mag-apply") get a smaller font in the
+// narrow ACTION column so every language fits on one line. Counting characters
+// (not bytes) keeps CJK / Thai labels, which are short, at the normal size.
+function actionLabelClass(label) {
+    return [...String(label || '')].length >= 8 ? ' btn-label-long' : '';
+}
+
 let isAdmin = false;
 let currentStaffUsername = null;
 let savedApplications = [];

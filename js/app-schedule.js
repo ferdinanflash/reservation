@@ -165,7 +165,7 @@ function renderTimeSlots() {
             let actionBtn = isAdmin
                 ? `<div style="display:inline-flex; flex-wrap:nowrap; align-items:center; justify-content:center; gap:6px;">
                      <span style="flex-shrink:0;">${detailBtn}</span>
-                     <button class="btn-apply btn-danger btn-compact" style="padding: 4px 8px; font-size: 0.75rem; flex-shrink:0; white-space:nowrap;" onclick="removeApp(${acceptedApp.id})">${t("btn_remove")}</button>
+                     <button class="btn-apply btn-danger btn-compact${actionLabelClass(t("btn_remove"))}" style="padding: 4px 8px; font-size: 0.75rem; flex-shrink:0; white-space:nowrap;" onclick="removeApp(${acceptedApp.id})">${t("btn_remove")}</button>
                    </div>`
                 : detailBtn;
 
@@ -187,7 +187,7 @@ function renderTimeSlots() {
                 <td>${furnaceIconHtml(acceptedApp.furnace_level)}</td>
             `;
         } else {
-            let actionBtn = `<button class="btn-apply" onclick="applySlot('${utcTimeStr}')">${t("btn_apply_action")}</button>`;
+            let actionBtn = `<button class="btn-apply${actionLabelClass(t("btn_apply_action"))}" onclick="applySlot('${utcTimeStr}')">${t("btn_apply_action")}</button>`;
             let statusText = `<span class="no-apps">${t("status_no_applications")}</span>`;
             if (countWaiting > 0) {
                 statusText = `<span style="color:var(--t-amber, #f59e0b); font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openWaitingModal('${utcTimeStr}')">${t("status_waiting_count", { count: countWaiting })}</span>`;
