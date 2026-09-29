@@ -64,18 +64,18 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=72">
+				<link rel="stylesheet" href="style.css?v=73">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
 		<script src="lang.js?v=20" defer=""></script>
-					<script src="js/app-core.js?v=50" defer=""></script>
+					<script src="js/app-core.js?v=52" defer=""></script>
 					<script src="js/app-auth.js?v=50" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
-					<script src="js/app-schedule.js?v=46" defer=""></script>
-					<script src="js/app-applications.js?v=49" defer=""></script>
+					<script src="js/app-schedule.js?v=47" defer=""></script>
+					<script src="js/app-applications.js?v=50" defer=""></script>
 					<script src="js/app-waiting.js?v=49" defer=""></script>
-					<script src="js/app-extras.js?v=50" defer=""></script>
+					<script src="js/app-extras.js?v=51" defer=""></script>
 					<script src="js/app-notifications.js?v=6" defer=""></script>
 					<script src="fire-banner.js?v=11" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
@@ -511,20 +511,9 @@
 					<input type="text" inputmode="numeric" pattern="[0-9]*" id="input-gameid" maxlength="20" placeholder="Enter your game ID" data-i18n-placeholder="placeholder_gameid" required aria-required="true">
             </div>
 				<div class="form-group">
-					<label for="input-furnace"><span data-i18n="label_furnace">Furnace Level</span><span class="required-mark" aria-hidden="true">*</span></label>
-					<select id="input-furnace" required aria-required="true">
-						<option value="" data-i18n="option_select_furnace">Select Furnace Level</option>
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
-						<option value="5">5</option>
-						<option value="6">6</option>
-						<option value="7">7</option>
-						<option value="8">8</option>
-						<option value="9">9</option>
-						<option value="10">10</option>
-					</select>
+					<label id="label-furnace"><span data-i18n="label_furnace">Furnace Level</span><span class="required-mark" aria-hidden="true">*</span></label>
+					<input type="hidden" id="input-furnace" value="">
+					<div id="furnace-picker" class="furnace-picker" role="radiogroup" aria-labelledby="label-furnace"></div>
             </div>
 
 				<div class="form-section-title"><span data-i18n="form_section_resources">Resources</span><span class="form-section-hint" data-i18n="form_section_resources_hint">Optional — leave blank if you don't have any</span></div>

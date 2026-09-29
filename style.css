@@ -5779,3 +5779,59 @@ body.svs-apply-modal-open * {
 .essential-badge .stat-icon { width: 20px; height: 20px; }
 .speedup-ring-label .stat-icon { display: block; width: 22px; height: 22px; margin: 0 auto 2px; }
 .rar-stat-label .stat-icon { width: 1.3em; height: 1.3em; margin-top: -2px; }
+
+
+/* ================= FURNACE LEVEL BADGES ================= */
+.furnace-badge {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    vertical-align: middle;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.furnace-badge-sm { width: 22px; height: 22px; margin-left: 3px; }
+.furnace-badge-md { width: 40px; height: 40px; }
+.furnace-badge-lg { width: 100%; height: auto; aspect-ratio: 1; display: block; }
+.furnace-badge-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30%;
+    background: linear-gradient(145deg, #a855f7, #6d28d9);
+    border: 2px solid #c4b5fd;
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.8em;
+    line-height: 1;
+    box-sizing: border-box;
+}
+.furnace-badge-sm.furnace-badge-fallback { font-size: 0.68rem; }
+.furnace-badge-lg.furnace-badge-fallback { width: 100%; height: auto; aspect-ratio: 1; font-size: 1.1rem; }
+
+.furnace-picker {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+}
+.furnace-option {
+    padding: 6px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: rgba(15, 17, 23, 0.45);
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.furnace-option:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.07); }
+.furnace-option:focus-visible { outline: 2px solid var(--t-link, #3b82f6); outline-offset: 2px; }
+.furnace-option.selected {
+    border-color: var(--t-amber, #f59e0b);
+    background: rgba(245, 158, 11, 0.16);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
+    transform: scale(1.04);
+}
+.furnace-picker.invalid { outline: 2px solid #ef4444; outline-offset: 4px; border-radius: 12px; }
+@media (max-width: 380px) { .furnace-picker { gap: 5px; } .furnace-option { padding: 4px; } }
