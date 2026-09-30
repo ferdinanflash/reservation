@@ -734,7 +734,7 @@ body.halloween-theme {
     position: absolute;
     inset: -3%;
     z-index: 1;
-    background-image: url('halloween-banner.png');
+    background-image: url('halloween-banner.png?v=2');
     background-size: cover;
     background-position: center;
     animation: halloweenKenBurns 26s ease-in-out infinite alternate;
@@ -742,6 +742,25 @@ body.halloween-theme {
 @keyframes halloweenKenBurns {
     0%   { transform: scale(1.0) translate(0, 0); }
     100% { transform: scale(1.045) translate(-0.6%, -0.4%); }
+}
+
+/* Glow spots (windows / jack-o'-lantern faces) are positioned in IMAGE
+   coordinates: .halloween-spot-layer copies .halloween-art's box + Ken Burns
+   motion and .halloween-spot-frame has the image's 1376:768 ratio, centred,
+   exactly like background-size: cover does (width-fit on mobile and desktop). */
+.halloween-spot-layer {
+    position: absolute;
+    inset: -3%;
+    pointer-events: none;
+    animation: halloweenKenBurns 26s ease-in-out infinite alternate;
+}
+.halloween-spot-frame {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    aspect-ratio: 1376 / 768;
+    transform: translateY(-50%);
 }
 
 .halloween-fog {
@@ -772,7 +791,7 @@ body.halloween-theme {
     position: absolute;
     inset: 0;
     z-index: 2;
-    background: radial-gradient(ellipse at 78% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0) 55%);
+    background: radial-gradient(ellipse at 80% 18%, rgba(255,255,255,0.9), rgba(255,255,255,0) 55%);
     opacity: 0;
     pointer-events: none;
     animation: halloweenLightningFlash 9s ease-in-out infinite;
@@ -877,7 +896,7 @@ body.halloween-theme {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .halloween-art, .halloween-fog, .halloween-lightning, .halloween-moon-glow,
+    .halloween-art, .halloween-spot-layer, .halloween-fog, .halloween-lightning, .halloween-moon-glow,
     .halloween-glow-spot, .halloween-digit-glow, .halloween-bat {
         animation: none !important;
     }
