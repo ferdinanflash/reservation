@@ -64,11 +64,11 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=78">
+				<link rel="stylesheet" href="style.css?v=79">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
-		<script src="lang.js?v=20" defer=""></script>
+		<script src="lang.js?v=21" defer=""></script>
 					<script src="js/app-core.js?v=53" defer=""></script>
 					<script src="js/app-auth.js?v=50" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
@@ -320,19 +320,31 @@
 					<p class="page-subtitle" data-i18n="page_subtitle">Select a position to make reservation</p>
 					<div class="list-container">
 						<button type="button" class="list-item" onclick="showSchedule('Vice President D1')">
-							<span data-i18n="pos_vp_d1">Vice President D1 (Monday)</span>
+							<span class="list-item-text">
+								<span class="list-item-title" data-i18n="pos_vp_d1">Vice President D1 (Monday)</span>
+								<span class="pos-note pos-note-construction" data-i18n="pos_vp_d1_note">Construction Buff</span>
+							</span>
 							<span class="arrow">&gt;</span>
 						</button>
 						<button type="button" class="list-item" onclick="showSchedule('Vice President D2')">
-							<span data-i18n="pos_vp_d2">Vice President D2 (Tuesday)</span>
+							<span class="list-item-text">
+								<span class="list-item-title" data-i18n="pos_vp_d2">Vice President D2 (Tuesday)</span>
+								<span class="pos-note pos-note-research" data-i18n="pos_vp_d2_note">Research Buff</span>
+							</span>
 							<span class="arrow">&gt;</span>
 						</button>
 						<button type="button" class="list-item" onclick="showSchedule('Minister of Education D4')">
-							<span data-i18n="pos_edu_d4">Minister of Education D4 (Thursday)</span>
+							<span class="list-item-text">
+								<span class="list-item-title" data-i18n="pos_edu_d4">Minister of Education D4 (Thursday)</span>
+								<span class="pos-note pos-note-training" data-i18n="pos_edu_d4_note">Troops Training Buff</span>
+							</span>
 							<span class="arrow">&gt;</span>
 						</button>
 						<button type="button" class="list-item" onclick="showSchedule('Vice President D5')">
-							<span data-i18n="pos_vp_d5">Vice President D5 (Friday)</span>
+							<span class="list-item-text">
+								<span class="list-item-title" data-i18n="pos_vp_d5">Vice President D5 (Friday)</span>
+								<span class="pos-note pos-note-nobuff" data-i18n="pos_vp_d5_note">Construction &amp; Research without state buff</span>
+							</span>
 							<span class="arrow">&gt;</span>
 						</button>
 					</div>
