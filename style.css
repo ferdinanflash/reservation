@@ -3966,9 +3966,12 @@ body.halloween-theme .svs-opening-sparks::after {
     align-items: baseline;
 }
 .stat-compact-label {
-    flex: 0 0 auto;
-    min-width: 15ch;
+    flex: 0 0 17ch;
+    width: 17ch;
+    min-width: 17ch;
+    max-width: 17ch;
     margin-right: 10px;
+    overflow-wrap: break-word;
 }
 .stat-full-row {
     display: flex;
