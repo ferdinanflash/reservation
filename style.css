@@ -6012,3 +6012,29 @@ body.svs-apply-modal-open * {
         text-align: center;
     }
 }
+
+/* Minister position notes: one informational button per position */
+.minister-position-note {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 6px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+  background: rgba(0,0,0,.22);
+  color: inherit;
+  text-align: center;
+  font: inherit;
+  line-height: 1.25;
+  cursor: default;
+}
+.minister-position-note-title {
+  font-weight: 700;
+  font-size: .78rem;
+}
+.minister-position-note-detail {
+  margin-top: 2px;
+  font-size: .70rem;
+  opacity: .9;
+}
