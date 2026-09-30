@@ -855,13 +855,36 @@ body.halloween-theme {
 .halloween-bat {
     position: absolute;
     z-index: 4;
-    font-size: 15px;
-    opacity: .9;
-    filter: drop-shadow(0 0 3px rgba(0,0,0,.6));
+    width: 30px;
+    line-height: 0;
+    opacity: .95;
+    /* dark silhouette + soft violet rim so it reads against the night sky */
+    filter: drop-shadow(0 0 2px rgba(190,150,255,.75)) drop-shadow(0 0 5px rgba(120,70,220,.45));
     pointer-events: none;
 }
+.halloween-bat svg { display: block; width: 100%; height: auto; overflow: visible; }
+.halloween-bat svg path, .halloween-bat svg ellipse, .halloween-bat svg circle { fill: #07030d; }
+.halloween-bat svg .bat-eye { fill: #ffb347; }
+.halloween-bat .bat-wing-l, .halloween-bat .bat-wing-r {
+    transform-box: view-box;
+    animation: halloweenWingFlapL .34s ease-in-out infinite alternate;
+}
+.halloween-bat .bat-wing-l { transform-origin: 30px 15px; }
+.halloween-bat .bat-wing-r { transform-origin: 34px 15px; animation-name: halloweenWingFlapR; }
+.halloween-bat2 { width: 22px; }
+.halloween-bat3 { width: 34px; }
+.halloween-bat2 .bat-wing-l, .halloween-bat2 .bat-wing-r { animation-duration: .27s; }
+.halloween-bat3 .bat-wing-l, .halloween-bat3 .bat-wing-r { animation-duration: .42s; }
+@keyframes halloweenWingFlapL {
+    0%   { transform: rotate(24deg)  scaleY(.85); }
+    100% { transform: rotate(-26deg) scaleY(1.05); }
+}
+@keyframes halloweenWingFlapR {
+    0%   { transform: rotate(-24deg) scaleY(.85); }
+    100% { transform: rotate(26deg)  scaleY(1.05); }
+}
 .halloween-bat1 { top: 14%; animation: halloweenFlyRight 11s linear infinite; }
-.halloween-bat2 { top: 9%;  animation: halloweenFlyRight 14s linear infinite; animation-delay: 3.5s; font-size: 12px; }
+.halloween-bat2 { top: 9%;  animation: halloweenFlyRight 14s linear infinite; animation-delay: 3.5s; }
 .halloween-bat3 { top: 20%; animation: halloweenFlyLeft 16s linear infinite; animation-delay: 6s; }
 
 /* Overlay elements only render while #fire-banner carries the
@@ -884,20 +907,26 @@ body.halloween-theme {
 .fire-banner.halloween-theme .halloween-bat {
     display: inline-block;
 }
+/* translateY uses px (a % would be relative to the 15px emoji itself = ~0px),
+   so the flight path really arcs instead of being a ruler-straight line. */
 @keyframes halloweenFlyRight {
     0%   { left: -5%;  transform: translateY(0) scaleX(1); }
-    45%  { transform: translateY(-4%) scaleX(1); }
-    55%  { transform: translateY(-4%) scaleX(1); }
-    100% { left: 105%; transform: translateY(2%) scaleX(1); }
+    25%  { transform: translateY(-10px) scaleX(1); }
+    50%  { transform: translateY(4px) scaleX(1); }
+    75%  { transform: translateY(-8px) scaleX(1); }
+    100% { left: 105%; transform: translateY(2px) scaleX(1); }
 }
 @keyframes halloweenFlyLeft {
     0%   { left: 105%; transform: translateY(0) scaleX(-1); }
-    100% { left: -5%;  transform: translateY(3%) scaleX(-1); }
+    30%  { transform: translateY(8px) scaleX(-1); }
+    60%  { transform: translateY(-6px) scaleX(-1); }
+    100% { left: -5%;  transform: translateY(6px) scaleX(-1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .halloween-art, .halloween-spot-layer, .halloween-fog, .halloween-lightning, .halloween-moon-glow,
-    .halloween-glow-spot, .halloween-digit-glow, .halloween-bat {
+    .halloween-glow-spot, .halloween-digit-glow, .halloween-bat,
+    .halloween-bat .bat-wing-l, .halloween-bat .bat-wing-r {
         animation: none !important;
     }
 }
