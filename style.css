@@ -1499,38 +1499,6 @@ body.halloween-theme {
     opacity: 1;
 }
 
-
-/* Small informational note shown below the Minister Reservation positions. */
-.minister-reservation-note {
-    width: 100%;
-    margin-top: 10px;
-    padding: 9px 12px;
-    border: 1px solid rgba(148, 163, 184, 0.32);
-    border-radius: 10px;
-    background: rgba(15, 23, 42, 0.72);
-    color: var(--t-text, #e5e7eb);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-    text-align: center;
-    cursor: default;
-    font: inherit;
-    line-height: 1.25;
-}
-
-.minister-reservation-note .minister-note-line {
-    display: block;
-    font-size: 0.76rem;
-    font-weight: 500;
-}
-
-.minister-reservation-note .minister-note-position,
-.minister-reservation-note .minister-note-emphasis {
-    font-weight: 800;
-}
-
-.minister-reservation-note .minister-note-position:not(:first-child) {
-    margin-top: 4px;
-}
-
 /* ==================== BUTTONS STYLE ==================== */
 .btn-admin {
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
@@ -6011,30 +5979,4 @@ body.svs-apply-modal-open * {
         box-sizing: border-box;
         text-align: center;
     }
-}
-
-/* Minister position notes: one informational button per position */
-.minister-position-note {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-top: 6px;
-  padding: 7px 10px;
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 8px;
-  background: rgba(0,0,0,.22);
-  color: inherit;
-  text-align: center;
-  font: inherit;
-  line-height: 1.25;
-  cursor: default;
-}
-.minister-position-note-title {
-  font-weight: 700;
-  font-size: .78rem;
-}
-.minister-position-note-detail {
-  margin-top: 2px;
-  font-size: .70rem;
-  opacity: .9;
 }
