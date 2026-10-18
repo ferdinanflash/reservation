@@ -599,3 +599,66 @@ function closeRedeemModal() {
     });
 })();
 // ======================================================
+
+
+// ================= DONATE MODAL =================
+// "Donate" navbar menu item -> popup with a click-to-copy donation ID.
+let donateModalTrigger = null;
+const DONATE_ID = '581651105';
+
+function openDonateModal() {
+    const modal = document.getElementById('donate-modal');
+    if (!modal) return;
+    donateModalTrigger = document.activeElement;
+    const hint = document.getElementById('donate-copy-hint');
+    if (hint) hint.textContent = 'Click to copy 👻';
+    modal.classList.remove('hidden');
+    document.body.classList.add('redeem-modal-open');
+}
+
+function closeDonateModal() {
+    const modal = document.getElementById('donate-modal');
+    if (!modal || modal.classList.contains('hidden')) return;
+    modal.classList.add('hidden');
+    document.body.classList.remove('redeem-modal-open');
+    if (donateModalTrigger && typeof donateModalTrigger.focus === 'function') donateModalTrigger.focus();
+    donateModalTrigger = null;
+}
+
+async function copyDonateId() {
+    let ok = false;
+    try {
+        await navigator.clipboard.writeText(DONATE_ID);
+        ok = true;
+    } catch (e) {
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = DONATE_ID;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+        } catch (e2) { ok = false; }
+    }
+    const hint = document.getElementById('donate-copy-hint');
+    if (hint) {
+        hint.textContent = ok ? '✓ Copied! 🎉' : 'Copy failed, please copy manually';
+        setTimeout(() => { hint.textContent = 'Click to copy 👻'; }, 2000);
+    }
+}
+
+(function initDonateModal() {
+    const modal = document.getElementById('donate-modal');
+    if (!modal) return;
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeDonateModal();
+    });
+    let pressStartedOnBackdrop = false;
+    modal.addEventListener('mousedown', (event) => { pressStartedOnBackdrop = (event.target === modal); });
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal && pressStartedOnBackdrop) closeDonateModal();
+        pressStartedOnBackdrop = false;
+    });
+})();
