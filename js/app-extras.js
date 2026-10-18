@@ -311,6 +311,43 @@ function parseRedeemFidList(raw) {
     return out;
 }
 
+// Player names come from the `troops_power` table (same table the alliance
+// quick-load reads). They are fetched once per submit, BEFORE any redeem call,
+// because an ID that answers USER INFO ERROR gets deleted from that table.
+const REDEEM_NAME_COLUMNS = ['nickname'];
+let redeemNameByFid = new Map();
+
+function pickRedeemName(row) {
+    for (const col of REDEEM_NAME_COLUMNS) {
+        const v = row && row[col];
+        if (v !== undefined && v !== null && String(v).trim()) {
+            const name = String(v).trim();
+            return typeof capZalgo === 'function' ? capZalgo(name) : name;
+        }
+    }
+    return '';
+}
+
+async function loadRedeemNames(fids) {
+    redeemNameByFid = new Map();
+    const client = getSupabase();
+    if (!client) return;
+    for (let i = 0; i < fids.length; i += 100) {
+        const chunk = fids.slice(i, i + 100);
+        try {
+            const { data, error } = await client.from('troops_power').select('game_id, nickname').in('game_id', chunk);
+            if (error) throw error;
+            for (const row of (data || [])) {
+                const fid = String(row.game_id ?? '').trim();
+                const name = pickRedeemName(row);
+                if (fid && name && !redeemNameByFid.has(fid)) redeemNameByFid.set(fid, name);
+            }
+        } catch (e) {
+            console.error('loadRedeemNames failed', e);
+        }
+    }
+}
+
 function renderRedeemResultList(rows) {
     const list = document.getElementById('redeem-result-list');
     if (!list) return;
@@ -318,7 +355,8 @@ function renderRedeemResultList(rows) {
     for (const row of rows) {
         const li = document.createElement('li');
         li.className = `redeem-result-row is-${row.status}`;
-        li.textContent = `${row.fid} — ${row.message}`;
+        const name = redeemNameByFid.get(row.fid);
+        li.textContent = name ? `${name} — ${row.message}` : `${row.fid} — ${row.message}`;
         list.appendChild(li);
     }
 }
@@ -364,6 +402,7 @@ async function submitRedeemCode() {
     }
 
     setButtonBusy(submitBtn, true, t('redeem_redeeming'));
+    await loadRedeemNames(fids);
     const rows = fids.map((fid) => ({ fid, status: 'pending', message: t('redeem_pending') }));
     renderRedeemResultList(rows);
 
