@@ -257,7 +257,15 @@ function redeemUpstreamIsSuccess(upstream) {
 // below and retried instead of being shown as an error.
 function redeemUpstreamIsTimeout(upstream) {
     const msg = String((upstream && upstream.msg) || '').trim().toUpperCase();
-    return msg === 'TIMEOUT' || msg === 'TIMEOUT.';
+    // Real reply is "TIMEOUT RETRY." (err_code 40004); plain "Timeout" also kept.
+    return msg.startsWith('TIMEOUT');
+}
+
+// "USER INFO ERROR" = Player ID doesn't exist. The edge function deletes it
+// from troops_power and reports back via `removed` in the response.
+function redeemUpstreamIsUserInfoError(upstream) {
+    const msg = String((upstream && upstream.msg) || '').trim().toUpperCase();
+    return msg.startsWith('USER INFO ERROR');
 }
 
 function redeemMessageKeyFor(upstream) {
@@ -374,6 +382,12 @@ async function submitRedeemCode() {
             const upstream = (result && result.data) || {};
             if (result.ok && redeemUpstreamIsSuccess(upstream)) {
                 rows[i] = { fid, status: 'success', message: t('redeem_success') };
+            } else if (redeemUpstreamIsUserInfoError(upstream)) {
+                rows[i] = {
+                    fid,
+                    status: 'error',
+                    message: result.removed ? t('redeem_user_removed') : t('redeem_user_remove_failed'),
+                };
             } else {
                 const key = redeemMessageKeyFor(upstream);
                 const message = key ? t(key) : (upstream.msg ? t('redeem_server_said', { msg: escapeHtml(upstream.msg) }) : t('redeem_generic_error'));
