@@ -4998,6 +4998,7 @@ body.halloween-theme .svs-opening-sparks::after {
 }
 .nav-menu-discord svg { color: #8b95ff; }
 .nav-menu-redeem svg { color: #f5c56b; }
+.nav-menu-donate svg { color: #f472b6; }
 .nav-menu-item.nav-menu-admin {
     background: rgba(37, 99, 235, 0.16);
     border-color: rgba(59, 130, 246, 0.4);
@@ -6059,3 +6060,29 @@ body.svs-apply-modal-open * {
         text-align: center;
     }
 }
+
+
+/* ==================== DONATE MODAL ==================== */
+.modal-content.donate-modal-content {
+    max-width: 360px;
+    width: 92%;
+    text-align: center;
+}
+.donate-message { margin: 8px 0 16px; font-size: 1.05rem; }
+.donate-id-box {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    padding: 16px 12px;
+    background: #1e2230;
+    border: 1px dashed rgba(245, 197, 107, 0.55);
+    border-radius: 12px;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+}
+.donate-id-box:hover, .donate-id-box:focus-visible { border-color: #f5c56b; background: #252a3b; outline: none; }
+.donate-id-label { font-size: 1.25rem; letter-spacing: .5px; }
+.donate-copy-hint { font-size: .85rem; opacity: .75; }
