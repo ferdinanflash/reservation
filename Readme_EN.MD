@@ -18,7 +18,7 @@ Every project below is **live and running**, and serves as proof of what we can 
 | 🔐 **Role-based access** | Regular users and Admin/President get different permissions |
 | 🔔 **Notifications** | Users get status updates right on their device |
 | 🎨 **Seasonal themes** | The look can follow the season (Halloween, Christmas, Lunar New Year, Eid, etc.) |
-| 💸 **Low-cost hosting** | Static frontend (GitHub Pages / Netlify / Vercel) + Supabase, no expensive servers |
+| 💸 **Low-cost hosting** | Static frontend
 | 🌐 **Your own domain** | Ready to deploy on your own domain or subdomain |
 
 ---
@@ -62,6 +62,7 @@ Every project below is **live and running**, and serves as proof of what we can 
 - **Player management:** add, edit, delete member data
 - **Roster assignment** per Legion (Battle / Substitute), including **bulk assign**
 - Global **Battle Theme switch** — one player pool, two battle modes with separate rosters that never overwrite each other
+- Two battle themes : FDT & TAL
 - **Legion schedules**, alliance navigation, and **CSV export**
 - **Staff accounts** and a **read-only viewer** mode
 - President panel, footer settings, opening animation, and snow effect
@@ -145,9 +146,9 @@ Nine modules in a single menu:
 
 Ready to build your web app? Tell us your idea and we'll take it from concept to launch.
 
-- 💬 **WhatsApp / Telegram:** `[add your contact]`
-- ✉️ **Email:** `[add your email]`
-- 🌐 **Demo / Portfolio:** `[add your link]`
+- 💬 **WhatsApp / Telegram:** ``
+- ✉️ **Email:** `ferdinan.net@gmail.com`
+- 🌐 **Demo / Portfolio:** `3475.web.id`
 
 ---
 
