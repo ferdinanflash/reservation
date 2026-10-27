@@ -6123,14 +6123,18 @@ body.svs-apply-modal-open * {
 }
 
 body.intro-complete #main-menu-links > .list-item-small {
-    animation: menu-button-fade-in 0.58s cubic-bezier(.2,.7,.25,1) both;
+    /* Keep fade-in and border animations separate. The border delay is set
+       individually below so it begins only after that button has faded in. */
+    animation:
+        menu-button-fade-in 0.58s cubic-bezier(.2,.7,.25,1) both,
+        navBorderRun 12s linear infinite;
     visibility: visible;
 }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(1) { animation-delay: 0s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(2) { animation-delay: 0.22s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(3) { animation-delay: 0.44s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(4) { animation-delay: 0.66s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation-delay: 0.88s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(1) { animation-delay: 0s, 0.58s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(2) { animation-delay: 0.22s, 0.80s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(3) { animation-delay: 0.44s, 1.02s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(4) { animation-delay: 0.66s, 1.24s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation-delay: 0.88s, 1.46s; }
 
 @keyframes menu-button-fade-in {
     from { opacity: 0; transform: translateY(16px); }
@@ -6139,6 +6143,7 @@ body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation
 
 @media (prefers-reduced-motion: reduce) {
     body.intro-complete #main-menu-links > .list-item-small {
-        animation: none; opacity: 1; visibility: visible; transform: none;
+        animation: navBorderRun 12s linear infinite;
+        opacity: 1; visibility: visible; transform: none;
     }
 }
