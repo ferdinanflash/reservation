@@ -6147,3 +6147,29 @@ body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation
         opacity: 1; visibility: visible; transform: none;
     }
 }
+
+/* ==================== MINISTER RESERVATION: REPLAY FADE-IN ON OPEN ====================
+   The position cards animate whenever the reservation-position view is opened.
+   Each card fades in and rises slightly, in sequence. */
+@keyframes reservation-position-fade-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+#minister-reservation-view:not(.hidden) .list-container > .list-item {
+    opacity: 0;
+    animation: reservation-position-fade-in 0.48s cubic-bezier(.2,.7,.25,1) both;
+    will-change: opacity, transform;
+}
+#minister-reservation-view:not(.hidden) .list-container > .list-item:nth-child(1) { animation-delay: 0s; }
+#minister-reservation-view:not(.hidden) .list-container > .list-item:nth-child(2) { animation-delay: 0.12s; }
+#minister-reservation-view:not(.hidden) .list-container > .list-item:nth-child(3) { animation-delay: 0.24s; }
+#minister-reservation-view:not(.hidden) .list-container > .list-item:nth-child(4) { animation-delay: 0.36s; }
+
+@media (prefers-reduced-motion: reduce) {
+    #minister-reservation-view:not(.hidden) .list-container > .list-item {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
