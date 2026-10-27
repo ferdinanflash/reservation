@@ -2878,7 +2878,7 @@ th {
 }
 
 .custom-form-modal { max-width: 420px; background: #151821; padding: 24px; }
-.custom-confirm-box { max-width: 320px; background: #151821; padding: 20px; text-align: center; }
+.custom-confirm-box { width: min(92vw, 440px); max-width: 440px; box-sizing: border-box; background: #151821; padding: clamp(18px, 4vw, 28px); text-align: center; }
 
 /* ==================== THEME SWITCHER (President panel) ====================
    Lets the President preview or force a seasonal banner theme instead of
@@ -6173,5 +6173,54 @@ body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation
         animation: none;
         opacity: 1;
         transform: none;
+    }
+}
+
+
+/* Longer Russian/French labels: let controls grow and wrap instead of clipping. */
+html[lang="ru"] .btn-apply,
+html[lang="fr"] .btn-apply,
+html[lang="ru"] .btn-back,
+html[lang="fr"] .btn-back,
+html[lang="ru"] .modal-action-btn,
+html[lang="fr"] .modal-action-btn {
+    min-height: 44px;
+    height: auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+    padding: 10px 14px;
+}
+html[lang="ru"] .btn-reservation-toggle,
+html[lang="fr"] .btn-reservation-toggle {
+    min-width: min(44vw, 190px);
+    max-width: 100%;
+}
+html[lang="ru"] .custom-confirm-box,
+html[lang="fr"] .custom-confirm-box { width: min(92vw, 440px); }
+html[lang="ru"] #confirm-message,
+html[lang="fr"] #confirm-message { overflow-wrap: anywhere; }
+
+
+
+/* RU/FR long action labels (e.g. "Подать заявку"): keep Apply buttons
+   inside the ACTION column on narrow screens instead of clipping the text. */
+@media screen and (max-width: 768px) {
+    .table-container > table td:first-child .btn-apply.btn-label-long,
+    .table-container > table td:first-child .btn-danger.btn-label-long {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 5px 2px !important;
+        font-size: clamp(0.58rem, 2.8vw, 0.72rem) !important;
+        line-height: 1.15;
+        letter-spacing: normal;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: normal;
+        overflow: visible;
+        text-align: center;
     }
 }
