@@ -3,7 +3,27 @@
 // Part of the app script, split out of the old single script.js.
 // Load order matters: see the <script> tags in index.html.
 
+// The LOCAL / UTC clock bar is only shown inside the Minister Reservation flow
+// (the position list and the schedule page). On the main menu it stays hidden.
+// A MutationObserver watches the views' "hidden" class, so it works no matter
+// which function (or deep link) switches the views.
+function setupClockVisibility() {
+    const clockBar = document.getElementById('live-clock-container');
+    const ministerView = document.getElementById('minister-reservation-view');
+    const schedulePage = document.getElementById('schedule-page');
+    if (!clockBar || !ministerView || !schedulePage) return;
+
+    const sync = () => {
+        const show = !ministerView.classList.contains('hidden') || !schedulePage.classList.contains('hidden');
+        clockBar.classList.toggle('hidden', !show);
+    };
+    const observer = new MutationObserver(sync);
+    [ministerView, schedulePage].forEach(el => observer.observe(el, { attributes: true, attributeFilter: ['class'] }));
+    sync();
+}
+
 function startLiveClock() {
+    setupClockVisibility();
     const localClockEl = document.getElementById('local-clock');
     const localLabelEl = document.getElementById('local-clock-label');
     const utcClockEl = document.getElementById('utc-clock');
