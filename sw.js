@@ -1,108 +1,236 @@
-/* TAL Main Foundry service worker
- * Static assets use stale-while-revalidate: return cached content immediately,
- * refresh it in the background, and repair stale/missing cache entries whenever
- * the network is available. HTML navigations use network-first so deployments
- * are not hidden behind a stale index.html.
- */
-'use strict';
+// ================= SERVICE WORKER =================
+// Makes the app installable (PWA) and keeps it usable when the network is
+// slow or offline. Strategy:
+//   - navigations (the HTML page): network first, cached copy as fallback
+//   - same-origin static assets (js/css/images/icons): stale-while-revalidate
+//     (serve the cached copy instantly, then refresh it in the background so
+//     the NEXT visit is up to date even if nobody remembered to bump a
+//     version number — see the fetch handler below for why this matters)
+//   - everything else (Supabase, CDN): never touched, always straight to network
+//
+// >>> Still bump CACHE_VERSION on every deploy. <<<
+// It's no longer the only thing standing between users and stale files (the
+// stale-while-revalidate fetch handler below self-heals that), but it's what
+// throws away old cache namespaces on activate() and gives every user a
+// clean slate immediately instead of waiting for a background revalidation.
+const CACHE_VERSION = '2026-10-28-1';
+const CACHE_NAME = `svs-${CACHE_VERSION}`;
 
-const SW_VERSION = 'tal-foundry-sw-v2-russian';
-const STATIC_CACHE = `${SW_VERSION}-static`;
-const PAGE_CACHE = `${SW_VERSION}-pages`;
-const CORE_ASSETS = [
-  './',
-  './index.html',
-  './style.css'
+// Icons/images/manifest whose version lives in the FILENAME (e.g. "-v8.png"),
+// not a "?v=" query string. These rarely change, so listing them once here is
+// fine — when their filename changes, this list simply needs a matching edit.
+const PRECACHE_STATIC = [
+    './',
+    './index.html',
+    './christmas-banner-v3.jpg',
+    './valentine-banner-v1.jpg',
+    './cny-banner-v1.jpg',
+    './eid-banner-v1.jpg',
+    './midautumn-banner-v1.jpg',
+    './bluefire-banner-v1.mp4',
+    './bluefire-banner-v1.png',
+    './halloween-banner-v2.mp4',
+    './halloween-banner-v2.jpg',
+    './fonts/creepster-halloween.woff2',
+    './default-banner-v2.jpg',
+    './images/furnace/fc-1.webp',
+    './images/furnace/fc-2.webp',
+    './images/furnace/fc-3.webp',
+    './images/furnace/fc-4.webp',
+    './images/furnace/fc-5.webp',
+    './images/furnace/fc-6.webp',
+    './images/furnace/fc-7.webp',
+    './images/check.svg',
+    './images/furnace/fc-8.webp',
+    './images/furnace/fc-9.webp',
+    './images/furnace/fc-10.webp',
+    './images/resources/fire-crystal.webp',
+    './images/resources/refined-fire-crystal.webp',
+    './images/resources/fire-crystal-shard.webp',
+    './images/speedups/general.webp',
+    './images/speedups/construction.webp',
+    './images/speedups/research.webp',
+    './images/speedups/troop-training.webp',
+    './pwa-icon-192-v8.png',
+    './pwa-icon-512-v8.png',
+    './apple-touch-icon-v8.png',
+    './favicon-32-v8.png',
+    './favicon-16-v8.png',
+    './favicon-v8.ico'
 ];
 
+// style.css, common.js, lang.js, the js/*.js modules, fire-banner.js and
+// site.webmanifest are instead versioned with a "?v=" query string that only
+// lives in index.html. Hardcoding those same numbers a second time here used
+// to drift out of sync with index.html (precache held "./js/app-core.js"
+// while the page actually requested "js/app-core.js?v=48" — two different
+// cache keys for one file, the first of which nothing ever read again).
+// Instead of guessing, read index.html itself at install time and precache
+// exactly the versioned URLs it references right now.
+async function getVersionedAssetUrls() {
+    try {
+        const res = await fetch('./index.html', { cache: 'no-store' });
+        const html = await res.text();
+        const urls = new Set();
+        const attrRe = /\b(?:src|href)\s*=\s*"([^"]+)"/g;
+        let match;
+        while ((match = attrRe.exec(html))) {
+            const raw = match[1];
+            if (/^([a-z]+:)?\/\//i.test(raw) || raw.startsWith('data:') || raw.startsWith('#')) continue; // skip cross-origin / inline
+            if (!/\.(js|css|webmanifest)(\?|$)/i.test(raw)) continue; // only the query-string-versioned asset types
+            urls.add(raw);
+        }
+        return [...urls];
+    } catch (error) {
+        return []; // offline on first install: static list below still works
+    }
+}
+
 self.addEventListener('install', (event) => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(STATIC_CACHE);
-    await Promise.all(CORE_ASSETS.map(async (url) => {
-      try {
-        const response = await fetch(new Request(url, { cache: 'reload' }));
-        if (response.ok && response.type !== 'opaque') await cache.put(url, response);
-      } catch (_) {
-        // Installation can still complete when an optional shell asset is offline.
-      }
-    }));
-    await self.skipWaiting();
-  })());
+    event.waitUntil(
+        getVersionedAssetUrls()
+            .then((versionedUrls) => caches.open(CACHE_NAME)
+                .then((cache) => cache.addAll([...PRECACHE_STATIC, ...versionedUrls])))
+            .catch(() => undefined)
+            .then(() => self.skipWaiting())
+    );
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil((async () => {
-    const keep = new Set([STATIC_CACHE, PAGE_CACHE]);
-    const keys = await caches.keys();
-    await Promise.all(keys.map((key) => {
-      if (key.startsWith('tal-foundry-sw-') && !keep.has(key)) return caches.delete(key);
-      return Promise.resolve(false);
-    }));
-    await self.clients.claim();
-  })());
+    event.waitUntil(
+        caches.keys()
+            .then((keys) => Promise.all(
+                keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+            ))
+            .then(() => self.clients.claim())
+    );
 });
 
-async function staleWhileRevalidate(request) {
-  const cache = await caches.open(STATIC_CACHE);
-  const cached = await cache.match(request);
-  const refresh = fetch(request).then((response) => {
-    if (response && (response.ok || response.type === 'opaque')) {
-      // Clone before storing; never cache failed HTTP responses.
-      return cache.put(request, response.clone()).then(() => response);
-    }
-    return response;
-  }).catch(() => null);
-
-  // Return cached data quickly, while the refresh repairs the cache in background.
-  if (cached) {
-    // Keep the background refresh alive without delaying the response.
-    refresh.catch(() => {});
-    return cached;
-  }
-
-  const fresh = await refresh;
-  if (fresh) return fresh;
-  return new Response('Offline: this resource is not cached yet.', {
-    status: 503,
-    statusText: 'Service Unavailable',
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-  });
-}
-
-async function networkFirstNavigation(request) {
-  try {
-    const response = await fetch(request);
-    if (response && response.ok) {
-      const cache = await caches.open(PAGE_CACHE);
-      await cache.put(request, response.clone());
-    }
-    return response;
-  } catch (_) {
-    const cached = await caches.match(request) || await caches.match('./index.html') || await caches.match('./');
-    if (cached) return cached;
-    return new Response('You are offline. Reconnect and reload TAL Main Foundry.', {
-      status: 503,
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-    });
-  }
-}
-
 self.addEventListener('fetch', (event) => {
-  const request = event.request;
-  if (request.method !== 'GET') return;
+    const request = event.request;
+    if (request.method !== 'GET') return;
 
-  const url = new URL(request.url);
-  // Never intercept Supabase, CDNs, or other cross-origin/API traffic.
-  if (url.origin !== self.location.origin) return;
+    const url = new URL(request.url);
+    if (url.origin !== self.location.origin) return; // Supabase / CDN: untouched
 
-  if (request.mode === 'navigate') {
-    event.respondWith(networkFirstNavigation(request));
-    return;
-  }
+    if (request.mode === 'navigate') {
+        event.respondWith(
+            fetch(request)
+                .then((response) => {
+                    const copy = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+                    return response;
+                })
+                .catch(() => caches.match(request).then((cached) => cached || caches.match('./index.html')))
+        );
+        return;
+    }
 
-  // Only cache assets served by this site. Exclude browser-specific or opaque
-  // requests that are not useful to keep in the application cache.
-  if (['script', 'style', 'image', 'font', 'worker'].includes(request.destination)) {
-    event.respondWith(staleWhileRevalidate(request));
-  }
+    // Stale-while-revalidate: answer from cache immediately when we have a
+    // copy (fast, and works offline), but ALWAYS also kick off a network
+    // fetch that refreshes the cache in the background for next time.
+    // event.waitUntil() keeps the worker alive long enough for that
+    // background fetch to finish even after we've already responded.
+    //
+    // This is the safety net for human error: if a file's content changes
+    // but its "?v=" (or CACHE_VERSION) doesn't get bumped, the OLD cache-first
+    // code below would have kept serving the stale copy forever. Now the very
+    // next request for that same URL updates the cache, so the visit after
+    // that gets the corrected file — no manual "clear site data" needed.
+    event.respondWith(
+        caches.match(request).then((cached) => {
+            const revalidate = fetch(request)
+                .then((response) => {
+                    if (response.ok) {
+                        const copy = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+                    }
+                    return response;
+                })
+                .catch(() => undefined);
+
+            if (cached) {
+                event.waitUntil(revalidate);
+                return cached;
+            }
+            return revalidate.then((response) => response || caches.match(request));
+        })
+    );
+});
+
+
+// ================= NOTIFICATION HANDLING =================
+// Two sources can trigger a notification:
+//  1) Web Push ('push' event, below) — delivered by the browser's push
+//     service even when the app/tab/browser is completely closed.
+//  2) The page's own Supabase Realtime listener (app-notifications.js),
+//     which only updates the on-screen status while the tab is open and no
+//     longer shows a duplicate local notification (push covers that now).
+self.addEventListener('push', (event) => {
+    let payload = {};
+    try {
+        payload = event.data ? event.data.json() : {};
+    } catch (error) {
+        payload = { title: 'Reservation Update', body: event.data ? event.data.text() : '' };
+    }
+
+    // Announcements (President Panel -> send-announcement Edge Function) are
+    // broadcast to every subscriber and aren't tied to any one reservation,
+    // so they get their own tag — reusing the "reservation-*" tag would
+    // silently replace (or be replaced by) a real reservation-status
+    // notification sitting in the same device's notification tray.
+    const isAnnouncement = payload.type === 'announcement';
+
+    const title = payload.title || (isAnnouncement ? 'Announcement' : 'Reservation Update');
+    const options = {
+        body: payload.body || '',
+        icon: './pwa-icon-192-v8.png',
+        badge: './pwa-icon-192-v8.png',
+        tag: isAnnouncement ? `announcement-${Date.now()}` : `reservation-${payload.application_id || 'update'}`,
+        renotify: true,
+        data: isAnnouncement
+            ? { type: 'announcement' }
+            : {
+                application_id: payload.application_id || null,
+                status: payload.status || null,
+                nickname: payload.nickname || null,
+                old_time_slot: payload.old_time_slot || null,
+                new_time_slot: payload.new_time_slot || null,
+                original_time_slot: payload.original_time_slot || null,
+                reason: payload.reason || null
+            }
+    };
+
+    event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// Rare: the browser/OS rotates the push subscription on its own (e.g. after
+// a long time or a security event). Re-subscribe immediately and hand the
+// new subscription to any open page so it can be re-saved to Supabase —
+// otherwise future pushes would silently stop arriving for this device.
+self.addEventListener('pushsubscriptionchange', (event) => {
+    event.waitUntil(
+        self.registration.pushManager
+            .subscribe(event.oldSubscription ? event.oldSubscription.options : { userVisibleOnly: true })
+            .then(async (subscription) => {
+                const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+                clientList.forEach((client) => client.postMessage({
+                    type: 'PUSH_SUBSCRIPTION_CHANGED',
+                    subscription: subscription.toJSON()
+                }));
+            })
+            .catch(() => undefined)
+    );
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+                if ('focus' in client) return client.focus();
+            }
+            if (clients.openWindow) return clients.openWindow('./');
+        })
+    );
 });
