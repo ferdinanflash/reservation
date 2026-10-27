@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-09-27-01';
+			var APP_BUILD = '2026-10-27-01';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -64,7 +64,7 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=84">
+				<link rel="stylesheet" href="style.css?v=85">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
@@ -77,7 +77,7 @@
 					<script src="js/app-waiting.js?v=49" defer=""></script>
 					<script src="js/app-extras.js?v=53" defer=""></script>
 					<script src="js/app-notifications.js?v=6" defer=""></script>
-					<script src="fire-banner.js?v=14" defer=""></script>
+					<script src="fire-banner.js?v=15" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
 		<script>
@@ -214,22 +214,18 @@
 							<div class="bluefire-vignette"></div>
 						</div>
 
-						<!-- ============ HALLOWEEN SEASONAL OVERLAY ============
-						     Layered on top of the base illustration (halloween-banner.png).
-						     To revert to the plain orange fire banner: remove the
-						     "halloween-theme" class from #fire-banner above and delete
-						     (or comment out) this block. -->
-						<div class="halloween-art"></div>
-						<div class="halloween-decor-layer seasonal-decor-layer" aria-hidden="true"></div>
-						<!-- Halloween decoration nodes are generated only when Halloween is active. -->
-
-						
-						
-						
-
-						
-						
-						
+						<!-- ============ HALLOWEEN SEASONAL BANNER (VIDEO) ============
+						     Uses the supplied animated video (halloween-banner-v2.mp4, which
+						     already contains the "3475" lettering) as the artwork, with the
+						     first frame (halloween-banner-v2.jpg) as poster/fallback. Same
+						     structure as the Blue Fire banner. Still follows the Halloween
+						     calendar (1 Oct - 2 Nov) or the President's Theme Switcher. -->
+						<div class="halloween-art" aria-hidden="true">
+							<video class="halloween-video" muted playsinline loop preload="metadata" poster="halloween-banner-v2.jpg">
+								<source src="halloween-banner-v2.mp4" type="video/mp4">
+							</video>
+							<img class="halloween-poster" src="halloween-banner-v2.jpg" alt="">
+						</div>
 
 						<!-- ============ CHRISTMAS SEASONAL OVERLAY ============
 						     christmas-banner-v3.jpg with twinkling highlights on its real

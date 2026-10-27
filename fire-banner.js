@@ -140,7 +140,7 @@
 		eid: 'eid-banner-v1.jpg',
 		midautumn: 'midautumn-banner-v1.jpg',
 		bluefire: 'bluefire-banner-v1.png',
-		halloween: 'halloween-banner.png?v=2'
+		halloween: 'halloween-banner-v2.jpg'
 	};
 	const artState = {}; // tema -> 'loading' | 'ok' | 'failed'
 
@@ -166,7 +166,8 @@
 			layer.removeAttribute('data-rendered-theme');
 		});
 
-		const entries = SEASONAL_DECORATIONS[theme];
+		// Halloween now uses a video banner, so its old image-pinned decorations are skipped.
+		const entries = theme === 'halloween' ? null : SEASONAL_DECORATIONS[theme];
 		if (!entries) return;
 
 		const layer = container.querySelector(
@@ -250,19 +251,21 @@
 		document.body.classList.toggle('eid-theme', theme === 'eid');
 		document.body.classList.toggle('midautumn-theme', theme === 'midautumn');
 		document.body.classList.toggle('bluefire-theme', theme === 'bluefire');
-		const bluefireVideo = container.querySelector('.bluefire-video');
-		if (bluefireVideo) {
-			bluefireVideo.muted = true;
-			bluefireVideo.loop = true;
-			bluefireVideo.playsInline = true;
-			const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-			if (theme === 'bluefire' && !reducedMotion) {
-				const playPromise = bluefireVideo.play();
+		// Video banners (Blue Fire + Halloween): play only while their theme is active.
+		const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		[['bluefire', '.bluefire-video'], ['halloween', '.halloween-video']].forEach(([name, selector]) => {
+			const video = container.querySelector(selector);
+			if (!video) return;
+			video.muted = true;
+			video.loop = true;
+			video.playsInline = true;
+			if (theme === name && !reducedMotion) {
+				const playPromise = video.play();
 				if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(() => {});
 			} else {
-				bluefireVideo.pause();
+				video.pause();
 			}
-		}
+		});
 		renderSeasonalDecorations(container, theme);
 		checkArt(container, theme);
 		return theme;

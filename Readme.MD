@@ -20,6 +20,10 @@ A modern, responsive, and lightweight **Reservation & Queue Management System** 
 * **Audit & Notes:** Track application submission time logs and attach internal administrative notes (`app-notes.js`).
 
 --- 
+## 🎃 Halloween Banner (Video)
+The Halloween theme banner is now a video: `halloween-banner-v2.mp4` (poster/fallback: `halloween-banner-v2.jpg`). It already contains the "3475" lettering, so the old image-pinned overlays (glow spots / bats) are no longer generated. The theme still follows the calendar (1 Oct - 2 Nov) or the President's Theme Switcher, and the video only plays while the Halloween theme is active. `halloween-banner.png` is no longer used. Cache versions were bumped (`style.css?v=85`, `fire-banner.js?v=15`, `APP_BUILD`, `sw.js` `CACHE_VERSION`).
+
+--- 
 ## 🛠️ Tech Stack
 
 * **Frontend:** Vanilla JavaScript (ES6 Modules), HTML5, CSS3, Service Workers (PWA)
