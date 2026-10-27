@@ -47,7 +47,9 @@
 .lang-toggle[data-lang="id"] .lang-current-id,
 .lang-toggle[data-lang="ph"] .lang-current-ph,
 .lang-toggle[data-lang="th"] .lang-current-th,
-.lang-toggle[data-lang="it"] .lang-current-it {
+.lang-toggle[data-lang="it"] .lang-current-it,
+.lang-toggle[data-lang="ru"] .lang-current-ru,
+.lang-toggle[data-lang="fr"] .lang-current-fr {
     display: inline-flex;
 }
 .lang-flag-emoji { font-size: 0.95rem; line-height: 1; }
