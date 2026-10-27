@@ -303,16 +303,18 @@ async function handleToggleReservation() {
     if (!isAdmin) return;
 
     const newStatus = !isReservationOpen;
-    const actionText = newStatus ? "open" : "close";
+    const actionText = newStatus ? t("action_open") : t("action_close");
 
-    // Uses the existing custom confirm modal for visual consistency
-    // (previously used the browser's built-in confirm()).
-    showCustomConfirm(`Are you sure to ${actionText} reservation for ${currentPosition}?`, async () => {
+    // Keep confirmation copy localized and use the translated position label.
+    showCustomConfirm(t("confirm_toggle_reservation", {
+        action: actionText,
+        position: translatePositionName(currentPosition)
+    }), async () => {
         const client = getSupabase();
         if (!client) return;
 
         const toggleBtn = document.getElementById('toggle-reservation-btn');
-        setButtonBusy(toggleBtn, true, actionText === 'open' ? 'Opening...' : 'Closing...');
+        setButtonBusy(toggleBtn, true, newStatus ? t('busy_opening') : t('busy_closing'));
 
         try {
             const { error } = await client

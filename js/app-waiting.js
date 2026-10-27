@@ -137,7 +137,7 @@ async function moveAppToSlot(id, newTimeSlot, originTime) {
 }
 
 async function removeApp(id) {
-    showCustomConfirm("Reject this reservation application?", async () => {
+    showCustomConfirm(t('confirm_reject_application'), async () => {
         const client = getSupabase();
         if (!client) return;
         const app = savedApplications.find(a => a.id === id);
@@ -202,9 +202,9 @@ async function handleFinishSVS() {
     const client = getSupabase();
     if (!client) return;
 
-    showCustomConfirm("Caution to finish SvS!\n Are you sure ?, this will be reset all applied data", async () => {
+    showCustomConfirm(t('confirm_finish_svs'), async () => {
         const finishBtn = document.getElementById('president-panel-finish-btn');
-        setButtonBusy(finishBtn, true, 'Clearing...');
+        setButtonBusy(finishBtn, true, t('busy_clearing'));
         try {
             // Only wipe the reservation applications. push_subscriptions rows are
             // intentionally left untouched on Finish SvS: we keep both the
