@@ -17,6 +17,8 @@
             intro.style.opacity = '0';
             intro.style.visibility = 'hidden';
             intro.style.pointerEvents = 'none';
+            // Mulai animasi tombol hanya setelah intro selesai.
+            document.body.classList.add('intro-complete');
         }, 2500);
     }
 
