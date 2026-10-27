@@ -1905,157 +1905,7 @@
             btn_add_another_time: "+ เพิ่มเวลาอีก?",
             option_select_additional_time: "เลือกช่วงเวลา",
             stat_additional_time_slots: "เวลาสำรองเพิ่มเติม:"
-        },
-        ru: Object.assign({}, en, {
-            doc_title: "3475 SvS — бронирование должностей министра",
-            admin_login_btn: "Президент 👑",
-            admin_logout_btn: "Выйти из режима президента",
-            admin_logout_named: "Выйти ({{name}})",
-            page_title: "Портал штата 3475",
-            page_subtitle: "Выберите должность для бронирования",
-            page_subtitle_menu: "Выберите один из вариантов ниже",
-            selected_position_title: "Название должности",
-            pos_vp_d1: "Вице-президент D1 (понедельник)",
-            pos_vp_d2: "Вице-президент D2 (вторник)",
-            pos_edu_d4: "Министр образования D4 (четверг)",
-            pos_vp_d5: "Вице-президент D5 (пятница)",
-            pos_vp_d1_note: "Бонус: скорость строительства +20%",
-            pos_vp_d2_note: "Бонус: скорость исследований +20%",
-            pos_edu_d4_note: "Бонус: скорость обучения +80%, вместимость обучения +200",
-            pos_vp_d5_note: "Бонус: скорость строительства и исследований +10%",
-            minister_note_d1: "Вице-президент D1 (понедельник)",
-            minister_note_d1_buff: "Бонус к строительству",
-            minister_note_d2: "Вице-президент D2 (вторник)",
-            minister_note_d2_buff: "Бонус к исследованиям",
-            minister_note_d4: "Министр образования D4 (четверг)",
-            minister_note_d4_buff: "Бонус к обучению",
-            minister_note_d5: "Вице-президент D5 (пятница)",
-            minister_note_d5_buff: "Строительство и исследования без бонуса штата",
-            link_minister_reservation: "Бронирование должности министра",
-            link_leaderboard: "Записи таблицы лидеров событий",
-            link_tal: "Боевые события",
-            link_wos_tool: "Инструменты WoS",
-            nav_menu_btn: "Меню",
-            link_transfer_portal: "Портал переноса",
-            local_label: "МЕСТНОЕ ВРЕМЯ:",
-            utc_label: "UTC-0:",
-            btn_back_main_menu: "‹ Назад в меню",
-            btn_back: "‹ Назад",
-            btn_export_csv: "Экспорт CSV",
-            btn_close_reservation: "Закрыть бронирование",
-            btn_open_reservation: "Открыть бронирование",
-            btn_how_to_use: "Как пользоваться",
-            schedule_heading: "Расписание временных слотов",
-            admin_mode_indicator: "(РЕЖИМ ПРЕЗИДЕНТА)",
-            label_timezone: "Часовой пояс отображения:",
-            th_action: "ДЕЙСТВИЕ",
-            th_preferred_time: "ВРЕМЕННОЙ СЛОТ (UTC+0)",
-            th_status: "СТАТУС",
-            th_nickname: "ИГРОВОЙ НИК",
-            th_gameid: "ИГРОВОЙ ID",
-            th_fc: "FC",
-            applicants_list_title: "Список заявок",
-            modal_nickname_short: "НИК",
-            modal_id_short: "ID",
-            reassign_modal_title: "Перенос ожидающих заявок",
-            reassign_desc: "На этот слот уже есть одобренная заявка. Заявки ниже НЕ удаляются — выберите свободный слот для каждой и нажмите «Перенести».",
-            th_move_to: "ПЕРЕНЕСТИ НА",
-            details_modal_title: "Данные заявки",
-            how_to_use_title: "Как пользоваться",
-            how_to_use_description: "Инструкции по использованию страницы бронирования. Президент может редактировать и сохранять эти заметки.",
-            how_to_use_placeholder: "Введите инструкции здесь...",
-            btn_close: "Закрыть",
-            btn_save: "Сохранить",
-            redeem_code_btn: "Активировать код",
-            donate_btn: "Поддержать",
-            redeem_state_label: "Штат",
-            redeem_alliance_quickload_label: "Активация для альянса Premium",
-            redeem_fid_label: "ID игрока (FID)",
-            redeem_fid_placeholder_multi: "123456789\n987654321\n...",
-            redeem_fid_multi_hint: "Введите один ID игрока в каждой строке, чтобы активировать код сразу для нескольких аккаунтов.",
-            redeem_alliance_quickload_hint: "Или выберите альянс выше, чтобы автоматически заполнить все ID игроков этого альянса.",
-            redeem_code_label: "Подарочный код",
-            redeem_code_placeholder: "Введите подарочный код",
-            redeem_submit_btn: "Активировать",
-            apply_modal_title: "Заявка на временной слот",
-            apply_position_label: "Должность:",
-            apply_time_label: "Время:",
-            form_section_player_info: "Данные игрока",
-            label_nickname: "Игровой ник",
-            placeholder_nickname: "Введите свой ник",
-            label_gameid: "Игровой ID",
-            placeholder_gameid: "Введите игровой ID",
-            label_furnace: "Уровень печи",
-            form_section_resources: "Ресурсы",
-            form_section_resources_hint: "Необязательно — оставьте пустым, если у вас их нет",
-            label_fc: "Количество огненных кристаллов",
-            placeholder_fc: "Огненные кристаллы",
-            label_rfc: "Количество очищенных огненных кристаллов",
-            reason_modal_title: "Причина / комментарий",
-            reason_modal_label: "Причина / комментарий (необязательно):",
-            reason_modal_placeholder: "Введите причину / комментарий...",
-            btn_cancel: "Отмена",
-            btn_ok: "ОК",
-            confirm_default_message: "Вы уверены?",
-            btn_apply: "Подать заявку",
-            btn_submit: "Отправить",
-            btn_accept: "Принять",
-            btn_reject: "Отклонить",
-            btn_move: "Перенести",
-            btn_remove: "Удалить",
-            status_waiting: "Ожидание",
-            status_accepted: "Одобрено",
-            status_rejected: "Отклонено",
-            status_pending: "В ожидании",
-            waiting_list_title: "Список ожидания",
-            applicants: "Заявители",
-            accepted_slots: "Занятые слоты",
-            slots_left: "Свободные слоты",
-            label_name: "Имя",
-            label_state: "Штат",
-            label_time: "Время",
-            label_status: "Статус",
-            label_reason: "Причина",
-            label_notes: "Заметки",
-            btn_refresh: "Обновить",
-            btn_search: "Поиск",
-            btn_filter: "Фильтр",
-            btn_clear: "Очистить",
-            btn_copy: "Копировать",
-            btn_details: "Подробности",
-            btn_edit: "Изменить",
-            btn_delete: "Удалить",
-            btn_move_applicant: "Перенести заявителя",
-            btn_view_applicants: "Посмотреть заявки",
-            toast_app_submitted: "Заявка успешно отправлена!",
-            toast_app_submit_failed: "Не удалось отправить заявку. Попробуйте ещё раз.",
-            confirm_accept_app: "Одобрить эту заявку? Это заблокирует временной слот.",
-            toast_app_approved: "Заявка одобрена!",
-            toast_app_approve_failed: "Не удалось одобрить. Возможно, слот уже занят.",
-            no_more_waiting: "В этом слоте больше нет ожидающих заявок.",
-            no_free_slots: "Нет свободных слотов",
-            toast_no_slot_selected: "Свободный слот не выбран.",
-            toast_applicant_moved: "Заявитель перенесён на {{time}} UTC.",
-            toast_move_failed: "Не удалось перенести заявителя. Попробуйте ещё раз.",
-            confirm_delete_record: "Удалить эту запись заявки без возможности восстановления?",
-            toast_record_dropped: "Запись успешно удалена.",
-            toast_delete_failed: "Не удалось удалить запись.",
-            toast_no_data_export: "Нет данных для экспорта!",
-            toast_csv_downloaded: "Файл CSV успешно загружен!",
-            confirm_finish_svs: "Предупреждение о завершении SvS!\nВы уверены? Все отправленные данные будут сброшены.",
-            toast_all_cleared: "Все записи очищены.",
-            toast_clear_failed: "Не удалось очистить данные. Попробуйте ещё раз.",
-            your_location_suffix: " (Ваше местоположение)",
-            toast_load_schedule_failed: "Не удалось загрузить расписание. Обновите страницу.",
-            toast_id_copied: "ID {{id}} скопирован в буфер обмена!",
-            toast_id_copied_fallback: "ID {{id}} скопирован!",
-            toast_copy_failed: "Не удалось скопировать ID автоматически.",
-            label_additional_time_toggle: "Дополнительный предпочтительный слот",
-            desc_additional_time_toggle: "Если этот слот недоступен, можно выбрать другое время для бронирования",
-            btn_add_another_time: "+ Добавить другое время?",
-            option_select_additional_time: "Выберите временной слот",
-            stat_additional_time_slots: "Дополнительные предпочтительные слоты:"
-        })
+        }
     };
 
     // Position display-name translations. Internal English keys (used as
@@ -2073,7 +1923,7 @@
         'Vice President D5': { en: 'VP D5', cn: '副D5', id: 'WP H+5', ph: 'BP H+5', th: 'รป D5', it: 'VP D5' }
     };
 
-    let currentLang = ['en', 'cn', 'id', 'ph', 'th', 'it', 'ru'].includes(localStorage.getItem(LANG_STORAGE_KEY)) ? localStorage.getItem(LANG_STORAGE_KEY) : 'en';
+    let currentLang = ['en', 'cn', 'id', 'ph', 'th', 'it'].includes(localStorage.getItem(LANG_STORAGE_KEY)) ? localStorage.getItem(LANG_STORAGE_KEY) : 'en';
 
     function t(key, vars) {
         const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
@@ -2090,21 +1940,19 @@
     function translatePositionName(name) {
         const entry = POSITION_NAMES[name];
         if (!entry) return name;
-        if (currentLang === 'ru') return ({'Vice President D1':'Вице-президент D1','Vice President D2':'Вице-президент D2','Minister of Education D4':'Министр образования D4','Vice President D5':'Вице-президент D5'})[name] || entry.en;
         return entry[currentLang] || entry.en;
     }
 
     function translatePositionShort(name) {
         const entry = POSITION_SHORT_LABELS[name];
         if (!entry) return name;
-        if (currentLang === 'ru') return ({'Vice President D1':'Вице-президент D1','Vice President D2':'Вице-президент D2','Minister of Education D4':'Мин. образования D4','Vice President D5':'Вице-президент D5'})[name] || entry.en;
         return entry[currentLang] || entry.en;
     }
 
     function getLang() { return currentLang; }
 
     function applyStaticTranslations() {
-        document.documentElement.lang = currentLang === 'cn' ? 'zh' : (currentLang === 'id' ? 'id' : (currentLang === 'ph' ? 'tl' : (currentLang === 'th' ? 'th' : (currentLang === 'it' ? 'it' : (currentLang === 'ru' ? 'ru' : 'en')))));
+        document.documentElement.lang = currentLang === 'cn' ? 'zh' : (currentLang === 'id' ? 'id' : (currentLang === 'ph' ? 'tl' : (currentLang === 'th' ? 'th' : (currentLang === 'it' ? 'it' : 'en'))));
         document.title = t('doc_title');
 
         document.querySelectorAll('[data-i18n]').forEach(function (el) {
@@ -2127,8 +1975,7 @@
                 id: 'Ganti ke Bahasa Inggris, Mandarin, Filipino, Thailand, atau Italia',
                 ph: 'Lumipat sa English, Mandarin, Bahasa Indonesia, Thai, o Italyano',
                 th: 'เปลี่ยนเป็นภาษาอังกฤษ จีน อินโดนีเซีย ฟิลิปปินส์ หรืออิตาลี',
-                it: 'Passa a inglese, cinese, indonesiano, filippino o thailandese',
-                ru: 'Переключить на английский, китайский, индонезийский, филиппинский, тайский или итальянский'
+                it: 'Passa a inglese, cinese, indonesiano, filippino o thailandese'
             };
             toggleBtn.setAttribute('aria-label', switchLabels[currentLang] || switchLabels.en);
         }
@@ -2195,7 +2042,7 @@
     }
 
     function setLanguage(lang) {
-        if (!['en', 'cn', 'id', 'ph', 'th', 'it', 'ru'].includes(lang)) return;
+        if (!['en', 'cn', 'id', 'ph', 'th', 'it'].includes(lang)) return;
         currentLang = lang;
         localStorage.setItem(LANG_STORAGE_KEY, lang);
         applyStaticTranslations();
@@ -2204,7 +2051,7 @@
     }
 
     function toggleLanguage() {
-        const order = ['en', 'cn', 'id', 'ph', 'th', 'it', 'ru'];
+        const order = ['en', 'cn', 'id', 'ph', 'th', 'it'];
         const nextIndex = (order.indexOf(currentLang) + 1) % order.length;
         setLanguage(order[nextIndex]);
     }
