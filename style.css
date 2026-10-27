@@ -2634,6 +2634,36 @@ body.halloween-theme .navbar .logo.fire-text::before {
     letter-spacing: 0;
 }
 
+/* Halloween font: Creepster (SIL OFL, self-hosted in /fonts) for the header
+   logo "State 3475" and the page title "Portal of State 3475". Only applies
+   while the Halloween theme is active; other themes keep the default fonts.
+   If the font file fails to load, the Georgia/serif fallback is used. */
+@font-face {
+    font-family: 'Creepster';
+    src: url('fonts/creepster-halloween.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+body.halloween-theme .navbar .logo.fire-text {
+    font-family: 'Creepster', Georgia, 'Times New Roman', serif;
+    font-weight: 400;              /* Creepster has a single weight */
+    text-transform: none;
+    letter-spacing: 2px;
+    font-size: clamp(1.4rem, 5.4vw, 1.85rem);
+}
+body.halloween-theme .page-title {
+    font-family: 'Creepster', Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    letter-spacing: 3px;
+    font-size: clamp(1.7rem, 7vw, 2.6rem);
+    line-height: 1.1;
+    text-shadow:
+        0 0 10px rgba(255, 120, 20, 0.55),
+        0 0 22px rgba(160, 70, 255, 0.30),
+        0 2px 3px rgba(0, 0, 0, 0.85);
+}
+
 /* ---- Blue Fire ---- */
 /* Header title + President/Guild info use the same Blue Fire palette so
    the branding remains consistent with the active theme. */
