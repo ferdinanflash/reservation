@@ -64,7 +64,7 @@
 				<meta name="apple-mobile-web-app-capable" content="yes">
 				<link rel="manifest" href="site.webmanifest?v=8">
 				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=90">
+				<link rel="stylesheet" href="style.css?v=91">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
@@ -838,6 +838,56 @@
 		</div>
 
 		<div id="toast-container" class="toast-container"></div>
+
+
+        <script>
+        // Looping typewriter for the State 3475 header brand, after the intro animation.
+        (() => {
+            const startTypewriter = () => {
+                const logo = document.querySelector('.navbar .logo.fire-text');
+                if (!logo || logo.dataset.typewriterStarted === 'true') return;
+                logo.dataset.typewriterStarted = 'true';
+
+                const fullText = 'State 3475';
+                const typingSpeed = 125;
+                const deletingSpeed = 75;
+                const holdAfterTyping = 3000;
+                const pauseAfterDeleting = 1000;
+
+                logo.setAttribute('aria-label', fullText);
+                logo.textContent = '';
+                logo.style.borderRight = '2px solid currentColor';
+                logo.style.paddingRight = '3px';
+
+                let index = 0;
+                const typeNext = () => {
+                    if (index < fullText.length) {
+                        logo.textContent = fullText.slice(0, ++index);
+                        window.setTimeout(typeNext, typingSpeed);
+                    } else {
+                        window.setTimeout(deleteNext, holdAfterTyping);
+                    }
+                };
+
+                const deleteNext = () => {
+                    if (index > 0) {
+                        logo.textContent = fullText.slice(0, --index);
+                        window.setTimeout(deleteNext, deletingSpeed);
+                    } else {
+                        window.setTimeout(typeNext, pauseAfterDeleting);
+                    }
+                };
+
+                typeNext();
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => window.setTimeout(startTypewriter, 2500), { once: true });
+            } else {
+                window.setTimeout(startTypewriter, 2500);
+            }
+        })();
+        </script>
 
 	</body>
 </html>
