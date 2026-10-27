@@ -1,470 +1,848 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<script>
-		(function () {
-			// ============================================================
-			// SAFARI / iOS CACHE-BUST GUARD
-			// Safari on Mac and iOS (including "Add to Home Screen" apps)
-			// aggressively caches the HTML page itself, not just the JS
-			// files. That means bumping "?v=" on the <script> tags below
-			// has no effect there, because Safari never even re-fetches
-			// THIS index.html to see the new version numbers.
-			//
-			// This runs before anything else loads. It compares a build
-			// string you control (APP_BUILD) against what's saved in
-			// localStorage. If it changed (new deploy), it forces exactly
-			// one real network reload with a cache-busting query param,
-			// which Safari/WebKit treats as a new URL it can't serve from
-			// its stale page cache.
-			//
-			// >>> Bump APP_BUILD every time you deploy a fix. <<<
-			// ============================================================
-			var APP_BUILD = '2026-10-27-03';
-
-			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
-			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
-
-			try {
-				var stored = localStorage.getItem('__app_build');
-
-				if (!stored) {
-					// First ever visit on this device — nothing stale to bust.
-					localStorage.setItem('__app_build', APP_BUILD);
-					return;
-				}
-				if (stored === APP_BUILD) return; // already on the latest build
-
-				localStorage.setItem('__app_build', APP_BUILD);
-
-				if (window.caches && caches.keys) {
-					caches.keys().then(function (keys) {
-						keys.forEach(function (key) { caches.delete(key); });
-					});
-				}
-
-				var url = new URL(window.location.href);
-				url.searchParams.set('_cb', APP_BUILD);
-				window.location.replace(url.toString());
-			} catch (e) {
-				// localStorage unavailable (e.g. Private Browsing) — fail
-				// silently, normal caching behavior just applies.
-			}
-		})();
-		</script>
 		<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>3475 SvS Minister Reservation</title>
-				<link rel="icon" href="favicon-v8.ico" sizes="any">
-				<link rel="icon" type="image/png" sizes="32x32" href="favicon-32-v8.png">
-				<link rel="icon" type="image/png" sizes="16x16" href="favicon-16-v8.png">
-				<link rel="icon" type="image/png" sizes="192x192" href="pwa-icon-192-v8.png">
-				<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-v8.png">
-				<meta name="apple-mobile-web-app-title" content="State 3475">
-				<meta name="apple-mobile-web-app-capable" content="yes">
-				<link rel="manifest" href="site.webmanifest?v=8">
-				<meta name="theme-color" content="#111827">
-				<link rel="stylesheet" href="style.css?v=91">
+				<title>3475 Battle League</title>
+				<meta name="description" content="3475 3475 Battle League - Alliance troops power leaderboard, legion roster, and match scheduling.">
+				<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%E2%9A%94%EF%B8%8F%3C/text%3E%3C/svg%3E">
+				<link rel="stylesheet" href="style.css?v=31">
 
-					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
-		<script src="common.js?v=7" defer=""></script>
-		<script src="lang.js?v=24" defer=""></script>
-					<script src="js/app-core.js?v=53" defer=""></script>
-					<script src="js/app-auth.js?v=50" defer=""></script>
-					<script src="js/app-notes.js?v=45" defer=""></script>
-					<script src="js/app-schedule.js?v=48" defer=""></script>
-					<script src="js/app-applications.js?v=50" defer=""></script>
-					<script src="js/app-waiting.js?v=49" defer=""></script>
-					<script src="js/app-extras.js?v=54" defer=""></script>
-					<script src="js/app-notifications.js?v=6" defer=""></script>
-					<script src="fire-banner.js?v=15" defer=""></script>
-					<script src="opening-animation.js" defer=""></script>
 
-		<script>
-		// Register the service worker so the app is installable and still opens
-		// when the connection drops. See sw.js for the caching rules.
-		if ('serviceWorker' in navigator) {
-			window.addEventListener('load', function () {
-				navigator.serviceWorker.register('sw.js').catch(function () {});
-			});
-		}
-		</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+                    <script src="i18n.js?v=9" defer></script>
+                    <script src="i18n-dict.js?v=20261028-russian-language-v1" defer></script>
+					<!-- Modular application scripts: load in dependency order. -->
+					<script src="core.js?v=28" defer></script>
+					<script src="navigation.js?v=22" defer></script>
+					<script src="schedule.js?v=18" defer></script>
+					<script src="leaderboard.js?v=25" defer></script>
+					<script src="player.js?v=21" defer></script>
+					<script src="legion.js?v=23" defer></script>
+					<script src="export.js?v=20" defer></script>
+					<script src="footer.js?v=18" defer></script>
+					<script src="effects.js?v=18" defer></script>
+					<script src="president-panel.js?v=11" defer></script>
+					<script src="redeem.js?v=4" defer></script>
 				</head>
-	<body class="ui-v2-theme">
-		<!-- Early seasonal flag: the opening animation below is painted before the
-		     deferred scripts (Supabase, fire-banner.js) have run, so this tiny inline
-		     script puts the season class on <body> right away, using the cached
-		     theme override or the date. fire-banner.js takes over afterwards and
-		     keeps it in sync with the database. KEEP THE DATE RANGES IN SYNC with
-		     SEASONS / CNY_DATES in fire-banner.js. -->
-		<script>
-		(function () {
-			function ls(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
-			var t = ls('svs_theme_override');
-			if (t !== 'halloween' && t !== 'christmas' && t !== 'valentine' && t !== 'cny' && t !== 'eid' && t !== 'midautumn' && t !== 'bluefire' && t !== 'none') {
-				t = 'none';
-				var d = new Date(), m = d.getMonth(), day = d.getDate();
-				var h = ls('svs_halloween_override'), c = ls('svs_christmas_override');
-				if (h !== 'off' && (h === 'on' || m === 9 || (m === 10 && day <= 2))) t = 'halloween';
-				else if (c !== 'off' && (c === 'on' || (m === 11 && day <= 30))) t = 'christmas';
-				// Mid-Autumn Festival: 19 - 27 September every year (same as SEASONS.midautumn).
-				else if (m === 8 && day >= 19 && day <= 27) t = 'midautumn';
-				// Chinese New Year: lunar dates, listed per year (same table as CNY_DATES).
-				// Checked BEFORE Valentine so the two seasons never overlap.
-				else if (d.getFullYear() === 2027 && m === 1 && day >= 6 && day <= 13) t = 'cny';   // 6 - 13 Feb 2027
-				else if (m === 1 && day <= 14) t = 'valentine';
-				// Eid al-Fitr ('eid') is intentionally NOT automatic: it only appears
-				// when the President picks it in the Theme Switcher (cached override above).
-			}
-			if (t === 'halloween' || t === 'christmas' || t === 'valentine' || t === 'cny' || t === 'eid' || t === 'midautumn' || t === 'bluefire') document.body.classList.add(t + '-theme');
-		})();
-		</script>
-
-		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
-		<div id="snow-container"></div>
-
-		<!-- Opening animation: tidak mengubah layout halaman utama -->
-		<div id="svs-opening" class="svs-opening" aria-hidden="true">
-			<div class="svs-opening-glow"></div>
-			<div class="svs-opening-sparks" aria-hidden="true"></div>
-			<div class="svs-opening-content">
-				<div class="svs-opening-number">3475</div>
-				<div class="svs-opening-line"></div>
-				<div class="svs-opening-title">STATE 3475</div>
+	<body>
+		<!-- 2.5s opening animation; intentionally runs on every refresh. -->
+		<div id="opening-animation" class="opening-animation" aria-hidden="true">
+			<div class="opening-animation-glow"></div>
+			<div class="opening-animation-content">
+				<div class="opening-animation-logo fire-text">3475</div>
+				<div class="opening-animation-title">3475 - Competition Events</div>
+				<div class="opening-animation-line"></div>
+				<div class="opening-animation-subtitle">Tundra Arm League & Frostdragon Tyrant</div>
 			</div>
 		</div>
 
+		<!-- SHARED SVG SYMBOL: CLASHING SWORDS ICON (used via <use> to avoid repeating markup) -->
+		<svg class="svg-symbol-defs" aria-hidden="true">
+			<symbol id="frostdragon-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M2.500 3C8 3.500 11 5.500 12 8l5.500.5c2.500.5 4.500 1.500 5.500 3L20 12l-5.500 1L21 16c-2 1.500-5 2-8 1.500-1 1.500-1.500 3-1 4.500H5c-.5-5 .5-9 3-11.500C6 9 4 6.500 2.500 3zM14.500 9.500a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/><path d="M10 6.800 13 2l1 5.500zM7.300 12.500 3.800 12.800l3.200 2.200zM6.500 16.500 3 17.200l3.300 2zM5.800 20.300 2.800 21.500H5.600zM15.500 13.200l1.200 2.600 1.300-2.800zM19 12.800l.9 2 1.100-2.300z"/></symbol>
+			<symbol id="tundra-snow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g id="tundra-snow-arm"><path d="M12 2.500v19M9.300 5 12 7.500 14.700 5M9.300 19 12 16.500 14.700 19"/></g><use href="#tundra-snow-arm" transform="rotate(60 12 12)"/><use href="#tundra-snow-arm" transform="rotate(120 12 12)"/></symbol>
+			<symbol id="swords-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.500 17.500 3 6V3h3l11.500 11.500"/><path d="m13 19 6-6M16 16l4 4M19 21l2-2"/><path d="M14.500 6.500 18 3h3v3l-3.500 3.500"/><path d="m5 14 4 4M7 17l-3 3M3 19l2 2"/></symbol>
+			<symbol id="emb-arx" viewBox="0 0 24 24" fill="currentColor"><path d="M13.500 2 4.500 13.500h6L9.500 22l10-12.500h-6.500z"/></symbol>
+			<symbol id="emb-idn" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2.500 2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.400l-5.900 3.100 1.200-6.500L2.500 9.400l6.600-.9z"/></symbol>
+			<symbol id="emb-vnx" viewBox="0 0 24 24" fill="currentColor" fill-opacity=".25" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M9 3l3 6 3-6M12 9v12" fill="none"/></symbol>
+			<symbol id="emb-zxc" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.8 3.800 5.500 6 5.500 11.200a5.500 5.500 0 0 1-11 0c0-2.200 1-3.600 2.200-4.600.1 1.800.8 2.800 1.800 3.200C9.600 8.200 10.200 5 12 2z"/></symbol>
+			<symbol id="emb-cat" viewBox="0 0 24 24" fill="currentColor"><circle cx="5.500" cy="10.500" r="2.100"/><circle cx="9.500" cy="5.800" r="2.100"/><circle cx="14.500" cy="5.800" r="2.100"/><circle cx="18.500" cy="10.500" r="2.100"/><path d="M12 11c-3.200 0-6 3.600-6 6.200 0 1.900 1.400 2.800 3 2.800 1.200 0 2-.5 3-.5s1.800.5 3 .5c1.600 0 3-.9 3-2.800 0-2.600-2.800-6.200-6-6.200z"/></symbol>
+			<symbol id="alliance-shield-icon" viewBox="0 0 24 24">
+				<path d="M12 2.500 4 5.500v6c0 4.900 3.300 8.800 8 10 4.700-1.200 8-5.100 8-10v-6z" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.800" stroke-linejoin="round"/>
+				<path d="m8.500 12 2.500 2.500 4.500-5" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"/>
+			</symbol>
+			<symbol id="clash-sword-icon" viewBox="0 0 100 100">
+				<g class="sword-left-group">
+					<path d="M 38 62 L 78 22 L 82 26 L 42 66 Z" fill="#f1f5f9" stroke="#0f172a" stroke-width="3" stroke-linejoin="round"/>
+					<path d="M 38 62 L 78 22 L 76 30 Z" fill="#cbd5e1"/>
+					<path d="M 28 54 C 34 50, 44 60, 46 68 C 38 68, 28 60, 28 54 Z" fill="#0f172a"/>
+					<path d="M 33 65 L 21 77" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+					<circle cx="19" cy="79" r="4" fill="#0f172a"/>
+				</g>
+				<g class="sword-right-group">
+					<path d="M 62 62 L 22 22 L 18 26 L 58 66 Z" fill="#f1f5f9" stroke="#0f172a" stroke-width="3" stroke-linejoin="round"/>
+					<path d="M 62 62 L 22 22 L 24 30 Z" fill="#cbd5e1"/>
+					<path d="M 72 54 C 66 50, 56 60, 54 68 C 62 68, 72 60, 72 54 Z" fill="#0f172a"/>
+					<path d="M 67 65 L 79 77" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+					<circle cx="81" cy="79" r="4" fill="#0f172a"/>
+				</g>
+				<g class="spark-group">
+					<line x1="50" y1="36" x2="50" y2="24" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+					<line x1="38" y1="44" x2="28" y2="38" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+					<line x1="62" y1="44" x2="72" y2="38" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+				</g>
+			</symbol>
+		</svg>
+
 		<header class="navbar">
-			<span class="logo fire-text">State 3475</span>
-			<div class="navbar-actions"><div id="lang-toggle-btn" class="lang-toggle" data-lang="en" role="group" aria-label="Language"><button type="button" class="lang-trigger" onclick="toggleLangDropdown(event)" aria-haspopup="listbox" aria-expanded="false" aria-label="Change language"><svg class="lang-globe-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9s1.3-6.3 3.8-9z"></path></svg><span class="lang-chevron" aria-hidden="true">▾</span><span class="lang-current lang-current-en"><strong>ENG</strong><span class="lang-flag-emoji">🇺🇸</span></span><span class="lang-current lang-current-cn"><strong>CN</strong><span class="lang-flag-emoji">🇨🇳</span></span><span class="lang-current lang-current-id"><strong>ID</strong><span class="lang-flag-emoji">🇮🇩</span></span><span class="lang-current lang-current-ph"><strong>PH</strong><span class="lang-flag-emoji">🇵🇭</span></span><span class="lang-current lang-current-th"><strong>TH</strong><span class="lang-flag-emoji">🇹🇭</span></span><span class="lang-current lang-current-it"><strong>IT</strong><span class="lang-flag-emoji">🇮🇹</span></span></button><div class="lang-dropdown" role="listbox"><button type="button" class="lang-option lang-eng" onclick="setLanguage('en')" aria-label="English"><span class="lang-flag-emoji">🇺🇸</span><span class="lang-code">ENG</span></button><button type="button" class="lang-option lang-cn" onclick="setLanguage('cn')" aria-label="中文"><span class="lang-flag-emoji">🇨🇳</span><span class="lang-code">CN</span></button><button type="button" class="lang-option lang-id" onclick="setLanguage('id')" aria-label="Bahasa Indonesia"><span class="lang-flag-emoji">🇮🇩</span><span class="lang-code">ID</span></button><button type="button" class="lang-option lang-ph" onclick="setLanguage('ph')" aria-label="Filipino"><span class="lang-flag-emoji">🇵🇭</span><span class="lang-code">PH</span></button><button type="button" class="lang-option lang-th" onclick="setLanguage('th')" aria-label="ภาษาไทย"><span class="lang-flag-emoji">🇹🇭</span><span class="lang-code">TH</span></button><button type="button" class="lang-option lang-it" onclick="setLanguage('it')" aria-label="Italiano"><span class="lang-flag-emoji">🇮🇹</span><span class="lang-code">IT</span></button></div></div><div id="nav-menu" class="nav-menu"><button type="button" class="nav-menu-trigger" onclick="toggleNavMenu(event)" aria-haspopup="menu" aria-expanded="false" aria-controls="nav-menu-panel"><svg class="nav-menu-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><span data-i18n="nav_menu_btn">Menu</span><span class="nav-menu-chevron" aria-hidden="true">▾</span></button><div id="nav-menu-panel" class="nav-menu-panel" role="menu"><a id="discord-btn" class="nav-menu-item nav-menu-discord" role="menuitem" href="https://discord.gg/7Zr4dJvbqU" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 640 512" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,115.677,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"></path></svg><span>Discord</span></a><button id="redeem-code-btn" type="button" class="nav-menu-item nav-menu-redeem" role="menuitem" onclick="openRedeemModal()" aria-haspopup="dialog" aria-controls="redeem-modal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg><span data-i18n="redeem_code_btn">Redeem Code</span></button><button id="donate-btn" type="button" class="nav-menu-item nav-menu-donate" role="menuitem" onclick="openDonateModal()" aria-haspopup="dialog" aria-controls="donate-modal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"></path></svg><span data-i18n="donate_btn">Donate</span></button><div class="nav-menu-divider" role="separator"></div><button id="admin-toggle-btn" type="button" class="nav-menu-item nav-menu-admin" role="menuitem" onclick="handleAdminLogin()" data-i18n="admin_login_btn">President 👑</button></div></div></div>
+			<div class="navbar-controls">
+				<button id="snow-toggle-btn" class="btn-snow-toggle" onclick="toggleSnowEffect()" title="Toggle snow effect"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#tundra-snow-icon"></use></svg> <span class="snow-label">Snow</span> <span class="snow-state">ON</span></button>
+				<div class="navbar-main-btns">
+            <div id="site-language-switcher" class="site-language-switcher">
+              <button type="button" class="language-current" id="language-current" aria-label="Choose language" aria-expanded="false" aria-controls="language-options">
+                <span class="language-caret">▴</span><span id="language-current-code">ENG</span><span id="language-current-flag">🇺🇸</span>
+              </button>
+              <div class="language-options" id="language-options" role="group" aria-label="Choose language">
+                <button type="button" data-lang-btn="zh" aria-pressed="false"><span class="language-flag">🇨🇳</span><span>中文</span></button>
+                <button type="button" data-lang-btn="id" aria-pressed="false"><span class="language-flag">🇮🇩</span><span>Indonesia</span></button>
+                <button type="button" data-lang-btn="tl" aria-pressed="false"><span class="language-flag">🇵🇭</span><span>Filipino</span></button>
+                <button type="button" data-lang-btn="it" aria-pressed="false"><span class="language-flag">🇮🇹</span><span>Italiano</span></button>
+                <button type="button" data-lang-btn="th" aria-pressed="false"><span class="language-flag">🇹🇭</span><span>ไทย</span></button>
+                <button type="button" data-lang-btn="ru" aria-pressed="false"><span class="language-flag">🇷🇺</span><span>Русский</span></button>
+                <button type="button" data-lang-btn="en" aria-pressed="true"><span class="language-flag">🇺🇸</span><span>English</span></button>
+              </div>
+            </div>
+
+				<button id="redeem-code-btn" type="button" class="btn-redeem" onclick="openRedeemModal()" aria-haspopup="dialog" aria-controls="redeem-modal"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg><span>Redeem Code</span></button>
+				<button id="admin-toggle-btn" class="btn-admin" onclick="handleAdminLogin()">Login</button>
+				<button id="president-panel-btn" class="btn-admin president-panel-top-btn hidden" onclick="openPresidentPanel()">👑 PRESIDENT<span class="pp-panel-word">&nbsp;PANEL</span></button>
+				</div>
+			</div>
 		</header>
 
-		<div id="live-clock-container" class="hidden">
+		<div id="live-clock-container">
 			<div class="clock-item">
-				<span id="local-clock-label" class="clock-label" data-i18n="local_label">LOCAL:</span>
+				<span id="local-clock-label" class="clock-label">LOCAL:</span>
 				<span id="local-clock" class="clock-time">00:00:00</span>
 			</div>
 			<div class="clock-divider">|</div>
 			<div class="clock-item">
-				<span class="clock-label" data-i18n="utc_label">UTC-0:</span>
-				<span id="utc-clock" class="clock-time clock-theme-color">00:00:00</span>
+				<span class="clock-label">UTC-0:</span>
+				<span id="utc-clock" class="clock-time utc-clock-time">00:00:00</span>
 			</div>
 		</div>
 
 		<main class="container">
-			<section id="positions-page">
-				<h1 class="page-title" data-i18n="page_title">Portal of State 3475</h1>
+			<!-- MAIN MENU: ALLIANCE & LEGION SELECTION -->
+			<section id="alliance-menu-page">
+				<h1 class="page-title fire-text" id="battle-theme-page-title">Tundra Arm League</h1>
+				<p class="page-subtitle" id="battle-theme-page-subtitle">Select Alliance, Global Leaderboard, or Battle Group</p>
 
-				<div class="banner-container">
-					<div id="fire-banner" class="fire-banner" role="img" aria-label="3475">
-						<svg width="0" height="0" aria-hidden="true">
-							<defs>
-								<linearGradient id="fireBannerFlameGrad" x1="0" y1="1" x2="0" y2="0">
-									<stop offset="0%" stop-color="#7a1a00" stop-opacity="0"/>
-									<stop offset="35%" stop-color="#ff4500" stop-opacity="0.7"/>
-									<stop offset="70%" stop-color="#ffa500" stop-opacity="0.92"/>
-									<stop offset="100%" stop-color="#fff3b0" stop-opacity="0.98"/>
-								</linearGradient>
-								<linearGradient id="fireBannerFlameInner" x1="0" y1="1" x2="0" y2="0">
-									<stop offset="0%" stop-color="#ffb300" stop-opacity="0"/>
-									<stop offset="30%" stop-color="#ffd54f" stop-opacity="0.85"/>
-									<stop offset="65%" stop-color="#fff59d" stop-opacity="0.95"/>
-									<stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
-								</linearGradient>
-							</defs>
-						</svg>
-						<!-- DEFAULT (non-seasonal) BANNER ART: default-banner-v2.jpg, shown whenever
-						     no seasonal theme (Halloween / Christmas / Valentine / Chinese New Year / Eid al-Fitr / Mid-Autumn) is active. The older
-						     CSS/SVG fire digits below (.fire-glow-back / .fire-numbers) are kept
-						     in the page but hidden by style.css while this art is in use. -->
-						<div class="fire-default-art"></div>
-						<div class="fire-glow-back"></div>
-						<div class="fire-numbers">
-							<div class="fire-digit-wrap">
-								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path class="flame-outer" d="M50,138 C30,138 12,118 14,94 C15,80 26,72 24,58 C23,48 15,40 19,28 C28,36 34,28 31,16 C40,26 46,16 42,4 C54,14 58,28 50,38 C62,42 72,52 68,66 C80,70 90,84 82,100 C90,108 84,126 66,134 C70,118 58,112 56,98 C55,112 44,116 42,128 C46,134 48,138 50,138 Z"/><path class="flame-inner" d="M50,132 C38,130 28,116 30,100 C31,90 38,84 36,74 C35,66 30,60 33,50 C40,56 44,48 42,38 C48,46 52,38 49,28 C56,36 58,46 53,54 C60,58 66,66 62,76 C70,80 76,90 70,100 C74,106 68,118 56,124 C58,114 50,108 48,98 C47,108 40,112 38,120 C42,126 45,130 50,132 Z"/></svg></div>
-								<div class="fire-digit">3</div>
-								<div class="fire-digit-shine">3</div>
-							</div>
-							<div class="fire-digit-wrap">
-								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path class="flame-outer" d="M50,138 C30,138 12,118 14,94 C15,80 26,72 24,58 C23,48 15,40 19,28 C28,36 34,28 31,16 C40,26 46,16 42,4 C54,14 58,28 50,38 C62,42 72,52 68,66 C80,70 90,84 82,100 C90,108 84,126 66,134 C70,118 58,112 56,98 C55,112 44,116 42,128 C46,134 48,138 50,138 Z"/><path class="flame-inner" d="M50,132 C38,130 28,116 30,100 C31,90 38,84 36,74 C35,66 30,60 33,50 C40,56 44,48 42,38 C48,46 52,38 49,28 C56,36 58,46 53,54 C60,58 66,66 62,76 C70,80 76,90 70,100 C74,106 68,118 56,124 C58,114 50,108 48,98 C47,108 40,112 38,120 C42,126 45,130 50,132 Z"/></svg></div>
-								<div class="fire-digit">4</div>
-								<div class="fire-digit-shine">4</div>
-							</div>
-							<div class="fire-digit-wrap">
-								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path class="flame-outer" d="M50,138 C30,138 12,118 14,94 C15,80 26,72 24,58 C23,48 15,40 19,28 C28,36 34,28 31,16 C40,26 46,16 42,4 C54,14 58,28 50,38 C62,42 72,52 68,66 C80,70 90,84 82,100 C90,108 84,126 66,134 C70,118 58,112 56,98 C55,112 44,116 42,128 C46,134 48,138 50,138 Z"/><path class="flame-inner" d="M50,132 C38,130 28,116 30,100 C31,90 38,84 36,74 C35,66 30,60 33,50 C40,56 44,48 42,38 C48,46 52,38 49,28 C56,36 58,46 53,54 C60,58 66,66 62,76 C70,80 76,90 70,100 C74,106 68,118 56,124 C58,114 50,108 48,98 C47,108 40,112 38,120 C42,126 45,130 50,132 Z"/></svg></div>
-								<div class="fire-digit">7</div>
-								<div class="fire-digit-shine">7</div>
-							</div>
-							<div class="fire-digit-wrap">
-								<div class="fire-flame-tongue"><svg viewBox="0 0 100 140"><path class="flame-outer" d="M50,138 C30,138 12,118 14,94 C15,80 26,72 24,58 C23,48 15,40 19,28 C28,36 34,28 31,16 C40,26 46,16 42,4 C54,14 58,28 50,38 C62,42 72,52 68,66 C80,70 90,84 82,100 C90,108 84,126 66,134 C70,118 58,112 56,98 C55,112 44,116 42,128 C46,134 48,138 50,138 Z"/><path class="flame-inner" d="M50,132 C38,130 28,116 30,100 C31,90 38,84 36,74 C35,66 30,60 33,50 C40,56 44,48 42,38 C48,46 52,38 49,28 C56,36 58,46 53,54 C60,58 66,66 62,76 C70,80 76,90 70,100 C74,106 68,118 56,124 C58,114 50,108 48,98 C47,108 40,112 38,120 C42,126 45,130 50,132 Z"/></svg></div>
-								<div class="fire-digit">5</div>
-								<div class="fire-digit-shine">5</div>
+				<div class="list-container menu-list-container">
+					<!-- LEGION 1 BUTTON -->
+					<div class="list-item legion-btn legion-btn-1" onclick="selectLegion('Legion 1')" role="button" tabindex="0" aria-label="Legion 1 roster">
+						<div class="legion-btn-header">
+							<span class="legion-btn-label">
+								<svg class="clash-svg legion-icon-blue" viewBox="0 0 100 100">
+									<use href="#clash-sword-icon"></use>
+								</svg>
+								LEGION 1 (30 Battle / 20 Sub)
+							</span>
+							<div class="legion-btn-actions">
+								<button class="admin-schedule-btn hidden" id="edit-schedule-legion-1" onclick="event.stopPropagation(); openScheduleModal('Legion 1')">Set Schedule</button>
+								<span class="arrow legion-btn-arrow">&gt;</span>
 							</div>
 						</div>
-						<canvas id="fire-banner-embers"></canvas>
-
-						<!-- ============ BLUE FIRE SEASONAL OVERLAY ============
-						     Uses the supplied animated video as the primary artwork and the
-						     supplied still image as poster/fallback. Manual-only theme. -->
-						<div class="bluefire-art" aria-hidden="true">
-							<video class="bluefire-video" muted playsinline loop preload="metadata" poster="bluefire-banner-v1.png">
-								<source src="bluefire-banner-v1.mp4" type="video/mp4">
-							</video>
-							<img class="bluefire-poster" src="bluefire-banner-v1.png" alt="">
-							<div class="bluefire-vignette"></div>
-						</div>
-
-						<!-- ============ HALLOWEEN SEASONAL BANNER (VIDEO) ============
-						     Uses the supplied animated video (halloween-banner-v2.mp4, which
-						     already contains the "3475" lettering) as the artwork, with the
-						     first frame (halloween-banner-v2.jpg) as poster/fallback. Same
-						     structure as the Blue Fire banner. Still follows the Halloween
-						     calendar (1 Oct - 2 Nov) or the President's Theme Switcher. -->
-						<div class="halloween-art" aria-hidden="true">
-							<video class="halloween-video" muted playsinline loop preload="metadata" poster="halloween-banner-v2.jpg">
-								<source src="halloween-banner-v2.mp4" type="video/mp4">
-							</video>
-							<img class="halloween-poster" src="halloween-banner-v2.jpg" alt="">
-						</div>
-
-						<!-- ============ CHRISTMAS SEASONAL OVERLAY ============
-						     christmas-banner-v3.jpg with twinkling highlights on its real
-						     lights (bulbs, stars, gold sparkles). The decoration points are
-						     generated by fire-banner.js only when this theme is active. Active automatically 1-30 December, or
-						     on demand via the President's Theme Switcher
-						     (window.SVSSeasonalTheme); fire-banner.js handles the rest. -->
-						<div class="christmas-art">
-							<div class="seasonal-decor-layer" aria-hidden="true"></div>
-						</div>
-
-						<!-- ============ VALENTINE SEASONAL OVERLAY ============
-						     valentine-banner-v1.jpg (a "3475" made of pink and gold glitter
-						     with cupid wings, roses and a "Happy Celebration" ribbon) with
-						     twinkling highlights on its real lights (string bulbs, firework
-						     hearts, gold stars, arrow sparkle). Decoration points are
-						     generated only while this theme is active. Active automatically 1-14 February, or
-						     on demand via the President's Theme Switcher
-						     (window.SVSSeasonalTheme); fire-banner.js handles the rest. -->
-						<div class="valentine-art">
-							<div class="seasonal-decor-layer" aria-hidden="true"></div>
-						</div>
-
-						<!-- ============ CHINESE NEW YEAR (IMLEK) SEASONAL OVERLAY ============
-						     cny-banner-v1.jpg (a red and gold "3475" wrapped by a dragon, with
-						     lanterns, gold clouds, coins, cherry blossoms and a "Chinese New
-						     Year" ribbon) with twinkling highlights on its real lights
-						     (fireworks, gold stars, coins, dragon eye) and a soft flicker
-						     on the three lanterns. Decoration points are generated only
-						     while this theme is active. Active
-						     automatically on the dates in CNY_DATES (fire-banner.js), which
-						     take priority over Valentine so the two never overlap, or on
-						     demand via the President's Theme Switcher (window.SVSSeasonalTheme). -->
-						<div class="cny-art">
-							<div class="seasonal-decor-layer" aria-hidden="true"></div>
-						</div>
-
-						<!-- ============ EID AL-FITR (IDUL FITRI) SEASONAL OVERLAY ============
-						     eid-banner-v1.jpg (a golden "3475" in front of a green mosque with a
-						     crescent moon, ketupat, hanging lanterns and an "Eid al-Fitr / Idul
-						     Fitri" ribbon) with twinkling highlights on its real lights
-						     (fireworks, stars, sparkles) and a warm flicker on the four hanging
-						     lanterns. Decoration points are generated only while this theme
-						     is active. NEVER automatic: this theme
-						     only shows when the President selects it in the Theme Switcher
-						     (window.SVSSeasonalTheme); fire-banner.js handles the rest. -->
-						<div class="eid-art">
-							<div class="seasonal-decor-layer" aria-hidden="true"></div>
-						</div>
-
-						<!-- ============ MID-AUTUMN FESTIVAL SEASONAL OVERLAY ============
-						     midautumn-banner-v1.jpg (a jade / red / gold "3475" under a full moon
-						     with jade rabbits, phoenixes, osmanthus blossoms, mooncakes,
-						     fireworks and sky / string lanterns, with a "Mid-Autumn Festival"
-						     ribbon) with a slow breathing glow on the moon, twinkles on the
-						     fireworks and a warm flicker on the lanterns. Decoration points
-						     are generated only while this theme is active. Active automatically 19-27 September, or on demand
-						     via the President's Theme Switcher (window.SVSSeasonalTheme). -->
-						<div class="midautumn-art">
-							<div class="seasonal-decor-layer" aria-hidden="true"></div>
+						<div id="display-schedule-legion-1" class="schedule-display schedule-display-l1">
+							⏰ Match Time: <span class="schedule-time-val">-</span>
 						</div>
 					</div>
-            </div>
 
-				<div id="main-menu-view">
-					<p class="page-subtitle" data-i18n="page_subtitle_menu">Select an option below</p>
-					<div class="external-link-container" id="main-menu-links">
-						<button type="button" class="list-item list-item-small" onclick="showMinisterReservationMenu()">
-							<span data-i18n="link_minister_reservation">Minister Reservation</span>
-						</button>
-						<a class="list-item list-item-small" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer">
-							<span data-i18n="link_leaderboard">Events Leaderboard Record</span>
-						</a>
-						<a class="list-item list-item-small" href="https://transfer.3475.web.id" target="_blank" rel="noopener noreferrer">
-							<span data-i18n="link_transfer_portal">Transfer Portal</span>
-						</a>
-						<a class="list-item list-item-small" href="https://tal.3475.web.id" target="_blank" rel="noopener noreferrer">
-							<span data-i18n="link_tal">Battle Events</span>
-						</a>
-						<a class="list-item list-item-small" href="https://calc.3475.web.id" target="_blank" rel="noopener noreferrer">
-							<span data-i18n="link_wos_tool">WoS Tool</span>
-						</a>
+					<!-- LEGION 2 BUTTON -->
+					<div class="list-item legion-btn legion-btn-2" onclick="selectLegion('Legion 2')" role="button" tabindex="0" aria-label="Legion 2 roster">
+						<div class="legion-btn-header">
+							<span class="legion-btn-label">
+								<svg class="clash-svg legion-icon-red" viewBox="0 0 100 100">
+									<use href="#clash-sword-icon"></use>
+								</svg>
+								LEGION 2 (30 Battle / 20 Sub)
+							</span>
+							<div class="legion-btn-actions">
+								<button class="admin-schedule-btn hidden" id="edit-schedule-legion-2" onclick="event.stopPropagation(); openScheduleModal('Legion 2')">Set Schedule</button>
+								<span class="arrow legion-btn-arrow">&gt;</span>
+							</div>
+						</div>
+						<div id="display-schedule-legion-2" class="schedule-display schedule-display-l2">
+							⏰ Match Time: <span class="schedule-time-val">-</span>
+						</div>
 					</div>
-				</div>
 
-				<div id="minister-reservation-view" class="hidden">
-					<button type="button" class="btn-back action-no-bottom" onclick="showMainMenu()" data-i18n="btn_back_main_menu">&lt; Back to menu</button>
-					<p class="page-subtitle" data-i18n="page_subtitle">Select a position to make reservation</p>
-					<div class="list-container">
-						<button type="button" class="list-item" onclick="showSchedule('Vice President D1')">
-							<span class="list-item-text">
-								<span class="list-item-title" data-i18n="pos_vp_d1">Vice President D1 (Monday)</span>
-								<span class="pos-note pos-note-construction" data-i18n="pos_vp_d1_note">Buff: +20% Construction Speed</span>
-							</span>
-							<span class="arrow">&gt;</span>
-						</button>
-						<button type="button" class="list-item" onclick="showSchedule('Vice President D2')">
-							<span class="list-item-text">
-								<span class="list-item-title" data-i18n="pos_vp_d2">Vice President D2 (Tuesday)</span>
-								<span class="pos-note pos-note-research" data-i18n="pos_vp_d2_note">Buff: +20% Research Speed</span>
-							</span>
-							<span class="arrow">&gt;</span>
-						</button>
-						<button type="button" class="list-item" onclick="showSchedule('Minister of Education D4')">
-							<span class="list-item-text">
-								<span class="list-item-title" data-i18n="pos_edu_d4">Minister of Education D4 (Thursday)</span>
-								<span class="pos-note pos-note-training" data-i18n="pos_edu_d4_note">Buff: +80% Training Speed + 200 Training Capacity</span>
-							</span>
-							<span class="arrow">&gt;</span>
-						</button>
-						<button type="button" class="list-item" onclick="showSchedule('Vice President D5')">
-							<span class="list-item-text">
-								<span class="list-item-title" data-i18n="pos_vp_d5">Vice President D5 (Friday)</span>
-								<span class="pos-note pos-note-nobuff" data-i18n="pos_vp_d5_note">Buff: +10% Construction &amp; Research Speed</span>
-							</span>
-							<span class="arrow">&gt;</span>
-						</button>
+					<!-- FDT GUIDE (Frostdragon theme only) -->
+					<div class="list-item hidden fdt-rgb-border" id="fdt-guide-menu-btn" onclick="toggleFdtGuide(true)" role="button" tabindex="0" aria-label="Open FDT Guide" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFdtGuide(true)}">
+						<span class="alliance-name">🐉 FDT Guide</span>
+						<span class="arrow">&gt;</span>
+					</div>
+
+					<!-- FOUNDRY BATTLE ROSTER (IDN) -->
+					<div class="list-item foundry-menu-btn" id="foundry-menu-btn" onclick="openFoundry()" role="button" tabindex="0" aria-label="Foundry Battle Roster IDN" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openFoundry()}">
+						<span class="alliance-name">🏭 Foundry Battle Roster (IDN)</span>
+						<span class="arrow">&gt;</span>
+					</div>
+
+					<div class="list-spacer"></div>
+
+					<!-- ALLIANCE & GLOBAL BUTTONS -->
+					<div class="list-item alliance-item" onclick="selectAlliance('ARX')" role="button" tabindex="0" aria-label="ARX Alliance">
+						<span class="alliance-name"><span class="alliance-crest crest-arx" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#emb-arx"></use></svg></span>ARX Alliance</span>
+						<span class="arrow">&gt;</span>
+					</div>
+					<div class="list-item alliance-item" onclick="selectAlliance('IDN')" role="button" tabindex="0" aria-label="IDN Alliance">
+						<span class="alliance-name"><span class="alliance-crest crest-idn" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#emb-idn"></use></svg></span>IDN Alliance</span>
+						<span class="arrow">&gt;</span>
+					</div>
+					<div class="list-item alliance-item" onclick="selectAlliance('VNX')" role="button" tabindex="0" aria-label="VNX Alliance">
+						<span class="alliance-name"><span class="alliance-crest crest-vnx" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#emb-vnx"></use></svg></span>VNX Alliance</span>
+						<span class="arrow">&gt;</span>
+					</div>
+					<div class="list-item alliance-item" onclick="selectAlliance('ZXC')" role="button" tabindex="0" aria-label="ZXC Alliance">
+						<span class="alliance-name"><span class="alliance-crest crest-zxc" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#emb-zxc"></use></svg></span>ZXC Alliance</span>
+						<span class="arrow">&gt;</span>
+					</div>
+					<div class="list-item alliance-item" onclick="selectAlliance('CAT')" role="button" tabindex="0" aria-label="CAT Alliance">
+						<span class="alliance-name"><span class="alliance-crest crest-cat" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#emb-cat"></use></svg></span>CAT Alliance</span>
+						<span class="arrow">&gt;</span>
+					</div>
+
+					<!-- ALL TROOPS POWER BUTTON -->
+					<div class="list-item all-troops-btn" onclick="selectAlliance('ALL')" role="button" tabindex="0" aria-label="All troops power global rank">
+						<span class="all-troops-label">
+							<span class="all-troops-icon">🏆</span>
+							ALL TROOPS POWER (GLOBAL RANK)
+						</span>
+						<span class="arrow legion-btn-arrow">&gt;</span>
 					</div>
 				</div>
 			</section>
 
-			<section id="schedule-page" class="hidden">
-				<div class="schedule-actions schedule-actions-row">
-					<button class="btn-back action-no-bottom" onclick="showPositions()" data-i18n="btn_back">&lt; Back to positions</button>
-					<button id="export-csv-btn" class="btn-apply btn-export" onclick="exportToCSV()" data-i18n="btn_export_csv">Export CSV</button>
-					<button id="toggle-reservation-btn" class="btn-apply btn-reservation-toggle" onclick="handleToggleReservation()" data-i18n="btn_close_reservation">Close Reservation</button>
-					<button id="how-to-use-btn" class="btn-apply how-to-use-btn btn-schedule-small" onclick="openHowToUseModal()" data-i18n="btn_how_to_use">How to use</button>
+
+			<!-- FOUNDRY BATTLE ROSTER PAGE (IDN) -->
+			<section id="foundry-page" class="hidden">
+				<div class="schedule-actions">
+					<button class="btn-back no-bottom-margin" onclick="closeFoundry()">&lt; Back to Menu</button>
+				</div>
+				<h1 class="page-title fire-text">Foundry Battle Roster</h1>
+				<p class="page-subtitle">IDN Alliance · 2 Legion · 30 Battle + 10 Substitutes per Legion</p>
+				<div id="foundry-admin-bar" class="fy-admin hidden">
+					<button class="btn-apply" type="button" onclick="openFoundryBulkAssign()">➕ Bulk Assign</button>
+					<button class="btn-apply" type="button" onclick="foundryAutoFill()">⚡ Isi Otomatis (by Power)</button>
+					<select id="foundry-copy-legion" class="btn-apply" aria-label="Legion untuk disalin" style="min-height:44px"><option value="all">Semua Legion</option><option value="Legion 1">Legion 1</option><option value="Legion 2">Legion 2</option></select>
+					<select id="foundry-copy-mode" class="btn-apply" aria-label="Fase untuk disalin" style="min-height:44px"><option value="all">Semua fase (per slot)</option><option value="1">Phase 1 (per bangunan)</option><option value="2">Phase 2 (per bangunan)</option><option value="3">Phase 3 (per bangunan)</option></select>
+					<button class="btn-apply" type="button" onclick="foundryCopyText()">📋 Salin untuk Discord</button>
+					<button class="btn-apply btn-danger" type="button" onclick="foundryClearAll()">Kosongkan Roster</button>
+				</div>
+				<div class="fy-tabs" role="tablist">
+					<button class="fy-tab btn-apply" data-tab="Legion 1" onclick="foundrySetTab('Legion 1')">Legion 1</button>
+					<button class="fy-tab btn-apply" data-tab="Legion 2" onclick="foundrySetTab('Legion 2')">Legion 2</button>
+					<button class="fy-tab btn-apply" data-tab="map" onclick="foundrySetTab('map')">🗺️ Peta</button>
+					<button class="fy-tab btn-apply" data-tab="chart" onclick="foundrySetTab('chart')">📊 Grafik</button>
+					<button class="fy-tab btn-apply" data-tab="strategy" onclick="foundrySetTab('strategy')">📖 Strategi</button>
+					<button class="fy-tab btn-apply" data-tab="checklist" onclick="foundrySetTab('checklist')">✅ Checklist</button>
+				</div>
+				<div id="foundry-body"></div>
+			</section>
+
+			<!-- TROOPS & LEGION TABLE PAGE -->
+			<section id="troops-table-page" class="hidden">
+				<div class="schedule-actions">
+					<button class="btn-back no-bottom-margin" onclick="showAllianceMenu()">&lt; Back to Menu</button>
+					<div class="schedule-actions-buttons">
+						<button id="add-entry-btn" class="btn-apply toolbar-action-btn" onclick="openAddModal()">+ Add Player Power</button>
+						<button id="add-legion-member-btn" class="btn-apply toolbar-action-btn legion-action-btn" onclick="openAddLegionModal()">+ Assign Player to Legion</button>
+						<button id="bulk-assign-top-btn" class="btn-apply toolbar-action-btn legion-action-btn" style="display:none;" onclick="openBulkAssignModal()">Bulk Assign</button>
+						<button id="bulk-remove-top-btn" class="btn-apply btn-danger toolbar-action-btn" style="display:none;" onclick="openBulkRemoveModal()">Bulk Remove</button>
+						<button class="btn-apply toolbar-action-btn export-btn" onclick="exportToCSV()">Export CSV</button>
+					</div>
 				</div>
 
-				<h1 class="page-title" id="selected-title" data-i18n="selected_position_title">Position Title</h1>
-				<h3 class="section-title">
-					<span data-i18n="schedule_heading">Time Slot Schedule</span> <span id="admin-indicator" data-i18n="admin_mode_indicator" class="admin-indicator">(PRESIDENT MODE)</span>
+				<h1 class="page-title" id="selected-alliance-title">ARX Alliance</h1>
+				<h3 class="section-title table-section-title">
+					<span id="sub-page-title">Troops Power Leaderboard</span>
+					<span id="admin-indicator" class="admin-indicator">(ALLIANCE STAFF MODE)</span>
 				</h3>
 
-				<div class="timezone-selector">
-					<label for="timezone" data-i18n="label_timezone">Display Time Zone:</label>
-					<select id="timezone" onchange="renderTimeSlots()">
-					</select>
+				<!-- LEGION STATUS COUNTER BAR -->
+				<div id="legion-counter-bar" class="legion-counter-bar">
+					<span class="counter-badge counter-badge-battle">
+						<svg class="clash-svg counter-sword-icon" viewBox="0 0 100 100">
+							<use href="#clash-sword-icon"></use>
+						</svg>
+						<strong>Battle Main Players:</strong> <span id="count-battle" class="counter-value">0</span> / 30
+					</span>
+					<span class="counter-badge counter-badge-substitute">
+						<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#alliance-shield-icon"></use></svg> <strong>Substitute Players:</strong> <span id="count-substitute">0</span> / 20
+					</span>
 				</div>
 
-				<div class="table-container">
+				<!-- DINAMIS POWER SUMMARY CARDS CONTAINER -->
+				<div id="dynamic-summary-cards" class="dynamic-summary-cards">
+					<!-- Dinamis diisi via leaderboard.js -->
+				</div>
+
+				<!-- SEARCH + LAST UPDATED TOOLBAR -->
+				<div class="table-toolbar">
+					<div class="search-bar-container">
+						<input type="text" id="search-input" class="search-input" placeholder="🔍 Search nickname or Game ID..." oninput="handleSearchInput(this.value)">
+					</div>
+					<div id="fdt-alliance-filter-wrap" class="alliance-filter-container hidden">
+						<label for="fdt-alliance-filter">View by Alliance</label>
+						<select id="fdt-alliance-filter" class="alliance-filter-select" onchange="handleFdtAllianceFilter(this.value)">
+							<option value="">All Alliances</option>
+							<option value="Alliance A">Alliance A</option>
+							<option value="Alliance B">Alliance B</option>
+						</select>
+						<button id="fdt-chart-toggle-btn" class="btn-apply fdt-chart-toggle-btn" type="button" onclick="toggleFdtChartView()" aria-pressed="false">📊 View as Chart</button>
+					</div>
+					<span id="last-updated-text" class="last-updated-text">Last updated: -</span>
+				</div>
+
+				<section id="fdt-tools" class="hidden" style="margin:14px 0;padding:16px;border:1px solid #38bdf8;border-radius:14px;background:rgba(8,47,73,.28)">
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between">
+                      <div><h2 style="margin:0">🐉 Frostdragon Tyrant Command Center</h2><small>One battle group · up to 60 combatants per alliance</small></div>
+                      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-apply" type="button" onclick="toggleFdtStatus(true)">Real Time Status</button><button class="btn-apply fdt-rgb-border" type="button" onclick="toggleFdtGuide()">FDT Guide</button></div>
+                    </div>
+                    <div id="fdt-admin-controls" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:end">
+                      <label>Battlefield open (UTC)<input id="fdt-open-time" type="datetime-local" style="display:block"></label>
+                      <label>Roster deadline (UTC)<input id="fdt-deadline" type="datetime-local" style="display:block"></label>
+                      <button class="btn-apply" onclick="saveFdtSettings()">Save schedule</button>
+                      <button class="btn-apply" onclick="toggleFdtLock()" id="fdt-lock-btn">Lock roster</button>
+                      <button class="btn-apply" type="button" onclick="autoAssignDragoniteCollectors()" title="Lowest-power players become Dragonite Collectors and multitask until Dragonite opens">🐲 Auto-assign Dragonite</button>
+                    </div>
+                    <div id="fdt-countdown" style="margin-top:12px;font-weight:700">Battlefield schedule not set.</div>
+                    <div id="fdt-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:12px"></div>
+                    <div id="fdt-checklist" style="margin-top:14px"><button type="button" id="fdt-checklist-toggle" class="fdt-checklist-toggle" aria-expanded="false" aria-controls="fdt-checklist-body" onclick="toggleFdtChecklist()"><span class="fdt-checklist-title">Admin phase checklist <small id="fdt-checklist-status" style="font-weight:400;color:#94a3b8"></small></span><span class="fdt-checklist-chevron" aria-hidden="true">&#9660;</span></button>
+                      <div id="fdt-checklist-body" class="fdt-checklist-body hidden">
+                      <h4>Before Battlefield opens</h4>
+                      <label><input type="checkbox" data-chk="tyrant"> Confirm exactly one Tyrant Candidate</label>
+                      <label><input type="checkbox" data-chk="captains"> Assign Rally Captains and Capital Reinforcers</label>
+                      <label><input type="checkbox" data-chk="spires"> Assign Spire teams (Life / Shield / Dragonbane / Blade)</label>
+                      <label><input type="checkbox" data-chk="limit60"> Confirm members joined before sign-up ended and dispatch at most 60 per alliance</label>
+                      <label><input type="checkbox" data-chk="lock"> Lock roster at the deadline</label>
+                      <h4>Capital opening / Dragonite gathering</h4>
+                      <label><input type="checkbox" data-chk="routes"> Share Dragonite collection routes and refresh timing</label>
+                      <label><input type="checkbox" data-chk="defense"> Coordinate Capital Defense and reinforcement calls</label>
+                      <h4>Mid-battle / Rearmament</h4>
+                      <label><input type="checkbox" data-chk="rotate"> Rotate Spire assignments every 30 minutes</label>
+                      <label><input type="checkbox" data-chk="rearm"> Save healing resources for Rearmament and prepare teleport plan</label>
+                      </div>
+                    </div>
+                </section>
+				<div class="table-container" aria-live="polite">
 					<table>
 						<thead>
-							<tr>
-								<th data-i18n="th_action">ACTION</th>
-								<th data-i18n="th_preferred_time">TIME SLOT (UTC+0)</th>
-								<th data-i18n="th_status">STATUS</th>
-								<th data-i18n="th_nickname">IN-GAME NICKNAME</th>
-								<th data-i18n="th_gameid">IN-GAME ID</th>
-								<th data-i18n="th_fc">FC</th>
+							<tr id="table-header-row">
+								<th>RANK</th>
+								<th class="sortable" onclick="handleSortClick('alliance')">ALLIANCE <span class="sort-arrow" id="sort-arrow-alliance"></span></th>
+								<th class="sortable" onclick="handleSortClick('nickname')">NICKNAME <span class="sort-arrow" id="sort-arrow-nickname"></span></th>
+								<th class="sortable" onclick="handleSortClick('game_id')">GAME ID <span class="sort-arrow" id="sort-arrow-game_id"></span></th>
+								<th class="sortable" onclick="handleSortClick('troops_power')">TROOPS POWER <span class="sort-arrow" id="sort-arrow-troops_power"></span></th>
+								<th class="sortable" onclick="handleSortClick('preferred_time')">PREFERRED TIME <span class="sort-arrow" id="sort-arrow-preferred_time"></span></th>
+                                <th id="th-frostdragon-task" class="hidden-table-column">FROSTDRAGON TASK</th>
+								<th id="th-status" class="hidden-table-column">STATUS</th>
+								<th id="th-action" class="hidden-table-column">ACTION</th>
 							</tr>
 						</thead>
-						<tbody id="schedule-table-body"></tbody>
+						<tbody id="troops-table-body">
+							<!-- Populated via JS -->
+						</tbody>
 					</table>
+				</div>
+
+				<!-- PAGINATION -->
+				<div id="pagination-controls" class="pagination-controls hidden-pagination">
+					<button class="btn-back" onclick="goToPrevPage()" id="pagination-prev-btn">&lt; Prev</button>
+					<span id="pagination-info">Page 1 of 1</span>
+					<button class="btn-back" onclick="goToNextPage()" id="pagination-next-btn">Next &gt;</button>
 				</div>
 			</section>
 		</main>
 
-		<!-- Modal Daftar Menunggu -->
-		<div id="waiting-modal" class="modal hidden">
-			<div class="modal-content">
-				<button type="button" class="close-modal" onclick="closeModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 id="modal-title" data-i18n="applicants_list_title">Applicants List</h2>
-				<div class="modal-table-container">
-					<table>
-						<thead>
-							<tr>
-								<th data-i18n="modal_nickname_short" class="table-cell-left-compact">NICKNAME</th>
-								<th data-i18n="modal_id_short" class="table-cell-left-compact">ID</th>
-							</tr>
-						</thead>
-						<tbody id="modal-table-body"></tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal Pindahkan Pengajuan Menunggu (leftover setelah salah satu di-Accept) -->
-		<div id="reassign-modal" class="modal hidden">
-			<div class="modal-content">
-				<button type="button" class="close-modal" onclick="closeReassignModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 id="reassign-modal-title" data-i18n="reassign_modal_title">Move Waiting Applicants</h2>
-				<p data-i18n="reassign_desc" class="reassign-description">This slot now has an Accepted application. The applicants below are NOT deleted — pick a free slot for each one and click Move.</p>
-				<div class="modal-table-container">
-					<table>
-						<thead>
-							<tr>
-								<th data-i18n="modal_nickname_short" class="table-cell-left-compact">NICKNAME</th>
-								<th data-i18n="modal_id_short" class="table-cell-left-compact">ID</th>
-								<th data-i18n="th_move_to" class="table-cell-left-compact">MOVE TO</th>
-								<thclass="table-cell-left-compact"></th>
-							</tr>
-						</thead>
-						<tbody id="reassign-table-body"></tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal Detail Statistik (Pop-up Ikon Kaca Pembesar) -->
-		<div id="details-modal" class="modal hidden">
+		<!-- SCHEDULE SETTING MODAL FOR ADMIN -->
+		<div id="schedule-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="schedule-modal-title">
 			<div class="modal-content custom-form-modal">
-				<button type="button" class="close-modal" onclick="closeDetailsModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 data-i18n="details_modal_title" class="modal-heading-center">Application Details</h2>
-				<div id="details-content">
-					<!-- Diisi secara dinamis via JavaScript -->
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal How to Use -->
-		<div id="how-to-use-modal" class="modal hidden">
-			<div class="modal-content custom-form-modal how-to-use-modal-content">
-				<button type="button" class="close-modal" onclick="closeHowToUseModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 data-i18n="how_to_use_title" class="howto-title">How to use</h2>
-				<p class="how-to-use-description" data-i18n="how_to_use_description">Notes for using this reservation page. President can edit and save these notes.</p>
-				<textarea id="how-to-use-notes" class="how-to-use-notes" maxlength="10000" spellcheck="true" data-i18n-placeholder="how_to_use_placeholder" placeholder="Write usage notes here..."></textarea>
-				<div class="form-actions how-to-use-actions">
-					<button class="btn-back modal-action-btn" onclick="closeHowToUseModal()" data-i18n="btn_close">Close</button>
-					<button id="how-to-use-save-btn" class="btn-apply modal-action-btn" onclick="saveHowToUseNotes()" data-i18n="btn_save">Save</button>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal Redeem Code: native form that calls the redeem-giftcode Supabase
-		     Edge Function (see js/app-extras.js), which itself calls Century Games'
-		     wos-giftcode-api.centurygame.com on the server side. -->
-		<div id="redeem-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="redeem-modal-title">
-			<div class="modal-content custom-form-modal redeem-modal-content">
-				<button type="button" class="close-modal" onclick="closeRedeemModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 id="redeem-modal-title" class="apply-title" data-i18n="redeem_code_btn">Redeem Code</h2>
+				<span class="close-modal" onclick="closeScheduleModal()">&times;</span>
+				<h2 id="schedule-modal-title" class="modal-title">Set Match Schedule</h2>
+				<p class="modal-subtitle">
+					Target: <span id="schedule-modal-target" class="modal-target-highlight">-</span>
+				</p>
 
 				<div class="form-group">
-					<label for="redeem-state-display" data-i18n="redeem_state_label">State</label>
+					<label>Match Day</label>
+					<select id="input-match-day">
+						<option value="">-- Select Day --</option>
+						<option value="Monday">Monday</option>
+						<option value="Tuesday">Tuesday</option>
+						<option value="Wednesday">Wednesday</option>
+						<option value="Thursday">Thursday</option>
+						<option value="Friday">Friday</option>
+						<option value="Saturday">Saturday</option>
+						<option value="Sunday">Sunday</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>Match Time (UTC)</label>
+					<select id="input-match-time">
+						<option value="">-- Select Match Time --</option>
+						<option value="02:00 UTC">02:00 UTC</option>
+						<option value="07:00 UTC">07:00 UTC</option>
+						<option value="12:00 UTC">12:00 UTC</option>
+						<option value="14:00 UTC">14:00 UTC</option>
+						<option value="19:00 UTC">19:00 UTC</option>
+					</select>
+				</div>
+
+				<div class="form-actions">
+					<button class="btn-back" onclick="closeScheduleModal()">Cancel</button>
+					<button class="btn-apply primary-action" onclick="submitMatchSchedule()">Save Schedule</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- PRESIDENT / GUILD INFO EDIT MODAL (Full-access staff only) -->
+		<div id="president-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="president-modal-title">
+			<div class="modal-content custom-form-modal">
+				<span class="close-modal" onclick="closePresidentModal()">&times;</span>
+				<h2 id="president-modal-title" class="modal-title">Edit President Info</h2>
+				<p class="modal-subtitle">This updates the footer shown to everyone.</p>
+
+				<div class="form-group">
+					<label>President Name</label>
+					<input type="text" id="input-president-name" placeholder="Enter president name">
+				</div>
+
+				<div class="form-group">
+					<label>Guild Name</label>
+					<input type="text" id="input-guild-name" placeholder="Enter guild name">
+				</div>
+
+				<div class="form-actions">
+					<button class="btn-back" onclick="closePresidentModal()">Cancel</button>
+					<button id="president-submit-btn" class="btn-apply primary-action" onclick="submitPresidentInfo()">Save</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- PLAYER INPUT/EDIT MODAL -->
+		<div id="add-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-form-title">
+			<div class="modal-content custom-form-modal">
+				<span class="close-modal" onclick="closeAddModal()">&times;</span>
+				<h2 id="modal-form-title" class="modal-title">Add Troops Power</h2>
+				<p class="modal-subtitle">
+					Alliance: <span id="form-alliance-label" class="modal-target-highlight">-</span>
+				</p>
+
+				<div class="form-group hidden-form-group" id="group-alliance-select">
+					<label>Select Alliance</label>
+					<select id="input-alliance">
+						<option value="ARX">ARX</option>
+						<option value="IDN">IDN</option>
+						<option value="VNX">VNX</option>
+						<option value="ZXC">ZXC</option>
+						<option value="CAT">CAT</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>In-Game Nickname</label>
+					<input type="text" id="input-nickname" placeholder="Enter nickname">
+				</div>
+
+				<div class="form-group">
+					<label>In-Game ID</label>
+					<input type="text" inputmode="numeric" pattern="[0-9]*" id="input-gameid" placeholder="Enter Game ID">
+				</div>
+
+				<div class="form-group">
+					<label>Troops Power Amount</label>
+					<input type="number" id="input-power" placeholder="e.g. 150000000">
+				</div>
+
+				<!-- PREFERRED TIME DROPDOWN -->
+				<div class="form-group">
+					<label>Preferred Time (UTC)</label>
+					<select id="input-preferred-time">
+						<option value="">-- Select Preferred Time --</option>
+						<option value="02:00 UTC">02:00 UTC</option>
+						<option value="07:00 UTC">07:00 UTC</option>
+						<option value="12:00 UTC">12:00 UTC</option>
+						<option value="14:00 UTC">14:00 UTC</option>
+						<option value="19:00 UTC">19:00 UTC</option>
+					</select>
+				</div>
+
+				<div class="form-actions">
+					<button class="btn-back" onclick="closeAddModal()">Cancel</button>
+					<button id="modal-submit-btn" class="btn-apply primary-action" onclick="submitPlayerData()">Submit Data</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- PRESIDENT PANEL -->
+		<section id="president-panel" class="president-panel hidden" aria-label="President Panel" onclick="if(event.target===this) closePresidentPanel()">
+		<div class="pp-modal-content">
+			<div class="pp-header">
+				<div>
+					<div class="pp-kicker">FULL ACCESS CONTROL CENTER</div>
+					<h2>👑 PRESIDENT PANEL</h2>
+					<p>Central control for the five alliances, player roster, battle and system settings.</p>
+				</div>
+				<div id="pp-theme-badge" class="pp-theme-badge"><svg class="pp-badge-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#tundra-snow-icon"></use></svg>TUNDRA ARM LEAGUE</div>
+			</div>
+
+			<div class="pp-toolbar">
+				<button class="btn-back" onclick="closePresidentPanel()">&lt; Back</button>
+				<button class="btn-apply" onclick="presidentRefreshData()">↻ Refresh</button>
+				<button class="btn-apply export-btn" onclick="exportPresidentSnapshot()">⇩ Export CSV</button>
+			</div>
+
+			<div class="pp-stats">
+				<div class="pp-stat"><span>Total Players</span><strong id="pp-total-players">—</strong></div>
+				<div class="pp-stat"><span>Battle</span><strong id="pp-battle-players">0</strong></div>
+				<div class="pp-stat"><span>Substitute</span><strong id="pp-sub-players">0</strong></div>
+				<div class="pp-stat"><span>Active Theme</span><strong id="pp-theme-name">Tundra Arm League</strong></div>
+			</div>
+
+			<div class="pp-grid">
+				<div class="pp-card pp-wide pp-theme-card">
+					<h3>🎨 Battle Theme</h3>
+					<p>Choose the battle mode for the whole site. This is global: every visitor and staff member sees the change.</p>
+					<div class="pp-theme-options" role="group" aria-label="Battle theme">
+						<button id="pp-tundra-btn" class="pp-theme-option" aria-pressed="false" onclick="switchBattleTheme('tundra')">
+							<span class="pp-theme-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g id="pp-snow-arm"><path d="M12 2.500v19M9.300 5 12 7.500 14.700 5M9.300 19 12 16.500 14.700 19"/></g><use href="#pp-snow-arm" transform="rotate(60 12 12)"/><use href="#pp-snow-arm" transform="rotate(120 12 12)"/></svg></span>
+							<span class="pp-theme-text">
+								<b>Tundra Arm League <i class="pp-active-tag">ACTIVE</i></b>
+								<small>2 Legions · each 30 Battle + 20 Substitute</small>
+							</span>
+						</button>
+						<button id="pp-frostdragon-btn" class="pp-theme-option" aria-pressed="false" onclick="switchBattleTheme('frostdragon')">
+							<span class="pp-theme-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" stroke="none"><path fill-rule="evenodd" d="M2.500 3C8 3.500 11 5.500 12 8l5.500.5c2.500.5 4.500 1.500 5.500 3L20 12l-5.500 1L21 16c-2 1.500-5 2-8 1.500-1 1.500-1.500 3-1 4.500H5c-.5-5 .5-9 3-11.500C6 9 4 6.500 2.500 3zM14.500 9.500a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/><path d="M10 6.800 13 2l1 5.500zM7.300 12.500 3.800 12.800l3.200 2.200zM6.500 16.500 3 17.200l3.300 2zM5.800 20.300 2.800 21.500H5.600zM15.500 13.200l1.200 2.600 1.300-2.800zM19 12.800l.9 2 1.100-2.300z"/></svg></span>
+							<span class="pp-theme-text">
+								<b>Frostdragon Tyrant <i class="pp-active-tag">ACTIVE</i></b>
+								<small>1 Battle Group · up to 60 per alliance · No Substitute</small>
+							</span>
+						</button>
+					</div>
+					<div class="pp-feature-note">Player data, alliances and leaderboards stay intact. Each theme keeps its own roster, so switching never overwrites the other.</div>
+				</div>
+
+				<div class="pp-card">
+					<h3>👥 Player Management</h3>
+					<p>Open the existing player database and manage all five alliances.</p>
+					<div class="pp-actions-grid">
+						<button class="btn-apply" onclick="presidentOpenAlliance('ARX')">ARX</button><button class="btn-apply" onclick="presidentOpenAlliance('IDN')">IDN</button>
+						<button class="btn-apply" onclick="presidentOpenAlliance('VNX')">VNX</button><button class="btn-apply" onclick="presidentOpenAlliance('ZXC')">ZXC</button>
+						<button class="btn-apply" onclick="presidentOpenAlliance('CAT')">CAT</button><button class="btn-apply" onclick="presidentOpenAlliance('ALL')">ALL</button>
+					</div>
+				</div>
+
+				<div class="pp-card">
+					<h3><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#swords-icon"></use></svg> Battle / Legion Management</h3>
+					<p id="pp-battle-description">Manage the existing Legion rosters and player assignments.</p>
+					<div class="pp-actions-row"><button class="btn-apply legion-action-btn" onclick="presidentOpenBattle('Legion 1')">Open Battle 1</button><button id="pp-legion2-btn" class="btn-apply legion-action-btn" onclick="presidentOpenBattle('Legion 2')">Open Battle 2</button></div>
+				</div>
+
+				<div class="pp-card">
+					<h3>🏆 Global Leaderboard</h3>
+					<p>View the complete Troops Power ranking across ARX, IDN, VNX, ZXC and CAT.</p>
+					<button class="btn-apply" onclick="presidentOpenAlliance('ALL')">Open Global Ranking</button>
+				</div>
+
+				<div class="pp-card">
+					<h3>📅 Battle Schedule</h3>
+					<p>Use the existing schedule system for the active Battle group(s).</p>
+					<div class="pp-actions-row"><button class="btn-apply" onclick="presidentOpenSchedule('Legion 1')">Schedule 1</button><button id="pp-schedule2-btn" class="btn-apply" onclick="presidentOpenSchedule('Legion 2')">Schedule 2</button></div>
+				</div>
+
+				<div class="pp-card">
+					<h3>👤 Staff / Access Control</h3>
+					<p>Review the access scopes currently configured in this website.</p>
+					<div id="pp-role-list" class="pp-role-list"></div>
+				</div>
+
+				<div id="pp-accounts-card" class="pp-card pp-wide hidden">
+					<h3>🔑 Staff Accounts</h3>
+					<p>Change the username and password of every staff account. Users are signed out after a change and must log in again.</p>
+					<div id="pp-accounts-list" class="pp-accounts-list"><div class="pp-accounts-empty">Loading…</div></div>
+					<div class="pp-actions-row"><button class="btn-apply" onclick="loadStaffAccounts()">Reload Accounts</button></div>
+				</div>
+
+				<div class="pp-card">
+					<h3>⚙️ System Settings</h3>
+					<p>Site presentation and President/Guild information.</p>
+					<div class="pp-actions-row"><button class="btn-apply" onclick="toggleSnowEffect(); refreshPresidentPanel()">Toggle Snow</button><button class="btn-apply" onclick="presidentOpenInfo()">President / Guild</button></div>
+				</div>
+
+				<div class="pp-card pp-wide pp-maintenance">
+					<h3>🧹 Data Maintenance</h3>
+					<p>Administrative maintenance of the existing <code>troops_power</code> data. Destructive actions require confirmation.</p>
+					<div class="pp-actions-row"><button class="btn-back pp-danger-outline" onclick="presidentClearAllTroops()">Delete ALL Player Data</button><button class="btn-back pp-danger-outline" onclick="presidentClearLocalSettings()">Reset Local Settings</button></div>
+				</div>
+			</div>
+		</div>
+		</section>
+
+		<!-- PRESIDENT LEGION ASSIGNMENT MODAL -->
+		<div id="bulk-remove-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="bulk-remove-modal-title">
+			<div class="modal-content custom-form-modal">
+				<span class="close-modal" onclick="closeBulkRemoveModal()">&times;</span>
+				<h2 id="bulk-remove-modal-title" class="modal-title">Bulk Remove from Roster</h2>
+				<p class="modal-subtitle">
+					Target: <span id="bulk-remove-target-label" class="modal-target-highlight-purple">Legion 1</span>
+				</p>
+
+				<div class="form-group">
+					<label for="bulk-remove-alliance">Alliance Category</label>
+					<select id="bulk-remove-alliance" onchange="filterBulkRemovePlayers()"></select>
+				</div>
+
+				<div class="form-group hidden" id="bulk-remove-task-group">
+					<label for="bulk-remove-task">Task</label>
+					<select id="bulk-remove-task" onchange="filterBulkRemovePlayers()"></select>
+				</div>
+
+				<div class="form-group">
+					<label for="bulk-remove-search">Search Game ID / Nickname</label>
+					<input type="text" id="bulk-remove-search" placeholder="Type game ID or nickname..." autocomplete="off" oninput="filterBulkRemovePlayers()">
+				</div>
+
+				<div class="bulk-remove-toolbar">
+					<label class="bulk-remove-all"><input type="checkbox" id="bulk-remove-select-all" onchange="toggleBulkRemoveAll(this.checked)"> Select all shown</label>
+					<span id="bulk-remove-count" class="legion-assign-count">0 selected</span>
+				</div>
+				<div id="bulk-remove-list" class="bulk-remove-list"></div>
+
+				<div class="form-actions">
+					<button class="btn-back" onclick="closeBulkRemoveModal()">Cancel</button>
+					<button id="bulk-remove-submit-btn" class="btn-apply btn-danger primary-action" onclick="submitBulkRemove()" disabled>Remove Selected</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- BULK ASSIGN MODAL -->
+		<div id="bulk-assign-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="bulk-assign-modal-title">
+			<div class="modal-content custom-form-modal">
+				<span class="close-modal" onclick="closeBulkAssignModal()">&times;</span>
+				<h2 id="bulk-assign-modal-title" class="modal-title">Bulk Assign Players</h2>
+				<p class="modal-subtitle">
+					Target: <span id="bulk-assign-target-label" class="modal-target-highlight-purple">Legion 1</span>
+				</p>
+
+				<div class="form-group">
+					<label for="bulk-assign-alliance">Alliance Category</label>
+					<select id="bulk-assign-alliance" onchange="filterBulkAssignPlayers()"></select>
+				</div>
+
+				<div class="form-group">
+					<label for="bulk-assign-search">Search Game ID / Nickname</label>
+					<input type="text" id="bulk-assign-search" placeholder="Type game ID or nickname..." autocomplete="off" oninput="filterBulkAssignPlayers()">
+				</div>
+
+				<div class="bulk-remove-toolbar">
+					<label class="bulk-remove-all"><input type="checkbox" id="bulk-assign-select-all" onchange="toggleBulkAssignAll(this.checked)"> Select all shown</label>
+					<span id="bulk-assign-count" class="legion-assign-count">0 selected</span>
+				</div>
+				<div id="bulk-assign-list" class="bulk-remove-list"></div>
+
+				<div class="form-group" id="bulk-assign-role-group">
+					<label for="bulk-assign-role">Legion Role Status</label>
+					<select id="bulk-assign-role">
+						<option value="Battle">Battle (Main Players - Max 30)</option>
+						<option value="Substitute">Substitute (Reserve Players - Max 20)</option>
+					</select>
+				</div>
+
+				<div class="form-group hidden" id="bulk-assign-task-group">
+					<label>Task for all selected <span class="legion-assign-count">(optional, can pick several)</span></label>
+					<div id="bulk-assign-task-options" class="legion-assign-task-options"></div>
+					<select id="bulk-assign-task-mode" style="margin-top:8px">
+						<option value="add">Add to each player's existing tasks</option>
+						<option value="replace">Replace each player's existing tasks</option>
+					</select>
+				</div>
+
+				<div class="form-actions">
+					<button class="btn-back" onclick="closeBulkAssignModal()">Cancel</button>
+					<button id="bulk-assign-submit-btn" class="btn-apply legion-action-btn primary-action" onclick="submitBulkAssign()" disabled>Assign Selected</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- FOUNDRY BULK ASSIGN MODAL -->
+		<div id="fy-bulk-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="fy-bulk-title">
+			<div class="modal-content custom-form-modal">
+				<span class="close-modal" onclick="closeFoundryBulkAssign()">&times;</span>
+				<h2 id="fy-bulk-title" class="modal-title">Bulk Assign Foundry</h2>
+				<p class="modal-subtitle">Pemain yang dipilih mengisi slot kosong berikutnya, urut dari Power tertinggi.</p>
+
+				<div class="fy-bulk-row">
+					<div class="form-group">
+						<label for="fy-bulk-legion">Legion</label>
+						<select id="fy-bulk-legion" onchange="foundryBulkUpdate()"></select>
+					</div>
+					<div class="form-group">
+						<label for="fy-bulk-status">Status</label>
+						<select id="fy-bulk-status" onchange="foundryBulkUpdate()"></select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="fy-bulk-search">Cari Game ID / Nickname</label>
+					<input type="text" id="fy-bulk-search" placeholder="Ketik game ID atau nickname..." autocomplete="off" oninput="foundryBulkFilter()">
+				</div>
+
+				<div class="bulk-remove-toolbar">
+					<label class="bulk-remove-all"><input type="checkbox" id="fy-bulk-all" onchange="foundryBulkToggleAll(this.checked)"> Pilih semua yang tampil (sampai slot penuh)</label>
+					<span id="fy-bulk-count" class="legion-assign-count">0 dipilih</span>
+				</div>
+				<div id="fy-bulk-list" class="bulk-remove-list"></div>
+				<p id="fy-bulk-info" class="fy-note"></p>
+
+				<div class="form-actions">
+					<button class="btn-back" onclick="closeFoundryBulkAssign()">Batal</button>
+					<button id="fy-bulk-submit" class="btn-apply legion-action-btn primary-action" onclick="foundryBulkSubmit()" disabled>Assign Terpilih</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="legion-assign-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="legion-assign-modal-title">
+			<div class="modal-content custom-form-modal">
+				<span class="close-modal" onclick="closeLegionAssignModal()">&times;</span>
+				<h2 id="legion-assign-modal-title" class="modal-title">Assign Player to Legion</h2>
+				<p class="modal-subtitle">
+					Target: <span id="legion-assign-target-label" class="modal-target-highlight-purple">Legion 1</span>
+				</p>
+
+				<div class="form-group">
+					<label for="legion-assign-alliance">Alliance Category</label>
+					<select id="legion-assign-alliance" onchange="filterLegionAssignPlayers()">
+						<!-- Populated via JS -->
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="legion-assign-search">Search Game ID / Nickname</label>
+					<input type="text" id="legion-assign-search" placeholder="Type game ID or nickname..." autocomplete="off" oninput="filterLegionAssignPlayers()">
+				</div>
+
+				<div class="form-group">
+					<label for="select-legion-player">Select Player <span id="legion-assign-count" class="legion-assign-count"></span></label>
+					<select id="select-legion-player" onchange="onLegionAssignPlayerChange()">
+						<!-- Populated via JS -->
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>Legion Role Status</label>
+					<select id="select-legion-role">
+						<option value="Battle">Battle (Main Players - Max 30)</option>
+						<option value="Substitute">Substitute (Reserve Players - Max 20)</option>
+					</select>
+				</div>
+
+				<div class="form-group hidden" id="legion-assign-task-group">
+					<label>Task <span class="legion-assign-count">(optional, can pick several)</span></label>
+					<div id="legion-assign-task-options" class="legion-assign-task-options"></div>
+				</div>
+
+				<div class="form-actions">
+					<button class="btn-back" onclick="closeLegionAssignModal()">Cancel</button>
+					<button class="btn-apply legion-action-btn" onclick="submitLegionAssignment()">Assign Player</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- PRESIDENT: EDIT STAFF ACCOUNT MODAL -->
+		<div id="staff-account-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="staff-account-modal-title">
+			<div class="modal-content custom-form-modal">
+				<span class="close-modal" onclick="closeStaffAccountModal()">&times;</span>
+				<h2 id="staff-account-modal-title" class="modal-title">Edit Staff Account</h2>
+				<p class="modal-subtitle">Current username: <span id="staff-account-current" class="modal-target-highlight-purple"></span></p>
+
+				<div class="form-group">
+					<label for="staff-account-username">New Username</label>
+					<input type="text" id="staff-account-username" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+				</div>
+				<div class="form-group">
+					<label for="staff-account-password">New Password <span class="legion-assign-count">(leave empty to keep)</span></label>
+					<input type="password" id="staff-account-password" autocomplete="new-password" placeholder="Min. 6 characters">
+				</div>
+				<div class="form-group">
+					<label for="staff-account-password2">Confirm New Password</label>
+					<input type="password" id="staff-account-password2" autocomplete="new-password">
+				</div>
+
+				<div class="form-actions">
+					<button class="btn-back" onclick="closeStaffAccountModal()">Cancel</button>
+					<button id="staff-account-save-btn" class="btn-apply primary-action" onclick="submitStaffAccountChange()">Save Changes</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ALLIANCE STAFF LOGIN MODAL (Supabase Auth, username-based) -->
+		<div id="login-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+			<div class="modal-content custom-form-modal">
+				<span class="close-modal" onclick="closeLoginModal()">&times;</span>
+				<h2 id="login-modal-title" class="modal-title">Login</h2>
+				<p class="modal-subtitle">Sign in to view player IDs and Troops Power.</p>
+
+				<div class="form-group">
+					<label>Username</label>
+					<input type="text" id="input-login-username" placeholder="Enter username" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false">
+				</div>
+
+				<div class="form-group">
+					<label>Password</label>
+					<input type="password" id="input-login-password" placeholder="Enter password" autocomplete="current-password">
+				</div>
+
+				<div class="form-actions">
+					<button class="btn-back" onclick="closeLoginModal()">Cancel</button>
+					<button id="login-submit-btn" class="btn-apply primary-action" onclick="submitStaffLogin()">Sign In</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- DUPLICATE GAME ID MODAL -->
+		<div id="duplicate-id-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="dup-title">
+			<div class="modal-content custom-confirm-box duplicate-id-box">
+				<div class="dup-icon" aria-hidden="true">
+					<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+				</div>
+				<h3 id="dup-title" class="confirm-message">Duplicate Game ID</h3>
+				<p id="dup-message" class="dup-message"></p>
+				<div class="dup-details">
+					<div><span>Game ID</span><strong id="dup-game-id">-</strong></div>
+					<div><span>Nickname</span><strong id="dup-nickname">-</strong></div>
+					<div><span>Alliance</span><strong><span id="dup-alliance" class="dup-badge">-</span></strong></div>
+					<div><span>Troops Power</span><strong id="dup-power">-</strong></div>
+				</div>
+				<div id="dup-flow" class="dup-flow hidden"><span id="dup-flow-from" class="dup-badge">-</span><span class="dup-arrow" aria-hidden="true">&rarr;</span><span id="dup-flow-to" class="dup-badge dup-badge-to">-</span></div>
+				<p id="dup-move-note" class="dup-note hidden"></p>
+				<p id="dup-no-permission" class="dup-note hidden">You can't edit this alliance. Please contact that alliance's staff.</p>
+				<div class="form-actions no-top-margin">
+					<button type="button" class="btn-back dup-cancel" onclick="closeDuplicateIdModal()">Cancel</button>
+					<button type="button" id="dup-move-btn" class="btn-apply dup-primary hidden" onclick="moveDuplicatePlayer()">Move</button>
+					<button type="button" id="dup-edit-btn" class="btn-apply dup-primary" onclick="editDuplicatePlayer()">Edit Player Data</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- CONFIRMATION MODAL -->
+		<div id="confirm-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-message">
+			<div class="modal-content custom-confirm-box">
+				<h3 id="confirm-message" class="confirm-message">Are you sure?</h3>
+				<div class="form-actions no-top-margin">
+					<button id="confirm-cancel-btn" class="btn-back">Cancel</button>
+					<button id="confirm-ok-btn" class="btn-apply danger-action">OK</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- REDEEM CODE MODAL (uses the same Supabase redeem-giftcode edge
+		     function / State 3475 as the reservation site) -->
+		<div id="redeem-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="redeem-modal-title">
+			<div class="modal-content custom-form-modal redeem-modal-content">
+				<button type="button" class="close-modal" onclick="closeRedeemModal()" aria-label="Close">&times;</button>
+				<h2 id="redeem-modal-title" class="modal-title">Redeem Code</h2>
+
+				<div class="form-group">
+					<label for="redeem-state-display">State</label>
 					<input type="text" id="redeem-state-display" value="3475" disabled>
 				</div>
 
 				<div class="form-group">
-					<label data-i18n="redeem_alliance_quickload_label">Premium Alliance Redeem</label>
+					<label>Premium Alliance Redeem</label>
 					<div id="redeem-alliance-quickload" class="redeem-alliance-quickload">
 						<button type="button" class="btn-alliance-load" data-alliance="ARX" onclick="loadAllianceFidsForRedeem('ARX', this)">ARX</button>
 						<button type="button" class="btn-alliance-load" data-alliance="IDN" onclick="loadAllianceFidsForRedeem('IDN', this)">IDN</button>
@@ -472,423 +850,129 @@
 						<button type="button" class="btn-alliance-load" data-alliance="VNX" onclick="loadAllianceFidsForRedeem('VNX', this)">VNX</button>
 						<button type="button" class="btn-alliance-load" data-alliance="CAT" onclick="loadAllianceFidsForRedeem('CAT', this)">CAT</button>
 					</div>
-					<p id="redeem-alliance-status" class="redeem-hint redeem-alliance-status" style="margin:6px 0 0; text-align:left;"></p>
+					<p id="redeem-alliance-status" class="redeem-hint" style="margin:6px 0 0; text-align:left;"></p>
 				</div>
 
 				<div class="form-group">
-					<label for="redeem-fid-input"><span data-i18n="redeem_fid_label">Player ID (FID)</span><span class="required-mark" aria-hidden="true">*</span></label>
-					<textarea id="redeem-fid-input" rows="4" placeholder="123456789&#10;987654321&#10;..." data-i18n-placeholder="redeem_fid_placeholder_multi" required aria-required="true"></textarea>
-					<p class="redeem-hint" style="margin:4px 0 0;" data-i18n="redeem_fid_multi_hint">One Player ID per line to redeem for multiple accounts at once.</p>
-					<p class="redeem-hint" style="margin:2px 0 0;" data-i18n="redeem_alliance_quickload_hint">Or pick an alliance above to auto-fill every Player ID in that alliance.</p>
+					<label for="redeem-fid-input">Player ID (FID)<span class="required-mark" aria-hidden="true">*</span></label>
+					<textarea id="redeem-fid-input" rows="4" placeholder="123456789&#10;987654321&#10;..." required aria-required="true"></textarea>
+					<p class="redeem-hint" style="margin:4px 0 0;">One Player ID per line to redeem for multiple accounts at once, or pick an alliance above to auto-fill every ID in that alliance.</p>
 				</div>
 
 				<div class="form-group">
-					<label for="redeem-code-input"><span data-i18n="redeem_code_label">Gift Code</span><span class="required-mark" aria-hidden="true">*</span></label>
-					<input type="text" id="redeem-code-input" maxlength="40" placeholder="Enter gift code" data-i18n-placeholder="redeem_code_placeholder" required aria-required="true">
+					<label for="redeem-code-input">Gift Code<span class="required-mark" aria-hidden="true">*</span></label>
+					<input type="text" id="redeem-code-input" maxlength="40" placeholder="Enter gift code" required aria-required="true">
 				</div>
 
 				<p id="redeem-result-status" class="redeem-result-status" role="status" aria-live="polite"></p>
 				<ul id="redeem-result-list" class="redeem-result-list" aria-live="polite"></ul>
 
 				<div class="form-actions">
-					<button type="button" class="btn-back modal-action-btn" onclick="closeRedeemModal()" data-i18n="btn_close">Close</button>
-					<button type="button" id="redeem-submit-btn" class="btn-apply modal-action-btn" onclick="submitRedeemCode()" data-i18n="redeem_submit_btn">Redeem</button>
+					<button type="button" class="btn-back modal-action-btn" onclick="closeRedeemModal()">Close</button>
+					<button type="button" id="redeem-submit-btn" class="btn-apply modal-action-btn" onclick="submitRedeemCode()">Redeem</button>
 				</div>
 
 			</div>
 		</div>
 
-		<!-- Modal Donate -->
-		<div id="donate-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="donate-modal-title">
-			<div class="modal-content custom-form-modal donate-modal-content">
-				<button type="button" class="close-modal" onclick="closeDonateModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 id="donate-modal-title" class="apply-title" data-i18n="donate_btn">Donate</h2>
-				<p class="donate-message">Feel Free to Donate 😂</p>
-				<button type="button" id="donate-id-btn" class="donate-id-box" onclick="copyDonateId()" aria-label="Copy ID 581651105">
-					<span class="donate-id-label">ID : <strong id="donate-id-value">581651105</strong></span>
-					<span class="donate-copy-hint" id="donate-copy-hint">Click to copy 👻</span>
-				</button>
-				<div class="form-actions">
-					<button type="button" class="btn-back modal-action-btn" onclick="closeDonateModal()" data-i18n="btn_close">Close</button>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal Form Apply -->
-		<div id="apply-modal" class="modal hidden">
-			<div class="modal-content custom-form-modal">
-				<button type="button" class="close-modal" onclick="closeApplyModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 data-i18n="apply_modal_title" class="apply-title">Apply for Time Slot</h2>
-				<pclass="apply-description">
-					<span data-i18n="apply_position_label">Position:</span> <span id="form-position-title" class="form-position-title">-</span><br>
-						<span data-i18n="apply_time_label">Time:</span> <span id="form-time-title" class="form-time-title">-</span>
-					</p>
-
-				<div class="form-section-title" data-i18n="form_section_player_info">Player Info</div>
-
-				<div class="form-group">
-					<label for="input-nickname"><span data-i18n="label_nickname">In-Game Nickname</span><span class="required-mark" aria-hidden="true">*</span></label>
-					<input type="text" id="input-nickname" maxlength="40" placeholder="Enter your nickname" data-i18n-placeholder="placeholder_nickname" required aria-required="true">
-            </div>
-				<div class="form-group">
-					<label for="input-gameid"><span data-i18n="label_gameid">In-Game ID</span><span class="required-mark" aria-hidden="true">*</span></label>
-					<input type="text" inputmode="numeric" pattern="[0-9]*" id="input-gameid" maxlength="20" placeholder="Enter your game ID" data-i18n-placeholder="placeholder_gameid" required aria-required="true">
-            </div>
-				<div class="form-group">
-					<label id="label-furnace"><span data-i18n="label_furnace">Furnace Level</span><span class="required-mark" aria-hidden="true">*</span></label>
-					<input type="hidden" id="input-furnace" value="">
-					<div id="furnace-picker" class="furnace-picker" role="radiogroup" aria-labelledby="label-furnace"></div>
-            </div>
-
-				<div class="form-section-title"><span data-i18n="form_section_resources">Resources</span><span class="form-section-hint" data-i18n="form_section_resources_hint">Optional — leave blank if you don't have any</span></div>
-
-				<div class="form-group">
-					<label for="input-fc" class="label-with-icon"><img class="stat-icon" src="images/resources/fire-crystal.webp" alt="" width="24" height="24" loading="lazy" decoding="async"><span data-i18n="label_fc">Fire Crystals Amount</span></label>
-					<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" id="input-fc" placeholder="Fire Crystal" data-i18n-placeholder="placeholder_fc">
-            </div>
-				<div class="form-group">
-					<label for="input-rfc" class="label-with-icon"><img class="stat-icon" src="images/resources/refined-fire-crystal.webp" alt="" width="24" height="24" loading="lazy" decoding="async"><span data-i18n="label_rfc">Refined Fire Crystals Amount</span></label>
-					<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" id="input-rfc" placeholder="Refined Fire Crystal" data-i18n-placeholder="placeholder_rfc">
-            </div>
-				<div class="form-group">
-					<label for="input-shard" class="label-with-icon"><img class="stat-icon" src="images/resources/fire-crystal-shard.webp" alt="" width="24" height="24" loading="lazy" decoding="async"><span data-i18n="label_shard">Fire Crystal Shard Amount</span></label>
-					<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" id="input-shard" placeholder="Fire Crystal Shard" data-i18n-placeholder="placeholder_shard">
-            </div>
-				<div class="form-group">
-					<label for="input-gensp" class="label-with-icon"><img class="stat-icon" src="images/speedups/general.webp" alt="" width="24" height="24" loading="lazy" decoding="async"><span data-i18n="label_gensp">General Speedups (Days)</span></label>
-					<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" id="input-gensp" placeholder="General Speedup in Days" data-i18n-placeholder="placeholder_gensp">
-            </div>
-				<div class="form-group">
-					<label for="input-constsp" class="label-with-icon"><img class="stat-icon" src="images/speedups/construction.webp" alt="" width="24" height="24" loading="lazy" decoding="async"><span data-i18n="label_constsp">Construction Speedups (Days)</span></label>
-					<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" id="input-constsp" placeholder="Construction Speedup in Days" data-i18n-placeholder="placeholder_constsp">
-            </div>
-				<div class="form-group">
-					<label for="input-ressp" class="label-with-icon"><img class="stat-icon" src="images/speedups/research.webp" alt="" width="24" height="24" loading="lazy" decoding="async"><span data-i18n="label_ressp">Research Speedups (Days)</span></label>
-					<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" id="input-ressp" placeholder="Research Speedup in Days" data-i18n-placeholder="placeholder_ressp">
-            </div>
-				<div class="form-group">
-					<label for="input-trainsp" class="label-with-icon"><img class="stat-icon" src="images/speedups/troop-training.webp" alt="" width="24" height="24" loading="lazy" decoding="async"><span data-i18n="label_trainsp">Troops Training Speedups (Days)</span></label>
-					<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" id="input-trainsp" placeholder="Training Speedup in Days" data-i18n-placeholder="placeholder_trainsp">
-            </div>
-
-				<div class="form-group additional-time-toggle-group">
-					<label class="checkbox-label">
-						<input type="checkbox" id="input-additional-time-toggle" onchange="toggleAdditionalTimeSlots()">
-						<span data-i18n="label_additional_time_toggle">Additional Preferred Time Slot</span>
-					</label>
-					<small class="field-hint" data-i18n="desc_additional_time_toggle">If this time slot not available, you can pick another time to reservation</small>
-				</div>
-
-				<div class="form-group notification-toggle-group">
-					<label class="checkbox-label">
-						<input type="checkbox" id="input-get-notification">
-						<span data-i18n="label_get_notification">Get Notification ?</span>
-					</label>
-					<small class="field-hint" data-i18n="desc_get_notification">Receive a browser notification when your reservation status changes.</small>
-				</div>
-
-				<div id="additional-time-slots-container" class="additional-time-slots-container hidden"></div>
-
-				<button type="button" id="btn-add-another-time" class="btn-add-another-time hidden" onclick="addAnotherTimeSlot()" data-i18n="btn_add_another_time">+ Add another time?</button>
-
-				<div class="form-actions">
-					<button class="btn-back modal-action-btn" onclick="closeApplyModal()" data-i18n="btn_cancel">Cancel</button>
-					<button class="btn-apply modal-submit-btn" onclick="submitApplication()" data-i18n="btn_submit_application">Submit Application</button>
-				</div>
-			</div>
-		</div>
+		<!-- TOAST CONTAINER -->
+		<div id="toast-container" class="toast-container"></div>
 
 		<footer class="site-footer">
 			<div class="footer-section">
-				<p data-i18n="footer_current_president" class="footer-current-president">Current President</p>
+				<p class="footer-label">Current President</p>
 				<div class="footer-row">
 					<div id="display-president-name" class="fire-text">...</div>
 				</div>
-				<div class="footer-row footer-row-spacing">
+				<div class="footer-row footer-guild-row">
 					<p id="display-guild-name" class="guild-name fire-text">...</p>
 				</div>
+				<button id="edit-president-btn" class="btn-apply hidden footer-edit-btn" onclick="openPresidentModal()">Edit President Info</button>
 			</div>
 
-			<div id="recent-log-container">
-				<div class="log-title" data-i18n="footer_recent_log_title">📢 RECENTLY ACCEPTED RESERVATION</div>
-				<div id="recent-log-list">
-					<div class="log-item-empty" data-i18n="log_empty">No recent activity</div>
-				</div>
+			<div class="footer-note">
+				Created By : ACE aka DEMON
 			</div>
-			<!-- rar-* markup for each row is generated dynamically by loadRecentAccepts() in js/app-extras.js -->
-
-			<div class="footer-admin-actions">
-				<button id="president-panel-btn" class="btn-apply president-panel-btn" onclick="openPresidentPanelModal()" data-i18n="btn_president_panel">👑 President Panel</button>
-			</div>
-
-			<!-- Teks Credit Pembuat Web -->
-			<div class="neon-container">
-    <h1 class="neon-text"><span data-i18n="created_by">Made With ♥️ By :
-[IDN] - ACĒ</span></h1>
-</div>
 		</footer>
+<div id="fdt-guide-modal" class="modal hidden fdt-guide-modal" role="dialog" aria-modal="true" aria-labelledby="fdt-guide-title" onclick="if(event.target===this) toggleFdtGuide(false)">
+                      <div class="modal-content fdt-guide-modal-content">
+                        <button class="close-modal" type="button" aria-label="Close FDT Guide" onclick="toggleFdtGuide(false)">&times;</button>
+                        <div class="fdt-guide-modal-header">
+                          <div class="fdt-guide-kicker">FROSTDRAGON TYRANT</div>
+                          <h2 id="fdt-guide-title">🐉 FDT Guide</h2>
+                          <p>Battle preparation, assignments and phase-by-phase reminders.</p>
+                        </div>
+                        <div class="fdt-guide-body">
+<section class="fdt-guide-section"><h3>1. Before battle</h3><ul><li>Sign-up (48h): the Alliance Leader or an R4 registers. Only a limited number of top alliances per Zone qualify.</li><li>Members must already be in the alliance before sign-up ends, or they cannot be dispatched.</li><li>Dispatch (48h): R4/R5 select up to 60 combatants per alliance. Players not dispatched can still help by healing troops.</li><li>Eve of Battle (59h): finalize the Tyrant candidate, Rally Captains, Spire teams, Dragonite collectors and communication calls.</li></ul></section>
+<section class="fdt-guide-section"><h3>2. Battle timeline</h3><ul><li>Battlefield is open for 7 hours. Cities start in the Border Region.</li><li>The Capital becomes vulnerable 1 hour after opening, leaving a 6-hour Capital battle.</li><li>Frostdragon Escorts appear in the Border Region when the Capital opens and refresh every 30 minutes.</li><li>Dragonite gathering appears 15 minutes after the Capital opens and also refreshes every 30 minutes.</li><li>Spires alternate 30 minutes vulnerable and 30 minutes protected.</li><li>Rearmament follows the battle for 55 hours: +500% Healing Speed and -30% Healing Costs.</li></ul></section>
+<section class="fdt-guide-section"><h3>3. Spires (30-minute alliance buff)</h3><p>Life Spire: +20% Troop Health. Shield Spire: +20% Troop Defense. Dragonbane Spire: +20% Troop Lethality. Blade Spire: +20% Troop Attack. The alliance that dominates a Spire during its vulnerable period gets the buff for 30 minutes.</p></section>
+<section class="fdt-guide-section"><h3>4. Becoming Frostdragon Tyrant</h3><p>The Chief with the longest total Capital occupation time wins; on a tie, whoever reached that time first. Only the Rally Captain accumulates occupation time, reinforcers do not, so pick one candidate and avoid unnecessary captain changes. Tyrant privileges last 30 days.</p></section>
+<section class="fdt-guide-section"><h3>5. Common mistakes</h3><ul><li>Rotating random Rally Captains, which splits occupation time.</li><li>Ignoring Spires or leaving Capital Defense uncovered.</li><li>Not assigning anyone to Dragonite gathering and its 30-minute refresh.</li><li>Staying in the Dragon Crypt expecting a Shield: Shields are removed there and cannot be activated.</li><li>Spending all healing resources before Rearmament.</li></ul></section>
+<section class="fdt-guide-section"><h3>6. Personal points</h3><p>Personal Points come from Carnage Points (severely injuring enemy troops) and Casualty Points (your troops severely injured) in Capital and Spire battles. Sitting in a building without fighting does not earn points.</p></section>
+<section class="fdt-guide-section"><h3>7. Task duties</h3><p>Every Battle player has one group task (Alliance A or B) plus one or more role tasks. Check your task on the roster before the Eve of Battle and follow your group leader's calls.</p><ul>
+<li><strong>Rally Captain</strong>: starts and leads the Capital rallies and is the only one who accumulates occupation time. Stay on the Capital, keep the garrison full, and do not hand over the captain role unless the leader calls it.</li>
+<li><strong>Tyrant Candidate</strong>: the Chief the alliance is backing to become Frostdragon Tyrant. Hold the Capital as Rally Captain for as long as possible, avoid unnecessary captain changes, and keep your troops healed.</li>
+<li><strong>Capital Reinforcer</strong>: send your troops into the Rally Captain's Capital garrison and keep them there. Refill the garrison right after losses and do not leave the Capital while the captain is holding it.</li>
+<li><strong>Capital Defense</strong>: protect the Capital against enemy rallies and attacks. Stay close to the Capital, join defensive reinforcements when the captain is under pressure, and make sure the Capital is never left uncovered.</li>
+<li><strong>Spire Life</strong>: take and hold the Life Spire (+20% Troop Health) during its 30-minute vulnerable window. Coordinate with your group so the buff is secured as soon as the window opens.</li>
+<li><strong>Spire Shield</strong>: take and hold the Shield Spire (+20% Troop Defense) during its vulnerable window, and keep enough troops there to stop the enemy from retaking it.</li>
+<li><strong>Spire Dragonbane</strong>: take and hold the Dragonbane Spire (+20% Troop Lethality) during its vulnerable window. Move on to the next objective once the window closes.</li>
+<li><strong>Spire Blade</strong>: take and hold the Blade Spire (+20% Troop Attack) during its vulnerable window, and rally or reinforce as needed to keep it.</li>
+<li><strong>Dragonite Collector</strong>: gather Dragonite as soon as it appears (15 minutes after the Capital opens) and check again at every 30-minute refresh. Escort or hide gatherers if enemies are nearby. Collectors are the lowest-power players and multitask: until Dragonite opens (75 minutes after the Battlefield opens) they carry out their other duty, usually Capital Reinforcer.</li>
+<li><strong>Alliance A / Alliance B</strong>: your battle group. Players join the Capital, Spires and Dragonite calls of their own group. A player belongs to only one group.</li>
+</ul></section>
+</div>
+<div class="fdt-guide-modal-footer"><span>Tip: verify event-specific mechanics in-game before battle.</span><button class="btn-apply" type="button" onclick="toggleFdtGuide(false)">Close guide</button></div>
+                      </div>
+                    </div>
 
-		<!-- Modal President Login (Supabase Auth - signInWithPassword) -->
-		<div id="login-modal" class="modal hidden">
-			<div class="modal-content custom-form-modal narrow-modal">
-				<button type="button" class="close-modal" onclick="closeLoginModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 data-i18n="login_modal_title" class="modal-title">President Login</h2>
-				<div class="form-group">
-					<label data-i18n="label_username">Username</label>
-					<input type="text" id="input-login-username" placeholder="Enter username" data-i18n-placeholder="placeholder_username">
-				</div>
-				<div class="form-group">
-					<label data-i18n="label_password">Password</label>
-					<input type="password" id="input-login-password" placeholder="Enter password" data-i18n-placeholder="placeholder_password">
-				</div>
-				<div class="form-actions">
-					<button class="btn-back modal-action-btn" onclick="closeLoginModal()" data-i18n="btn_cancel">Cancel</button>
-					<button id="login-submit-btn" class="btn-apply modal-action-btn" onclick="submitStaffLogin()" data-i18n="btn_signin">Sign In</button>
-				</div>
-			</div>
-		</div>
+<div id="fdt-chart-modal" class="modal hidden fdt-guide-modal fdt-chart-modal" role="dialog" aria-modal="true" aria-labelledby="fdt-chart-title" onclick="if(event.target===this) toggleFdtChartView(false)">
+<div class="modal-content fdt-guide-modal-content fdt-chart-modal-content">
+<button class="close-modal" type="button" aria-label="Close chart" onclick="toggleFdtChartView(false)">&times;</button>
+<div class="fdt-guide-modal-header">
+<div class="fdt-guide-kicker">FROSTDRAGON TYRANT</div>
+<h2 id="fdt-chart-title">📊 Roster Chart</h2>
+<div class="fdt-chart-tabs" role="tablist">
+<button id="fdt-chart-tab-chart" class="fdt-chart-tab active" type="button" role="tab" aria-selected="true" onclick="setFdtChartTab('chart')">📊 Chart</button>
+<button id="fdt-chart-tab-image" class="fdt-chart-tab" type="button" role="tab" aria-selected="false" onclick="setFdtChartTab('image')">🖼 Image</button>
+<button id="fdt-chart-edit-btn" class="fdt-chart-tab fdt-chart-edit-btn hidden" type="button" aria-pressed="false" title="Edit group, tasks, assign or remove players directly from the chart or image" onclick="toggleFdtChartEdit()">✏️ Live Edit</button>
+<div class="fdt-zoom-controls" role="group" aria-label="Zoom">
+<button type="button" class="fdt-zoom-btn" id="fdt-zoom-out" aria-label="Zoom out" title="Zoom out" onclick="fdtZoomBy(-1)">−</button>
+<button type="button" class="fdt-zoom-level" id="fdt-zoom-level" aria-label="Reset zoom to 100%" title="Reset zoom" onclick="fdtZoomReset()">100%</button>
+<button type="button" class="fdt-zoom-btn" id="fdt-zoom-in" aria-label="Zoom in" title="Zoom in" onclick="fdtZoomBy(1)">+</button>
+</div>
+</div>
+</div>
+<div class="fdt-guide-body">
+<div id="fdt-chart-view" class="fdt-chart-view" aria-live="polite"></div>
+<div id="fdt-chart-image-wrap" class="fdt-chart-image-wrap hidden"><div id="fdt-image-edit-bar" class="fdt-image-edit-bar hidden"><span>✏️ Live Edit — click a player in the image to edit. Changes save instantly.</span><button type="button" class="fdt-mini-btn fdt-edit-assign" onclick="openAddLegionModal()">+ Assign Player</button></div><img id="fdt-chart-image" alt="Frostdragon roster chart" onclick="onFdtImageClick(event)"></div>
+</div>
+<div class="fdt-guide-modal-footer"><span>Follows the "View by Alliance" filter. Image tab = ready-to-share PNG. Live Edit saves each change instantly.</span><div class="fdt-footer-btns"><button class="btn-apply" type="button" onclick="shareFdtChartLink()" title="Share a link that opens this chart image (always latest data)">🔗 Share link</button><button class="btn-apply" type="button" onclick="downloadFdtChartImage()">⬇ Download PNG</button><button class="btn-apply" type="button" onclick="toggleFdtChartView(false)">Close</button></div></div>
+</div>
+</div>
 
-		<!-- Modal President Panel (President-only) — single entry point that groups
-		     Edit President Info, Theme Switcher and Finish SvS behind one button,
-		     instead of showing three separate buttons in the footer. -->
-		<div id="president-panel-modal" class="modal hidden">
-			<div class="modal-content custom-form-modal narrow-modal">
-				<button type="button" class="close-modal" onclick="closePresidentPanelModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 data-i18n="president_panel_modal_title" class="modal-title">👑 President Panel</h2>
-				<div class="president-panel-options">
-					<button type="button" id="president-panel-edit-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenEditFooter()">
-						<span class="president-panel-option-label"><span class="president-panel-option-icon">📝</span> <span data-i18n="btn_edit_footer">Edit President Info</span></span>
-						<span class="arrow">&#8250;</span>
-					</button>
-					<button type="button" id="president-panel-theme-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenThemeSwitcher()">
-						<span class="president-panel-option-label"><span data-i18n="btn_theme_switcher">🎨 Theme Switcher</span></span>
-						<span class="arrow">&#8250;</span>
-					</button>
-					<button type="button" id="president-panel-announcement-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenAnnouncement()">
-						<span class="president-panel-option-label"><span data-i18n="btn_announcement">📢 Announcement</span></span>
-						<span class="arrow">&#8250;</span>
-					</button>
-					<button type="button" id="president-panel-finish-btn" class="list-item president-panel-option-btn president-panel-option-danger" onclick="presidentPanelFinishSVS()">
-						<span class="president-panel-option-label"><span class="president-panel-option-icon">🏁</span> <span data-i18n="btn_finish_svs">FINISH SvS</span></span>
-						<span class="arrow">&#8250;</span>
-					</button>
-				</div>
-				<div class="form-actions">
-					<button class="btn-back modal-action-btn" onclick="closePresidentPanelModal()" data-i18n="btn_close">Close</button>
-				</div>
-			</div>
-		</div>
+<div id="fdt-status-modal" class="modal hidden fdt-guide-modal" role="dialog" aria-modal="true" aria-labelledby="fdt-status-title" onclick="if(event.target===this) toggleFdtStatus(false)">
+<div class="modal-content fdt-guide-modal-content">
+<button class="close-modal" type="button" aria-label="Close Real Time Status" onclick="toggleFdtStatus(false)">&times;</button>
+<div class="fdt-guide-modal-header">
+<div class="fdt-guide-kicker">FROSTDRAGON TYRANT</div>
+<h2 id="fdt-status-title">📡 Real Time Status</h2>
+<p>What is happening right now. Updates every second (UTC schedule).</p>
+</div>
+<div class="fdt-guide-body"><div id="fdt-status" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px" aria-live="polite"></div></div>
+<div class="fdt-guide-modal-footer"><span>Based on the Battlefield open time set in the Command Center.</span><button class="btn-apply" type="button" onclick="toggleFdtStatus(false)">Close</button></div>
+</div>
+</div>
 
-		<!-- Modal Edit President/Guild Info (menggantikan native prompt()) -->
-		<div id="edit-footer-modal" class="modal hidden">
-			<div class="modal-content custom-form-modal narrow-modal">
-				<button type="button" class="close-modal" onclick="closeEditFooterModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 data-i18n="edit_footer_modal_title" class="modal-title">Edit President Info</h2>
-				<div class="form-group">
-					<label data-i18n="label_president_name">President Name</label>
-					<input type="text" id="edit-footer-name" maxlength="60" placeholder="Enter president name" data-i18n-placeholder="placeholder_president_name">
-				</div>
-				<div class="form-group">
-					<label data-i18n="label_guild_name">Guild Name</label>
-					<input type="text" id="edit-footer-guild" maxlength="60" placeholder="Enter guild name" data-i18n-placeholder="placeholder_guild_name">
-				</div>
-				<div class="form-actions">
-					<button class="btn-back modal-action-btn" onclick="closeEditFooterModal()" data-i18n="btn_cancel">Cancel</button>
-					<button id="edit-footer-save-btn" class="btn-apply modal-action-btn" onclick="saveEditFooter()" data-i18n="btn_save">Save</button>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal Theme Switcher (President-only) — force/preview the seasonal
-		     banner theme instead of waiting for the automatic date range.
-		     Applied instantly via window.SVSSeasonalTheme (fire-banner.js). -->
-		<div id="theme-switcher-modal" class="modal hidden">
-			<div class="modal-content custom-form-modal narrow-modal">
-				<button type="button" class="close-modal" onclick="closeThemeSwitcherModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 data-i18n="theme_switcher_modal_title" class="theme-switcher-title">🎨 Theme Switcher</h2>
-				<p class="theme-switcher-hint" data-i18n="theme_switcher_hint">Choose which banner theme is shown to everyone. "Auto" follows the calendar (Halloween: Oct 1 - Nov 2, Christmas: Dec 1 - 30, Valentine: Feb 1 - 14, Chinese New Year: Feb 6 - 13 in 2027, which takes priority over Valentine). Eid al-Fitr is never automatic - pick it here. Mid-Autumn Festival: Sep 19 - 27.</p>
-				<div class="theme-switcher-options">
-					<button type="button" class="theme-option-btn" data-theme-value="auto" onclick="selectSeasonalTheme('auto')">
-						<span class="theme-option-icon">🗓️</span>
-						<span class="theme-option-text">
-							<span data-i18n="theme_option_auto">Auto (by date)</span>
-							<span class="theme-option-sub" data-i18n="theme_option_auto_sub">Follows the calendar automatically</span>
-						</span>
-						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
-					</button>
-					<button type="button" class="theme-option-btn" data-theme-value="none" onclick="selectSeasonalTheme('none')">
-						<span class="theme-option-icon">🔥</span>
-						<span class="theme-option-text">
-							<span data-i18n="theme_option_none">Default (Fire)</span>
-							<span class="theme-option-sub" data-i18n="theme_option_none_sub">The regular orange fire banner</span>
-						</span>
-						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
-					</button>
-					<button type="button" class="theme-option-btn" data-theme-value="halloween" onclick="selectSeasonalTheme('halloween')">
-						<span class="theme-option-icon">🎃</span>
-						<span class="theme-option-text">
-							<span data-i18n="theme_option_halloween">Halloween</span>
-							<span class="theme-option-sub" data-i18n="theme_option_halloween_sub">Force the Halloween banner on</span>
-						</span>
-						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
-					</button>
-					<button type="button" class="theme-option-btn" data-theme-value="christmas" onclick="selectSeasonalTheme('christmas')">
-						<span class="theme-option-icon">🎄</span>
-						<span class="theme-option-text">
-							<span data-i18n="theme_option_christmas">Christmas</span>
-							<span class="theme-option-sub" data-i18n="theme_option_christmas_sub">Force the Christmas banner on</span>
-						</span>
-						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
-					</button>
-					<button type="button" class="theme-option-btn" data-theme-value="valentine" onclick="selectSeasonalTheme('valentine')">
-						<span class="theme-option-icon">💖</span>
-						<span class="theme-option-text">
-							<span data-i18n="theme_option_valentine">Valentine</span>
-							<span class="theme-option-sub" data-i18n="theme_option_valentine_sub">Force the Valentine banner on</span>
-						</span>
-						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
-					</button>
-					<button type="button" class="theme-option-btn" data-theme-value="cny" onclick="selectSeasonalTheme('cny')">
-						<span class="theme-option-icon">🏮</span>
-						<span class="theme-option-text">
-							<span data-i18n="theme_option_cny">Chinese New Year</span>
-							<span class="theme-option-sub" data-i18n="theme_option_cny_sub">Force the Chinese New Year banner on</span>
-						</span>
-						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
-					</button>
-					<button type="button" class="theme-option-btn" data-theme-value="eid" onclick="selectSeasonalTheme('eid')">
-						<span class="theme-option-icon">🌙</span>
-						<span class="theme-option-text">
-							<span data-i18n="theme_option_eid">Eid al-Fitr</span>
-							<span class="theme-option-sub" data-i18n="theme_option_eid_sub">Force the Eid al-Fitr banner on (manual only)</span>
-						</span>
-						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
-					</button>
-					<button type="button" class="theme-option-btn" data-theme-value="bluefire" onclick="selectSeasonalTheme('bluefire')">
-						<span class="theme-option-icon">🔥</span>
-						<span class="theme-option-text">
-							<span data-i18n="theme_option_bluefire">Blue Fire</span>
-							<span class="theme-option-sub" data-i18n="theme_option_bluefire_sub">Force the Blue Fire banner on</span>
-						</span>
-						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
-					</button>
-					<button type="button" class="theme-option-btn" data-theme-value="midautumn" onclick="selectSeasonalTheme('midautumn')">
-						<span class="theme-option-icon">🌕</span>
-						<span class="theme-option-text">
-							<span data-i18n="theme_option_midautumn">Mid-Autumn Festival</span>
-							<span class="theme-option-sub" data-i18n="theme_option_midautumn_sub">Force the Mid-Autumn Festival banner on</span>
-						</span>
-						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
-					</button>
-				</div>
-				<div class="form-actions">
-					<button class="btn-back modal-action-btn" onclick="closeThemeSwitcherModal()" data-i18n="btn_close">Close</button>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal Announcement (President-only) — broadcasts a push notification
-		     to every player device that has notifications enabled, via the
-		     `send-announcement` Supabase Edge Function (independent of any
-		     single reservation's push subscriptions). -->
-		<div id="announcement-modal" class="modal hidden">
-			<div class="modal-content custom-form-modal narrow-modal">
-				<button type="button" class="close-modal" onclick="closeAnnouncementModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 data-i18n="announcement_modal_title" class="modal-title">📢 Send Announcement</h2>
-				<p class="theme-switcher-hint" data-i18n="announcement_hint">This sends a push notification to every player who has notifications enabled, even if the app is closed.</p>
-				<div class="form-group">
-					<label data-i18n="label_announcement_title">Title (optional)</label>
-					<input type="text" id="announcement-title-input" maxlength="80" placeholder="e.g. Server Maintenance" data-i18n-placeholder="placeholder_announcement_title">
-				</div>
-				<div class="form-group">
-					<label data-i18n="label_announcement_message">Message</label>
-					<textarea id="announcement-message-input" maxlength="500" rows="5" spellcheck="true" placeholder="Type your announcement to all players..." data-i18n-placeholder="placeholder_announcement_message"></textarea>
-				</div>
-				<div class="form-actions">
-					<button class="btn-back modal-action-btn" onclick="closeAnnouncementModal()" data-i18n="btn_cancel">Cancel</button>
-					<button id="announcement-send-btn" class="btn-apply modal-action-btn" onclick="sendAnnouncement()" data-i18n="btn_send_announcement">Send Announcement</button>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal Reason (replaces native window.prompt for reliable Android/PWA behavior) -->
-		<div id="reason-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="reason-modal-title">
-			<div class="modal-content custom-form-modal reason-modal-content">
-				<button type="button" class="close-modal" id="reason-modal-close-btn" aria-label="Close" data-i18n-aria-label="btn_close" onclick="document.getElementById('reason-modal-cancel-btn').click()">&times;</button>
-				<h2 id="reason-modal-title" data-i18n="reason_modal_title">Reason / Keterangan</h2>
-				<div class="form-group reason-modal-group">
-					<label id="reason-modal-label" for="reason-modal-input" data-i18n="reason_modal_label">Reason / keterangan (optional):</label>
-					<textarea id="reason-modal-input" maxlength="500" rows="5" data-i18n-placeholder="reason_modal_placeholder" placeholder="Enter reason / keterangan..." spellcheck="true"></textarea>
-				</div>
-				<div class="form-actions reason-modal-actions">
-					<button type="button" class="btn-back" id="reason-modal-cancel-btn" data-i18n="btn_cancel">Cancel</button>
-					<button type="button" class="btn-apply" id="reason-modal-ok-btn" data-i18n="btn_ok">OK</button>
-				</div>
-			</div>
-		</div>
-
-		<div id="confirm-modal" class="modal hidden">
-			<div class="modal-content custom-confirm-box">
-				<h3 id="confirm-message" data-i18n="confirm_default_message" class="confirm-message">Are you sure?</h3>
-				<div class="form-actions form-actions-no-top">
-					<button id="confirm-cancel-btn" class="btn-back confirm-cancel-btn" data-i18n="btn_cancel">Cancel</button>
-					<button id="confirm-ok-btn" class="btn-apply confirm-ok-btn" data-i18n="btn_ok">OK</button>
-				</div>
-			</div>
-		</div>
-
-		<div id="toast-container" class="toast-container"></div>
-
-
-        <script>
-        // Looping typewriter for the State 3475 header brand, after the intro animation.
-        (() => {
-            const startTypewriter = () => {
-                const logo = document.querySelector('.navbar .logo.fire-text');
-                if (!logo || logo.dataset.typewriterStarted === 'true') return;
-                logo.dataset.typewriterStarted = 'true';
-
-                const fullText = 'State 3475';
-                const typingSpeed = 125;
-                const deletingSpeed = 75;
-                const holdAfterTyping = 3000;
-                const pauseAfterDeleting = 1000;
-
-                logo.setAttribute('aria-label', fullText);
-                logo.textContent = '';
-                // No typing cursor: keep the existing logo styling clean.
-                logo.style.borderRight = 'none';
-                logo.style.paddingRight = '';
-
-                let index = 0;
-                const typeNext = () => {
-                    if (index < fullText.length) {
-                        logo.textContent = fullText.slice(0, ++index);
-                        window.setTimeout(typeNext, typingSpeed);
-                    } else {
-                        window.setTimeout(deleteNext, holdAfterTyping);
-                    }
-                };
-
-                const deleteNext = () => {
-                    if (index > 0) {
-                        logo.textContent = fullText.slice(0, --index);
-                        window.setTimeout(deleteNext, deletingSpeed);
-                    } else {
-                        window.setTimeout(typeNext, pauseAfterDeleting);
-                    }
-                };
-
-                typeNext();
-            };
-
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => window.setTimeout(startTypewriter, 2500), { once: true });
-            } else {
-                window.setTimeout(startTypewriter, 2500);
-            }
-        })();
-        </script>
-
-	</body>
+	<script src="frostdragon.js?v=16"></script>
+	<script src="foundry.js?v=12"></script>
+	<script>
+	  // Register the service worker only on HTTPS or localhost.
+	  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+	    window.addEventListener('load', () => {
+	      navigator.serviceWorker.register('./sw.js').catch((error) => console.warn('Service worker registration failed:', error));
+	    });
+	  }
+	</script>
+</body>
 </html>
