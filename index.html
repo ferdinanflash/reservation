@@ -856,8 +856,9 @@
 
                 logo.setAttribute('aria-label', fullText);
                 logo.textContent = '';
-                logo.style.borderRight = '2px solid currentColor';
-                logo.style.paddingRight = '3px';
+                // No typing cursor: keep the existing logo styling clean.
+                logo.style.borderRight = 'none';
+                logo.style.paddingRight = '';
 
                 let index = 0;
                 const typeNext = () => {
