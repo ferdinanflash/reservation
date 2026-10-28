@@ -1,6 +1,7 @@
 {
-  "name": "State 3475",
+  "name": "Whiteout Survival - State 3475",
   "short_name": "State 3475",
+  "description": "Official reservation & queue portal for State 3475. Apply for Minister and Vice President time slots and track waiting list status in real time.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
@@ -20,5 +21,7 @@
   ],
   "theme_color": "#071a33",
   "background_color": "#071a33",
-  "display": "standalone"
+  "display": "standalone",
+  "lang": "en",
+  "categories": ["utilities", "productivity"]
 }
