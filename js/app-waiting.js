@@ -184,7 +184,9 @@ function exportToCSV() {
     ]);
 
     const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    // "\uFEFF" = UTF-8 BOM. Without it Excel on Windows reads the file as ANSI and
+    // shows garbage for Chinese / Cyrillic / Thai / accented names.
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
