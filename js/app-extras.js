@@ -682,3 +682,40 @@ async function copyDonateId() {
         pressStartedOnBackdrop = false;
     });
 })();
+
+
+// ================= WHAT'S NEW MODAL =================
+// "What's New?" navbar menu item -> popup listing the latest features and fixes.
+// The text lives in lang.js (keys whatsnew_*); edit those and the list in index.html on each release.
+let whatsNewModalTrigger = null;
+
+function openWhatsNewModal() {
+    const modal = document.getElementById('whatsnew-modal');
+    if (!modal) return;
+    whatsNewModalTrigger = document.activeElement;
+    modal.classList.remove('hidden');
+    document.body.classList.add('redeem-modal-open');
+}
+
+function closeWhatsNewModal() {
+    const modal = document.getElementById('whatsnew-modal');
+    if (!modal || modal.classList.contains('hidden')) return;
+    modal.classList.add('hidden');
+    document.body.classList.remove('redeem-modal-open');
+    if (whatsNewModalTrigger && typeof whatsNewModalTrigger.focus === 'function') whatsNewModalTrigger.focus();
+    whatsNewModalTrigger = null;
+}
+
+(function initWhatsNewModal() {
+    const modal = document.getElementById('whatsnew-modal');
+    if (!modal) return;
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeWhatsNewModal();
+    });
+    let pressStartedOnBackdrop = false;
+    modal.addEventListener('mousedown', (event) => { pressStartedOnBackdrop = (event.target === modal); });
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal && pressStartedOnBackdrop) closeWhatsNewModal();
+        pressStartedOnBackdrop = false;
+    });
+})();
