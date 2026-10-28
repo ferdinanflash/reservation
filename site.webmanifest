@@ -1,7 +1,7 @@
 {
   "name": "Whiteout Survival - State 3475",
   "short_name": "State 3475",
-  "description": "Official reservation & queue portal for State 3475. Apply for Minister and Vice President time slots and track waiting list status in real time.",
+  "description": "Official management system for State 3475. SvS Ministry, Battle Events Organizer, Transfer Portal, and Whiteout Survival tool.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
