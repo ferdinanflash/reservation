@@ -1,6 +1,6 @@
 // ================= BULK ACTION (President-only) =================
 // Lets the President accept or reject many applications at once instead of
-// opening each one. Opened from the President Panel.
+// opening each one.
 //   - Works on any position (not just the one currently on screen).
 //   - Accept: only "Waiting" applications. A time slot can hold ONE accepted
 //     applicant, so slots that are already taken, or that have more than one
@@ -16,25 +16,12 @@ let bulkLoadSeq = 0;
 
 function bulkEl(id) { return document.getElementById(id); }
 
-function fillBulkPositionOptions() {
-    const select = bulkEl('bulk-position');
-    if (!select) return;
-    const previous = select.value || currentPosition;
-    select.innerHTML = '';
-    Object.keys(POSITION_CONFIG).forEach((name) => {
-        const option = document.createElement('option');
-        option.value = name;
-        option.textContent = translatePositionName(name);
-        select.appendChild(option);
-    });
-    if (POSITION_CONFIG[previous]) select.value = previous;
-}
-
 function openBulkModal() {
     if (!isAdmin) return;
     const modal = bulkEl('bulk-modal');
     if (!modal) return;
-    fillBulkPositionOptions();
+    const label = bulkEl('bulk-position-label');
+    if (label) label.textContent = translatePositionName(currentPosition);
     const filter = bulkEl('bulk-filter');
     if (filter) filter.value = 'Waiting';
     modal.classList.remove('hidden');
@@ -53,7 +40,7 @@ function closeBulkModal() {
 async function loadBulkRows() {
     const client = getSupabase();
     const list = bulkEl('bulk-list');
-    const position = bulkEl('bulk-position')?.value;
+    const position = currentPosition;
     if (!client || !list || !position) return;
 
     const seq = ++bulkLoadSeq;

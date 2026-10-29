@@ -264,6 +264,8 @@ function updateAdminUI() {
     if (adminInd) adminInd.style.display = "inline";
     if (presidentPanelBtn) presidentPanelBtn.style.display = "inline-block";
     if (toggleResBtn) toggleResBtn.style.display = "inline-block"; 
+    const bulkBtn = document.getElementById('bulk-action-btn');
+    if (bulkBtn) bulkBtn.style.display = "inline-block";
 }
 
 function resetAdminUI() {
@@ -276,6 +278,9 @@ function resetAdminUI() {
     if (adminInd) adminInd.style.display = "none";
     if (presidentPanelBtn) presidentPanelBtn.style.display = "none";
     if (toggleResBtn) toggleResBtn.style.display = "none";
+    const bulkBtn = document.getElementById('bulk-action-btn');
+    if (bulkBtn) bulkBtn.style.display = "none";
+    if (typeof closeBulkModal === 'function') closeBulkModal();
     // Closing the panel (and any modal opened from it) on logout avoids a
     // stray open modal for President-only actions after access is revoked.
     const panelModal = document.getElementById('president-panel-modal');
