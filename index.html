@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-10-29-firewall';
+			var APP_BUILD = '2026-10-29-discord';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -170,19 +170,20 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=93">
+		<link rel="stylesheet" href="style.css?v=94">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
-		<script src="lang.js?v=30" defer=""></script>
-					<script src="js/app-core.js?v=53" defer=""></script>
-					<script src="js/app-auth.js?v=50" defer=""></script>
+		<script src="lang.js?v=31" defer=""></script>
+					<script src="js/app-core.js?v=54" defer=""></script>
+					<script src="js/app-auth.js?v=51" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
-					<script src="js/app-schedule.js?v=48" defer=""></script>
+					<script src="js/app-schedule.js?v=49" defer=""></script>
 					<script src="js/app-applications.js?v=50" defer=""></script>
 					<script src="js/app-waiting.js?v=50" defer=""></script>
-					<script src="js/app-extras.js?v=55" defer=""></script>
-					<script src="js/app-notifications.js?v=6" defer=""></script>
+					<script src="js/app-bulk.js?v=1" defer=""></script>
+					<script src="js/app-extras.js?v=57" defer=""></script>
+					<script src="js/app-notifications.js?v=7" defer=""></script>
 					<script src="fire-banner.js?v=15" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
@@ -622,6 +623,13 @@
 					<span class="donate-id-label">ID : <strong id="donate-id-value">581651105</strong></span>
 					<span class="donate-copy-hint" id="donate-copy-hint">Click to copy 👻</span>
 				</button>
+				<div class="donate-discord">
+					<p class="donate-discord-title">Contact me on Discord</p>
+					<button type="button" id="donate-discord-btn" class="donate-id-box donate-discord-box" onclick="copyDiscordUsername()" aria-label="Copy Discord username _ferdinan">
+						<span class="donate-id-label">Discord Username : <strong id="donate-discord-value">_ferdinan</strong></span>
+						<span class="donate-copy-hint" id="donate-discord-hint">Click to copy 👻</span>
+					</button>
+				</div>
 				<div class="form-actions">
 					<button type="button" class="btn-back modal-action-btn" onclick="closeDonateModal()" data-i18n="btn_close">Close</button>
 				</div>
@@ -845,6 +853,10 @@
 						<span class="president-panel-option-label"><span data-i18n="btn_announcement">📢 Announcement</span></span>
 						<span class="arrow">&#8250;</span>
 					</button>
+					<button type="button" id="president-panel-bulk-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenBulk()">
+						<span class="president-panel-option-label"><span data-i18n="bulk_btn">⚡ Bulk Action</span></span>
+						<span class="arrow">&#8250;</span>
+					</button>
 					<button type="button" id="president-panel-finish-btn" class="list-item president-panel-option-btn president-panel-option-danger" onclick="presidentPanelFinishSVS()">
 						<span class="president-panel-option-label"><span class="president-panel-option-icon">🏁</span> <span data-i18n="btn_finish_svs">FINISH SvS</span></span>
 						<span class="arrow">&#8250;</span>
@@ -852,6 +864,40 @@
 				</div>
 				<div class="form-actions">
 					<button class="btn-back modal-action-btn" onclick="closePresidentPanelModal()" data-i18n="btn_close">Close</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal Bulk Action (President-only) -->
+		<div id="bulk-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="bulk-modal-title">
+			<div class="modal-content custom-form-modal bulk-modal-content">
+				<button type="button" class="close-modal" onclick="closeBulkModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 id="bulk-modal-title" class="modal-title" data-i18n="bulk_title">Bulk Action</h2>
+				<div class="bulk-filters">
+					<div class="form-group">
+						<label for="bulk-position" data-i18n="bulk_position">Position</label>
+						<select id="bulk-position" onchange="loadBulkRows()"></select>
+					</div>
+					<div class="form-group">
+						<label for="bulk-filter" data-i18n="bulk_filter">Show</label>
+						<select id="bulk-filter" onchange="renderBulkList()">
+							<option value="Waiting" data-i18n="bulk_filter_waiting">Waiting</option>
+							<option value="Accepted" data-i18n="bulk_filter_accepted">Accepted</option>
+							<option value="all" data-i18n="bulk_filter_all">All</option>
+						</select>
+					</div>
+				</div>
+				<div class="bulk-toolbar">
+					<label class="bulk-select-all"><input type="checkbox" id="bulk-select-all" onchange="toggleBulkSelectAll(this.checked)"> <span data-i18n="bulk_select_all">Select all</span></label>
+					<span id="bulk-count" class="bulk-count">0</span>
+				</div>
+				<div id="bulk-list" class="bulk-list"></div>
+				<div class="form-actions bulk-actions">
+					<button type="button" id="bulk-accept-btn" class="btn-apply modal-action-btn" onclick="runBulkAction('accept')" data-i18n="bulk_accept" disabled>✅ Accept</button>
+					<button type="button" id="bulk-reject-btn" class="btn-apply btn-danger modal-action-btn" onclick="runBulkAction('reject')" data-i18n="bulk_reject" disabled>❌ Reject</button>
+				</div>
+				<div class="form-actions">
+					<button type="button" class="btn-back modal-action-btn" onclick="closeBulkModal()" data-i18n="btn_close">Close</button>
 				</div>
 			</div>
 		</div>
