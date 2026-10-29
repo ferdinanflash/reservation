@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-10-29-seo2';
+			var APP_BUILD = '2026-10-29-firewall';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -54,32 +54,46 @@
 		</script>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Whiteout Survival - State 3475</title>
-		<meta name="description" content="Official reservation &amp; queue portal for State 3475. Apply for Minister and Vice President time slots, track waiting list status, and manage SvS schedules in real time.">
-		<meta name="keywords" content="State 3475, SvS, Minister Reservation, Vice President, Whiteout Survival, reservation portal, queue management, 3475.web.id">
+		<title>State 3475 – Whiteout Survival SvS Ministry, Battle Events &amp; Transfer Portal</title>
+		<meta name="description" content="Official management system for State 3475. SvS Ministry, Battle Events Organizer, Transfer Portal, and Whiteout Survival tools.">
+		<meta name="keywords" content="State 3475, Whiteout Survival, SvS, SvS Ministry, Minister Reservation, Battle Events Organizer, Transfer Portal, Whiteout Survival tools, hero gear calculator, redeem code, state management system, 3475.web.id">
 		<meta name="author" content="State 3475">
 		<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 		<meta name="googlebot" content="index, follow">
+		<link rel="alternate" hreflang="x-default" href="https://3475.web.id/">
+		<link rel="alternate" hreflang="en" href="https://3475.web.id/">
 		<link rel="canonical" href="https://3475.web.id/">
 
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content="website">
 		<meta property="og:url" content="https://3475.web.id/">
-		<meta property="og:title" content="Whiteout Survival - State 3475">
-		<meta property="og:description" content="Official reservation &amp; queue portal for State 3475. Apply for Minister and Vice President time slots and track waiting list status in real time.">
+		<meta property="og:title" content="State 3475 – Whiteout Survival Management System">
+		<meta property="og:description" content="Official management system for State 3475. SvS Ministry, Battle Events Organizer, Transfer Portal, and Whiteout Survival tools.">
 		<meta property="og:image" content="https://3475.web.id/default-banner-v2.jpg">
 		<meta property="og:image:width" content="1376">
 		<meta property="og:image:height" content="768">
-		<meta property="og:image:alt" content="Whiteout Survival - State 3475">
+		<meta property="og:image:alt" content="State 3475 – official Whiteout Survival management system">
 		<meta property="og:site_name" content="State 3475">
 		<meta property="og:locale" content="en_US">
+		<meta property="og:locale:alternate" content="id_ID">
+		<meta property="og:locale:alternate" content="zh_CN">
+		<meta property="og:locale:alternate" content="fil_PH">
+		<meta property="og:locale:alternate" content="th_TH">
+		<meta property="og:locale:alternate" content="it_IT">
+		<meta property="og:locale:alternate" content="ru_RU">
+		<meta property="og:locale:alternate" content="fr_FR">
 
 		<!-- Twitter Card -->
 		<meta name="twitter:card" content="summary_large_image">
 		<meta name="twitter:url" content="https://3475.web.id/">
-		<meta name="twitter:title" content="Whiteout Survival - State 3475">
-		<meta name="twitter:description" content="Official reservation &amp; queue portal for State 3475. Apply for Minister and VP time slots and track your waiting list status.">
+		<meta name="twitter:title" content="State 3475 – Whiteout Survival Management System">
+		<meta name="twitter:description" content="Official management system for State 3475: SvS Ministry, Battle Events Organizer, Transfer Portal &amp; Whiteout Survival tools.">
 		<meta name="twitter:image" content="https://3475.web.id/default-banner-v2.jpg">
+		<meta name="twitter:image:alt" content="State 3475 – official Whiteout Survival management system">
+
+		<!-- Faster third-party connections -->
+		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+		<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
 		<!-- Icons & PWA -->
 		<link rel="icon" href="favicon-v8.ico" sizes="any">
@@ -99,24 +113,60 @@
 		<script type="application/ld+json">
 		{
 			"@context": "https://schema.org",
-			"@type": "WebApplication",
-			"name": "Whiteout Survival - State 3475",
-			"alternateName": "Portal of State 3475",
-			"url": "https://3475.web.id/",
-			"description": "Official reservation and queue management portal for State 3475. Apply for Minister and Vice President time slots, track waiting list status, and manage SvS schedules in real time.",
-			"applicationCategory": "UtilitiesApplication",
-			"operatingSystem": "Any",
-			"browserRequirements": "Requires JavaScript. Modern browser recommended.",
-			"offers": {
-				"@type": "Offer",
-				"price": "0",
-				"priceCurrency": "USD"
-			},
-			"publisher": {
-				"@type": "Organization",
-				"name": "State 3475",
-				"url": "https://3475.web.id/"
-			}
+			"@graph": [
+				{
+					"@type": "Organization",
+					"@id": "https://3475.web.id/#organization",
+					"name": "State 3475",
+					"url": "https://3475.web.id/",
+					"logo": {
+						"@type": "ImageObject",
+						"url": "https://3475.web.id/pwa-icon-512-v8.png",
+						"width": 512,
+						"height": 512
+					},
+					"description": "Official management system for State 3475 in Whiteout Survival.",
+					"sameAs": ["https://discord.gg/7Zr4dJvbqU"]
+				},
+				{
+					"@type": "WebSite",
+					"@id": "https://3475.web.id/#website",
+					"url": "https://3475.web.id/",
+					"name": "State 3475",
+					"alternateName": ["Whiteout Survival State 3475", "Portal of State 3475", "3475.web.id"],
+					"description": "Official management system for State 3475. SvS Ministry, Battle Events Organizer, Transfer Portal, and Whiteout Survival tools.",
+					"inLanguage": ["en", "id", "zh", "fil", "th", "it", "ru", "fr"],
+					"publisher": { "@id": "https://3475.web.id/#organization" }
+				},
+				{
+					"@type": "WebApplication",
+					"@id": "https://3475.web.id/#webapp",
+					"name": "State 3475 – Whiteout Survival Management System",
+					"alternateName": "Portal of State 3475",
+					"url": "https://3475.web.id/",
+					"description": "Official management system for State 3475. SvS Ministry, Battle Events Organizer, Transfer Portal, and Whiteout Survival tools.",
+					"applicationCategory": "GameApplication",
+					"applicationSubCategory": "Whiteout Survival tools",
+					"operatingSystem": "Any",
+					"browserRequirements": "Requires JavaScript. Modern browser recommended.",
+					"image": "https://3475.web.id/default-banner-v2.jpg",
+					"featureList": [
+						"SvS Ministry time slot reservation",
+						"Battle Events Organizer",
+						"State Transfer Portal",
+						"Whiteout Survival gift code redeem",
+						"Whiteout Survival calculators and tools"
+					],
+					"inLanguage": ["en", "id", "zh", "fil", "th", "it", "ru", "fr"],
+					"offers": {
+						"@type": "Offer",
+						"price": "0",
+						"priceCurrency": "USD"
+					},
+					"isPartOf": { "@id": "https://3475.web.id/#website" },
+					"publisher": { "@id": "https://3475.web.id/#organization" }
+				}
+			]
 		}
 		</script>
 
@@ -124,7 +174,7 @@
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
-		<script src="lang.js?v=28" defer=""></script>
+		<script src="lang.js?v=30" defer=""></script>
 					<script src="js/app-core.js?v=53" defer=""></script>
 					<script src="js/app-auth.js?v=50" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
@@ -175,6 +225,14 @@
 			if (t === 'halloween' || t === 'christmas' || t === 'valentine' || t === 'cny' || t === 'eid' || t === 'midautumn' || t === 'bluefire') document.body.classList.add(t + '-theme');
 		})();
 		</script>
+
+		<noscript>
+			<div style="max-width:720px;margin:24px auto;padding:16px;color:#fff;font-family:sans-serif;line-height:1.6">
+				<h1>State 3475 – Whiteout Survival</h1>
+				<p>Official management system for State 3475. SvS Ministry, Battle Events Organizer, Transfer Portal, and Whiteout Survival tools.</p>
+				<p>Please enable JavaScript to use the reservation portal.</p>
+			</div>
+		</noscript>
 
 		<!-- Kontainer Khusus Efek Salju (Agar tidak menutupi kolom isian/modal) -->
 		<div id="snow-container"></div>
@@ -575,8 +633,15 @@
 			<div class="modal-content custom-form-modal whatsnew-modal-content">
 				<button type="button" class="close-modal" onclick="closeWhatsNewModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
 				<h2 id="whatsnew-modal-title" class="apply-title" data-i18n="whatsnew_title">What's New?</h2>
-				<p class="whatsnew-date" data-i18n="whatsnew_date">Last Update: 28 Oct 2026</p>
+				<p class="whatsnew-date" data-i18n="whatsnew_date">Last Update: 29 Oct 2026</p>
 				<ul class="whatsnew-list">
+					<li class="whatsnew-item">
+						<span class="whatsnew-icon" aria-hidden="true">🛡️</span>
+						<div class="whatsnew-body">
+							<div class="whatsnew-item-title"><span class="whatsnew-badge whatsnew-badge-new" data-i18n="whatsnew_badge_new">New</span><span data-i18n="whatsnew_7_title"></span></div>
+							<p class="whatsnew-item-desc" data-i18n="whatsnew_7_desc"></p>
+						</div>
+					</li>
 					<li class="whatsnew-item">
 						<span class="whatsnew-icon" aria-hidden="true">🎃</span>
 						<div class="whatsnew-body">

@@ -1,0 +1,27 @@
+{
+  "name": "Whiteout Survival - State 3475",
+  "short_name": "State 3475",
+  "description": "Official management system for State 3475. SvS Ministry, Battle Events Organizer, Transfer Portal, and Whiteout Survival tool.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "pwa-icon-192-v8.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa-icon-512-v8.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "theme_color": "#071a33",
+  "background_color": "#071a33",
+  "display": "standalone",
+  "lang": "en",
+  "categories": ["utilities", "productivity"]
+}

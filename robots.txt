@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /supabase/
+Disallow: /*?_cb=
 
-# Sitemap (optional — create sitemap.xml if you add more public pages later)
 Sitemap: https://3475.web.id/sitemap.xml
-
-# Crawl-delay is ignored by major engines; left out intentionally.
