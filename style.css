@@ -5208,6 +5208,12 @@ body.redeem-modal-open { overflow: hidden; }
     display: none;
 }
 
+.btn-bulk-action {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    animation: none !important;
+    display: none;
+}
+
 .btn-schedule-small {
     margin-bottom: 0;
     padding: 10px 16px;
@@ -6264,7 +6270,7 @@ html[lang="fr"] #confirm-message { overflow-wrap: anywhere; }
 
 /* ==================== BULK ACTION (President) ==================== */
 .modal-content.bulk-modal-content { max-width: 560px; width: 94%; }
-.bulk-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bulk-position-label { margin: 0 0 8px; text-align: center; font-weight: 700; color: var(--t-amber, #f59e0b); }
 .bulk-filters select { width: 100%; }
 .bulk-toolbar {
     display: flex; align-items: center; justify-content: space-between;
@@ -6293,7 +6299,6 @@ html[lang="fr"] #confirm-message { overflow-wrap: anywhere; }
 .bulk-empty { padding: 22px 12px; text-align: center; opacity: .75; }
 .bulk-actions { margin-top: 12px; }
 @media (max-width: 480px) {
-    .bulk-filters { grid-template-columns: 1fr; }
     .bulk-row { grid-template-columns: auto 78px 1fr; }
     .bulk-row .bulk-tag { grid-column: 2 / -1; justify-self: start; }
 }

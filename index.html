@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-10-29-discord';
+			var APP_BUILD = '2026-10-29-bulk2';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -170,18 +170,18 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=94">
+		<link rel="stylesheet" href="style.css?v=95">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
-		<script src="lang.js?v=31" defer=""></script>
-					<script src="js/app-core.js?v=54" defer=""></script>
-					<script src="js/app-auth.js?v=51" defer=""></script>
+		<script src="lang.js?v=32" defer=""></script>
+					<script src="js/app-core.js?v=55" defer=""></script>
+					<script src="js/app-auth.js?v=52" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
 					<script src="js/app-schedule.js?v=49" defer=""></script>
 					<script src="js/app-applications.js?v=50" defer=""></script>
 					<script src="js/app-waiting.js?v=50" defer=""></script>
-					<script src="js/app-bulk.js?v=1" defer=""></script>
+					<script src="js/app-bulk.js?v=2" defer=""></script>
 					<script src="js/app-extras.js?v=57" defer=""></script>
 					<script src="js/app-notifications.js?v=7" defer=""></script>
 					<script src="fire-banner.js?v=15" defer=""></script>
@@ -467,6 +467,7 @@
 					<button class="btn-back action-no-bottom" onclick="showPositions()" data-i18n="btn_back">&lt; Back to positions</button>
 					<button id="export-csv-btn" class="btn-apply btn-export" onclick="exportToCSV()" data-i18n="btn_export_csv">Export CSV</button>
 					<button id="toggle-reservation-btn" class="btn-apply btn-reservation-toggle" onclick="handleToggleReservation()" data-i18n="btn_close_reservation">Close Reservation</button>
+					<button id="bulk-action-btn" class="btn-apply btn-bulk-action btn-schedule-small" onclick="openBulkModal()" data-i18n="bulk_btn">⚡ Bulk Action</button>
 					<button id="how-to-use-btn" class="btn-apply how-to-use-btn btn-schedule-small" onclick="openHowToUseModal()" data-i18n="btn_how_to_use">How to use</button>
 				</div>
 
@@ -853,10 +854,6 @@
 						<span class="president-panel-option-label"><span data-i18n="btn_announcement">📢 Announcement</span></span>
 						<span class="arrow">&#8250;</span>
 					</button>
-					<button type="button" id="president-panel-bulk-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenBulk()">
-						<span class="president-panel-option-label"><span data-i18n="bulk_btn">⚡ Bulk Action</span></span>
-						<span class="arrow">&#8250;</span>
-					</button>
 					<button type="button" id="president-panel-finish-btn" class="list-item president-panel-option-btn president-panel-option-danger" onclick="presidentPanelFinishSVS()">
 						<span class="president-panel-option-label"><span class="president-panel-option-icon">🏁</span> <span data-i18n="btn_finish_svs">FINISH SvS</span></span>
 						<span class="arrow">&#8250;</span>
@@ -873,11 +870,8 @@
 			<div class="modal-content custom-form-modal bulk-modal-content">
 				<button type="button" class="close-modal" onclick="closeBulkModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
 				<h2 id="bulk-modal-title" class="modal-title" data-i18n="bulk_title">Bulk Action</h2>
+				<p id="bulk-position-label" class="bulk-position-label"></p>
 				<div class="bulk-filters">
-					<div class="form-group">
-						<label for="bulk-position" data-i18n="bulk_position">Position</label>
-						<select id="bulk-position" onchange="loadBulkRows()"></select>
-					</div>
 					<div class="form-group">
 						<label for="bulk-filter" data-i18n="bulk_filter">Show</label>
 						<select id="bulk-filter" onchange="renderBulkList()">
