@@ -68,6 +68,11 @@ function presidentPanelOpenThemeSwitcher() {
     openThemeSwitcherModal();
 }
 
+function presidentPanelOpenBulk() {
+    closePresidentPanelModal();
+    openBulkModal();
+}
+
 function presidentPanelFinishSVS() {
     closePresidentPanelModal();
     handleFinishSVS();

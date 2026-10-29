@@ -179,6 +179,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 // (e.g. one restored from a troops.js login) is deliberately treated as
 // "not admin" here — it's a valid session, just not authorized on this page.
 function applyAuthSession(session) {
+    const prevAdmin = isAdmin;
+    const prevUsername = currentStaffUsername;
     const sessionUsername = session ? staffEmailToUsername(session.user.email) : null;
     isAdmin = isPresidentUsername(sessionUsername);
     currentStaffUsername = isAdmin ? sessionUsername : null;
@@ -187,7 +189,23 @@ function applyAuthSession(session) {
     } else {
         resetAdminUI();
     }
-    loadApplications();
+    // Supabase fires auth events on startup, token refresh and tab refocus.
+    // Only reload the schedule when the admin state really changed, otherwise
+    // every one of those events re-fetched the table for nothing.
+    if (prevAdmin !== isAdmin || prevUsername !== currentStaffUsername) {
+        requestApplicationsReload(0);
+    }
+}
+
+// Debounced refresh of the "recently accepted" list so a burst of realtime
+// events (e.g. several rows changing at once) triggers a single fetch.
+let recentAcceptsReloadTimer = null;
+function requestRecentAcceptsReload(delay) {
+    clearTimeout(recentAcceptsReloadTimer);
+    recentAcceptsReloadTimer = setTimeout(() => {
+        recentAcceptsReloadTimer = null;
+        loadRecentAccepts();
+    }, typeof delay === 'number' ? delay : 600);
 }
 
 // ================= REALTIME SUBSCRIPTIONS =================
@@ -201,11 +219,14 @@ function subscribeToRealtimeUpdates() {
         client
             .channel('reservation_slots_changes')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'reservation_slots' }, (payload) => {
+                // DELETE events only carry the row id (no position) unless the
+                // table uses REPLICA IDENTITY FULL, so an unknown position must
+                // still trigger a refresh or deletions never reach other viewers.
                 const affectedPosition = payload.new?.position || payload.old?.position;
-                if (affectedPosition === currentPosition) {
-                    loadApplications();
+                if (!affectedPosition || affectedPosition === currentPosition) {
+                    requestApplicationsReload();
                 }
-                loadRecentAccepts();
+                requestRecentAcceptsReload();
             })
             .subscribe();
 

@@ -326,7 +326,7 @@ function getNotificationStatusText(status) {
 }
 
 function updateGuestApplicationStatusUI(status, application) {
-    if (typeof loadApplications === 'function') loadApplications();
+    if (typeof requestApplicationsReload === 'function') requestApplicationsReload();
 
     const statusEl = document.getElementById('my-application-status');
     if (statusEl) {

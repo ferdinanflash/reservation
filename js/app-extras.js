@@ -625,6 +625,7 @@ function closeRedeemModal() {
 // "Donate" navbar menu item -> popup with a click-to-copy donation ID.
 let donateModalTrigger = null;
 const DONATE_ID = '581651105';
+const DISCORD_USERNAME = '_ferdinan';
 
 function openDonateModal() {
     const modal = document.getElementById('donate-modal');
@@ -632,6 +633,8 @@ function openDonateModal() {
     donateModalTrigger = document.activeElement;
     const hint = document.getElementById('donate-copy-hint');
     if (hint) hint.textContent = 'Click to copy 👻';
+    const discordHint = document.getElementById('donate-discord-hint');
+    if (discordHint) discordHint.textContent = 'Click to copy 👻';
     modal.classList.remove('hidden');
     document.body.classList.add('redeem-modal-open');
 }
@@ -645,28 +648,38 @@ function closeDonateModal() {
     donateModalTrigger = null;
 }
 
-async function copyDonateId() {
-    let ok = false;
+async function copyTextToClipboard(text) {
     try {
-        await navigator.clipboard.writeText(DONATE_ID);
-        ok = true;
+        await navigator.clipboard.writeText(text);
+        return true;
     } catch (e) {
         try {
             const ta = document.createElement('textarea');
-            ta.value = DONATE_ID;
+            ta.value = text;
             ta.style.position = 'fixed';
             ta.style.opacity = '0';
             document.body.appendChild(ta);
             ta.select();
-            ok = document.execCommand('copy');
+            const ok = document.execCommand('copy');
             document.body.removeChild(ta);
-        } catch (e2) { ok = false; }
+            return ok;
+        } catch (e2) { return false; }
     }
-    const hint = document.getElementById('donate-copy-hint');
-    if (hint) {
-        hint.textContent = ok ? '✓ Copied! 🎉' : 'Copy failed, please copy manually';
-        setTimeout(() => { hint.textContent = 'Click to copy 👻'; }, 2000);
-    }
+}
+
+function showCopyHint(hintId, ok) {
+    const hint = document.getElementById(hintId);
+    if (!hint) return;
+    hint.textContent = ok ? '✓ Copied! 🎉' : 'Copy failed, please copy manually';
+    setTimeout(() => { hint.textContent = 'Click to copy 👻'; }, 2000);
+}
+
+async function copyDonateId() {
+    showCopyHint('donate-copy-hint', await copyTextToClipboard(DONATE_ID));
+}
+
+async function copyDiscordUsername() {
+    showCopyHint('donate-discord-hint', await copyTextToClipboard(DISCORD_USERNAME));
 }
 
 (function initDonateModal() {

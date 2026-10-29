@@ -93,21 +93,71 @@ function showPositions() {
     document.getElementById('positions-page').classList.remove('hidden');
 }
 
+// ---- Reload control -------------------------------------------------------
+// loadApplications() used to be fired by many sources at once (realtime events,
+// auth events, the user's own actions, guest notifications) and every call wiped
+// the table with a spinner, so the schedule flickered and out-of-order responses
+// could overwrite newer data. Now:
+//   - realtime / auth / notification triggers go through requestApplicationsReload()
+//     (debounced, and skipped while the schedule page is not open)
+//   - the spinner only shows on the first load or when the position changes;
+//     later refreshes swap the data in place without blanking the table
+//   - only the newest request is allowed to update the table (loadSeq)
+let applicationsLoadSeq = 0;
+let applicationsLoadedPosition = null;
+let applicationsReloadTimer = null;
+
+function isSchedulePageOpen() {
+    const page = document.getElementById('schedule-page');
+    return !!page && !page.classList.contains('hidden');
+}
+
+function requestApplicationsReload(delay) {
+    if (!isSchedulePageOpen()) return;
+    clearTimeout(applicationsReloadTimer);
+    applicationsReloadTimer = setTimeout(() => {
+        applicationsReloadTimer = null;
+        if (isSchedulePageOpen()) loadApplications();
+    }, typeof delay === 'number' ? delay : 400);
+}
+
 async function loadApplications() {
     const client = getSupabase();
     if (!client) return;
 
-    isLoadingApplications = true;
-    renderLoadingState();
+    const seq = ++applicationsLoadSeq;
+    const requestedPosition = currentPosition;
+    // Silent refresh = same position already on screen: keep the table, no spinner.
+    const silent = applicationsLoadedPosition === requestedPosition;
 
+    if (!silent) {
+        isLoadingApplications = true;
+        renderLoadingState();
+    }
+
+    let failed = false;
+    let rows = null;
     try {
-        const { data, error } = await client.from('reservation_slots').select('*').eq('position', currentPosition);
+        const { data, error } = await client.from('reservation_slots').select('*').eq('position', requestedPosition);
         if (error) throw error;
-        savedApplications = data || [];
+        rows = data || [];
     } catch (e) {
+        failed = true;
         console.error("Database failure:", e);
-        savedApplications = [];
-        showToast(t("toast_load_schedule_failed"), "error");
+    }
+
+    // A newer request started while this one was in flight: drop this result.
+    if (seq !== applicationsLoadSeq) return;
+
+    if (failed) {
+        if (!silent) {
+            savedApplications = [];
+            showToast(t("toast_load_schedule_failed"), "error");
+        }
+        // silent refresh failed: keep the data already on screen instead of blanking it
+    } else {
+        savedApplications = rows;
+        applicationsLoadedPosition = requestedPosition;
     }
     isLoadingApplications = false;
     renderTimeSlots();
