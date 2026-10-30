@@ -6501,3 +6501,68 @@ body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation
         opacity: 1; visibility: visible; transform: none;
     }
 }
+
+
+/* ==================== PORTAL TITLE: "LIT" FLAME TEXT ====================
+   Only the main heading "Portal of State 3475" (.portal-title), not the position title.
+   1) a hot band of light slowly sweeps through the letters,
+   2) the outer glow flickers like a torch (irregular rhythm, not a plain pulse).
+   Colors come from 4 variables so every seasonal theme gets its own flame.
+   (text-shadow can't be used with gradient-filled text, so the glow is drop-shadow.) */
+.portal-title {
+    --pt-base: #ffe3b0;
+    --pt-hot:  #ff8a1f;
+    --pt-g1:   rgba(255, 138, 31, 0.65);
+    --pt-g2:   rgba(255, 70, 0, 0.35);
+}
+body.halloween-theme  .portal-title { --pt-base: #ffe3b0; --pt-hot: #ff8a1f; --pt-g1: rgba(255, 138, 31, 0.65); --pt-g2: rgba(181, 107, 255, 0.38); }
+body.christmas-theme  .portal-title { --pt-base: #fff1cf; --pt-hot: #ff4d5a; --pt-g1: rgba(255, 77, 90, 0.60);  --pt-g2: rgba(63, 209, 138, 0.36); }
+body.valentine-theme  .portal-title { --pt-base: #ffe3ef; --pt-hot: #ff5c9a; --pt-g1: rgba(255, 92, 154, 0.62); --pt-g2: rgba(255, 61, 110, 0.36); }
+body.cny-theme        .portal-title { --pt-base: #fff0c8; --pt-hot: #ff4a3d; --pt-g1: rgba(255, 74, 61, 0.62);  --pt-g2: rgba(255, 210, 94, 0.36); }
+body.eid-theme        .portal-title { --pt-base: #fff4d0; --pt-hot: #3fd18a; --pt-g1: rgba(63, 209, 138, 0.58); --pt-g2: rgba(255, 210, 94, 0.36); }
+body.midautumn-theme  .portal-title { --pt-base: #fff4d0; --pt-hot: #ffb347; --pt-g1: rgba(255, 179, 71, 0.62); --pt-g2: rgba(201, 160, 255, 0.36); }
+body.bluefire-theme   .portal-title { --pt-base: #e5fcff; --pt-hot: #18dfff; --pt-g1: rgba(24, 223, 255, 0.62); --pt-g2: rgba(11, 114, 255, 0.40); }
+
+body h1.page-title.portal-title {
+    background-image: linear-gradient(100deg,
+        var(--pt-base) 0%,
+        var(--pt-base) 36%,
+        var(--pt-hot)  44%,
+        #ffffff        50%,
+        var(--pt-hot)  56%,
+        var(--pt-base) 64%,
+        var(--pt-base) 100%);
+    background-size: 300% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-shadow: none;
+    filter:
+        drop-shadow(0 0 6px var(--pt-g1))
+        drop-shadow(0 0 16px var(--pt-g2))
+        drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85));
+    animation:
+        portalTitleSheen 6s ease-in-out infinite,
+        portalTitleFlicker 3.1s linear infinite;
+}
+@keyframes portalTitleSheen {
+    0%   { background-position: 100% 0; }
+    70%  { background-position: 0% 0; }
+    100% { background-position: 0% 0; }
+}
+@keyframes portalTitleFlicker {
+    0%   { filter: drop-shadow(0 0 6px var(--pt-g1)) drop-shadow(0 0 16px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85)); }
+    8%   { filter: drop-shadow(0 0 9px var(--pt-g1)) drop-shadow(0 0 22px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85)); }
+    14%  { filter: drop-shadow(0 0 5px var(--pt-g1)) drop-shadow(0 0 13px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85)); }
+    31%  { filter: drop-shadow(0 0 10px var(--pt-g1)) drop-shadow(0 0 24px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85)); }
+    47%  { filter: drop-shadow(0 0 7px var(--pt-g1)) drop-shadow(0 0 17px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85)); }
+    52%  { filter: drop-shadow(0 0 4px var(--pt-g1)) drop-shadow(0 0 12px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85)); }
+    66%  { filter: drop-shadow(0 0 10px var(--pt-g1)) drop-shadow(0 0 26px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85)); }
+    83%  { filter: drop-shadow(0 0 6px var(--pt-g1)) drop-shadow(0 0 15px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85)); }
+    100% { filter: drop-shadow(0 0 6px var(--pt-g1)) drop-shadow(0 0 16px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85)); }
+}
+@media (prefers-reduced-motion: reduce) {
+    body h1.page-title.portal-title { animation: none; }
+}
