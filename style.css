@@ -6302,3 +6302,17 @@ html[lang="fr"] #confirm-message { overflow-wrap: anywhere; }
     .bulk-row { grid-template-columns: auto 78px 1fr; }
     .bulk-row .bulk-tag { grid-column: 2 / -1; justify-self: start; }
 }
+
+/* ============ iOS: stop Safari auto-zooming when a field is focused ============
+   iOS Safari zooms the page whenever a focused input/select/textarea has a
+   computed font-size below 16px. Forcing 16px on iOS only (the touch-callout
+   feature query matches WebKit on iOS/iPadOS, not desktop) removes the zoom
+   without disabling pinch-zoom (no maximum-scale), which keeps it accessible.
+   !important is needed because many fields set their own size by id/class. */
+@supports (-webkit-touch-callout: none) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="hidden"]),
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
