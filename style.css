@@ -6357,7 +6357,8 @@ html[lang="fr"] #confirm-message { overflow-wrap: anywhere; }
     transition: translate .35s cubic-bezier(.34,1.56,.64,1),
                 scale .18s ease,
                 box-shadow .25s ease,
-                filter .25s ease;
+                filter .25s ease,
+                --ring .35s ease;
 }
 #main-menu-links > .list-item-small::before,
 #main-menu-links > .list-item-small::after {
@@ -6429,4 +6430,74 @@ html[lang="fr"] #confirm-message { overflow-wrap: anywhere; }
     #main-menu-links > .list-item-small::before { display: none; }
     #main-menu-links > .list-item-small:hover,
     #main-menu-links > .list-item-small:active { translate: none; scale: 1; }
+}
+
+
+/* ==================== MAIN MENU BUTTONS: BORDER SHINE (top-left -> bottom-right) ====================
+   The border is a calm, dim ring in each button's color. Every few seconds a bright
+   diagonal band of light sweeps ALONG THE BORDER ONLY, from the top-left corner to the
+   bottom-right corner, then pauses. The five buttons fire one after another
+   (1 -> 2 -> 3 -> 4 -> 5), then the cycle repeats. Hover lights the base ring.
+   Needs @property support (all current browsers); older ones just show the static ring. */
+@property --ring {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 30%;
+}
+@property --shine {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: -30%;
+}
+@keyframes navShine {
+    0%   { --shine: -30%; }
+    38%  { --shine: 130%; }
+    100% { --shine: 130%; }
+}
+
+#main-menu-links > .list-item-small:nth-child(n) {
+    --ring: 32%;
+    background:
+        linear-gradient(#171a22, #171a22) padding-box,
+        linear-gradient(135deg,
+            transparent calc(var(--shine) - 15%),
+            color-mix(in srgb, var(--c2) 60%, transparent) calc(var(--shine) - 5%),
+            #ffffff var(--shine),
+            color-mix(in srgb, var(--c2) 60%, transparent) calc(var(--shine) + 5%),
+            transparent calc(var(--shine) + 15%)) border-box,
+        linear-gradient(135deg,
+            color-mix(in srgb, var(--c1) var(--ring), transparent),
+            color-mix(in srgb, var(--c2) calc(var(--ring) * 0.6), transparent),
+            color-mix(in srgb, var(--c1) var(--ring), transparent)) border-box;
+}
+/* Hover: base ring lights up. */
+@media (hover: hover) and (pointer: fine) {
+    #main-menu-links > .list-item-small:nth-child(n):hover,
+    #main-menu-links > .list-item-small:nth-child(n):focus-visible { --ring: 85%; }
+}
+/* Soft static glow (hover keeps its own stronger glow from the rules above). */
+#main-menu-links > .list-item-small:nth-child(n):not(:hover) {
+    box-shadow:
+        0 0 14px color-mix(in srgb, var(--c1) 26%, transparent),
+        0 5px 14px rgba(0, 0, 0, 0.28);
+}
+
+/* fade-in keeps its original timing; the shine starts after it, one button after another */
+body.intro-complete #main-menu-links > .list-item-small:nth-child(n) {
+    animation:
+        menu-button-fade-in 0.58s cubic-bezier(.2,.7,.25,1) both,
+        navShine 5s ease-in-out infinite;
+}
+body.intro-complete #main-menu-links > .list-item-small:nth-child(1) { animation-delay: 0s,    0.9s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(2) { animation-delay: 0.22s, 1.4s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(3) { animation-delay: 0.44s, 1.9s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(4) { animation-delay: 0.66s, 2.4s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation-delay: 0.88s, 2.9s; }
+
+@media (prefers-reduced-motion: reduce) {
+    /* no moving shine: just the static ring */
+    body.intro-complete #main-menu-links > .list-item-small:nth-child(n) {
+        animation: none;
+        opacity: 1; visibility: visible; transform: none;
+    }
 }
