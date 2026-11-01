@@ -375,14 +375,14 @@ function openWaitingModal(timeStr) {
         ` : '-';
 
         mainRow.innerHTML = `
-            <td style="padding: 5px 10px; text-align: left; font-weight: 500; white-space: nowrap;">
+            <td class="waiting-col-nick" style="padding: 5px 10px; text-align: left; font-weight: 500;">
                 <span class="icon-tap-target" style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${escapeHtml(capZalgo(app.nickname))}
             </td>
-            <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
+            <td class="waiting-col-id" style="padding: 5px 10px; text-align: left;">
                 <span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
             </td>
-            ${isAdmin ? `<td style="padding: 5px 10px; text-align: left; white-space: nowrap;">${moveControls}</td>` : ''}
-            ${isAdmin ? `<td style="padding: 5px 10px; text-align: left; white-space: nowrap;">${adminButtons}</td>` : ''}
+            ${isAdmin ? `<td class="waiting-col-move" style="padding: 5px 10px; text-align: left;">${moveControls}</td>` : ''}
+            ${isAdmin ? `<td class="waiting-col-actions" style="padding: 5px 10px; text-align: left;">${adminButtons}</td>` : ''}
         `;
         modalTbody.appendChild(mainRow);
 
@@ -403,6 +403,7 @@ function openWaitingModal(timeStr) {
         modalTbody.appendChild(detailsRow);
     });
     
+    modal.classList.toggle('waiting-admin-view', !!isAdmin);
     modal.classList.remove('hidden');
 }
 
