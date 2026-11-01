@@ -4737,6 +4737,40 @@ body.halloween-theme .svs-opening-sparks::after {
     }
 }
 
+
+/* ==================== WAITING LIST: LONG NICKNAME FIX ====================
+   Nicknames made of decorative Unicode with no spaces used to stretch the
+   nickname column (inline nowrap) and push Move / Accept / Drop out of the
+   modal on iPad & desktop, where the container is overflow-x:hidden.
+   Fixed layout + wrapping at every width keeps all columns visible.
+*/
+#waiting-modal .modal-table-container { overflow-x: auto; }
+#waiting-modal table { table-layout: fixed; width: 100%; }
+#waiting-modal th,
+#waiting-modal td {
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    min-width: 0;
+    vertical-align: middle;
+}
+#waiting-modal .waiting-col-nick { overflow: hidden; }
+@media screen and (min-width: 701px) {
+    #waiting-modal.waiting-admin-view .modal-content { max-width: 720px; }
+    #waiting-modal.waiting-admin-view th:nth-child(1),
+    #waiting-modal.waiting-admin-view td:nth-child(1) { width: 28%; }
+    #waiting-modal.waiting-admin-view th:nth-child(2),
+    #waiting-modal.waiting-admin-view td:nth-child(2) { width: 17%; }
+    #waiting-modal.waiting-admin-view th:nth-child(3),
+    #waiting-modal.waiting-admin-view td:nth-child(3) { width: 32%; }
+    #waiting-modal.waiting-admin-view th:nth-child(4),
+    #waiting-modal.waiting-admin-view td:nth-child(4) { width: 23%; }
+    #waiting-modal .waiting-move-select { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+    #waiting-modal .waiting-move-btn { margin: 4px 0 0; width: 100%; box-sizing: border-box; }
+    #waiting-modal .admin-action-buttons { display: flex; flex-direction: column; gap: 5px; align-items: stretch; }
+    #waiting-modal .admin-action-btn { width: 100%; min-width: 0; margin: 0; box-sizing: border-box; }
+}
+
 /* ================= Cross-device Reason Modal ================= */
 .reason-modal-content {
     width: min(92vw, 460px);
