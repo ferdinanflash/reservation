@@ -14,7 +14,7 @@
         myState: 3475,
         cacheMs: 5 * 60 * 1000,
         allianceLimit: 10,
-        topPlayersLimit: 8,
+        topPlayersLimit: 20,
         storageKey: 'svs_enemies_kids',
         maxEnemies: 20
     };
@@ -141,15 +141,23 @@
         const results = await Promise.allSettled([
             fetchJson(`${base}/states/${kid}`, signal),
             fetchJson(`${base}/kingdoms/${kid}/power`, signal),
-            fetchJson(`${base}/alliances/leaderboard?kid=${kid}&limit=${CFG.allianceLimit}`, signal)
+            fetchJson(`${base}/alliances/leaderboard?kid=${kid}&limit=${CFG.allianceLimit}`, signal),
+            // Full top-N players (kingdoms/.../power only returns ~5 in "top")
+            fetchJson(`${base}/power/leaderboard?kid=${kid}&limit=${CFG.topPlayersLimit}`, signal)
         ]);
         const state = results[0].status === 'fulfilled' ? results[0].value : null;
-        const power = results[1].status === 'fulfilled' ? results[1].value : null;
+        let power = results[1].status === 'fulfilled' ? results[1].value : null;
         let alliances = results[2].status === 'fulfilled' ? results[2].value : null;
+        const leaderboard = results[3].status === 'fulfilled' ? results[3].value : null;
         if (alliances && Array.isArray(alliances.entries)) alliances = alliances.entries;
         else if (alliances && Array.isArray(alliances)) { /* ok */ }
         else if (alliances && Array.isArray(alliances.alliances)) alliances = alliances.alliances;
         else alliances = null;
+        // Prefer power/leaderboard entries (up to topPlayersLimit) over the short "top" list
+        if (leaderboard && Array.isArray(leaderboard.entries) && leaderboard.entries.length) {
+            power = power ? Object.assign({}, power) : {};
+            power.top = leaderboard.entries;
+        }
         if (!state && !power && !alliances) throw new Error('direct-detail-failed');
         return { state, power, alliances };
     }
