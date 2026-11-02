@@ -28,7 +28,8 @@
     const S = {
         kids: [],
         mode: null, // 'direct' | 'proxy'
-        cache: new Map(), // kid -> { fetchedAt, state, power, alliances, error, loading }
+        cache: new Map(), // kid -> { fetchedAt, state, power, alliances, players, error, loading }
+        allianceCache: new Map(), // aid -> { fetchedAt, data, error, loading }
         loadedAt: 0
     };
 
@@ -330,12 +331,17 @@
         const topAlliancesHtml = allianceList.slice(0, CFG.allianceLimit).map((a, i) => {
             const abbr = esc(a.abbr || a.tag || a.alliance_tag || '—');
             const name = esc(a.name || a.alliance_name || '');
+            const aid = Number(a.aid || a.id || a.alliance_id) || 0;
             const pw = Number(a.totalPower || a.total_power || a.power) || 0;
             const members = Number(a.members || a.member_count) || 0;
             const memberMax = Number(a.memberMax || a.member_max || a.max_members) || 0;
+            const nameInner = `<span class="svs-en-tag">[${abbr}]</span> <span data-no-i18n>${name}</span>`;
+            const nameCell = aid
+                ? `<button type="button" class="svs-en-alliance-btn" data-aid="${aid}" onclick="openSvSAllianceDetail(${aid})">${nameInner}</button>`
+                : nameInner;
             return `<tr>
                 <td class="st-num">${i + 1}</td>
-                <td><span class="svs-en-tag">[${abbr}]</span> <span data-no-i18n>${name}</span></td>
+                <td>${nameCell}</td>
                 <td class="st-num" title="${fmtFull(pw)}">${fmtCompact(pw)}</td>
                 <td class="st-num">${members}${memberMax ? '/' + memberMax : ''}</td>
             </tr>`;
@@ -421,7 +427,6 @@
             `;
         }
 
-        const atlasLink = `${CFG.sourceUrl}${kid}`;
         return `
             <article class="svs-en-card${isMine ? ' is-mine' : ''}" data-kid="${kid}">
                 <header class="svs-en-card-head">
@@ -429,7 +434,6 @@
                         ${esc(tr('svs_enemies_state_label', 'State'))} <span class="svs-en-kid">${kid}</span>
                         ${isMine ? `<span class="svs-en-badge">${esc(tr('svs_enemies_our_state', 'Our State'))}</span>` : ''}
                     </h3>
-                    <a class="svs-en-atlas-link" href="${atlasLink}" target="_blank" rel="noopener noreferrer">${esc(tr('svs_enemies_open_atlas', 'Open on WoS Atlas'))} ↗</a>
                 </header>
                 <div class="svs-en-card-body">${body}</div>
             </article>`;
@@ -499,6 +503,187 @@
         const enemies = document.getElementById('svs-enemies-view');
         if (enemies) enemies.classList.add('hidden');
     }
+
+
+    // ---------- Alliance detail modal ----------
+    async function fetchAllianceDirect(aid, signal) {
+        return fetchJson(`${CFG.apiBase}/alliances/${aid}/members`, signal);
+    }
+
+    async function fetchAllianceProxy(aid) {
+        const client = typeof getSupabase === 'function' ? getSupabase() : null;
+        if (!client) throw new Error('no-proxy');
+        const { data, error } = await client.functions.invoke(CFG.proxyFunction, {
+            body: { action: 'alliance', aid }
+        });
+        if (error) throw error;
+        if (!data || (typeof data === 'object' && data.error && !data.aid && !data.abbr)) {
+            throw new Error((data && data.error) || 'proxy-alliance-failed');
+        }
+        return data;
+    }
+
+    async function loadAllianceDetail(aid) {
+        const key = Number(aid);
+        if (!Number.isFinite(key)) return null;
+        const cached = S.allianceCache.get(key);
+        if (cached && cached.loading) return cached;
+        if (cached && cached.fetchedAt && Date.now() - cached.fetchedAt < CFG.cacheMs && !cached.error) {
+            return cached;
+        }
+        const entry = { loading: true, error: null, data: null, fetchedAt: 0 };
+        S.allianceCache.set(key, entry);
+        try {
+            let data = null;
+            if (S.mode === 'proxy') {
+                try { data = await fetchAllianceProxy(key); }
+                catch (_) { data = await fetchAllianceDirect(key); }
+            } else {
+                try {
+                    data = await fetchAllianceDirect(key);
+                    if (S.mode !== 'proxy') S.mode = 'direct';
+                } catch (_) {
+                    data = await fetchAllianceProxy(key);
+                    S.mode = 'proxy';
+                }
+            }
+            entry.loading = false;
+            entry.fetchedAt = Date.now();
+            entry.data = data;
+            entry.error = null;
+        } catch (err) {
+            console.error('SvS Enemies alliance', key, err);
+            entry.loading = false;
+            entry.fetchedAt = Date.now();
+            entry.error = tr('svs_enemies_alliance_load_failed', 'Could not load alliance detail');
+        }
+        S.allianceCache.set(key, entry);
+        return entry;
+    }
+
+    function renderAllianceModalBody(aid, entry) {
+        const bodyEl = document.getElementById('svs-alliance-detail-body');
+        const titleEl = document.getElementById('svs-alliance-detail-title');
+        if (!bodyEl) return;
+
+        if (!entry || entry.loading) {
+            if (titleEl) titleEl.textContent = tr('svs_enemies_alliance_loading', 'Loading alliance…');
+            bodyEl.innerHTML = `<p class="svs-en-status">${esc(tr('svs_enemies_alliance_loading', 'Loading alliance…'))}</p>`;
+            return;
+        }
+        if (entry.error && !entry.data) {
+            if (titleEl) titleEl.textContent = tr('svs_enemies_alliance_title', 'Alliance Info');
+            bodyEl.innerHTML = `<p class="svs-en-status svs-en-error">${esc(entry.error)}</p>`;
+            return;
+        }
+
+        const d = entry.data || {};
+        const abbr = esc(String(d.abbr || ''));
+        const name = esc(String(d.name || ''));
+        const members = Number(d.memberCount || d.derivedMemberCount || d.members) || 0;
+        const memberMax = Number(d.memberMax) || 0;
+        const power = Number(d.serverPower || d.derivedTotalPower || d.totalPower) || 0;
+        const powerRank = Number(d.serverPowerRank || d.powerRank) || null;
+        const rankedAll = Number(d.rankedAlliances) || null;
+        const leaderUid = Number(d.leaderUid) || 0;
+        const leaderName = esc(String(d.leaderName || ''));
+        const lv = Number(d.lv) || 0;
+        const minLv = Number(d.joinMinLevel) || 0;
+        const minPow = Number(d.joinMinPower) || 0;
+        const recruit = !!d.publicRecruit;
+        const homeKid = Number(d.homeKid || d.kid) || null;
+        const honor = Number(d.honorLevel) || null;
+        const notice = d.notice ? String(d.notice) : '';
+        const manifesto = d.manifesto ? String(d.manifesto) : '';
+
+        const rankLabel = powerRank
+            ? (rankedAll ? `#${fmtFull(powerRank)} / ${fmtFull(rankedAll)}` : `#${fmtFull(powerRank)}`)
+            : '—';
+
+        if (titleEl) {
+            titleEl.innerHTML = abbr
+                ? `<span class="svs-en-tag">[${abbr}]</span> <span data-no-i18n>${name}</span>`
+                : (name || tr('svs_enemies_alliance_title', 'Alliance Info'));
+        }
+
+        // Member list (often empty on free/metered tier)
+        let membersList = [];
+        if (Array.isArray(d.members) && d.members.length) membersList = d.members;
+        else if (Array.isArray(d.memberList) && d.memberList.length) membersList = d.memberList;
+        else if (Array.isArray(d.players) && d.players.length) membersList = d.players;
+
+        let membersHtml = '';
+        if (membersList.length) {
+            const rows = membersList.slice(0, 50).map((m, i) => {
+                const nick = esc(String(m.nick_name || m.nickname || m.name || m.uid || ''));
+                const uid = Number(m.uid || m.playerUid) || 0;
+                const pw = Number(m.power || m.total_power) || 0;
+                const stove = Number.isFinite(Number(m.stove_lv || m.stoveLv)) ? Number(m.stove_lv || m.stoveLv) : '—';
+                return `<tr>
+                    <td class="st-num">${i + 1}</td>
+                    <td data-no-i18n>${nick}${uid ? ` <span class="svs-en-uid">#${uid}</span>` : ''}</td>
+                    <td class="st-num" title="${fmtFull(pw)}">${fmtCompact(pw)}</td>
+                    <td class="st-num">${stove}</td>
+                </tr>`;
+            }).join('');
+            membersHtml = `
+                <h4 class="svs-en-h">${esc(tr('svs_enemies_alliance_members', 'Members'))}
+                    <span class="svs-en-h-meta">${membersList.length}</span>
+                </h4>
+                <div class="svs-en-table-wrap svs-en-lb-wrap">
+                    <table class="svs-en-table">
+                        <thead><tr>
+                            <th class="st-num">#</th>
+                            <th>${esc(tr('svs_enemies_col_name', 'Name'))}</th>
+                            <th class="st-num">${esc(tr('svs_enemies_col_power', 'Power'))}</th>
+                            <th class="st-num">${esc(tr('svs_enemies_col_furnace', 'Furnace'))}</th>
+                        </tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>`;
+        }
+
+        bodyEl.innerHTML = `
+            ${homeKid ? `<p class="svs-en-alliance-sub">${esc(tr('svs_enemies_state_label', 'State'))} ${homeKid}</p>` : ''}
+            <div class="svs-en-stats">
+                <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_col_power', 'Power'))}</span><strong title="${fmtFull(power)}">${fmtCompact(power)}</strong></div>
+                <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_stat_rank', 'Power Rank'))}</span><strong>${rankLabel}</strong></div>
+                <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_col_members', 'Members'))}</span><strong>${fmtFull(members)}${memberMax ? '/' + memberMax : ''}</strong></div>
+                <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_alliance_level', 'Alliance level'))}</span><strong>${lv || '—'}</strong></div>
+                <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_alliance_leader', 'Leader'))}</span><strong data-no-i18n>${leaderName || '—'}${leaderUid ? ` <span class="svs-en-uid">#${leaderUid}</span>` : ''}</strong></div>
+                <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_alliance_min_level', 'Min. level'))}</span><strong>${minLv}</strong></div>
+                <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_alliance_min_power', 'Min. power'))}</span><strong title="${fmtFull(minPow)}">${fmtCompact(minPow)}</strong></div>
+                <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_alliance_recruit', 'Recruitment'))}</span><strong>${esc(recruit ? tr('svs_enemies_recruit_open', 'Open') : tr('svs_enemies_recruit_closed', 'Closed'))}</strong></div>
+                ${honor != null ? `<div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_alliance_honor', 'Honor'))}</span><strong>${honor}</strong></div>` : ''}
+            </div>
+            ${notice ? `<h4 class="svs-en-h">${esc(tr('svs_enemies_alliance_notice', 'Notice'))}</h4><pre class="svs-en-note" data-no-i18n>${esc(notice)}</pre>` : ''}
+            ${manifesto ? `<h4 class="svs-en-h">${esc(tr('svs_enemies_alliance_manifesto', 'Manifesto'))}</h4><pre class="svs-en-note" data-no-i18n>${esc(manifesto)}</pre>` : ''}
+            ${membersHtml}
+            ${entry.error ? `<p class="svs-en-status svs-en-warn">${esc(entry.error)}</p>` : ''}
+        `;
+    }
+
+    async function openSvSAllianceDetail(aid) {
+        const key = Number(aid);
+        if (!Number.isFinite(key)) return;
+        const modal = document.getElementById('svs-alliance-detail-modal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        renderAllianceModalBody(key, { loading: true });
+        const entry = await loadAllianceDetail(key);
+        // Only update if modal still open for this flow
+        if (!modal.classList.contains('hidden')) {
+            renderAllianceModalBody(key, entry);
+        }
+    }
+
+    function closeSvSAllianceDetail() {
+        const modal = document.getElementById('svs-alliance-detail-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    window.openSvSAllianceDetail = openSvSAllianceDetail;
+    window.closeSvSAllianceDetail = closeSvSAllianceDetail;
 
     window.showSvSEnemiesMenu = showSvSEnemiesMenu;
     window.refreshSvSEnemiesView = function () {
