@@ -16,7 +16,10 @@
         allianceLimit: 10,
         topPlayersLimit: 100,
         storageKey: 'svs_enemies_kids',
-        maxEnemies: 20
+        maxEnemies: 20,
+        // SvS match history (wosnerds open data, states 3001–3500)
+        historyUrl: 'https://data.wosnerds.com/data/svs-history/svs-history-3001-3500.json',
+        historyCacheMs: 30 * 60 * 1000
     };
 
     const nfCompact = new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 });
@@ -30,6 +33,12 @@
         mode: null, // 'direct' | 'proxy'
         cache: new Map(), // kid -> { fetchedAt, state, power, alliances, players, error, loading }
         allianceCache: new Map(), // aid -> { fetchedAt, data, error, loading }
+        history: null, // full svs-data-per-state map
+        historyFetchedAt: 0,
+        historyError: null,
+        historyLoading: null, // Promise while in flight
+        availableDates: [], // sorted desc, only from configured enemy states
+        selectedDates: new Set(), // dates to show
         loadedAt: 0
     };
 
@@ -277,6 +286,285 @@
         return entry;
     }
 
+
+    // ---------- SvS Record (match history) ----------
+    async function loadSvSHistory() {
+        if (S.history && Date.now() - S.historyFetchedAt < CFG.historyCacheMs) {
+            return S.history;
+        }
+        if (S.historyLoading) return S.historyLoading;
+        S.historyLoading = (async () => {
+            try {
+                const res = await fetch(CFG.historyUrl, {
+                    headers: { accept: 'application/json, text/plain, */*' },
+                    credentials: 'omit',
+                    mode: 'cors'
+                });
+                if (!res.ok) throw new Error('http-' + res.status);
+                const json = await res.json();
+                const map = (json && json['svs-data-per-state']) || json || {};
+                S.history = map;
+                S.historyFetchedAt = Date.now();
+                S.historyError = null;
+                return map;
+            } catch (err) {
+                console.error('SvS Record history', err);
+                S.historyError = tr('svs_enemies_record_load_failed', 'Could not load SvS Record');
+                // keep stale cache if any
+                if (!S.history) S.history = {};
+                return S.history;
+            } finally {
+                S.historyLoading = null;
+            }
+        })();
+        return S.historyLoading;
+    }
+
+    function getStateMatchMap(kid) {
+        const map = S.history || {};
+        return map[String(kid)] || map[Number(kid)] || null;
+    }
+
+    function getStateRecordRows(kid, onlySelected) {
+        const entry = getStateMatchMap(kid);
+        if (!entry || typeof entry !== 'object') return [];
+        let dates = Object.keys(entry);
+        if (onlySelected) {
+            dates = dates.filter((d) => S.selectedDates.has(d));
+        }
+        const rows = dates.map((date) => {
+            const m = entry[date] || {};
+            return {
+                date,
+                wonPrep: !!m['won-prep'],
+                wonCastle: !!m['won-castle'],
+                hadMatch: m['had-svs-match'] !== false,
+                opp: Number(m['opposition-state']) || null
+            };
+        });
+        rows.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+        return rows;
+    }
+
+    /** Dates that appear in history for the President-configured enemy States only. */
+    function collectDatesForEnemyKids(kids) {
+        const set = new Set();
+        const map = S.history || {};
+        (kids || []).forEach((kid) => {
+            const entry = map[String(kid)] || map[Number(kid)];
+            if (!entry || typeof entry !== 'object') return;
+            Object.keys(entry).forEach((d) => set.add(d));
+        });
+        return Array.from(set).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
+    }
+
+    function resultBadge(won) {
+        if (won) {
+            return `<span class="svs-en-result is-win">${esc(tr('svs_enemies_record_win', 'Win'))}</span>`;
+        }
+        return `<span class="svs-en-result is-loss">${esc(tr('svs_enemies_record_loss', 'Loss'))}</span>`;
+    }
+
+    function matrixCellHtml(match) {
+        if (!match) {
+            return `<span class="svs-en-matrix-empty">${esc(tr('svs_enemies_record_no_data', 'No Data'))}</span>`;
+        }
+        const prep = match.wonPrep
+            ? `<span class="svs-en-matrix-line is-win">${esc(tr('svs_enemies_record_prep', 'Prep'))}: ${esc(tr('svs_enemies_record_yes', 'Yes'))}</span>`
+            : `<span class="svs-en-matrix-line is-loss">${esc(tr('svs_enemies_record_prep', 'Prep'))}: ${esc(tr('svs_enemies_record_no', 'No'))}</span>`;
+        const castle = match.wonCastle
+            ? `<span class="svs-en-matrix-line is-win">${esc(tr('svs_enemies_record_castle', 'Castle'))}: ${esc(tr('svs_enemies_record_yes', 'Yes'))}</span>`
+            : `<span class="svs-en-matrix-line is-loss">${esc(tr('svs_enemies_record_castle', 'Castle'))}: ${esc(tr('svs_enemies_record_no', 'No'))}</span>`;
+        const opp = match.opp != null
+            ? `<span class="svs-en-matrix-line">${esc(tr('svs_enemies_record_opp', 'Opposition'))}: ${match.opp}</span>`
+            : '';
+        return `${prep}${castle}${opp}`;
+    }
+
+    function renderDateFilterUI() {
+        const list = document.getElementById('svs-enemies-date-list');
+        const panel = document.getElementById('svs-enemies-record-panel');
+        if (!list) return;
+        if (!S.availableDates.length) {
+            list.innerHTML = `<p class="svs-en-status">${esc(tr('svs_enemies_record_no_dates', 'No match dates found for these States.'))}</p>`;
+            if (panel) panel.classList.toggle('hidden', !getEnemyKids().length);
+            return;
+        }
+        list.innerHTML = S.availableDates.map((d) => {
+            const checked = S.selectedDates.has(d) ? ' checked' : '';
+            return `<label class="svs-en-date-chip">
+                <input type="checkbox" data-date="${esc(d)}"${checked} onchange="svsEnemiesToggleDate('${esc(d)}', this.checked)">
+                <span>${esc(d)}</span>
+            </label>`;
+        }).join('');
+        if (panel) panel.classList.remove('hidden');
+    }
+
+    function renderRecordMatrix(kids) {
+        const head = document.getElementById('svs-enemies-matrix-head');
+        const body = document.getElementById('svs-enemies-matrix-body');
+        const wrap = document.getElementById('svs-enemies-record-matrix-wrap');
+        if (!head || !body) return;
+
+        const dates = S.availableDates.filter((d) => S.selectedDates.has(d));
+        if (!kids.length || !dates.length) {
+            head.innerHTML = '';
+            body.innerHTML = `<tr><td class="svs-en-status">${esc(tr('svs_enemies_record_select_dates', 'Select at least one date to show the record table.'))}</td></tr>`;
+            return;
+        }
+
+        head.innerHTML = `<tr>
+            <th>${esc(tr('svs_enemies_state_label', 'State'))}</th>
+            ${dates.map((d) => `<th>${esc(d)}</th>`).join('')}
+        </tr>`;
+
+        body.innerHTML = kids.map((kid) => {
+            const entry = getStateMatchMap(kid) || {};
+            const cells = dates.map((d) => {
+                const m = entry[d];
+                if (!m) {
+                    return `<td class="svs-en-matrix-cell">${matrixCellHtml(null)}</td>`;
+                }
+                const row = {
+                    wonPrep: !!m['won-prep'],
+                    wonCastle: !!m['won-castle'],
+                    opp: Number(m['opposition-state']) || null
+                };
+                const cls = (row.wonPrep || row.wonCastle) ? ' has-win' : ' has-loss';
+                return `<td class="svs-en-matrix-cell${cls}">${matrixCellHtml(row)}</td>`;
+            }).join('');
+            return `<tr>
+                <th scope="row" class="svs-en-matrix-state">${esc(tr('svs_enemies_state_label', 'State'))} ${kid}</th>
+                ${cells}
+            </tr>`;
+        }).join('');
+    }
+
+    function rebuildRecordFiltersAndMatrix() {
+        const kids = getEnemyKids();
+        S.availableDates = collectDatesForEnemyKids(kids);
+        // Default: all dates selected. Later: keep only still-valid selected dates.
+        if (!S.selectedDates.size) {
+            S.selectedDates = new Set(S.availableDates);
+        } else {
+            const next = new Set();
+            S.availableDates.forEach((d) => {
+                if (S.selectedDates.has(d)) next.add(d);
+            });
+            S.selectedDates = next.size ? next : new Set(S.availableDates);
+        }
+        renderDateFilterUI();
+        renderRecordMatrix(kids);
+        // Re-render per-card record sections without full reload
+        const listEl = document.getElementById('svs-enemies-list');
+        if (listEl) {
+            listEl.querySelectorAll('.svs-en-card[data-kid]').forEach((card) => {
+                const kid = Number(card.getAttribute('data-kid'));
+                const slot = card.querySelector('.svs-en-record-slot');
+                if (slot && Number.isFinite(kid)) {
+                    slot.innerHTML = renderSvSRecordSection(kid);
+                }
+            });
+        }
+    }
+
+    function svsEnemiesToggleDate(date, checked) {
+        if (checked) S.selectedDates.add(date);
+        else S.selectedDates.delete(date);
+        renderRecordMatrix(getEnemyKids());
+        const listEl = document.getElementById('svs-enemies-list');
+        if (listEl) {
+            listEl.querySelectorAll('.svs-en-card[data-kid]').forEach((card) => {
+                const kid = Number(card.getAttribute('data-kid'));
+                const slot = card.querySelector('.svs-en-record-slot');
+                if (slot && Number.isFinite(kid)) slot.innerHTML = renderSvSRecordSection(kid);
+            });
+        }
+        // sync checkbox UI state is already from user click
+        const panel = document.getElementById('svs-enemies-record-panel');
+        if (panel) panel.classList.remove('hidden');
+    }
+
+    function svsEnemiesSelectAllDates() {
+        S.selectedDates = new Set(S.availableDates);
+        renderDateFilterUI();
+        renderRecordMatrix(getEnemyKids());
+        const listEl = document.getElementById('svs-enemies-list');
+        if (listEl) {
+            listEl.querySelectorAll('.svs-en-card[data-kid]').forEach((card) => {
+                const kid = Number(card.getAttribute('data-kid'));
+                const slot = card.querySelector('.svs-en-record-slot');
+                if (slot && Number.isFinite(kid)) slot.innerHTML = renderSvSRecordSection(kid);
+            });
+        }
+    }
+
+    function svsEnemiesClearAllDates() {
+        S.selectedDates = new Set();
+        renderDateFilterUI();
+        renderRecordMatrix(getEnemyKids());
+        const listEl = document.getElementById('svs-enemies-list');
+        if (listEl) {
+            listEl.querySelectorAll('.svs-en-card[data-kid]').forEach((card) => {
+                const kid = Number(card.getAttribute('data-kid'));
+                const slot = card.querySelector('.svs-en-record-slot');
+                if (slot && Number.isFinite(kid)) slot.innerHTML = renderSvSRecordSection(kid);
+            });
+        }
+    }
+
+    window.svsEnemiesToggleDate = svsEnemiesToggleDate;
+    window.svsEnemiesSelectAllDates = svsEnemiesSelectAllDates;
+    window.svsEnemiesClearAllDates = svsEnemiesClearAllDates;
+
+    function renderSvSRecordSection(kid) {
+        if (S.historyError && !S.history) {
+            return `<div class="svs-en-record-slot"><h4 class="svs-en-h">${esc(tr('svs_enemies_record_title', 'SvS Record'))}</h4>
+                <p class="svs-en-status svs-en-error">${esc(S.historyError)}</p></div>`;
+        }
+        const rows = getStateRecordRows(kid, true);
+        if (!rows.length) {
+            return `<div class="svs-en-record-slot"><h4 class="svs-en-h">${esc(tr('svs_enemies_record_title', 'SvS Record'))}</h4>
+                <p class="svs-en-status">${esc(tr('svs_enemies_record_empty', 'No match history for this State yet.'))}</p></div>`;
+        }
+        let prepW = 0, prepL = 0, casW = 0, casL = 0;
+        rows.forEach((r) => {
+            if (!r.hadMatch) return;
+            if (r.wonPrep) prepW++; else prepL++;
+            if (r.wonCastle) casW++; else casL++;
+        });
+        const body = rows.map((r) => {
+            const opp = r.opp != null ? String(r.opp) : '—';
+            return `<tr>
+                <td>${esc(r.date)}</td>
+                <td class="st-num">${esc(opp)}</td>
+                <td>${resultBadge(r.wonPrep)}</td>
+                <td>${resultBadge(r.wonCastle)}</td>
+            </tr>`;
+        }).join('');
+        return `
+            <div class="svs-en-record-slot">
+            <h4 class="svs-en-h">${esc(tr('svs_enemies_record_title', 'SvS Record'))}
+                <span class="svs-en-h-meta">${rows.length}</span>
+            </h4>
+            <div class="svs-en-record-summary">
+                <span>${esc(tr('svs_enemies_record_prep', 'Prep'))}: <strong class="svs-en-win-text">${prepW}</strong>–<strong class="svs-en-loss-text">${prepL}</strong></span>
+                <span>${esc(tr('svs_enemies_record_castle', 'Castle'))}: <strong class="svs-en-win-text">${casW}</strong>–<strong class="svs-en-loss-text">${casL}</strong></span>
+            </div>
+            <div class="svs-en-table-wrap svs-en-lb-wrap">
+                <table class="svs-en-table">
+                    <thead><tr>
+                        <th>${esc(tr('svs_enemies_record_date', 'Date'))}</th>
+                        <th class="st-num">${esc(tr('svs_enemies_record_vs', 'vs State'))}</th>
+                        <th>${esc(tr('svs_enemies_record_prep', 'Prep'))}</th>
+                        <th>${esc(tr('svs_enemies_record_castle', 'Castle'))}</th>
+                    </tr></thead>
+                    <tbody>${body}</tbody>
+                </table>
+            </div>
+            </div>`;
+    }
+
     // ---------- UI helpers ----------
     function esc(v) {
         return typeof escapeHtml === 'function' ? escapeHtml(v) : String(v == null ? '' : v)
@@ -424,6 +712,7 @@
                             <tbody>${topAlliancesHtml}</tbody>
                         </table>
                     </div>` : ''}
+                ${renderSvSRecordSection(kid)}
             `;
         }
 
@@ -452,6 +741,8 @@
             listEl.innerHTML = '';
             if (emptyEl) emptyEl.classList.remove('hidden');
             if (metaEl) metaEl.textContent = '';
+            const panel = document.getElementById('svs-enemies-record-panel');
+            if (panel) panel.classList.add('hidden');
             return;
         }
         if (emptyEl) emptyEl.classList.add('hidden');
@@ -461,6 +752,10 @@
         if (metaEl) {
             metaEl.textContent = tr('svs_enemies_count', '{{n}} enemy State(s)').replace('{{n}}', String(kids.length));
         }
+
+        // SvS Record dataset — only dates/matches for President-configured enemy States
+        await loadSvSHistory();
+        rebuildRecordFiltersAndMatrix();
 
         // Load in parallel (capped concurrency)
         const concurrency = 3;
@@ -689,6 +984,11 @@
     window.refreshSvSEnemiesView = function () {
         // Force reload (clear cache)
         S.cache.clear();
+        S.history = null;
+        S.historyFetchedAt = 0;
+        S.historyError = null;
+        S.availableDates = [];
+        S.selectedDates = new Set();
         renderEnemiesView();
     };
 
