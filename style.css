@@ -6600,3 +6600,175 @@ body h1.page-title.portal-title {
 @media (prefers-reduced-motion: reduce) {
     body h1.page-title.portal-title { animation: none; }
 }
+
+/* ================= SVS ENEMIES ================= */
+.svs-en-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+.svs-en-header-row .page-title {
+    margin: 0 0 4px;
+    font-size: 1.25rem;
+}
+.svs-en-header-row .page-subtitle {
+    margin: 0;
+}
+.svs-en-meta {
+    margin: 6px 0 0;
+    font-size: 0.85rem;
+    opacity: 0.75;
+}
+.svs-en-refresh-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.svs-en-empty {
+    padding: 18px 14px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    text-align: center;
+    opacity: 0.9;
+    line-height: 1.45;
+}
+.svs-en-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+}
+.svs-en-card {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+}
+.svs-en-card.is-mine {
+    border-color: rgba(34, 197, 94, 0.45);
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.15);
+}
+.svs-en-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-wrap: wrap;
+}
+.svs-en-card-title {
+    margin: 0;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.svs-en-kid {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+.svs-en-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+}
+.svs-en-atlas-link {
+    font-size: 0.82rem;
+    opacity: 0.85;
+    text-decoration: none;
+}
+.svs-en-atlas-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+.svs-en-card-body {
+    padding: 12px 14px 14px;
+}
+.svs-en-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.svs-en-stat {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.svs-en-stat-label {
+    font-size: 0.72rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.svs-en-stat strong {
+    font-size: 0.98rem;
+    font-variant-numeric: tabular-nums;
+}
+.svs-en-h {
+    margin: 12px 0 6px;
+    font-size: 0.92rem;
+    opacity: 0.9;
+}
+.svs-en-table-wrap {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.svs-en-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+.svs-en-table th,
+.svs-en-table td {
+    padding: 7px 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.svs-en-table th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    opacity: 0.7;
+    font-weight: 600;
+}
+.svs-en-table tr:last-child td {
+    border-bottom: none;
+}
+.svs-en-table .st-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.svs-en-tag {
+    font-weight: 700;
+    opacity: 0.95;
+}
+.svs-en-status {
+    margin: 4px 0;
+    opacity: 0.8;
+}
+.svs-en-error {
+    color: #fca5a5;
+}
+.svs-en-warn {
+    color: #fcd34d;
+    font-size: 0.85rem;
+}
+#svs-enemies-kids-input {
+    width: 100%;
+    resize: vertical;
+    min-height: 72px;
+    font-family: inherit;
+}

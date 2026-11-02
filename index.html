@@ -170,20 +170,21 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=102">
+		<link rel="stylesheet" href="style.css?v=103">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
-		<script src="lang.js?v=35" defer=""></script>
+		<script src="lang.js?v=36" defer=""></script>
 					<script src="js/app-core.js?v=55" defer=""></script>
 					<script src="js/app-auth.js?v=52" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
-					<script src="js/app-schedule.js?v=49" defer=""></script>
+					<script src="js/app-schedule.js?v=50" defer=""></script>
 					<script src="js/app-applications.js?v=51" defer=""></script>
 					<script src="js/app-waiting.js?v=50" defer=""></script>
 					<script src="js/app-bulk.js?v=2" defer=""></script>
 					<script src="js/app-extras.js?v=57" defer=""></script>
 					<script src="js/app-notifications.js?v=7" defer=""></script>
+					<script src="js/app-svs-enemies.js?v=1" defer=""></script>
 					<script src="fire-banner.js?v=15" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
@@ -411,6 +412,9 @@
 						<button type="button" class="list-item list-item-small" onclick="showMinisterReservationMenu()">
 							<span data-i18n="link_minister_reservation">Minister Reservation</span>
 						</button>
+						<button type="button" class="list-item list-item-small" onclick="showSvSEnemiesMenu()">
+							<span data-i18n="link_svs_enemies">SvS Enemies</span>
+						</button>
 						<a class="list-item list-item-small" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer">
 							<span data-i18n="link_leaderboard">Events Leaderboard Record</span>
 						</a>
@@ -424,6 +428,20 @@
 							<span data-i18n="link_wos_tool">WoS Tool</span>
 						</a>
 					</div>
+				</div>
+
+				<div id="svs-enemies-view" class="hidden">
+					<button type="button" class="btn-back action-no-bottom" onclick="showMainMenu()" data-i18n="btn_back_main_menu">&lt; Back to menu</button>
+					<div class="svs-en-header-row">
+						<div>
+							<h2 class="page-title" data-i18n="svs_enemies_title">SvS Enemies</h2>
+							<p class="page-subtitle" data-i18n="svs_enemies_subtitle">Live State info from WoS Atlas for enemy States set by the President.</p>
+							<p id="svs-enemies-meta" class="svs-en-meta"></p>
+						</div>
+						<button type="button" class="btn-apply svs-en-refresh-btn" onclick="refreshSvSEnemiesView()" data-i18n="svs_enemies_refresh">Refresh</button>
+					</div>
+					<p id="svs-enemies-empty" class="svs-en-empty hidden" data-i18n="svs_enemies_empty">No enemy States configured yet. The President can set State numbers in President Panel → SvS Enemies Settings.</p>
+					<div id="svs-enemies-list" class="svs-en-list"></div>
 				</div>
 
 				<div id="minister-reservation-view" class="hidden">
@@ -861,6 +879,10 @@
 						<span class="president-panel-option-label"><span data-i18n="btn_announcement">📢 Announcement</span></span>
 						<span class="arrow">&#8250;</span>
 					</button>
+					<button type="button" id="president-panel-svs-enemies-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenSvSEnemies()">
+						<span class="president-panel-option-label"><span class="president-panel-option-icon">⚔️</span> <span data-i18n="btn_svs_enemies_settings">SvS Enemies Settings</span></span>
+						<span class="arrow">&#8250;</span>
+					</button>
 					<button type="button" id="president-panel-finish-btn" class="list-item president-panel-option-btn president-panel-option-danger" onclick="presidentPanelFinishSVS()">
 						<span class="president-panel-option-label"><span class="president-panel-option-icon">🏁</span> <span data-i18n="btn_finish_svs">FINISH SvS</span></span>
 						<span class="arrow">&#8250;</span>
@@ -868,6 +890,24 @@
 				</div>
 				<div class="form-actions">
 					<button class="btn-back modal-action-btn" onclick="closePresidentPanelModal()" data-i18n="btn_close">Close</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal SvS Enemies Settings (President-only) -->
+		<div id="svs-enemies-settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="svs-enemies-settings-title">
+			<div class="modal-content custom-form-modal narrow-modal">
+				<button type="button" class="close-modal" onclick="closeSvSEnemiesSettingsModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 id="svs-enemies-settings-title" class="modal-title" data-i18n="svs_enemies_settings_title">⚔️ SvS Enemies Settings</h2>
+				<p class="modal-subtitle" data-i18n="svs_enemies_settings_help">Enter enemy State numbers (comma or space separated). These States appear on the SvS Enemies menu with live data from WoS Atlas (same source as State Tracker).</p>
+				<div class="form-group">
+					<label for="svs-enemies-kids-input" data-i18n="svs_enemies_kids_label">Enemy State IDs</label>
+					<textarea id="svs-enemies-kids-input" rows="3" placeholder="3480, 3491, 3502" data-i18n-placeholder="svs_enemies_kids_placeholder"></textarea>
+					<p class="redeem-hint" data-i18n="svs_enemies_kids_hint">Example: 3480, 3491, 3502 — max 20 States.</p>
+				</div>
+				<div class="form-actions">
+					<button type="button" class="btn-back modal-action-btn" onclick="closeSvSEnemiesSettingsModal()" data-i18n="btn_close">Close</button>
+					<button type="button" id="svs-enemies-settings-save-btn" class="btn-apply modal-action-btn" onclick="saveSvSEnemiesSettings()" data-i18n="btn_save">Save</button>
 				</div>
 			</div>
 		</div>
