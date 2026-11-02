@@ -142,41 +142,76 @@
             fetchJson(`${base}/states/${kid}`, signal),
             fetchJson(`${base}/kingdoms/${kid}/power`, signal),
             fetchJson(`${base}/alliances/leaderboard?kid=${kid}&limit=${CFG.allianceLimit}`, signal),
-            // Full top-N players (kingdoms/.../power only returns ~5 in "top")
+            // Full leaderboard (up to topPlayersLimit). kingdoms/.../power only has ~5 in "top".
             fetchJson(`${base}/power/leaderboard?kid=${kid}&limit=${CFG.topPlayersLimit}`, signal)
         ]);
         const state = results[0].status === 'fulfilled' ? results[0].value : null;
-        let power = results[1].status === 'fulfilled' ? results[1].value : null;
+        const power = results[1].status === 'fulfilled' ? results[1].value : null;
         let alliances = results[2].status === 'fulfilled' ? results[2].value : null;
         const leaderboard = results[3].status === 'fulfilled' ? results[3].value : null;
+
         if (alliances && Array.isArray(alliances.entries)) alliances = alliances.entries;
         else if (alliances && Array.isArray(alliances)) { /* ok */ }
         else if (alliances && Array.isArray(alliances.alliances)) alliances = alliances.alliances;
         else alliances = null;
-        // Prefer power/leaderboard entries (up to topPlayersLimit) over the short "top" list
+
+        // Dedicated player list: prefer /power/leaderboard, else short power.top
+        let players = [];
         if (leaderboard && Array.isArray(leaderboard.entries) && leaderboard.entries.length) {
-            power = power ? Object.assign({}, power) : {};
-            power.top = leaderboard.entries;
+            players = leaderboard.entries.slice(0, CFG.topPlayersLimit);
+        } else if (power && Array.isArray(power.top) && power.top.length) {
+            players = power.top.slice(0, CFG.topPlayersLimit);
         }
-        if (!state && !power && !alliances) throw new Error('direct-detail-failed');
-        return { state, power, alliances };
+
+        if (!state && !power && !alliances && !players.length) throw new Error('direct-detail-failed');
+        return { state, power, alliances, players };
     }
 
     async function fetchDetailProxy(kid, signal) {
         const client = typeof getSupabase === 'function' ? getSupabase() : null;
         if (!client) throw new Error('no-proxy');
         const { data, error } = await client.functions.invoke(CFG.proxyFunction, {
-            body: { action: 'detail', kid, allianceLimit: CFG.allianceLimit }
+            body: {
+                action: 'detail',
+                kid,
+                allianceLimit: CFG.allianceLimit,
+                playerLimit: CFG.topPlayersLimit
+            }
         });
         if (error) throw error;
         if (!data) throw new Error('proxy-empty');
         let alliances = data.alliances || null;
         if (alliances && Array.isArray(alliances.entries)) alliances = alliances.entries;
+        let players = [];
+        if (Array.isArray(data.players) && data.players.length) {
+            players = data.players;
+        } else if (data.power && Array.isArray(data.power.top)) {
+            players = data.power.top;
+        }
         return {
             state: data.state || null,
             power: data.power || null,
-            alliances: alliances
+            alliances: alliances,
+            players: players.slice(0, CFG.topPlayersLimit)
         };
+    }
+
+    /** Fetch only the full power leaderboard via edge function (when direct CORS fails). */
+    async function fetchPlayersProxy(kid) {
+        const client = typeof getSupabase === 'function' ? getSupabase() : null;
+        if (!client) return [];
+        try {
+            const { data, error } = await client.functions.invoke(CFG.proxyFunction, {
+                body: { action: 'power-leaderboard', kid, limit: CFG.topPlayersLimit }
+            });
+            if (error || !data) return [];
+            if (Array.isArray(data.entries)) return data.entries.slice(0, CFG.topPlayersLimit);
+            if (Array.isArray(data.players)) return data.players.slice(0, CFG.topPlayersLimit);
+            return [];
+        } catch (err) {
+            console.warn('SvS Enemies power-leaderboard proxy failed', err);
+            return [];
+        }
     }
 
     async function loadDetail(kid) {
@@ -188,7 +223,7 @@
             return cached;
         }
 
-        const entry = { loading: true, error: null, state: null, power: null, alliances: null, fetchedAt: 0 };
+        const entry = { loading: true, error: null, state: null, power: null, alliances: null, players: [], fetchedAt: 0 };
         S.cache.set(key, entry);
 
         try {
@@ -214,7 +249,21 @@
             entry.state = payload.state;
             entry.power = payload.power;
             entry.alliances = payload.alliances;
-            entry.error = (!payload.state && !payload.power && !payload.alliances)
+            entry.players = Array.isArray(payload.players) ? payload.players : (
+                payload.power && Array.isArray(payload.power.top) ? payload.power.top : []
+            );
+            // Direct /power/leaderboard is often CORS-blocked; only ~5 come from kingdoms/.../power.
+            // Enrich via edge function when the list is still short.
+            if (entry.players.length < 10) {
+                const more = await fetchPlayersProxy(key);
+                if (more.length > entry.players.length) {
+                    entry.players = more;
+                    if (entry.power) {
+                        entry.power = Object.assign({}, entry.power, { top: more });
+                    }
+                }
+            }
+            entry.error = (!payload.state && !payload.power && !payload.alliances && !(entry.players && entry.players.length))
                 ? (typeof t === 'function' ? t('svs_enemies_load_partial') : 'Partial data only')
                 : null;
         } catch (err) {
@@ -292,7 +341,13 @@
             </tr>`;
         }).join('');
 
-        const topPlayers = power && Array.isArray(power.top) ? power.top.slice(0, CFG.topPlayersLimit) : [];
+        // Prefer dedicated leaderboard list from /power/leaderboard
+        let topPlayers = [];
+        if (data && Array.isArray(data.players) && data.players.length) {
+            topPlayers = data.players.slice(0, CFG.topPlayersLimit);
+        } else if (power && Array.isArray(power.top) && power.top.length) {
+            topPlayers = power.top.slice(0, CFG.topPlayersLimit);
+        }
         const topPlayersHtml = topPlayers.map((p) => {
             const rank = Number(p.rank) || 0;
             const uid = Number(p.uid) || 0;
@@ -334,22 +389,9 @@
                     ${kingName ? `<div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_stat_king', 'King'))}</span><strong data-no-i18n>${esc(kingName)}</strong></div>` : ''}
                 </div>
                 ${error ? `<p class="svs-en-status svs-en-warn">${esc(error)}</p>` : ''}
-                ${topAlliancesHtml ? `
-                    <h4 class="svs-en-h">${esc(tr('svs_enemies_top_alliances', 'Top Alliances'))}</h4>
-                    <div class="svs-en-table-wrap">
-                        <table class="svs-en-table">
-                            <thead><tr>
-                                <th class="st-num">#</th>
-                                <th>${esc(tr('svs_enemies_col_alliance', 'Alliance'))}</th>
-                                <th class="st-num">${esc(tr('svs_enemies_col_power', 'Power'))}</th>
-                                <th class="st-num">${esc(tr('svs_enemies_col_members', 'Members'))}</th>
-                            </tr></thead>
-                            <tbody>${topAlliancesHtml}</tbody>
-                        </table>
-                    </div>` : ''}
                 ${topPlayersHtml ? `
                     <h4 class="svs-en-h">${esc(tr('svs_enemies_leaderboard', 'Leaderboard'))}
-                        <span class="svs-en-h-meta">${topPlayers.length}</span>
+                        <span class="svs-en-h-meta">Top ${topPlayers.length}</span>
                     </h4>
                     <div class="svs-en-table-wrap svs-en-lb-wrap">
                         <table class="svs-en-table svs-en-lb-table">
@@ -361,6 +403,19 @@
                                 <th class="st-num">${esc(tr('svs_enemies_col_jump', 'Jump'))}</th>
                             </tr></thead>
                             <tbody>${topPlayersHtml}</tbody>
+                        </table>
+                    </div>` : `<p class="svs-en-status svs-en-warn">${esc(tr('svs_enemies_no_leaderboard', 'Leaderboard data unavailable'))}</p>`}
+                ${topAlliancesHtml ? `
+                    <h4 class="svs-en-h">${esc(tr('svs_enemies_top_alliances', 'Top Alliances'))}</h4>
+                    <div class="svs-en-table-wrap">
+                        <table class="svs-en-table">
+                            <thead><tr>
+                                <th class="st-num">#</th>
+                                <th>${esc(tr('svs_enemies_col_alliance', 'Alliance'))}</th>
+                                <th class="st-num">${esc(tr('svs_enemies_col_power', 'Power'))}</th>
+                                <th class="st-num">${esc(tr('svs_enemies_col_members', 'Members'))}</th>
+                            </tr></thead>
+                            <tbody>${topAlliancesHtml}</tbody>
                         </table>
                     </div>` : ''}
             `;
