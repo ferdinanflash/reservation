@@ -14,7 +14,7 @@
         myState: 3475,
         cacheMs: 5 * 60 * 1000,
         allianceLimit: 10,
-        topPlayersLimit: 20,
+        topPlayersLimit: 100,
         storageKey: 'svs_enemies_kids',
         maxEnemies: 20
     };
@@ -295,14 +295,23 @@
         const topPlayers = power && Array.isArray(power.top) ? power.top.slice(0, CFG.topPlayersLimit) : [];
         const topPlayersHtml = topPlayers.map((p) => {
             const rank = Number(p.rank) || 0;
+            const uid = Number(p.uid) || 0;
             const nick = esc(String(p.nick_name || p.uid || ''));
             const pw = Number(p.power) || 0;
             const stove = Number.isFinite(Number(p.stove_lv)) ? Number(p.stove_lv) : '—';
+            const jumpRaw = Number(p.last_jump_pct);
+            const jump = Number.isFinite(jumpRaw)
+                ? ((jumpRaw * 100).toFixed(1) + '%')
+                : '—';
+            const nameCell = uid
+                ? `<span data-no-i18n>${nick}</span> <span class="svs-en-uid" title="Player ID">#${uid}</span>`
+                : `<span data-no-i18n>${nick}</span>`;
             return `<tr>
                 <td class="st-num">${rank}</td>
-                <td data-no-i18n>${nick}</td>
+                <td>${nameCell}</td>
                 <td class="st-num" title="${fmtFull(pw)}">${fmtCompact(pw)}</td>
                 <td class="st-num">${stove}</td>
+                <td class="st-num">${jump}</td>
             </tr>`;
         }).join('');
 
@@ -339,14 +348,17 @@
                         </table>
                     </div>` : ''}
                 ${topPlayersHtml ? `
-                    <h4 class="svs-en-h">${esc(tr('svs_enemies_top_players', 'Top Players'))}</h4>
-                    <div class="svs-en-table-wrap">
-                        <table class="svs-en-table">
+                    <h4 class="svs-en-h">${esc(tr('svs_enemies_leaderboard', 'Leaderboard'))}
+                        <span class="svs-en-h-meta">${topPlayers.length}</span>
+                    </h4>
+                    <div class="svs-en-table-wrap svs-en-lb-wrap">
+                        <table class="svs-en-table svs-en-lb-table">
                             <thead><tr>
                                 <th class="st-num">#</th>
                                 <th>${esc(tr('svs_enemies_col_name', 'Name'))}</th>
                                 <th class="st-num">${esc(tr('svs_enemies_col_power', 'Power'))}</th>
                                 <th class="st-num">${esc(tr('svs_enemies_col_furnace', 'Furnace'))}</th>
+                                <th class="st-num">${esc(tr('svs_enemies_col_jump', 'Jump'))}</th>
                             </tr></thead>
                             <tbody>${topPlayersHtml}</tbody>
                         </table>
