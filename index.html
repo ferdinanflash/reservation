@@ -170,11 +170,11 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=104">
+		<link rel="stylesheet" href="style.css?v=105">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
-		<script src="lang.js?v=38" defer=""></script>
+		<script src="lang.js?v=39" defer=""></script>
 					<script src="js/app-core.js?v=55" defer=""></script>
 					<script src="js/app-auth.js?v=52" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
@@ -184,7 +184,7 @@
 					<script src="js/app-bulk.js?v=2" defer=""></script>
 					<script src="js/app-extras.js?v=57" defer=""></script>
 					<script src="js/app-notifications.js?v=7" defer=""></script>
-					<script src="js/app-svs-enemies.js?v=5" defer=""></script>
+					<script src="js/app-svs-enemies.js?v=6" defer=""></script>
 					<script src="fire-banner.js?v=15" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
@@ -908,6 +908,19 @@
 				<div class="form-actions">
 					<button type="button" class="btn-back modal-action-btn" onclick="closeSvSEnemiesSettingsModal()" data-i18n="btn_close">Close</button>
 					<button type="button" id="svs-enemies-settings-save-btn" class="btn-apply modal-action-btn" onclick="saveSvSEnemiesSettings()" data-i18n="btn_save">Save</button>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Modal Alliance Detail (SvS Enemies) -->
+		<div id="svs-alliance-detail-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="svs-alliance-detail-title">
+			<div class="modal-content custom-form-modal svs-alliance-modal-content">
+				<button type="button" class="close-modal" onclick="closeSvSAllianceDetail()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 id="svs-alliance-detail-title" class="modal-title" data-i18n="svs_enemies_alliance_title">Alliance Info</h2>
+				<div id="svs-alliance-detail-body" class="svs-alliance-detail-body"></div>
+				<div class="form-actions">
+					<button type="button" class="btn-back modal-action-btn" onclick="closeSvSAllianceDetail()" data-i18n="btn_close">Close</button>
 				</div>
 			</div>
 		</div>

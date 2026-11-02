@@ -6794,3 +6794,49 @@ body h1.page-title.portal-title {
     opacity: 0.55;
     font-variant-numeric: tabular-nums;
 }
+
+.svs-en-alliance-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+.svs-en-alliance-btn:hover {
+    text-decoration: underline;
+    color: #93c5fd;
+}
+.svs-en-alliance-btn:focus-visible {
+    outline: 2px solid rgba(147, 197, 253, 0.6);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+.svs-alliance-modal-content {
+    max-width: 560px;
+    width: calc(100% - 24px);
+}
+.svs-alliance-detail-body {
+    margin-top: 8px;
+    max-height: min(70vh, 560px);
+    overflow: auto;
+}
+.svs-en-alliance-sub {
+    margin: 0 0 10px;
+    opacity: 0.75;
+    font-size: 0.9rem;
+}
+.svs-en-note {
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 0 0 10px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    max-height: 160px;
+    overflow: auto;
+}
