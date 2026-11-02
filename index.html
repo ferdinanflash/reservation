@@ -170,11 +170,11 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=105">
+		<link rel="stylesheet" href="style.css?v=107">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=7" defer=""></script>
-		<script src="lang.js?v=39" defer=""></script>
+		<script src="lang.js?v=42" defer=""></script>
 					<script src="js/app-core.js?v=55" defer=""></script>
 					<script src="js/app-auth.js?v=52" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
@@ -184,7 +184,7 @@
 					<script src="js/app-bulk.js?v=2" defer=""></script>
 					<script src="js/app-extras.js?v=57" defer=""></script>
 					<script src="js/app-notifications.js?v=7" defer=""></script>
-					<script src="js/app-svs-enemies.js?v=6" defer=""></script>
+					<script src="js/app-svs-enemies.js?v=8" defer=""></script>
 					<script src="fire-banner.js?v=15" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
@@ -441,6 +441,25 @@
 						<button type="button" class="btn-apply svs-en-refresh-btn" onclick="refreshSvSEnemiesView()" data-i18n="svs_enemies_refresh">Refresh</button>
 					</div>
 					<p id="svs-enemies-empty" class="svs-en-empty hidden" data-i18n="svs_enemies_empty">No enemy States configured yet. The President can set State numbers in President Panel → SvS Enemies Settings.</p>
+					<div id="svs-enemies-record-panel" class="svs-en-record-panel hidden">
+						<div class="svs-en-record-panel-head">
+							<h3 class="svs-en-h" data-i18n="svs_enemies_record_title">SvS Record</h3>
+							<p class="svs-en-record-panel-hint" data-i18n="svs_enemies_record_filter_hint">Match history for enemy States set by the President. Filter by date below.</p>
+						</div>
+						<div class="svs-en-date-filter">
+							<div class="svs-en-date-filter-actions">
+								<button type="button" class="btn-apply svs-en-date-btn" onclick="svsEnemiesSelectAllDates()" data-i18n="svs_enemies_record_add_all_dates">Add All Dates</button>
+								<button type="button" class="btn-back svs-en-date-btn" onclick="svsEnemiesClearAllDates()" data-i18n="svs_enemies_record_clear_all_dates">Clear All Dates</button>
+							</div>
+							<div id="svs-enemies-date-list" class="svs-en-date-list" role="group" aria-label="Filter dates"></div>
+						</div>
+						<div id="svs-enemies-record-matrix-wrap" class="svs-en-table-wrap svs-en-matrix-wrap">
+							<table class="svs-en-table svs-en-matrix-table">
+								<thead id="svs-enemies-matrix-head"></thead>
+								<tbody id="svs-enemies-matrix-body"></tbody>
+							</table>
+						</div>
+					</div>
 					<div id="svs-enemies-list" class="svs-en-list"></div>
 				</div>
 
@@ -662,6 +681,13 @@
 				<h2 id="whatsnew-modal-title" class="apply-title" data-i18n="whatsnew_title">What's New?</h2>
 				<p class="whatsnew-date" data-i18n="whatsnew_date">Last Update: 2 Nov 2026</p>
 				<ul class="whatsnew-list">
+					<li class="whatsnew-item">
+						<span class="whatsnew-icon" aria-hidden="true">⚔️</span>
+						<div class="whatsnew-body">
+							<div class="whatsnew-item-title"><span class="whatsnew-badge whatsnew-badge-new" data-i18n="whatsnew_badge_new">New</span><span data-i18n="whatsnew_11_title"></span></div>
+							<p class="whatsnew-item-desc" data-i18n="whatsnew_11_desc"></p>
+						</div>
+					</li>
 					<li class="whatsnew-item">
 						<span class="whatsnew-icon" aria-hidden="true">📋</span>
 						<div class="whatsnew-body">
