@@ -150,15 +150,49 @@
         return res.json();
     }
 
-    // Public site API (no API key): works for single player lookup.
-    // api.wosatlas.com states/{kid} often returns king.uid only without nick_name.
+    // ---- President / King nickname (same strategy as TAL State Tracker) ----
+    // states/{kid} and server.roles often only have role:"king" + uid, no name.
+    // Resolution order:
+    //   1) Already on king object (nick_name / name)
+    //   2) Match uid in loaded top-players / leaderboard list
+    //   3) Public GET https://wosatlas.com/api/v1/players/{uid}
+    //   4) Edge function action:"player" (API key path)
+    function pickNameFromPlayerList(players, uid) {
+        const id = String(uid || '');
+        if (!id || !Array.isArray(players)) return null;
+        for (let i = 0; i < players.length; i++) {
+            const p = players[i];
+            if (!p) continue;
+            if (String(p.uid || p.playerUid || p.fid || '') !== id) continue;
+            const n = p.nick_name || p.nickname || p.nickName || p.name || null;
+            if (n) return String(n);
+        }
+        return null;
+    }
+
+    function playerPayloadName(p) {
+        if (!p || typeof p !== 'object' || p.error) return null;
+        const n = p.name || p.nick_name || p.nickname || p.nickName || null;
+        return n ? String(n) : null;
+    }
+
     async function resolvePlayerName(uid, signal) {
         const id = String(uid == null ? '' : uid).trim();
         if (!id) return null;
+
+        // Public site API — no API key; works for single-player lookup
         try {
-            const p = await fetchJson('https://wosatlas.com/api/v1/players/' + encodeURIComponent(id), signal);
-            if (p && !p.error && p.name) return String(p.name);
-        } catch (_) { /* fall through */ }
+            const p = await fetchJson(
+                'https://wosatlas.com/api/v1/players/' + encodeURIComponent(id),
+                signal
+            );
+            const n = playerPayloadName(p);
+            if (n) return n;
+        } catch (err) {
+            if (err && err.name === 'AbortError') throw err;
+        }
+
+        // Edge function (holds API key for api.wosatlas.com)
         try {
             const client = typeof getSupabase === 'function' ? getSupabase() : null;
             if (!client) return null;
@@ -167,32 +201,33 @@
             });
             if (error || !data) return null;
             const p = Array.isArray(data.players) ? data.players[0] : (data.player || data);
-            if (p && (p.name || p.nick_name)) return String(p.name || p.nick_name);
-        } catch (_) { /* ignore */ }
-        return null;
-    }
-
-    function pickNameFromPlayerList(players, uid) {
-        const id = String(uid || '');
-        if (!id || !Array.isArray(players)) return null;
-        for (let i = 0; i < players.length; i++) {
-            const p = players[i];
-            if (!p) continue;
-            if (String(p.uid || p.playerUid || '') !== id) continue;
-            const n = p.nick_name || p.nickname || p.name || null;
-            if (n) return String(n);
+            const n = playerPayloadName(p);
+            if (n) return n;
+        } catch (err) {
+            if (err && err.name === 'AbortError') throw err;
         }
         return null;
     }
 
     async function enrichKingName(state, players, signal) {
-        if (!state || !state.king) return state;
-        const king = Object.assign({}, state.king);
+        if (!state) return state;
+        // Some payloads nest king under state.king; others only expose roles[]
+        let king = state.king ? Object.assign({}, state.king) : null;
+        if (!king && Array.isArray(state.roles)) {
+            const role = state.roles.find(function (r) {
+                return r && (r.role === 'king' || r.role === 'president');
+            });
+            if (role && role.uid) king = { uid: role.uid };
+        }
+        if (!king) return state;
+
         const uid = king.uid || king.playerUid || king.id;
         if (!uid) return state;
+
         let name = king.nick_name || king.name || null;
         if (!name) name = pickNameFromPlayerList(players, uid);
         if (!name) name = await resolvePlayerName(uid, signal);
+
         if (name) {
             king.nick_name = name;
             king.name = name;
@@ -361,9 +396,12 @@
                     }
                 }
             }
-            // King from API often has uid only — resolve nickname (same as TAL State Tracker)
+            // King/President often has uid only — resolve nickname (TAL logic)
             try {
-                entry.state = await enrichKingName(entry.state, entry.players, signal);
+                const playerPool = (entry.players && entry.players.length)
+                    ? entry.players
+                    : (entry.power && Array.isArray(entry.power.top) ? entry.power.top : []);
+                entry.state = await enrichKingName(entry.state, playerPool, signal);
             } catch (e) {
                 if (e && e.name === 'AbortError') throw e;
             }
