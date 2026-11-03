@@ -150,6 +150,57 @@
         return res.json();
     }
 
+    // Public site API (no API key): works for single player lookup.
+    // api.wosatlas.com states/{kid} often returns king.uid only without nick_name.
+    async function resolvePlayerName(uid, signal) {
+        const id = String(uid == null ? '' : uid).trim();
+        if (!id) return null;
+        try {
+            const p = await fetchJson('https://wosatlas.com/api/v1/players/' + encodeURIComponent(id), signal);
+            if (p && !p.error && p.name) return String(p.name);
+        } catch (_) { /* fall through */ }
+        try {
+            const client = typeof getSupabase === 'function' ? getSupabase() : null;
+            if (!client) return null;
+            const { data, error } = await client.functions.invoke(CFG.proxyFunction, {
+                body: { action: 'player', uid: id }
+            });
+            if (error || !data) return null;
+            const p = Array.isArray(data.players) ? data.players[0] : (data.player || data);
+            if (p && (p.name || p.nick_name)) return String(p.name || p.nick_name);
+        } catch (_) { /* ignore */ }
+        return null;
+    }
+
+    function pickNameFromPlayerList(players, uid) {
+        const id = String(uid || '');
+        if (!id || !Array.isArray(players)) return null;
+        for (let i = 0; i < players.length; i++) {
+            const p = players[i];
+            if (!p) continue;
+            if (String(p.uid || p.playerUid || '') !== id) continue;
+            const n = p.nick_name || p.nickname || p.name || null;
+            if (n) return String(n);
+        }
+        return null;
+    }
+
+    async function enrichKingName(state, players, signal) {
+        if (!state || !state.king) return state;
+        const king = Object.assign({}, state.king);
+        const uid = king.uid || king.playerUid || king.id;
+        if (!uid) return state;
+        let name = king.nick_name || king.name || null;
+        if (!name) name = pickNameFromPlayerList(players, uid);
+        if (!name) name = await resolvePlayerName(uid, signal);
+        if (name) {
+            king.nick_name = name;
+            king.name = name;
+        }
+        king.uid = uid;
+        return Object.assign({}, state, { king: king });
+    }
+
     async function fetchDetailDirect(kid, signal) {
         const base = CFG.apiBase;
         const results = await Promise.allSettled([
@@ -309,6 +360,12 @@
                         entry.power = Object.assign({}, entry.power, { top: more });
                     }
                 }
+            }
+            // King from API often has uid only — resolve nickname (same as TAL State Tracker)
+            try {
+                entry.state = await enrichKingName(entry.state, entry.players, signal);
+            } catch (e) {
+                if (e && e.name === 'AbortError') throw e;
             }
             entry.error = (!payload.state && !payload.power && !payload.alliances && !(entry.players && entry.players.length))
                 ? (typeof t === 'function' ? t('svs_enemies_load_partial') : 'Partial data only')
@@ -655,9 +712,13 @@
             : null;
 
         const king = state && state.king ? state.king : null;
-        const kingName = king && (king.nick_name || king.name || king.uid)
-            ? String(king.nick_name || king.name || king.uid)
-            : null;
+        const kingUid = king && (king.uid || king.playerUid) ? String(king.uid || king.playerUid) : '';
+        const kingNick = king ? String(king.nick_name || king.name || '').trim() : '';
+        // Prefer nickname; fall back to uid only if name still missing
+        const kingName = kingNick || kingUid || null;
+        const kingDisplay = kingNick
+            ? (kingUid ? kingNick + ' · #' + kingUid : kingNick)
+            : (kingUid ? '#' + kingUid : null);
 
         let allianceList = [];
         if (Array.isArray(alliances)) allianceList = alliances;
@@ -727,7 +788,7 @@
                     <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_stat_total', 'Total Power'))}</span><strong title="${fmtFull(totalPower)}">${fmtCompact(totalPower)}</strong></div>
                     <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_stat_median', 'Median'))}</span><strong title="${fmtFull(medianPower)}">${fmtCompact(medianPower)}</strong></div>
                     <div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_stat_max', 'Max Power'))}</span><strong title="${fmtFull(maxPower)}">${fmtCompact(maxPower)}</strong></div>
-                    ${kingName ? `<div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_stat_king', 'King'))}</span><strong data-no-i18n>${esc(kingName)}</strong></div>` : ''}
+                    ${kingDisplay ? `<div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_stat_king', 'President'))}</span><strong data-no-i18n>${esc(kingDisplay)}</strong></div>` : ''}
                 </div>
                 ${error ? `<p class="svs-en-status svs-en-warn">${esc(error)}</p>` : ''}
                 ${topPlayersHtml ? `
