@@ -1,8 +1,9 @@
 // ================= SVS ENEMIES =================
 // Main-menu page that shows live WoS Atlas info for enemy States configured
 // by the President (President Panel → SvS Enemies Settings).
-// Data source matches tal-main State Tracker: api.wosatlas.com (direct, with
-// optional Supabase edge-function fallback wosatlas-states if deployed).
+// Data source: api.wosatlas.com (requires API key since ~Nov 2026).
+// Browser calls the Supabase edge function `wosatlas-states` which holds the
+// key in secrets. Direct browser calls are kept as a last-resort fallback.
 
 (function () {
     'use strict';
@@ -17,6 +18,9 @@
         topPlayersLimit: 100,
         storageKey: 'svs_enemies_kids',
         maxEnemies: 20,
+        // Prefer proxy: api.wosatlas.com now requires an API key that must
+        // live only in the edge function (never in the browser).
+        preferProxy: true,
         // SvS match history (wosnerds open data, states 3001–3500)
         historyUrl: 'https://data.wosnerds.com/data/svs-history/svs-history-3001-3500.json',
         historyCacheMs: 30 * 60 * 1000
@@ -188,8 +192,28 @@
                 playerLimit: CFG.topPlayersLimit
             }
         });
-        if (error) throw error;
+        if (error) {
+            // FunctionsHttpError / FunctionsRelayError often carry a context status
+            const status = error.context && error.context.status;
+            let detail = '';
+            try {
+                if (error.context && typeof error.context.json === 'function') {
+                    const body = await error.context.json();
+                    detail = (body && (body.message || body.error)) ? String(body.message || body.error) : '';
+                }
+            } catch (_) { /* body not JSON */ }
+            const msg = (detail || error.message || '') + (status ? ' status-' + status : '');
+            const e = new Error(msg || 'proxy-error');
+            e.status = status;
+            e.detail = detail;
+            throw e;
+        }
         if (!data) throw new Error('proxy-empty');
+        if (data.error) {
+            const e = new Error(String(data.message || data.error));
+            if (/401|INVALID_API_KEY|upstream-401/i.test(String(data.error))) e.status = 401;
+            throw e;
+        }
         let alliances = data.alliances || null;
         if (alliances && Array.isArray(alliances.entries)) alliances = alliances.entries;
         let players = [];
@@ -197,6 +221,10 @@
             players = data.players;
         } else if (data.power && Array.isArray(data.power.top)) {
             players = data.power.top;
+        }
+        // Treat fully empty payload as failure so loadDetail can surface the error.
+        if (!data.state && !data.power && !alliances && !players.length) {
+            throw new Error('proxy-empty');
         }
         return {
             state: data.state || null,
@@ -238,17 +266,27 @@
 
         try {
             let payload = null;
-            if (S.mode === 'proxy') {
+            // Prefer proxy first: upstream now requires an API key that only the
+            // edge function can hold. Fall back to direct only if proxy fails.
+            const tryProxyFirst = CFG.preferProxy || S.mode === 'proxy' || S.mode == null;
+            if (tryProxyFirst) {
                 try {
                     payload = await fetchDetailProxy(key);
-                } catch (_) {
-                    payload = await fetchDetailDirect(key);
-                    S.mode = 'direct';
+                    S.mode = 'proxy';
+                } catch (proxyErr) {
+                    console.warn('SvS Enemies proxy failed, trying direct', proxyErr);
+                    try {
+                        payload = await fetchDetailDirect(key);
+                        S.mode = 'direct';
+                    } catch (directErr) {
+                        // Direct calls fail with 401/CORS now; the proxy error is the useful one.
+                        throw proxyErr;
+                    }
                 }
             } else {
                 try {
                     payload = await fetchDetailDirect(key);
-                    if (S.mode !== 'proxy') S.mode = 'direct';
+                    S.mode = 'direct';
                 } catch (_) {
                     payload = await fetchDetailProxy(key);
                     S.mode = 'proxy';
@@ -262,8 +300,7 @@
             entry.players = Array.isArray(payload.players) ? payload.players : (
                 payload.power && Array.isArray(payload.power.top) ? payload.power.top : []
             );
-            // Direct /power/leaderboard is often CORS-blocked; only ~5 come from kingdoms/.../power.
-            // Enrich via edge function when the list is still short.
+            // Enrich player list via edge function when still short.
             if (entry.players.length < 10) {
                 const more = await fetchPlayersProxy(key);
                 if (more.length > entry.players.length) {
@@ -280,7 +317,17 @@
             console.error('SvS Enemies detail', key, err);
             entry.loading = false;
             entry.fetchedAt = Date.now();
-            entry.error = typeof t === 'function' ? t('svs_enemies_load_failed') : 'Could not load State data';
+            const msg = (err && err.message) ? String(err.message) : '';
+            const base = typeof t === 'function' ? t('svs_enemies_load_failed') : 'Could not load State data';
+            let hint = '';
+            if (/401|INVALID_API_KEY|upstream-401|API key/i.test(msg) || (err && err.status === 401)) {
+                hint = 'API key WoS Atlas belum diset / ditolak (cek secret WOSATLAS_API_KEY di Supabase)';
+            } else if (err && err.status === 404) {
+                hint = 'Edge function wosatlas-states belum di-deploy';
+            } else if (msg) {
+                hint = msg;
+            }
+            entry.error = hint ? base + ' — ' + hint : base;
         }
         S.cache.set(key, entry);
         return entry;
