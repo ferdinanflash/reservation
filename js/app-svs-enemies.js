@@ -195,14 +195,22 @@
         if (error) {
             // FunctionsHttpError / FunctionsRelayError often carry a context status
             const status = error.context && error.context.status;
-            const msg = (error.message || '') + (status ? ' status-' + status : '');
+            let detail = '';
+            try {
+                if (error.context && typeof error.context.json === 'function') {
+                    const body = await error.context.json();
+                    detail = (body && (body.message || body.error)) ? String(body.message || body.error) : '';
+                }
+            } catch (_) { /* body not JSON */ }
+            const msg = (detail || error.message || '') + (status ? ' status-' + status : '');
             const e = new Error(msg || 'proxy-error');
             e.status = status;
+            e.detail = detail;
             throw e;
         }
         if (!data) throw new Error('proxy-empty');
         if (data.error) {
-            const e = new Error(String(data.error));
+            const e = new Error(String(data.message || data.error));
             if (/401|INVALID_API_KEY|upstream-401/i.test(String(data.error))) e.status = 401;
             throw e;
         }
@@ -267,8 +275,13 @@
                     S.mode = 'proxy';
                 } catch (proxyErr) {
                     console.warn('SvS Enemies proxy failed, trying direct', proxyErr);
-                    payload = await fetchDetailDirect(key);
-                    S.mode = 'direct';
+                    try {
+                        payload = await fetchDetailDirect(key);
+                        S.mode = 'direct';
+                    } catch (directErr) {
+                        // Direct calls fail with 401/CORS now; the proxy error is the useful one.
+                        throw proxyErr;
+                    }
                 }
             } else {
                 try {
@@ -305,14 +318,16 @@
             entry.loading = false;
             entry.fetchedAt = Date.now();
             const msg = (err && err.message) ? String(err.message) : '';
-            // Surface a clearer hint when the upstream auth is the problem.
-            if (/401|INVALID_API_KEY|no-proxy|proxy-empty/i.test(msg) || (err && err.status === 401)) {
-                entry.error = typeof t === 'function'
-                    ? t('svs_enemies_load_failed')
-                    : 'Could not load State data (API key / proxy)';
-            } else {
-                entry.error = typeof t === 'function' ? t('svs_enemies_load_failed') : 'Could not load State data';
+            const base = typeof t === 'function' ? t('svs_enemies_load_failed') : 'Could not load State data';
+            let hint = '';
+            if (/401|INVALID_API_KEY|upstream-401|API key/i.test(msg) || (err && err.status === 401)) {
+                hint = 'API key WoS Atlas belum diset / ditolak (cek secret WOSATLAS_API_KEY di Supabase)';
+            } else if (err && err.status === 404) {
+                hint = 'Edge function wosatlas-states belum di-deploy';
+            } else if (msg) {
+                hint = msg;
             }
+            entry.error = hint ? base + ' — ' + hint : base;
         }
         S.cache.set(key, entry);
         return entry;
