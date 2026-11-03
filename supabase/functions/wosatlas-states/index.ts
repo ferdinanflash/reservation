@@ -1,8 +1,12 @@
 // Supabase Edge Function: wosatlas-states
-// Optional fallback for State Tracker / SvS Enemies. Browser tries WoS Atlas
-// directly first; if blocked (CORS/network) it calls this function.
+// Proxy for State Tracker / SvS Enemies.
+// api.wosatlas.com now requires an API key (401 without it). The browser
+// must NOT hold the key — this function reads WOSATLAS_API_KEY from secrets
+// and forwards it upstream.
 //
-// Deploy:  supabase functions deploy wosatlas-states
+// Setup:
+//   supabase secrets set WOSATLAS_API_KEY=your_key_here
+//   supabase functions deploy wosatlas-states
 //
 // Actions (body.action):
 //   "summary" (default) — list States
@@ -19,6 +23,7 @@ const API = 'https://api.wosatlas.com/v1';
 const CACHE_MS = 5 * 60 * 1000;
 const MAX_CACHE_ENTRIES = 400;
 const UA = '3475.web.id SvS Enemies / State Tracker';
+const API_KEY = (Deno.env.get('WOSATLAS_API_KEY') || '').trim();
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -50,9 +55,22 @@ function cacheSet(key: string, body: string) {
   cache.set(key, { at: Date.now(), body });
 }
 
+function upstreamHeaders(): Record<string, string> {
+  const h: Record<string, string> = {
+    accept: 'application/json',
+    'user-agent': UA,
+  };
+  if (API_KEY) {
+    // WoS Atlas accepts several common forms; send both to be safe.
+    h['X-Api-Key'] = API_KEY;
+    h['Authorization'] = `Bearer ${API_KEY}`;
+  }
+  return h;
+}
+
 async function upstreamGet(url: string): Promise<{ ok: true; body: string } | { ok: false; status: number }> {
   const res = await fetch(url, {
-    headers: { accept: 'application/json', 'user-agent': UA },
+    headers: upstreamHeaders(),
   });
   if (!res.ok) return { ok: false, status: res.status };
   const body = await res.text();
@@ -136,7 +154,17 @@ async function handleDetail(input: Record<string, unknown>) {
   }
 
   if (!state && !power && !alliances && !players.length) {
-    return jsonObj({ error: 'upstream-failed' }, 502);
+    const statuses = results.map((r) => (r.ok ? 200 : r.status));
+    const any401 = statuses.some((s) => s === 401);
+    if (any401) {
+      return jsonObj({
+        error: 'upstream-401',
+        message: API_KEY
+          ? 'WoS Atlas rejected the API key (invalid or revoked).'
+          : 'WOSATLAS_API_KEY secret is not set on this function.',
+      }, 502);
+    }
+    return jsonObj({ error: 'upstream-failed', statuses }, 502);
   }
 
   const payload = JSON.stringify({
