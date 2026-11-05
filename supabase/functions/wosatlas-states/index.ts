@@ -101,15 +101,58 @@ async function handleSummary(input: Record<string, unknown>) {
 const SITE = 'https://wosatlas.com/api/v1';
 
 async function siteGet(path: string): Promise<any | null> {
-  try {
-    const res = await fetch(`${SITE}${path}`, {
-      headers: { accept: 'application/json', 'user-agent': UA },
-    });
-    if (!res.ok) return null;
-    return JSON.parse(await res.text());
-  } catch (_) {
-    return null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`${SITE}${path}`, {
+        headers: { accept: 'application/json', 'user-agent': UA },
+      });
+      if (res.ok) return JSON.parse(await res.text());
+      if (res.status !== 429 && res.status < 500) return null;
+    } catch (_) { /* retry */ }
+    await new Promise((r) => setTimeout(r, 400));
   }
+  return null;
+}
+
+// Cursor pagination (same as TAL State Tracker). Follow only server-provided `next`.
+async function siteGetPaged(
+  path: string,
+  idOf: (it: any) => string,
+  maxItems: number,
+  maxPages = 30,
+): Promise<any[] | null> {
+  const sep = path.includes('?') ? '&' : '?';
+  const seen = new Set<string>();
+  const out: any[] = [];
+  let cursor: string | null = null;
+  for (let page = 0; page < maxPages && out.length < maxItems; page++) {
+    const url = cursor ? `${path}${sep}cursor=${encodeURIComponent(cursor)}` : path;
+    const data = await siteGet(url);
+    if (!data) return out.length ? out : null;
+    const items: any[] = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+    let added = 0;
+    for (const it of items) {
+      const id = idOf(it);
+      if (!seen.has(id)) { seen.add(id); out.push(it); added++; }
+    }
+    if (!added) break;
+    const next = data && typeof data.next === 'string' && data.next ? data.next : null;
+    cursor = next;
+    if (!cursor) break;
+  }
+  return out.slice(0, maxItems);
+}
+
+function mapPublicMember(m: any, i: number) {
+  return {
+    rank: i + 1,
+    uid: m.uid ?? null,
+    nick_name: m.name ?? m.nick_name ?? m.nickname ?? null,
+    power: Number(m.power) || 0,
+    stove_lv: m.hq_level ?? m.stove_lv ?? m.stove ?? null,
+    lv: m.hq_level ?? m.lv ?? null,
+    alliance_tag: m.alliance_tag ?? null,
+  };
 }
 
 /** Build detail payload from public wosatlas.com endpoints (no API key). */
@@ -384,39 +427,8 @@ async function handleAlliance(input: Record<string, unknown>) {
   const hit = cacheGet(key);
   if (hit) return json(hit);
 
-  // --- Keyed API path ---
-  if (API_KEY) {
-    // Prefer full alliance object if available; members is always useful.
-    const [infoUp, memUp] = await Promise.all([
-      upstreamGet(`${API}/alliances/${aid}`).catch(() => ({ ok: false as const, status: 0 })),
-      upstreamGet(`${API}/alliances/${aid}/members`).catch(() => ({ ok: false as const, status: 0 })),
-    ]);
-    let info: any = null;
-    let membersRaw: any = null;
-    if (infoUp.ok) {
-      try { info = JSON.parse(infoUp.body); } catch (_) { /* ignore */ }
-    }
-    if (memUp.ok) {
-      try { membersRaw = JSON.parse(memUp.body); } catch (_) { /* ignore */ }
-    }
-
-    let membersList: any[] = [];
-    if (membersRaw) {
-      if (Array.isArray(membersRaw.members)) membersList = membersRaw.members;
-      else if (Array.isArray(membersRaw.items)) membersList = membersRaw.items;
-      else if (Array.isArray(membersRaw)) membersList = membersRaw;
-      else if (Array.isArray(membersRaw.entries)) membersList = membersRaw.entries;
-    }
-
-    if (info || membersList.length) {
-      const payload = normalizeAlliancePayload(aid, info, membersList, membersRaw);
-      const body = JSON.stringify(payload);
-      cacheSet(key, body);
-      return json(body);
-    }
-  }
-
-  // --- Public site fallback (no API key / keyed path failed) ---
+  // TAL logic: alliance_id = "<serverId><6-digit seq>" e.g. 3369000011
+  // Meta comes from /servers/{kid}/alliances; members from /alliances/{aid}/members (paged).
   const pub = await allianceFromPublicSite(aid);
   if (pub) {
     const body = JSON.stringify(pub);
@@ -424,94 +436,96 @@ async function handleAlliance(input: Record<string, unknown>) {
     return json(body);
   }
 
+  // Optional keyed API last resort
+  if (API_KEY) {
+    const up = await upstreamGet(`${API}/alliances/${aid}/members`);
+    if (up.ok) {
+      try {
+        const raw = JSON.parse(up.body);
+        let membersList: any[] = [];
+        if (Array.isArray(raw.members)) membersList = raw.members;
+        else if (Array.isArray(raw.items)) membersList = raw.items;
+        else if (Array.isArray(raw)) membersList = raw;
+        const members = membersList.map(mapPublicMember);
+        const body = JSON.stringify({
+          aid,
+          abbr: raw.abbr || raw.tag || '',
+          name: raw.name || '',
+          memberCount: members.length,
+          members,
+          memberList: members,
+          players: members,
+          source: 'api',
+        });
+        cacheSet(key, body);
+        return json(body);
+      } catch (_) { /* fall through */ }
+    }
+  }
+
   return jsonObj({
-    error: 'upstream-failed',
-    message: API_KEY
-      ? 'Could not load alliance from WoS Atlas API.'
-      : 'Could not load alliance (no API key; public-site fallback failed).',
+    error: 'alliance-not-found',
+    message: 'Could not load alliance from public WoS Atlas (and API key path also failed).',
   }, 502);
 }
 
-function normalizeAlliancePayload(aid: number, info: any, membersList: any[], membersRaw?: any) {
-  const src = info || membersRaw || {};
-  const members = membersList.map((m: any, i: number) => ({
-    uid: m.uid || m.playerUid || m.id,
-    nick_name: m.nick_name || m.nickname || m.name || null,
-    power: m.power || m.total_power || 0,
-    stove_lv: m.stove_lv || m.stoveLv || m.stove || null,
-    rank: m.rank || i + 1,
-  }));
-  members.sort((a, b) => (Number(b.power) || 0) - (Number(a.power) || 0));
+async function allianceFromPublicSite(aid: number) {
+  // Derive state id from alliance id (TAL convention)
+  const kid = Math.trunc(aid / 1_000_000);
 
+  // 1) Alliance meta from the state's alliance list (paged)
+  let meta: any = null;
+  if (kid >= 1) {
+    const items = await siteGetPaged(
+      `/servers/${kid}/alliances?sort=power&limit=50`,
+      (a) => String(a.alliance_id),
+      400,
+      25,
+    );
+    if (items) {
+      meta = items.find((x: any) => Number(x.alliance_id) === aid) || null;
+    }
+  }
+
+  // 2) Members (paged) — public API uses `name` not `nick_name`
+  const memberItems = await siteGetPaged(
+    `/alliances/${aid}/members?limit=200`,
+    (m) => String(m.uid),
+    300,
+    15,
+  );
+
+  if (!meta && !(memberItems && memberItems.length)) return null;
+
+  const members = (memberItems || []).map(mapPublicMember);
+  members.sort((a, b) => (Number(b.power) || 0) - (Number(a.power) || 0));
+  // re-rank after sort
+  members.forEach((m, i) => { m.rank = i + 1; });
+
+  const a = meta || {};
   return {
     aid,
-    abbr: src.abbr || src.tag || src.alliance_tag || '',
-    name: src.name || src.alliance_name || '',
-    memberCount: Number(src.memberCount || src.member_count || src.members || members.length) || members.length,
-    memberMax: Number(src.memberMax || src.max_members || src.member_max) || 0,
-    serverPower: Number(src.serverPower || src.total_power || src.power || src.totalPower) || 0,
-    totalPower: Number(src.totalPower || src.total_power || src.power || src.serverPower) || 0,
-    serverPowerRank: Number(src.serverPowerRank || src.power_rank || src.powerRank) || null,
-    powerRank: Number(src.powerRank || src.power_rank || src.serverPowerRank) || null,
-    rankedAlliances: Number(src.rankedAlliances || src.ranked_alliances) || null,
-    leaderUid: Number(src.leaderUid || src.leader_uid || src.owner_uid) || 0,
-    leaderName: src.leaderName || src.leader_name || src.owner_name || '',
-    lv: Number(src.lv || src.level || src.alliance_level) || 0,
-    joinMinLevel: Number(src.joinMinLevel || src.join_min_level || src.min_level) || 0,
-    joinMinPower: Number(src.joinMinPower || src.join_min_power || src.min_power) || 0,
-    publicRecruit: !!(src.publicRecruit || src.public_recruit),
-    homeKid: Number(src.homeKid || src.kid || src.server_id) || null,
-    honorLevel: Number(src.honorLevel || src.honor_level) || null,
-    notice: src.notice || '',
-    manifesto: src.manifesto || '',
+    abbr: a.tag || (members[0] && members[0].alliance_tag) || '',
+    name: a.name || '',
+    memberCount: a.member_count ?? members.length,
+    memberMax: a.max_members ?? 0,
+    serverPower: a.power ?? members.reduce((s, m) => s + (Number(m.power) || 0), 0),
+    totalPower: a.power ?? null,
+    leaderUid: a.leader_uid ?? (members[0] && members[0].uid) ?? 0,
+    leaderName: a.leader_name ?? (members[0] && members[0].nick_name) ?? '',
+    lv: a.alliance_level ?? 0,
+    joinMinLevel: a.join_min_level ?? 0,
+    joinMinPower: a.join_min_power ?? 0,
+    publicRecruit: !!a.public_recruit,
+    homeKid: Number(a.home_server_id) || kid || null,
+    honorLevel: a.honor_level ?? null,
+    notice: a.notice || '',
+    manifesto: a.manifesto || '',
     members,
     memberList: members,
     players: members,
-    source: info ? 'api' : 'api-members',
+    source: 'public-site',
   };
-}
-
-async function allianceFromPublicSite(aid: number) {
-  // Public site: members list is the reliable endpoint.
-  const mem = await siteGet(`/alliances/${aid}/members`);
-  let membersList: any[] = [];
-  if (mem) {
-    if (Array.isArray(mem.items)) membersList = mem.items;
-    else if (Array.isArray(mem.members)) membersList = mem.members;
-    else if (Array.isArray(mem)) membersList = mem;
-  }
-
-  // Try alliance meta if exposed
-  let info: any = null;
-  try {
-    info = await siteGet(`/alliances/${aid}`);
-  } catch (_) { /* ignore */ }
-
-  // Some public responses put alliance fields on the members payload root
-  if (!info && mem && typeof mem === 'object' && !Array.isArray(mem)) {
-    if (mem.tag || mem.abbr || mem.name || mem.alliance_name) info = mem;
-  }
-
-  if (!info && !membersList.length) return null;
-
-  const payload = normalizeAlliancePayload(aid, info, membersList, mem);
-  payload.source = 'public-site';
-
-  // Derive power/count from members when meta missing
-  if (!payload.serverPower && membersList.length) {
-    payload.serverPower = membersList.reduce((s: number, m: any) => s + (Number(m.power) || 0), 0);
-    payload.totalPower = payload.serverPower;
-  }
-  if (!payload.memberCount) payload.memberCount = membersList.length;
-
-  // Leader: first by power if not provided
-  if (!payload.leaderUid && payload.members && payload.members.length) {
-    const top = payload.members[0];
-    payload.leaderUid = Number(top.uid) || 0;
-    payload.leaderName = top.nick_name || '';
-  }
-
-  return payload;
 }
 
 async function handlePlayer(input: Record<string, unknown>) {
