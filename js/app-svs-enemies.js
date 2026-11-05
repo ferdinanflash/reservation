@@ -401,7 +401,8 @@
                 const playerPool = (entry.players && entry.players.length)
                     ? entry.players
                     : (entry.power && Array.isArray(entry.power.top) ? entry.power.top : []);
-                entry.state = await enrichKingName(entry.state, playerPool, signal);
+                // signal optional — loadDetail has no AbortController of its own
+                entry.state = await enrichKingName(entry.state, playerPool, undefined);
             } catch (e) {
                 if (e && e.name === 'AbortError') throw e;
             }
