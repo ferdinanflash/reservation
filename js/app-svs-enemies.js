@@ -952,15 +952,37 @@
         return fetchJson(`${CFG.apiBase}/alliances/${aid}/members`, signal);
     }
 
+    function alliancePayloadUsable(data) {
+        if (!data || typeof data !== 'object') return false;
+        if (data.error && !data.aid && !data.abbr && !data.name
+            && !(Array.isArray(data.members) && data.members.length)
+            && !(Array.isArray(data.memberList) && data.memberList.length)
+            && !(Array.isArray(data.players) && data.players.length)
+            && !(Array.isArray(data.items) && data.items.length)) {
+            return false;
+        }
+        return true;
+    }
+
     async function fetchAllianceProxy(aid) {
         const client = typeof getSupabase === 'function' ? getSupabase() : null;
         if (!client) throw new Error('no-proxy');
         const { data, error } = await client.functions.invoke(CFG.proxyFunction, {
             body: { action: 'alliance', aid }
         });
-        if (error) throw error;
-        if (!data || (typeof data === 'object' && data.error && !data.aid && !data.abbr)) {
-            throw new Error((data && data.error) || 'proxy-alliance-failed');
+        if (error) {
+            // Surface edge-function body message when available
+            let detail = '';
+            try {
+                if (error.context && typeof error.context.json === 'function') {
+                    const body = await error.context.json();
+                    detail = (body && (body.message || body.error)) ? String(body.message || body.error) : '';
+                }
+            } catch (_) { /* ignore */ }
+            throw new Error(detail || error.message || 'proxy-alliance-failed');
+        }
+        if (!alliancePayloadUsable(data)) {
+            throw new Error((data && (data.message || data.error)) || 'proxy-alliance-failed');
         }
         return data;
     }
@@ -977,16 +999,18 @@
         S.allianceCache.set(key, entry);
         try {
             let data = null;
-            if (S.mode === 'proxy') {
-                try { data = await fetchAllianceProxy(key); }
-                catch (_) { data = await fetchAllianceDirect(key); }
-            } else {
+            // Always prefer proxy first (API key lives only in the edge function).
+            // Direct browser calls to api.wosatlas.com fail without a key.
+            try {
+                data = await fetchAllianceProxy(key);
+                S.mode = 'proxy';
+            } catch (proxyErr) {
+                console.warn('SvS Enemies alliance proxy failed, trying direct', proxyErr);
                 try {
                     data = await fetchAllianceDirect(key);
-                    if (S.mode !== 'proxy') S.mode = 'direct';
-                } catch (_) {
-                    data = await fetchAllianceProxy(key);
-                    S.mode = 'proxy';
+                    S.mode = 'direct';
+                } catch (directErr) {
+                    throw proxyErr;
                 }
             }
             entry.loading = false;
@@ -997,7 +1021,9 @@
             console.error('SvS Enemies alliance', key, err);
             entry.loading = false;
             entry.fetchedAt = Date.now();
-            entry.error = tr('svs_enemies_alliance_load_failed', 'Could not load alliance detail');
+            const msg = (err && err.message) ? String(err.message) : '';
+            const base = tr('svs_enemies_alliance_load_failed', 'Could not load alliance detail');
+            entry.error = msg && msg !== 'proxy-alliance-failed' ? base + ' — ' + msg : base;
         }
         S.allianceCache.set(key, entry);
         return entry;
