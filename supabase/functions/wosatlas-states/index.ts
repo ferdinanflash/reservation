@@ -255,16 +255,26 @@ async function detailFromPublicSite(kid: number, allianceLimit: number, playerLi
   let kingObj: { uid: any; nick_name: string | null; name: string | null } | null = null;
   if (king && king.uid) {
     let nick: string | null = null;
+    // 1) from assembled leaderboard
     const fromPlayers = (players || []).find((p: any) => String(p.uid) === String(king.uid));
-    if (fromPlayers && fromPlayers.nick_name) nick = String(fromPlayers.nick_name);
+    if (fromPlayers) {
+      nick = fromPlayers.nick_name || fromPlayers.name || fromPlayers.nickname || null;
+      if (nick) nick = String(nick);
+    }
+    // 2) dedicated player lookup (public API uses `name`)
     if (!nick) {
       try {
-        const p = await siteGet(`/players/${king.uid}`);
-        if (p && (p.name || p.nick_name)) nick = String(p.name || p.nick_name);
+        const p = await siteGet(`/players/${encodeURIComponent(String(king.uid))}`);
+        if (p && (p.name || p.nick_name || p.nickname)) {
+          nick = String(p.name || p.nick_name || p.nickname);
+        }
       } catch (_) { /* ignore */ }
     }
     kingObj = { uid: king.uid, nick_name: nick, name: nick };
   }
+
+  const topList = players || [];
+  const maxFromTop = topList.length ? (num(topList[0].power) ?? null) : null;
 
   const state = server
     ? {
@@ -279,8 +289,13 @@ async function detailFromPublicSite(kid: number, allianceLimit: number, playerLi
     : null;
 
   const power = server
-    ? { player_count: playerCount, total_power: totalPower, top: players || [] }
-    : (players && players.length ? { top: players } : null);
+    ? {
+        player_count: playerCount,
+        total_power: totalPower,
+        max_power: maxFromTop,
+        top: topList,
+      }
+    : (topList.length ? { top: topList, max_power: maxFromTop } : null);
 
   const alliances = allianceItems
     ? {
@@ -451,36 +466,62 @@ async function handleAlliance(input: Record<string, unknown>) {
 }
 
 async function allianceFromPublicSite(aid: number) {
-  // Derive state id from alliance id (TAL convention)
+  // TAL convention: alliance_id = "<serverId><6-digit seq>" e.g. 3369000011
   const kid = Math.trunc(aid / 1_000_000);
+  const aidStr = String(aid);
 
-  // 1) Alliance meta from the state's alliance list (paged)
+  // Members first (cheap, enough to show a useful modal). Public API uses `name`.
+  let memberItems: any[] = [];
+  try {
+    const page = await siteGet(`/alliances/${aid}/members?limit=200`);
+    if (page) {
+      if (Array.isArray(page.items)) memberItems = page.items;
+      else if (Array.isArray(page.members)) memberItems = page.members;
+      else if (Array.isArray(page)) memberItems = page;
+      // follow one extra page if needed
+      if (page.next && memberItems.length < 100) {
+        const page2 = await siteGet(
+          `/alliances/${aid}/members?limit=200&cursor=${encodeURIComponent(String(page.next))}`,
+        );
+        if (page2) {
+          const more = Array.isArray(page2.items) ? page2.items
+            : Array.isArray(page2.members) ? page2.members
+            : Array.isArray(page2) ? page2 : [];
+          const seen = new Set(memberItems.map((m) => String(m.uid)));
+          for (const m of more) {
+            const id = String(m.uid || '');
+            if (id && !seen.has(id)) { seen.add(id); memberItems.push(m); }
+          }
+        }
+      }
+    }
+  } catch (_) { /* ignore */ }
+
+  // Meta: scan top alliances of the state (string compare — alliance_id is a string in API)
   let meta: any = null;
   if (kid >= 1) {
-    const items = await siteGetPaged(
-      `/servers/${kid}/alliances?sort=power&limit=50`,
-      (a) => String(a.alliance_id),
-      400,
-      25,
-    );
-    if (items) {
-      meta = items.find((x: any) => Number(x.alliance_id) === aid) || null;
-    }
+    try {
+      const list = await siteGet(`/servers/${kid}/alliances?sort=power&limit=50`);
+      const items = list && Array.isArray(list.items) ? list.items
+        : Array.isArray(list) ? list : [];
+      meta = items.find((x: any) => String(x.alliance_id) === aidStr) || null;
+      // if not in first page, try paged search (capped)
+      if (!meta) {
+        const more = await siteGetPaged(
+          `/servers/${kid}/alliances?sort=power&limit=50`,
+          (a) => String(a.alliance_id),
+          200,
+          8,
+        );
+        if (more) meta = more.find((x: any) => String(x.alliance_id) === aidStr) || null;
+      }
+    } catch (_) { /* ignore */ }
   }
 
-  // 2) Members (paged) — public API uses `name` not `nick_name`
-  const memberItems = await siteGetPaged(
-    `/alliances/${aid}/members?limit=200`,
-    (m) => String(m.uid),
-    300,
-    15,
-  );
+  if (!meta && !memberItems.length) return null;
 
-  if (!meta && !(memberItems && memberItems.length)) return null;
-
-  const members = (memberItems || []).map(mapPublicMember);
+  const members = memberItems.map(mapPublicMember);
   members.sort((a, b) => (Number(b.power) || 0) - (Number(a.power) || 0));
-  // re-rank after sort
   members.forEach((m, i) => { m.rank = i + 1; });
 
   const a = meta || {};
@@ -515,10 +556,21 @@ async function handlePlayer(input: Record<string, unknown>) {
   const key = `player:${uid}`;
   const hit = cacheGet(key);
   if (hit) return json(hit);
-  const up = await upstreamGet(`${API}/players/${uid}`);
-  if (!up.ok) return jsonObj({ error: 'upstream-' + up.status }, 502);
-  cacheSet(key, up.body);
-  return json(up.body);
+  // Public site first
+  const pub = await siteGet(`/players/${uid}`);
+  if (pub) {
+    const body = JSON.stringify(pub);
+    cacheSet(key, body);
+    return json(body);
+  }
+  if (API_KEY) {
+    const up = await upstreamGet(`${API}/players/${uid}`);
+    if (up.ok) {
+      cacheSet(key, up.body);
+      return json(up.body);
+    }
+  }
+  return jsonObj({ error: 'upstream-failed' }, 502);
 }
 
 const PLAYER_EXTRA_PATHS: Record<string, string> = {
