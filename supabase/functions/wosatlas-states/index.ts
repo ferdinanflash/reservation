@@ -101,20 +101,27 @@ async function handleSummary(input: Record<string, unknown>) {
 const SITE = 'https://wosatlas.com/api/v1';
 
 async function siteGet(path: string): Promise<any | null> {
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const res = await fetch(`${SITE}${path}`, {
-        headers: { accept: 'application/json', 'user-agent': UA },
+        headers: {
+          accept: 'application/json, text/plain, */*',
+          'user-agent': UA,
+          'accept-language': 'en-US,en;q=0.9',
+        },
       });
-      if (res.ok) return JSON.parse(await res.text());
+      if (res.ok) {
+        const text = await res.text();
+        try { return JSON.parse(text); } catch (_) { return null; }
+      }
+      // retry on rate-limit / upstream errors
       if (res.status !== 429 && res.status < 500) return null;
     } catch (_) { /* retry */ }
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 300 + attempt * 200));
   }
   return null;
 }
 
-// Cursor pagination (same as TAL State Tracker). Follow only server-provided `next`.
 async function siteGetPaged(
   path: string,
   idOf: (it: any) => string,
@@ -143,6 +150,11 @@ async function siteGetPaged(
   return out.slice(0, maxItems);
 }
 
+function num(v: unknown): number | null {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
 function mapPublicMember(m: any, i: number) {
   return {
     rank: i + 1,
@@ -155,95 +167,145 @@ function mapPublicMember(m: any, i: number) {
   };
 }
 
-/** Build detail payload from public wosatlas.com endpoints (no API key). */
+async function fetchServer(kid: number) {
+  return await siteGet(`/servers/${kid}`);
+}
+
+async function fetchServerAlliances(kid: number, limit: number): Promise<any[] | null> {
+  const key = `alliances:${kid}:${limit}`;
+  const hit = cacheGet(key);
+  if (hit) {
+    try { return JSON.parse(hit); } catch (_) { /* ignore */ }
+  }
+  const items = await siteGetPaged(
+    `/servers/${kid}/alliances?sort=power&limit=${Math.min(Math.max(limit, 1), 50)}`,
+    (a) => String(a.alliance_id),
+    Math.max(limit, 50),
+    20,
+  );
+  if (items) cacheSet(key, JSON.stringify(items));
+  return items;
+}
+
+async function fetchAllianceMembers(aid: number): Promise<any[]> {
+  const key = `members:${aid}`;
+  const hit = cacheGet(key);
+  if (hit) {
+    try { return JSON.parse(hit); } catch (_) { /* ignore */ }
+  }
+  const items = (await siteGetPaged(
+    `/alliances/${aid}/members?limit=200`,
+    (m) => String(m.uid),
+    300,
+    12,
+  )) || [];
+  cacheSet(key, JSON.stringify(items));
+  return items;
+}
+
+// Build player leaderboard from strongest alliances (TAL approach).
+const PLAYER_SOURCE_ALLIANCES = 12;
+
+async function fetchServerPlayers(kid: number, limit: number): Promise<any[]> {
+  const key = `players:${kid}:${limit}`;
+  const hit = cacheGet(key);
+  if (hit) {
+    try { return JSON.parse(hit); } catch (_) { /* ignore */ }
+  }
+  const alliances = (await fetchServerAlliances(kid, 50)) || [];
+  const lists = await Promise.all(
+    alliances.slice(0, PLAYER_SOURCE_ALLIANCES).map((a: any) =>
+      fetchAllianceMembers(Number(a.alliance_id)).catch(() => [] as any[]),
+    ),
+  );
+  const seen = new Set<string>();
+  const merged: any[] = [];
+  for (const m of lists.flat()) {
+    const uid = String(m.uid ?? '');
+    if (!uid || seen.has(uid)) continue;
+    seen.add(uid);
+    merged.push(m);
+  }
+  merged.sort((a, b) => (num(b.power) ?? 0) - (num(a.power) ?? 0));
+  const out = merged.slice(0, limit).map(mapPublicMember);
+  cacheSet(key, JSON.stringify(out));
+  return out;
+}
+
+/** Primary detail path — public site, same as TAL (works without API key). */
 async function detailFromPublicSite(kid: number, allianceLimit: number, playerLimit: number) {
-  const server = await siteGet(`/servers/${kid}`);
-  if (!server) return null;
+  const [server, allianceItems, players] = await Promise.all([
+    fetchServer(kid),
+    fetchServerAlliances(kid, allianceLimit),
+    fetchServerPlayers(kid, playerLimit),
+  ]);
 
-  const rollup = server.rollup || {};
-  const playerCount = Number(rollup.players) || null;
-  const totalPower = Number(rollup.player_power) || null;
+  if (!server && !allianceItems && !(players && players.length)) {
+    return null;
+  }
 
-  let kingObj: { uid: any; nick_name: string | null; name: string | null } | null = null;
-  const role = Array.isArray(server.roles)
+  const rollup = (server && server.rollup) || {};
+  const king = server && Array.isArray(server.roles)
     ? server.roles.find((r: any) => r && (r.role === 'king' || r.role === 'president'))
     : null;
-  if (role && role.uid) {
+
+  const totalPower = num(rollup.player_power);
+  const playerCount = num(rollup.players);
+
+  let kingObj: { uid: any; nick_name: string | null; name: string | null } | null = null;
+  if (king && king.uid) {
     let nick: string | null = null;
-    try {
-      const p = await siteGet(`/players/${role.uid}`);
-      if (p && (p.name || p.nick_name)) nick = String(p.name || p.nick_name);
-    } catch (_) { /* ignore */ }
-    kingObj = { uid: role.uid, nick_name: nick, name: nick };
-  }
-
-  let allianceItems: any[] = [];
-  try {
-    const raw = await siteGet(`/servers/${kid}/alliances?sort=power&limit=${allianceLimit}`);
-    if (raw && Array.isArray(raw.items)) allianceItems = raw.items;
-    else if (Array.isArray(raw)) allianceItems = raw;
-  } catch (_) { /* ignore */ }
-
-  const players: any[] = [];
-  const seen = new Set<string>();
-  for (const a of allianceItems.slice(0, 8)) {
-    const aid = a.alliance_id || a.aid || a.id;
-    if (!aid) continue;
-    try {
-      const mem = await siteGet(`/alliances/${aid}/members`);
-      const list = (mem && Array.isArray(mem.items)) ? mem.items
-        : (mem && Array.isArray(mem.members)) ? mem.members
-        : Array.isArray(mem) ? mem : [];
-      for (const m of list) {
-        const uid = String(m.uid || m.playerUid || '');
-        if (!uid || seen.has(uid)) continue;
-        seen.add(uid);
-        players.push({
-          uid: m.uid,
-          nick_name: m.nick_name || m.nickname || m.name || null,
-          power: m.power || 0,
-          stove_lv: m.stove_lv || m.stove || null,
-          rank: players.length + 1,
-        });
-      }
-    } catch (_) { /* ignore */ }
-  }
-  players.sort((a, b) => (Number(b.power) || 0) - (Number(a.power) || 0));
-  const topPlayers = players.slice(0, playerLimit).map((p, i) => ({ ...p, rank: i + 1 }));
-
-  if (kingObj && kingObj.uid && !kingObj.nick_name) {
-    const hit = topPlayers.find((p) => String(p.uid) === String(kingObj!.uid));
-    if (hit && hit.nick_name) {
-      kingObj.nick_name = String(hit.nick_name);
-      kingObj.name = kingObj.nick_name;
+    const fromPlayers = (players || []).find((p: any) => String(p.uid) === String(king.uid));
+    if (fromPlayers && fromPlayers.nick_name) nick = String(fromPlayers.nick_name);
+    if (!nick) {
+      try {
+        const p = await siteGet(`/players/${king.uid}`);
+        if (p && (p.name || p.nick_name)) nick = String(p.name || p.nick_name);
+      } catch (_) { /* ignore */ }
     }
+    kingObj = { uid: king.uid, nick_name: nick, name: nick };
   }
 
-  const state = {
-    server_id: server.server_id ?? String(kid),
-    chiefs: playerCount,
-    total_power: totalPower,
-    alliance_count: Number(rollup.alliances) || allianceItems.length || null,
-    king: kingObj,
-    refreshed_at: rollup.refreshed_at ?? null,
-    roles: server.roles || null,
+  const state = server
+    ? {
+        server_id: server.server_id ?? String(kid),
+        chiefs: playerCount,
+        total_power: totalPower,
+        alliance_count: num(rollup.alliances),
+        king: kingObj,
+        refreshed_at: rollup.refreshed_at ?? null,
+        roles: server.roles || null,
+      }
+    : null;
+
+  const power = server
+    ? { player_count: playerCount, total_power: totalPower, top: players || [] }
+    : (players && players.length ? { top: players } : null);
+
+  const alliances = allianceItems
+    ? {
+        entries: allianceItems.slice(0, allianceLimit).map((a: any) => ({
+          ...a,
+          aid: Number(a.alliance_id),
+          abbr: a.tag,
+          members: a.member_count,
+          memberMax: a.max_members,
+          totalPower: a.power,
+          maxPower: a.held_members ? a.held_members.power_max : 0,
+          publicRecruit: !!a.public_recruit,
+          name: a.name,
+        })),
+      }
+    : null;
+
+  return {
+    state,
+    power,
+    alliances,
+    players: players || [],
+    kid,
+    source: 'public-site',
   };
-  const power = {
-    player_count: playerCount,
-    total_power: totalPower,
-    top: topPlayers,
-  };
-  const alliances = {
-    entries: allianceItems.slice(0, allianceLimit).map((a: any) => ({
-      ...a,
-      aid: Number(a.alliance_id || a.aid || a.id) || 0,
-      abbr: a.tag || a.abbr,
-      members: a.member_count || a.members,
-      memberMax: a.max_members || a.memberMax,
-      totalPower: a.power || a.total_power || a.totalPower,
-    })),
-  };
-  return { state, power, alliances, players: topPlayers, kid, source: 'public-site' };
 }
 
 async function handleDetail(input: Record<string, unknown>) {
@@ -257,152 +319,60 @@ async function handleDetail(input: Record<string, unknown>) {
   const hit = cacheGet(key);
   if (hit) return json(hit);
 
-  let state: any = null;
-  let power: any = null;
-  let alliances: any = null;
-  let players: any[] = [];
-  let results: Array<{ ok: true; body: string } | { ok: false; status: number }> = [];
-
-  if (API_KEY) {
-    const urls = [
-      `${API}/states/${kid}`,
-      `${API}/kingdoms/${kid}/power`,
-      `${API}/alliances/leaderboard?limit=${allianceLimit}&kid=${kid}`,
-      `${API}/power/leaderboard?kid=${kid}&limit=${playerLimit}`,
-    ];
-    results = await Promise.all(
-      urls.map(async (url) => {
-        try {
-          return await upstreamGet(url);
-        } catch (_) {
-          return { ok: false as const, status: 0 };
-        }
-      }),
-    );
-
-    const parse = (r: { ok: true; body: string } | { ok: false; status: number }) => {
-      if (!r.ok) return null;
-      try {
-        return JSON.parse(r.body);
-      } catch (_) {
-        return null;
-      }
-    };
-
-    state = parse(results[0]);
-    power = parse(results[1]);
-    alliances = parse(results[2]);
-    const leaderboard = parse(results[3]);
-
-    if (leaderboard && Array.isArray(leaderboard.entries) && leaderboard.entries.length) {
-      players = leaderboard.entries;
-    } else if (power && Array.isArray(power.top) && power.top.length) {
-      players = power.top;
-    }
-  }
-
-  // Public-site fallback when no API key, or keyed API returned nothing useful
-  if (!state && !power && !alliances && !players.length) {
+  // Always try public site first (works without WOSATLAS_API_KEY) — same as TAL.
+  try {
     const pub = await detailFromPublicSite(kid, allianceLimit, playerLimit);
-    if (pub) {
+    if (pub && (pub.state || pub.power || pub.alliances || (pub.players && pub.players.length))) {
       const payload = JSON.stringify(pub);
       cacheSet(key, payload);
       return json(payload);
     }
-    const statuses = results.map((r) => (r.ok ? 200 : r.status));
-    const any401 = statuses.some((s) => s === 401);
-    if (any401 || !API_KEY) {
-      return jsonObj({
-        error: 'upstream-401',
-        message: API_KEY
-          ? 'WoS Atlas rejected the API key (invalid or revoked).'
-          : 'WOSATLAS_API_KEY secret is not set, and public-site fallback also failed.',
-      }, 502);
-    }
-    return jsonObj({ error: 'upstream-failed', statuses }, 502);
+  } catch (e) {
+    console.error('detailFromPublicSite error', e);
   }
 
-  let powerOut = power;
-  if (power && players.length) {
-    powerOut = { ...power, top: players };
-  }
-
-  if (state && typeof state === 'object') {
-    let kingUid: any = null;
-    let existingName: string | null = null;
-
-    if (state.king && typeof state.king === 'object') {
-      kingUid = state.king.uid || state.king.playerUid || state.king.id || null;
-      existingName = state.king.nick_name || state.king.name || null;
-    }
-    if (!kingUid && Array.isArray(state.roles)) {
-      const role = state.roles.find(
-        (r: any) => r && (r.role === 'king' || r.role === 'president'),
+  // Optional: keyed api.wosatlas.com if secret is set and public path failed
+  if (API_KEY) {
+    try {
+      const urls = [
+        `${API}/states/${kid}`,
+        `${API}/kingdoms/${kid}/power`,
+        `${API}/alliances/leaderboard?limit=${allianceLimit}&kid=${kid}`,
+        `${API}/power/leaderboard?kid=${kid}&limit=${playerLimit}`,
+      ];
+      const results = await Promise.all(
+        urls.map(async (url) => {
+          try { return await upstreamGet(url); }
+          catch (_) { return { ok: false as const, status: 0 }; }
+        }),
       );
-      if (role) kingUid = role.uid || role.playerUid || null;
-    }
-
-    if (!kingUid) {
-      try {
-        const server = await siteGet(`/servers/${kid}`);
-        if (server && Array.isArray(server.roles)) {
-          const role = server.roles.find(
-            (r: any) => r && (r.role === 'king' || r.role === 'president'),
-          );
-          if (role) kingUid = role.uid || role.playerUid || null;
-        }
-      } catch (_) { /* ignore */ }
-    }
-
-    if (kingUid) {
-      let nick: string | null = existingName ? String(existingName) : null;
-
-      if (!nick && players.length) {
-        const hit = players.find(
-          (p: any) => p && String(p.uid || p.playerUid || '') === String(kingUid),
-        );
-        if (hit) {
-          nick = hit.nick_name || hit.nickname || hit.nickName || hit.name || null;
-          if (nick) nick = String(nick);
-        }
-      }
-
-      if (!nick) {
-        try {
-          if (API_KEY) {
-            const up = await upstreamGet(`${API}/players/${kingUid}`);
-            if (up.ok) {
-              const p = JSON.parse(up.body);
-              nick = (p && (p.name || p.nick_name || p.nickname)) ? String(p.name || p.nick_name || p.nickname) : null;
-            }
-          }
-          if (!nick) {
-            const p = await siteGet(`/players/${kingUid}`);
-            if (p && (p.name || p.nick_name)) nick = String(p.name || p.nick_name);
-          }
-        } catch (_) { /* ignore */ }
-      }
-
-      state = {
-        ...state,
-        king: {
-          uid: kingUid,
-          nick_name: nick,
-          name: nick,
-        },
+      const parse = (r: { ok: true; body: string } | { ok: false; status: number }) => {
+        if (!r.ok) return null;
+        try { return JSON.parse(r.body); } catch (_) { return null; }
       };
+      const state = parse(results[0]);
+      let power = parse(results[1]);
+      let alliances = parse(results[2]);
+      const leaderboard = parse(results[3]);
+      let players: any[] = [];
+      if (leaderboard && Array.isArray(leaderboard.entries)) players = leaderboard.entries;
+      else if (power && Array.isArray(power.top)) players = power.top;
+      if (power && players.length) power = { ...power, top: players };
+      if (state || power || alliances || players.length) {
+        const payload = JSON.stringify({ state, power, alliances, players, kid, source: 'api' });
+        cacheSet(key, payload);
+        return json(payload);
+      }
+    } catch (e) {
+      console.error('keyed API detail error', e);
     }
   }
 
-  const payload = JSON.stringify({
-    state,
-    power: powerOut,
-    alliances,
-    players,
-    kid,
-  });
-  cacheSet(key, payload);
-  return json(payload);
+  return jsonObj({
+    error: 'upstream-failed',
+    message: 'Could not load State from wosatlas.com public API'
+      + (API_KEY ? ' or api.wosatlas.com.' : ' (no WOSATLAS_API_KEY set).'),
+  }, 502);
 }
 
 async function handlePowerLeaderboard(input: Record<string, unknown>) {
@@ -414,10 +384,21 @@ async function handlePowerLeaderboard(input: Record<string, unknown>) {
   const key = `power-lb:${kid}:${limit}`;
   const hit = cacheGet(key);
   if (hit) return json(hit);
-  const up = await upstreamGet(`${API}/power/leaderboard?kid=${kid}&limit=${limit}`);
-  if (!up.ok) return jsonObj({ error: 'upstream-' + up.status }, 502);
-  cacheSet(key, up.body);
-  return json(up.body);
+  // Public path (no API key needed)
+  const entries = await fetchServerPlayers(kid, limit);
+  if (entries.length) {
+    const body = JSON.stringify({ entries, players: entries, kid, source: 'public-site' });
+    cacheSet(key, body);
+    return json(body);
+  }
+  if (API_KEY) {
+    const up = await upstreamGet(`${API}/power/leaderboard?kid=${kid}&limit=${limit}`);
+    if (up.ok) {
+      cacheSet(key, up.body);
+      return json(up.body);
+    }
+  }
+  return jsonObj({ error: 'upstream-failed' }, 502);
 }
 
 async function handleAlliance(input: Record<string, unknown>) {
