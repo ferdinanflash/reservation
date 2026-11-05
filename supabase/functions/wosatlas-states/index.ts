@@ -134,13 +134,13 @@ async function handleDetail(input: Record<string, unknown>) {
     }
   };
 
-  const state = parse(results[0]);
+  let state = parse(results[0]);
   const power = parse(results[1]);
   const alliances = parse(results[2]);
   const leaderboard = parse(results[3]);
 
   // Prefer full power/leaderboard entries; fall back to short power.top
-  let players: unknown[] = [];
+  let players: any[] = [];
   if (leaderboard && Array.isArray(leaderboard.entries) && leaderboard.entries.length) {
     players = leaderboard.entries;
   } else if (power && Array.isArray(power.top) && power.top.length) {
@@ -151,6 +151,77 @@ async function handleDetail(input: Record<string, unknown>) {
   let powerOut = power;
   if (power && players.length) {
     powerOut = { ...power, top: players };
+  }
+
+  // ---- King / President nickname (same approach as TAL State Tracker) ----
+  // api.wosatlas.com /states/{kid} often returns roles: [{ role: "king", uid }] with no name.
+  // Resolve nick_name from the leaderboard players list, then fall back to /players/{uid}.
+  if (state && typeof state === 'object') {
+    let kingUid: any = null;
+    let existingName: string | null = null;
+
+    if (state.king && typeof state.king === 'object') {
+      kingUid = state.king.uid || state.king.playerUid || state.king.id || null;
+      existingName = state.king.nick_name || state.king.name || null;
+    }
+    if (!kingUid && Array.isArray(state.roles)) {
+      const role = state.roles.find(
+        (r: any) => r && (r.role === 'king' || r.role === 'president'),
+      );
+      if (role) kingUid = role.uid || role.playerUid || null;
+    }
+
+    // Fallback: public site /servers/{kid} (same source TAL State Tracker uses)
+    // when api.wosatlas.com /states does not expose roles.
+    if (!kingUid) {
+      try {
+        const siteRes = await fetch(`https://wosatlas.com/api/v1/servers/${kid}`, {
+          headers: { accept: 'application/json', 'user-agent': UA },
+        });
+        if (siteRes.ok) {
+          const server = await siteRes.json();
+          if (server && Array.isArray(server.roles)) {
+            const role = server.roles.find(
+              (r: any) => r && (r.role === 'king' || r.role === 'president'),
+            );
+            if (role) kingUid = role.uid || role.playerUid || null;
+          }
+        }
+      } catch (_) { /* ignore public-site failure */ }
+    }
+
+    if (kingUid) {
+      let nick: string | null = existingName ? String(existingName) : null;
+
+      if (!nick && players.length) {
+        const hit = players.find(
+          (p: any) => p && String(p.uid || p.playerUid || '') === String(kingUid),
+        );
+        if (hit) {
+          nick = hit.nick_name || hit.nickname || hit.nickName || hit.name || null;
+          if (nick) nick = String(nick);
+        }
+      }
+
+      if (!nick) {
+        try {
+          const up = await upstreamGet(`${API}/players/${kingUid}`);
+          if (up.ok) {
+            const p = JSON.parse(up.body);
+            nick = (p && (p.name || p.nick_name || p.nickname)) ? String(p.name || p.nick_name || p.nickname) : null;
+          }
+        } catch (_) { /* ignore name lookup failure */ }
+      }
+
+      state = {
+        ...state,
+        king: {
+          uid: kingUid,
+          nick_name: nick,
+          name: nick,
+        },
+      };
+    }
   }
 
   if (!state && !power && !alliances && !players.length) {
