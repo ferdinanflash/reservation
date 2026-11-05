@@ -275,7 +275,7 @@ function buildStatDetailsHtml(app, compact = false) {
             <div class="player-info-row">
                 <div class="player-avatar">🔥</div>
                 <div class="player-info-text">
-                    <div>${t("stat_nickname")} <strong>${escapeHtml(capZalgo(app.nickname)) || '-'}</strong></div>
+                    <div>${t("stat_nickname")} <strong>${typeof nicknameHtml === 'function' ? nicknameHtml(app.nickname, 40) : (escapeHtml(capZalgo(app.nickname)) || '-')}</strong></div>
                     <div>${t("stat_game_id")} <strong class="game-id-copy" title="${t('title_view_details')}" onclick="copyToClipboard('${gameId}')">${gameId} <span class="copy-icon">📋</span></strong></div>
                     ${additionalRowFull}
                 </div>
@@ -376,7 +376,7 @@ function openWaitingModal(timeStr) {
 
         mainRow.innerHTML = `
             <td class="waiting-col-nick" style="padding: 5px 10px; text-align: left; font-weight: 500;">
-                <span class="icon-tap-target" style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${escapeHtml(capZalgo(app.nickname))}
+                <span class="icon-tap-target" style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${typeof nicknameHtml === 'function' ? nicknameHtml(app.nickname) : escapeHtml(capZalgo(app.nickname))}
             </td>
             <td class="waiting-col-id" style="padding: 5px 10px; text-align: left;">
                 <span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>

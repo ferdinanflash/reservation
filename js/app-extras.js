@@ -189,7 +189,7 @@ async function loadRecentAccepts() {
             card.className = 'rar-card';
             card.innerHTML = `
                 <div class="rar-info">
-                    <div class="rar-name">${escapeHtml(capZalgo(item.nickname))} ${buildRarFurnaceLabel(item)}</div>
+                    <div class="rar-name">${typeof nicknameHtml === 'function' ? nicknameHtml(item.nickname, 24) : escapeHtml(capZalgo(item.nickname))} ${buildRarFurnaceLabel(item)}</div>
                     <div class="rar-pos">[${escapeHtml(shortPos)}]</div>
                 </div>
                 <div class="rar-right">

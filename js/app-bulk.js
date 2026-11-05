@@ -93,7 +93,7 @@ function renderBulkList() {
         return `<label class="bulk-row">
             <input type="checkbox" class="bulk-check" data-id="${escapeHtml(String(r.id))}"${bulkSelected.has(r.id) ? ' checked' : ''}>
             <span class="bulk-row-time">${escapeHtml(String(r.time_slot).trim())} UTC</span>
-            <span class="bulk-row-name">${escapeHtml(capZalgo(r.nickname || '-'))}<small>${escapeHtml(r.game_id || '-')}</small></span>
+            <span class="bulk-row-name">${typeof nicknameHtml === 'function' ? nicknameHtml(r.nickname || '-', 22) : escapeHtml(capZalgo(r.nickname || '-'))}<small>${escapeHtml(r.game_id || '-')}</small></span>
             <span class="bulk-tag ${accepted ? 'bulk-tag-accepted' : 'bulk-tag-waiting'}">${escapeHtml(statusLabel)}</span>
         </label>`;
     }).join('');

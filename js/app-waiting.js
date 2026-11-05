@@ -78,7 +78,7 @@ function renderReassignRows(originTime) {
             : `<option value="">${t("no_free_slots")}</option>`;
 
         row.innerHTML = `
-            <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">${escapeHtml(capZalgo(app.nickname))}</td>
+            <td class="waiting-col-nick" style="padding: 5px 10px; text-align: left;">${typeof nicknameHtml === 'function' ? nicknameHtml(app.nickname) : escapeHtml(capZalgo(app.nickname))}</td>
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
                 <span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
             </td>

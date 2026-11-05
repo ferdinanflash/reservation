@@ -236,7 +236,7 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:var(--t-muted, #8a8d98);">${t("local_prefix", { time: localTimeStr })}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">${t("status_accepted")}</span>${leftoverBadge}</td>
-                <td>${escapeHtml(capZalgo(acceptedApp.nickname))}</td>
+                <td class="schedule-col-nick">${typeof nicknameHtml === 'function' ? nicknameHtml(acceptedApp.nickname) : escapeHtml(capZalgo(acceptedApp.nickname))}</td>
                 <td><span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
                 <td>${furnaceIconHtml(acceptedApp.furnace_level)}</td>
             `;
