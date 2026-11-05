@@ -71,6 +71,12 @@ function escapeHtml(value) {
 // it never touches the nickname that's stored in the DB, exported to CSV, or
 // used for copy-to-clipboard/lookup — it only caps what gets rendered on screen
 // so the nickname still shows, just without breaking the surrounding layout.
+//
+// Decorative "fancy text" nicknames (wide symbol alphabets, Tibetan marks,
+// emoji ZWJ sequences, etc.) are also a problem on iOS Safari: they measure
+// much wider than Latin text and ignore overflow-wrap, so a single nickname
+// can stretch a table column and push Move/Accept/Drop off-screen. displayNickname
+// truncates by grapheme cluster after capZalgo so layout stays stable.
 function capZalgo(value, maxMarksPerChar = 2) {
     if (value === null || value === undefined) return '';
     const str = String(value);
@@ -87,6 +93,41 @@ function capZalgo(value, maxMarksPerChar = 2) {
         result += ch;
     }
     return result;
+}
+
+/** Display-only nickname: capZalgo + soft truncate by grapheme count (iOS-safe). */
+function displayNickname(value, maxGraphemes = 28) {
+    const capped = capZalgo(value);
+    if (!capped) return '';
+    // Prefer Intl.Segmenter when available (modern Safari / Chrome).
+    try {
+        if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+            const seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+            const parts = [];
+            for (const { segment } of seg.segment(capped)) {
+                parts.push(segment);
+                if (parts.length > maxGraphemes) break;
+            }
+            if (parts.length > maxGraphemes) {
+                return parts.slice(0, maxGraphemes).join('') + '…';
+            }
+            return parts.join('');
+        }
+    } catch (_) { /* fall through */ }
+    // Fallback: iterate code points (good enough when Segmenter is missing).
+    const cps = Array.from(capped);
+    if (cps.length <= maxGraphemes) return capped;
+    return cps.slice(0, maxGraphemes).join('') + '…';
+}
+
+/** HTML for a nickname cell: ellipsis-friendly span + full name in title. */
+function nicknameHtml(value, maxGraphemes = 28) {
+    const raw = value == null ? '' : String(value);
+    const shown = displayNickname(raw, maxGraphemes);
+    const title = escapeHtml(capZalgo(raw));
+    const body = escapeHtml(shown);
+    if (!body) return '—';
+    return `<span class="nick-display" title="${title}">${body}</span>`;
 }
 
 // ================= SHARED SUPABASE CLIENT =================
