@@ -1471,8 +1471,9 @@ body.halloween-theme {
     margin-top: 16px;
 }
 
-/* Minister Reservation = main action: full-width; the 4 portals sit in a 2x2 grid below. */
-.external-link-container .list-item-small:nth-child(1) {
+/* Minister Reservation + WoS Tool = full-width; the middle 4 portals sit in a 2x2 grid. */
+.external-link-container .list-item-small:nth-child(1),
+.external-link-container .list-item-small:nth-child(6) {
     grid-column: 1 / -1;
     padding: 14px 16px;
     font-size: 0.95rem;
@@ -1532,6 +1533,13 @@ body.halloween-theme {
     box-shadow: 0 0 16px rgba(251,113,133,0.16), inset 0 0 12px rgba(251,113,133,0.04);
 }
 
+.external-link-container .list-item-small:nth-child(6) {
+    border-radius: 4px 14px 4px 14px;
+    background: linear-gradient(#171a22, #171a22) padding-box,
+                linear-gradient(135deg, #60a5fa, #bfdbfe, #1d4ed8) border-box;
+    box-shadow: 0 0 16px rgba(96,165,250,0.16), inset 0 0 12px rgba(96,165,250,0.04);
+}
+
 .external-link-container .list-item-small:hover {
     transform: translateY(-3px);
     filter: brightness(1.12);
@@ -1555,6 +1563,10 @@ body.halloween-theme {
 
 .external-link-container .list-item-small:nth-child(5):hover {
     box-shadow: 0 0 26px rgba(251,113,133,0.32), 0 8px 18px rgba(0,0,0,0.35);
+}
+
+.external-link-container .list-item-small:nth-child(6):hover {
+    box-shadow: 0 0 26px rgba(96,165,250,0.32), 0 8px 18px rgba(0,0,0,0.35);
 }
 
 .list-item-small .arrow {
@@ -5862,6 +5874,7 @@ body.svs-apply-modal-open * {
 .external-link-container .list-item-small:nth-child(3) { --c1: #a78bfa; --c2: #e9d5ff; animation-delay: -4.8s;  }
 .external-link-container .list-item-small:nth-child(4) { --c1: #34d399; --c2: #a7f3d0; animation-delay: -7.2s;  }
 .external-link-container .list-item-small:nth-child(5) { --c1: #fb7185; --c2: #fecdd3; animation-delay: -9.6s;  }
+.external-link-container .list-item-small:nth-child(6) { --c1: #60a5fa; --c2: #bfdbfe; animation-delay: -12s;  }
 
 .external-link-container .list-item-small:nth-child(n) {
     background:
@@ -6177,6 +6190,7 @@ body.intro-complete #main-menu-links > .list-item-small:nth-child(2) { animation
 body.intro-complete #main-menu-links > .list-item-small:nth-child(3) { animation-delay: 0.44s, 1.02s; }
 body.intro-complete #main-menu-links > .list-item-small:nth-child(4) { animation-delay: 0.66s, 1.24s; }
 body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation-delay: 0.88s, 1.46s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(6) { animation-delay: 1.10s, 1.68s; }
 
 @keyframes menu-button-fade-in {
     from { opacity: 0; transform: translateY(16px); }
