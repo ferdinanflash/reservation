@@ -97,65 +97,193 @@ async function handleSummary(input: Record<string, unknown>) {
   return json(up.body);
 }
 
+// Public site (no API key) — same source TAL State Tracker uses.
+const SITE = 'https://wosatlas.com/api/v1';
+
+async function siteGet(path: string): Promise<any | null> {
+  try {
+    const res = await fetch(`${SITE}${path}`, {
+      headers: { accept: 'application/json', 'user-agent': UA },
+    });
+    if (!res.ok) return null;
+    return JSON.parse(await res.text());
+  } catch (_) {
+    return null;
+  }
+}
+
+/** Build detail payload from public wosatlas.com endpoints (no API key). */
+async function detailFromPublicSite(kid: number, allianceLimit: number, playerLimit: number) {
+  const server = await siteGet(`/servers/${kid}`);
+  if (!server) return null;
+
+  const rollup = server.rollup || {};
+  const playerCount = Number(rollup.players) || null;
+  const totalPower = Number(rollup.player_power) || null;
+
+  let kingObj: { uid: any; nick_name: string | null; name: string | null } | null = null;
+  const role = Array.isArray(server.roles)
+    ? server.roles.find((r: any) => r && (r.role === 'king' || r.role === 'president'))
+    : null;
+  if (role && role.uid) {
+    let nick: string | null = null;
+    try {
+      const p = await siteGet(`/players/${role.uid}`);
+      if (p && (p.name || p.nick_name)) nick = String(p.name || p.nick_name);
+    } catch (_) { /* ignore */ }
+    kingObj = { uid: role.uid, nick_name: nick, name: nick };
+  }
+
+  let allianceItems: any[] = [];
+  try {
+    const raw = await siteGet(`/servers/${kid}/alliances?sort=power&limit=${allianceLimit}`);
+    if (raw && Array.isArray(raw.items)) allianceItems = raw.items;
+    else if (Array.isArray(raw)) allianceItems = raw;
+  } catch (_) { /* ignore */ }
+
+  const players: any[] = [];
+  const seen = new Set<string>();
+  for (const a of allianceItems.slice(0, 8)) {
+    const aid = a.alliance_id || a.aid || a.id;
+    if (!aid) continue;
+    try {
+      const mem = await siteGet(`/alliances/${aid}/members`);
+      const list = (mem && Array.isArray(mem.items)) ? mem.items
+        : (mem && Array.isArray(mem.members)) ? mem.members
+        : Array.isArray(mem) ? mem : [];
+      for (const m of list) {
+        const uid = String(m.uid || m.playerUid || '');
+        if (!uid || seen.has(uid)) continue;
+        seen.add(uid);
+        players.push({
+          uid: m.uid,
+          nick_name: m.nick_name || m.nickname || m.name || null,
+          power: m.power || 0,
+          stove_lv: m.stove_lv || m.stove || null,
+          rank: players.length + 1,
+        });
+      }
+    } catch (_) { /* ignore */ }
+  }
+  players.sort((a, b) => (Number(b.power) || 0) - (Number(a.power) || 0));
+  const topPlayers = players.slice(0, playerLimit).map((p, i) => ({ ...p, rank: i + 1 }));
+
+  if (kingObj && kingObj.uid && !kingObj.nick_name) {
+    const hit = topPlayers.find((p) => String(p.uid) === String(kingObj!.uid));
+    if (hit && hit.nick_name) {
+      kingObj.nick_name = String(hit.nick_name);
+      kingObj.name = kingObj.nick_name;
+    }
+  }
+
+  const state = {
+    server_id: server.server_id ?? String(kid),
+    chiefs: playerCount,
+    total_power: totalPower,
+    alliance_count: Number(rollup.alliances) || allianceItems.length || null,
+    king: kingObj,
+    refreshed_at: rollup.refreshed_at ?? null,
+    roles: server.roles || null,
+  };
+  const power = {
+    player_count: playerCount,
+    total_power: totalPower,
+    top: topPlayers,
+  };
+  const alliances = {
+    entries: allianceItems.slice(0, allianceLimit).map((a: any) => ({
+      ...a,
+      aid: Number(a.alliance_id || a.aid || a.id) || 0,
+      abbr: a.tag || a.abbr,
+      members: a.member_count || a.members,
+      memberMax: a.max_members || a.memberMax,
+      totalPower: a.power || a.total_power || a.totalPower,
+    })),
+  };
+  return { state, power, alliances, players: topPlayers, kid, source: 'public-site' };
+}
+
 async function handleDetail(input: Record<string, unknown>) {
   const kid = Math.trunc(Number(input.kid));
   if (!Number.isFinite(kid) || kid < 1 || kid > 99999) {
     return jsonObj({ error: 'bad-kid' }, 400);
   }
   const allianceLimit = Math.min(Math.max(Math.trunc(Number(input.allianceLimit)) || 15, 1), 50);
-  // Up to 100 players for SvS Enemies leaderboard
   const playerLimit = Math.min(Math.max(Math.trunc(Number(input.playerLimit)) || 100, 1), 100);
   const key = `detail:${kid}:${allianceLimit}:${playerLimit}`;
   const hit = cacheGet(key);
   if (hit) return json(hit);
 
-  const urls = [
-    `${API}/states/${kid}`,
-    `${API}/kingdoms/${kid}/power`,
-    `${API}/alliances/leaderboard?limit=${allianceLimit}&kid=${kid}`,
-    `${API}/power/leaderboard?kid=${kid}&limit=${playerLimit}`,
-  ];
-  const results = await Promise.all(
-    urls.map(async (url) => {
-      try {
-        return await upstreamGet(url);
-      } catch (_) {
-        return { ok: false as const, status: 0 };
-      }
-    }),
-  );
-
-  const parse = (r: { ok: true; body: string } | { ok: false; status: number }) => {
-    if (!r.ok) return null;
-    try {
-      return JSON.parse(r.body);
-    } catch (_) {
-      return null;
-    }
-  };
-
-  let state = parse(results[0]);
-  const power = parse(results[1]);
-  const alliances = parse(results[2]);
-  const leaderboard = parse(results[3]);
-
-  // Prefer full power/leaderboard entries; fall back to short power.top
+  let state: any = null;
+  let power: any = null;
+  let alliances: any = null;
   let players: any[] = [];
-  if (leaderboard && Array.isArray(leaderboard.entries) && leaderboard.entries.length) {
-    players = leaderboard.entries;
-  } else if (power && Array.isArray(power.top) && power.top.length) {
-    players = power.top;
+  let results: Array<{ ok: true; body: string } | { ok: false; status: number }> = [];
+
+  if (API_KEY) {
+    const urls = [
+      `${API}/states/${kid}`,
+      `${API}/kingdoms/${kid}/power`,
+      `${API}/alliances/leaderboard?limit=${allianceLimit}&kid=${kid}`,
+      `${API}/power/leaderboard?kid=${kid}&limit=${playerLimit}`,
+    ];
+    results = await Promise.all(
+      urls.map(async (url) => {
+        try {
+          return await upstreamGet(url);
+        } catch (_) {
+          return { ok: false as const, status: 0 };
+        }
+      }),
+    );
+
+    const parse = (r: { ok: true; body: string } | { ok: false; status: number }) => {
+      if (!r.ok) return null;
+      try {
+        return JSON.parse(r.body);
+      } catch (_) {
+        return null;
+      }
+    };
+
+    state = parse(results[0]);
+    power = parse(results[1]);
+    alliances = parse(results[2]);
+    const leaderboard = parse(results[3]);
+
+    if (leaderboard && Array.isArray(leaderboard.entries) && leaderboard.entries.length) {
+      players = leaderboard.entries;
+    } else if (power && Array.isArray(power.top) && power.top.length) {
+      players = power.top;
+    }
   }
 
-  // Enrich power.top so older clients also see more players when possible
+  // Public-site fallback when no API key, or keyed API returned nothing useful
+  if (!state && !power && !alliances && !players.length) {
+    const pub = await detailFromPublicSite(kid, allianceLimit, playerLimit);
+    if (pub) {
+      const payload = JSON.stringify(pub);
+      cacheSet(key, payload);
+      return json(payload);
+    }
+    const statuses = results.map((r) => (r.ok ? 200 : r.status));
+    const any401 = statuses.some((s) => s === 401);
+    if (any401 || !API_KEY) {
+      return jsonObj({
+        error: 'upstream-401',
+        message: API_KEY
+          ? 'WoS Atlas rejected the API key (invalid or revoked).'
+          : 'WOSATLAS_API_KEY secret is not set, and public-site fallback also failed.',
+      }, 502);
+    }
+    return jsonObj({ error: 'upstream-failed', statuses }, 502);
+  }
+
   let powerOut = power;
   if (power && players.length) {
     powerOut = { ...power, top: players };
   }
 
-  // ---- King / President nickname (same approach as TAL State Tracker) ----
-  // api.wosatlas.com /states/{kid} often returns roles: [{ role: "king", uid }] with no name.
-  // Resolve nick_name from the leaderboard players list, then fall back to /players/{uid}.
   if (state && typeof state === 'object') {
     let kingUid: any = null;
     let existingName: string | null = null;
@@ -171,23 +299,16 @@ async function handleDetail(input: Record<string, unknown>) {
       if (role) kingUid = role.uid || role.playerUid || null;
     }
 
-    // Fallback: public site /servers/{kid} (same source TAL State Tracker uses)
-    // when api.wosatlas.com /states does not expose roles.
     if (!kingUid) {
       try {
-        const siteRes = await fetch(`https://wosatlas.com/api/v1/servers/${kid}`, {
-          headers: { accept: 'application/json', 'user-agent': UA },
-        });
-        if (siteRes.ok) {
-          const server = await siteRes.json();
-          if (server && Array.isArray(server.roles)) {
-            const role = server.roles.find(
-              (r: any) => r && (r.role === 'king' || r.role === 'president'),
-            );
-            if (role) kingUid = role.uid || role.playerUid || null;
-          }
+        const server = await siteGet(`/servers/${kid}`);
+        if (server && Array.isArray(server.roles)) {
+          const role = server.roles.find(
+            (r: any) => r && (r.role === 'king' || r.role === 'president'),
+          );
+          if (role) kingUid = role.uid || role.playerUid || null;
         }
-      } catch (_) { /* ignore public-site failure */ }
+      } catch (_) { /* ignore */ }
     }
 
     if (kingUid) {
@@ -205,12 +326,18 @@ async function handleDetail(input: Record<string, unknown>) {
 
       if (!nick) {
         try {
-          const up = await upstreamGet(`${API}/players/${kingUid}`);
-          if (up.ok) {
-            const p = JSON.parse(up.body);
-            nick = (p && (p.name || p.nick_name || p.nickname)) ? String(p.name || p.nick_name || p.nickname) : null;
+          if (API_KEY) {
+            const up = await upstreamGet(`${API}/players/${kingUid}`);
+            if (up.ok) {
+              const p = JSON.parse(up.body);
+              nick = (p && (p.name || p.nick_name || p.nickname)) ? String(p.name || p.nick_name || p.nickname) : null;
+            }
           }
-        } catch (_) { /* ignore name lookup failure */ }
+          if (!nick) {
+            const p = await siteGet(`/players/${kingUid}`);
+            if (p && (p.name || p.nick_name)) nick = String(p.name || p.nick_name);
+          }
+        } catch (_) { /* ignore */ }
       }
 
       state = {
@@ -222,20 +349,6 @@ async function handleDetail(input: Record<string, unknown>) {
         },
       };
     }
-  }
-
-  if (!state && !power && !alliances && !players.length) {
-    const statuses = results.map((r) => (r.ok ? 200 : r.status));
-    const any401 = statuses.some((s) => s === 401);
-    if (any401) {
-      return jsonObj({
-        error: 'upstream-401',
-        message: API_KEY
-          ? 'WoS Atlas rejected the API key (invalid or revoked).'
-          : 'WOSATLAS_API_KEY secret is not set on this function.',
-      }, 502);
-    }
-    return jsonObj({ error: 'upstream-failed', statuses }, 502);
   }
 
   const payload = JSON.stringify({
