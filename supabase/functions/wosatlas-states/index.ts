@@ -571,7 +571,9 @@ async function handlePlayerSearch(input: Record<string, unknown>) {
 // upstream is hit at a fixed, throttled rate no matter how many people open the page.
 const SB_URL = Deno.env.get('SUPABASE_URL') || '';
 const SB_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-const REFRESH_MIN_INTERVAL_MS = 10 * 60 * 1000; // per-State throttle between attempts
+// Per-State throttle between attempts. The 120-minute rule lives in the browser; this only
+// stops several visitors (or a failing upstream) from triggering repeated refreshes.
+const REFRESH_MIN_INTERVAL_MS = 5 * 60 * 1000;
 const REFRESH_GAP_MS = 1000; // pause between States
 
 async function sbRest(path: string, init: RequestInit = {}): Promise<Response> {
@@ -608,6 +610,15 @@ async function cacheUpsert(row: Record<string, unknown>) {
   });
 }
 
+/** Drop volatile fields so "did the data change?" ignores timestamps. */
+function stableForCompare(p: any): unknown {
+  if (!p || typeof p !== 'object') return p;
+  const c = JSON.parse(JSON.stringify(p));
+  if (c.state) delete c.state.refreshed_at;
+  if (c.power) { delete c.power.recorded_at; delete c.power.refreshed_at; }
+  return c;
+}
+
 /** body: { action: 'refresh', kids?: number[] } — only States configured by the President are refreshed. */
 async function handleRefresh(input: Record<string, unknown>) {
   if (!SB_URL || !SB_KEY) return jsonObj({ error: 'no-service-role' }, 500);
@@ -619,12 +630,14 @@ async function handleRefresh(input: Record<string, unknown>) {
   if (!kids.length) return jsonObj({ results: [] });
 
   const exRes = await sbRest(
-    `svs_enemy_cache?kid=in.(${kids.join(',')})&select=kid,attempted_at`,
+    `svs_enemy_cache?kid=in.(${kids.join(',')})&select=kid,attempted_at,payload`,
   );
   const existing: Record<number, number> = {};
+  const oldPayload: Record<number, string> = {};
   if (exRes.ok) {
     for (const r of await exRes.json()) {
       existing[Number(r.kid)] = r.attempted_at ? Date.parse(r.attempted_at) : 0;
+      if (r.payload) oldPayload[Number(r.kid)] = JSON.stringify(stableForCompare(r.payload));
     }
   }
 
@@ -640,13 +653,14 @@ async function handleRefresh(input: Record<string, unknown>) {
     try {
       const detail = await detailFromPublicSite(kid, 15, 100);
       if (detail && (detail.state || detail.power || detail.alliances)) {
-        await cacheUpsert({
-          kid,
-          payload: detail,
-          fetched_at: new Date().toISOString(),
-          last_error: null,
-        });
-        results.push({ kid, status: 'ok' });
+        const unchanged = oldPayload[kid] !== undefined &&
+          oldPayload[kid] === JSON.stringify(stableForCompare(detail));
+        // Only rewrite the (large) payload when the data really changed;
+        // otherwise just bump fetched_at to record "checked, still current".
+        await cacheUpsert(unchanged
+          ? { kid, fetched_at: new Date().toISOString(), last_error: null }
+          : { kid, payload: detail, fetched_at: new Date().toISOString(), last_error: null });
+        results.push({ kid, status: unchanged ? 'ok-unchanged' : 'ok' });
       } else {
         await cacheUpsert({ kid, last_error: 'upstream returned no data' });
         results.push({ kid, status: 'failed' });
