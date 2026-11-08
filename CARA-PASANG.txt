@@ -3,8 +3,9 @@ Perubahan SvS Enemies (rate limit + error per State + cache di Supabase)
 File dalam zip ini (timpa / tambahkan ke repo dengan path yang sama):
   js/app-svs-enemies.js
   style.css
-  sw.js  (CACHE_VERSION 2026-11-08-3)
-  index.html  (?v= style.css 113, app-svs-enemies.js 20)
+  sw.js  (CACHE_VERSION 2026-11-08-4)
+  index.html  (?v= style.css 113, app-svs-enemies.js 20, lang.js 51; entri What's New baru)
+  lang.js  (What's New #12 dalam 8 bahasa, tanggal 8 Nov 2026)
   supabase/functions/wosatlas-states/index.ts
   supabase_migration_svs_enemy_cache.sql   (file baru)
 
