@@ -7021,3 +7021,29 @@ body h1.page-title.portal-title {
     opacity: 0.55;
     font-style: italic;
 }
+
+/* SvS / TAL Enemies menu label switch (President Panel) */
+.svs-en-label-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+}
+.svs-en-label-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    user-select: none;
+}
+.svs-en-label-option:has(input:checked) {
+    border-color: rgba(96, 165, 250, 0.55);
+    background: rgba(59, 130, 246, 0.15);
+}
+.svs-en-label-option input {
+    margin: 0;
+}

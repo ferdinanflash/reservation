@@ -184,7 +184,7 @@
 					<script src="js/app-bulk.js?v=3" defer=""></script>
 					<script src="js/app-extras.js?v=58" defer=""></script>
 					<script src="js/app-notifications.js?v=7" defer=""></script>
-					<script src="js/app-svs-enemies.js?v=16" defer=""></script>
+					<script src="js/app-svs-enemies.js?v=17" defer=""></script>
 					<script src="fire-banner.js?v=15" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
@@ -412,8 +412,8 @@
 						<button type="button" class="list-item list-item-small" onclick="showMinisterReservationMenu()">
 							<span data-i18n="link_minister_reservation">Minister Reservation</span>
 						</button>
-						<button type="button" class="list-item list-item-small" onclick="showSvSEnemiesMenu()">
-							<span data-i18n="link_svs_enemies">SvS Enemies</span>
+						<button type="button" class="list-item list-item-small" id="svs-enemies-menu-btn" onclick="showSvSEnemiesMenu()">
+							<span id="svs-enemies-menu-label" data-i18n="link_svs_enemies">SvS Enemies</span>
 						</button>
 						<a class="list-item list-item-small" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer">
 							<span data-i18n="link_leaderboard">Events Leaderboard Record</span>
@@ -930,6 +930,20 @@
 					<label for="svs-enemies-kids-input" data-i18n="svs_enemies_kids_label">Enemy State IDs</label>
 					<textarea id="svs-enemies-kids-input" rows="3" placeholder="3480, 3491, 3502" data-i18n-placeholder="svs_enemies_kids_placeholder"></textarea>
 					<p class="redeem-hint" data-i18n="svs_enemies_kids_hint">Example: 3480, 3491, 3502 — max 20 States.</p>
+				</div>
+				<div class="form-group">
+					<label data-i18n="svs_enemies_menu_label_title">Menu button name</label>
+					<div class="svs-en-label-switch" role="group" aria-label="Menu button name">
+						<label class="svs-en-label-option">
+							<input type="radio" name="svs-enemies-menu-label" id="svs-enemies-label-svs" value="svs" checked>
+							<span data-i18n="link_svs_enemies">SvS Enemies</span>
+						</label>
+						<label class="svs-en-label-option">
+							<input type="radio" name="svs-enemies-menu-label" id="svs-enemies-label-tal" value="tal">
+							<span data-i18n="link_tal_enemies">TAL Enemies</span>
+						</label>
+					</div>
+					<p class="redeem-hint" data-i18n="svs_enemies_menu_label_hint">Only changes the main-menu button text. Feature stays the same.</p>
 				</div>
 				<div class="form-actions">
 					<button type="button" class="btn-back modal-action-btn" onclick="closeSvSEnemiesSettingsModal()" data-i18n="btn_close">Close</button>
