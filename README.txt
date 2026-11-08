@@ -16,8 +16,8 @@ Steps
 3. supabase functions deploy wosatlas-states
 4. Hard refresh / clear PWA cache.
 
-Included fixes
+Included
 - WoS Atlas public API path (like TAL)
-- Menu label switch: SvS Enemies ↔ TAL Enemies (President Panel)
+- Menu label switch: SvS Enemies ↔ TAL Enemies
 - Queued State loading with delay when >1 enemy State
-  (avoids parallel API bursts / blocks)
+- Auto-retry failed State loads (up to 6 times, backoff)
