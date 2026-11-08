@@ -27,18 +27,22 @@ TO anon, authenticated
 USING (true);
 
 -- ---------------------------------------------------------------------------
--- OPTIONAL: refresh every 15 minutes even when nobody has the page open.
--- Without this the cache is still refreshed lazily when a visitor opens the page
--- and the data is older than ~15 minutes. To enable, enable the pg_cron and
--- pg_net extensions (Database -> Extensions), fill in the two values, and run:
+-- How refreshing works (no cron needed):
+-- When someone opens SvS Enemies, the page reads this table. If a State's data is
+-- older than 120 minutes, the page asks the edge function `wosatlas-states`
+-- (action "refresh") to fetch it again; the function writes the new data here
+-- (only when it changed) and the page shows it.
+--
+-- OPTIONAL extra: also refresh hourly when nobody opens the page. Fill in the two
+-- values, enable pg_cron + pg_net (Database -> Extensions), and run:
 --
 -- SELECT cron.schedule(
 --   'svs-enemy-refresh',
---   '*/15 * * * *',
---   $$ SELECT net.http_post(
+--   '0 * * * *',
+--   $job$ SELECT net.http_post(
 --        url     := 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/wosatlas-states',
 --        headers := '{"Content-Type":"application/json","Authorization":"Bearer YOUR_ANON_KEY"}'::jsonb,
 --        body    := '{"action":"refresh"}'::jsonb
---      ) $$
+--      ) $job$
 -- );
 -- ---------------------------------------------------------------------------
