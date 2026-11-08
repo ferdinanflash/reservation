@@ -16,6 +16,8 @@
         sourceUrl: 'https://wosatlas.com/states/',
         myState: 3475,
         cacheMs: 5 * 60 * 1000,
+        // Server cache older than this triggers a background refresh (edge fn throttles too).
+        cacheRefreshAfterMs: 15 * 60 * 1000,
         allianceLimit: 10,
         topPlayersLimit: 100,
         storageKey: 'svs_enemies_kids',
@@ -518,6 +520,67 @@
         };
     }
 
+    // ---------- Server-side cache (table svs_enemy_cache) ----------
+    // Filled by edge function action "refresh" at a throttled rate, so browsers
+    // no longer hit wosatlas.com themselves (avoids rate limiting).
+    function normalizeDetailData(data) {
+        let alliances = data.alliances || null;
+        if (alliances && Array.isArray(alliances.entries)) alliances = alliances.entries;
+        let players = [];
+        if (Array.isArray(data.players) && data.players.length) players = data.players;
+        else if (data.power && Array.isArray(data.power.top)) players = data.power.top;
+        return {
+            state: data.state || null,
+            power: data.power || null,
+            alliances: alliances,
+            players: players.slice(0, CFG.topPlayersLimit)
+        };
+    }
+
+    async function readCacheRow(kid) {
+        const client = typeof getSupabase === 'function' ? getSupabase() : null;
+        if (!client) return null;
+        const { data, error } = await client
+            .from('svs_enemy_cache')
+            .select('payload,fetched_at')
+            .eq('kid', kid)
+            .maybeSingle();
+        if (error || !data || !data.payload) return null;
+        const fetchedAt = Date.parse(data.fetched_at) || 0;
+        return { payload: data.payload, fetchedAt: fetchedAt, ageMs: Date.now() - fetchedAt };
+    }
+
+    /** Ask the edge function to refresh one State (it throttles per State itself). */
+    async function requestCacheRefresh(kid) {
+        const client = typeof getSupabase === 'function' ? getSupabase() : null;
+        if (!client) return false;
+        try {
+            const { data, error } = await client.functions.invoke(CFG.proxyFunction, {
+                body: { action: 'refresh', kids: [kid] }
+            });
+            if (error || !data) return false;
+            const r = Array.isArray(data.results) ? data.results[0] : null;
+            return !!(r && r.status === 'ok');
+        } catch (_) {
+            return false;
+        }
+    }
+
+    /** Returns { payload, fetchedAt } from the cache, refreshing in the background when old. */
+    async function fetchDetailCache(kid) {
+        let row = null;
+        try { row = await readCacheRow(kid); } catch (_) { row = null; }
+        if (row) {
+            if (row.ageMs > CFG.cacheRefreshAfterMs) requestCacheRefresh(kid); // fire and forget
+            return row;
+        }
+        // Nothing cached yet (first ever load): fetch it once, then read again.
+        if (await requestCacheRefresh(kid)) {
+            try { row = await readCacheRow(kid); } catch (_) { row = null; }
+        }
+        return row;
+    }
+
     /** Fetch only the full power leaderboard via edge function (when direct CORS fails). */
     async function fetchPlayersProxy(kid) {
         const client = typeof getSupabase === 'function' ? getSupabase() : null;
@@ -550,10 +613,21 @@
 
         try {
             let payload = null;
+            // 1) Server-side cache first (no upstream call from this browser).
+            let cacheRow = null;
+            try { cacheRow = await fetchDetailCache(key); } catch (_) { cacheRow = null; }
+            if (cacheRow && cacheRow.payload) {
+                payload = normalizeDetailData(cacheRow.payload);
+                entry.cachedAt = cacheRow.fetchedAt;
+                S.mode = 'cache';
+            }
+            // 2) Fallback: old behaviour (direct public API, then proxy).
             // Same order as TAL: public direct first, proxy only as fallback.
             // Stick with whichever mode already worked this session.
             const tryProxyFirst = CFG.preferProxy || S.mode === 'proxy';
-            if (tryProxyFirst) {
+            if (payload) {
+                // served from cache
+            } else if (tryProxyFirst) {
                 try {
                     payload = await fetchDetailProxy(key);
                     S.mode = 'proxy';
@@ -607,6 +681,7 @@
             entry.error = (!payload.state && !payload.power && !payload.alliances && !(entry.players && entry.players.length))
                 ? (typeof t === 'function' ? t('svs_enemies_load_partial') : 'Partial data only')
                 : null;
+            if (!entry.error) saveStale(key, entry);
         } catch (err) {
             console.error('SvS Enemies detail', key, err);
             entry.loading = false;
@@ -622,9 +697,38 @@
                 hint = msg;
             }
             entry.error = hint ? base + ' — ' + hint : base;
+            // Fall back to the last good snapshot so the card is not empty.
+            const stale = loadStale(key);
+            if (stale) {
+                entry.state = stale.state;
+                entry.power = stale.power;
+                entry.alliances = stale.alliances;
+                entry.players = stale.players || [];
+                entry.stale = true;
+                entry.error = tr('svs_enemies_stale', 'Live data unavailable — showing saved data from {{when}}')
+                    .replace('{{when}}', new Date(stale.savedAt).toLocaleString());
+            }
         }
         S.cache.set(key, entry);
         return entry;
+    }
+
+    // ---------- Last-good snapshot (localStorage) ----------
+    const STALE_PREFIX = 'svs_enemy_snapshot_';
+    function saveStale(kid, entry) {
+        try {
+            localStorage.setItem(STALE_PREFIX + kid, JSON.stringify({
+                savedAt: Date.now(),
+                state: entry.state, power: entry.power,
+                alliances: entry.alliances, players: entry.players
+            }));
+        } catch (_) { /* quota / private mode */ }
+    }
+    function loadStale(kid) {
+        try {
+            const raw = localStorage.getItem(STALE_PREFIX + kid);
+            return raw ? JSON.parse(raw) : null;
+        } catch (_) { return null; }
     }
 
     function detailLooksOk(entry) {
@@ -1079,7 +1183,11 @@
         if (loading) {
             body = `<p class="svs-en-status">${esc(error || tr('svs_enemies_loading', 'Loading…'))}</p>`;
         } else if (error && !power && !state) {
-            body = `<p class="svs-en-status svs-en-error">${esc(error)}</p>`;
+            // Live data failed, but SvS Record (wosnerds) is independent — keep showing it.
+            body = `
+                <p class="svs-en-status svs-en-error">${esc(error)}</p>
+                <button type="button" class="svs-en-retry" data-retry-kid="${kid}">${esc(tr('svs_enemies_retry_btn', 'Retry'))}</button>
+                ${renderSvSRecordSection(kid)}`;
         } else {
             const rankLabel = powerRank
                 ? (rankedStates ? `#${fmtFull(powerRank)} / ${fmtFull(rankedStates)}` : `#${fmtFull(powerRank)}`)
@@ -1094,6 +1202,7 @@
                     ${kingDisplay ? `<div class="svs-en-stat"><span class="svs-en-stat-label">${esc(tr('svs_enemies_stat_king', 'President'))}</span><strong data-no-i18n>${esc(kingDisplay)}</strong></div>` : ''}
                 </div>
                 ${error ? `<p class="svs-en-status svs-en-warn">${esc(error)}</p>` : ''}
+                ${data && data.cachedAt ? `<p class="svs-en-status svs-en-cached">${esc(tr('svs_enemies_data_as_of', 'Data as of {{when}}').replace('{{when}}', new Date(data.cachedAt).toLocaleString()))}</p>` : ''}
                 ${topPlayersHtml ? `
                     <h4 class="svs-en-h">${esc(tr('svs_enemies_leaderboard', 'Leaderboard'))}
                         <span class="svs-en-h-meta">Top ${topPlayers.length}</span>
@@ -1138,6 +1247,35 @@
                 <div class="svs-en-card-body">${body}</div>
             </article>`;
     }
+
+    /** Reload a single State card in place (used by 2nd pass and the Retry button). */
+    async function retryOneCard(kid, gen) {
+        const listEl = document.getElementById('svs-enemies-list');
+        if (!listEl) return;
+        const swap = (data) => {
+            const card = listEl.querySelector(`.svs-en-card[data-kid="${kid}"]`);
+            if (!card) return;
+            const wrap = document.createElement('div');
+            wrap.innerHTML = renderCard(Number(kid), data);
+            if (wrap.firstElementChild) card.replaceWith(wrap.firstElementChild);
+        };
+        swap({ loading: true });
+        const data = await loadDetailWithRetry(kid, {
+            shouldStop: () => gen != null && gen !== S.loadGen
+        });
+        if (gen != null && gen !== S.loadGen) return;
+        swap(data);
+    }
+
+    document.addEventListener('click', (ev) => {
+        const btn = ev.target && ev.target.closest && ev.target.closest('[data-retry-kid]');
+        if (!btn) return;
+        const kid = Number(btn.getAttribute('data-retry-kid'));
+        if (!Number.isFinite(kid)) return;
+        btn.disabled = true;
+        S.cache.delete(kid);
+        retryOneCard(kid, null);
+    });
 
     async function renderEnemiesView() {
         const listEl = document.getElementById('svs-enemies-list');
@@ -1221,6 +1359,24 @@
                 }
             }
         );
+
+        // Second pass: States that failed during the burst are often just rate-limited.
+        // Cool down, then retry only those, one at a time.
+        if (gen === S.loadGen) {
+            const failed = kids.filter((k) => {
+                const e = S.cache.get(Number(k));
+                return !e || e.error;
+            });
+            if (failed.length) {
+                await sleep(4000);
+                for (const kid of failed) {
+                    if (gen !== S.loadGen) return;
+                    S.cache.delete(Number(kid));
+                    await retryOneCard(kid, gen);
+                    await sleep(CFG.loadDelayMs);
+                }
+            }
+        }
 
         if (gen !== S.loadGen) return;
         S.loadedAt = Date.now();
