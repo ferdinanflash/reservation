@@ -19,6 +19,7 @@
         allianceLimit: 10,
         topPlayersLimit: 100,
         storageKey: 'svs_enemies_kids',
+        labelStorageKey: 'svs_enemies_menu_label', // 'svs' | 'tal' — display name only
         maxEnemies: 20,
         // Prefer browser-direct public API first (works on TAL); proxy is fallback.
         preferProxy: false,
@@ -35,6 +36,7 @@
 
     const S = {
         kids: [],
+        menuLabel: 'svs', // 'svs' | 'tal' — main-menu button text only
         mode: null, // 'direct' | 'proxy'
         cache: new Map(), // kid -> { fetchedAt, state, power, alliances, players, error, loading }
         allianceCache: new Map(), // aid -> { fetchedAt, data, error, loading }
@@ -86,39 +88,96 @@
         } catch (_) {}
     }
 
+    function normalizeMenuLabel(v) {
+        return String(v || '').toLowerCase() === 'tal' ? 'tal' : 'svs';
+    }
+
+    function loadMenuLabelLocal() {
+        try {
+            return normalizeMenuLabel(localStorage.getItem(CFG.labelStorageKey));
+        } catch (_) {
+            return 'svs';
+        }
+    }
+
+    function saveMenuLabelLocal(label) {
+        try {
+            localStorage.setItem(CFG.labelStorageKey, normalizeMenuLabel(label));
+        } catch (_) {}
+    }
+
+    function menuLabelText(label) {
+        const mode = normalizeMenuLabel(label);
+        if (mode === 'tal') {
+            return tr('link_tal_enemies', 'TAL Enemies');
+        }
+        return tr('link_svs_enemies', 'SvS Enemies');
+    }
+
+    function applyMenuLabel(label) {
+        S.menuLabel = normalizeMenuLabel(label);
+        const el = document.getElementById('svs-enemies-menu-label');
+        if (el) el.textContent = menuLabelText(S.menuLabel);
+        // Keep radio in settings modal in sync if open
+        const svsRadio = document.getElementById('svs-enemies-label-svs');
+        const talRadio = document.getElementById('svs-enemies-label-tal');
+        if (svsRadio) svsRadio.checked = S.menuLabel === 'svs';
+        if (talRadio) talRadio.checked = S.menuLabel === 'tal';
+    }
+
     async function loadKidsFromDb() {
         const client = typeof getSupabase === 'function' ? getSupabase() : null;
         if (!client) return null;
         try {
+            // menu_label is optional (added later); select * so older schemas still work
             const { data, error } = await client
                 .from('svs_enemies_settings')
-                .select('enemy_kids')
+                .select('*')
                 .eq('id', 'main')
                 .maybeSingle();
             if (error) throw error;
-            if (data && typeof data.enemy_kids === 'string') {
-                return parseKids(data.enemy_kids);
+            if (!data) return null;
+            const kids = typeof data.enemy_kids === 'string' ? parseKids(data.enemy_kids) : [];
+            if (data.menu_label != null) {
+                applyMenuLabel(data.menu_label);
+                saveMenuLabelLocal(data.menu_label);
             }
+            return kids;
         } catch (err) {
             console.warn('SvS Enemies: could not load settings from DB', err);
         }
         return null;
     }
 
-    async function saveKidsToDb(kids) {
+    async function saveKidsToDb(kids, menuLabel) {
         const client = typeof getSupabase === 'function' ? getSupabase() : null;
         if (!client) return false;
+        const payload = {
+            id: 'main',
+            enemy_kids: kidsToString(kids),
+            updated_at: new Date().toISOString()
+        };
+        if (menuLabel != null) payload.menu_label = normalizeMenuLabel(menuLabel);
         try {
             const { error } = await client
                 .from('svs_enemies_settings')
-                .upsert({
-                    id: 'main',
-                    enemy_kids: kidsToString(kids),
-                    updated_at: new Date().toISOString()
-                });
+                .upsert(payload);
             if (error) throw error;
             return true;
         } catch (err) {
+            // Older DB without menu_label column: retry without it
+            if (menuLabel != null) {
+                try {
+                    const { error } = await client
+                        .from('svs_enemies_settings')
+                        .upsert({
+                            id: 'main',
+                            enemy_kids: kidsToString(kids),
+                            updated_at: new Date().toISOString()
+                        });
+                    if (!error) return true;
+                } catch (_) { /* fall through */ }
+            }
             console.warn('SvS Enemies: could not save settings to DB', err);
             return false;
         }
@@ -131,6 +190,14 @@
             saveKidsLocal(fromDb);
         } else {
             S.kids = loadKidsFromLocal();
+        }
+        // Local label as fallback / until DB responds
+        if (!document.getElementById('svs-enemies-menu-label') || !S.menuLabel) {
+            applyMenuLabel(loadMenuLabelLocal());
+        } else if (S.menuLabel === 'svs' || S.menuLabel === 'tal') {
+            applyMenuLabel(S.menuLabel);
+        } else {
+            applyMenuLabel(loadMenuLabelLocal());
         }
         return S.kids;
     }
@@ -1339,6 +1406,12 @@
     };
 
     // ---------- President Panel: configure enemy state numbers ----------
+    function readMenuLabelFromForm() {
+        const tal = document.getElementById('svs-enemies-label-tal');
+        if (tal && tal.checked) return 'tal';
+        return 'svs';
+    }
+
     function openSvSEnemiesSettingsModal() {
         if (typeof isAdmin !== 'undefined' && !isAdmin) return;
         if (typeof closePresidentPanelModal === 'function') closePresidentPanelModal();
@@ -1346,6 +1419,7 @@
         const input = document.getElementById('svs-enemies-kids-input');
         if (!modal || !input) return;
         input.value = kidsToString(S.kids.length ? S.kids : loadKidsFromLocal());
+        applyMenuLabel(S.menuLabel || loadMenuLabelLocal());
         modal.classList.remove('hidden');
         setTimeout(() => input.focus(), 50);
     }
@@ -1360,11 +1434,14 @@
         const input = document.getElementById('svs-enemies-kids-input');
         if (!input) return;
         const kids = parseKids(input.value);
+        const menuLabel = readMenuLabelFromForm();
         S.kids = kids;
         saveKidsLocal(kids);
+        saveMenuLabelLocal(menuLabel);
+        applyMenuLabel(menuLabel);
         const btn = document.getElementById('svs-enemies-settings-save-btn');
         if (btn && typeof setButtonBusy === 'function') setButtonBusy(btn, true, tr('busy_saving', 'Saving…'));
-        const okDb = await saveKidsToDb(kids);
+        const okDb = await saveKidsToDb(kids, menuLabel);
         if (btn && typeof setButtonBusy === 'function') setButtonBusy(btn, false);
         if (typeof showToast === 'function') {
             showToast(
@@ -1390,6 +1467,7 @@
 
     // Init: load config early
     function init() {
+        applyMenuLabel(loadMenuLabelLocal());
         refreshKidsConfig().catch(() => {});
         // Realtime optional
         try {
