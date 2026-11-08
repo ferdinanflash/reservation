@@ -17,7 +17,11 @@
         myState: 3475,
         cacheMs: 5 * 60 * 1000,
         // Server cache older than this triggers a background refresh (edge fn throttles too).
-        cacheRefreshAfterMs: 15 * 60 * 1000,
+        // When a visitor opens the page and the Supabase cache is older than this,
+        // the State is re-fetched from WoS Atlas and the cache is updated.
+        cacheRefreshAfterMs: 120 * 60 * 1000,
+        // Max time to wait for that refresh before showing the old cached data.
+        cacheRefreshWaitMs: 45 * 1000,
         allianceLimit: 10,
         topPlayersLimit: 100,
         storageKey: 'svs_enemies_kids',
@@ -560,7 +564,7 @@
             });
             if (error || !data) return false;
             const r = Array.isArray(data.results) ? data.results[0] : null;
-            return !!(r && r.status === 'ok');
+            return !!(r && (r.status === 'ok' || r.status === 'ok-unchanged'));
         } catch (_) {
             return false;
         }
@@ -571,7 +575,19 @@
         let row = null;
         try { row = await readCacheRow(kid); } catch (_) { row = null; }
         if (row) {
-            if (row.ageMs > CFG.cacheRefreshAfterMs) requestCacheRefresh(kid); // fire and forget
+            if (row.ageMs <= CFG.cacheRefreshAfterMs) return row; // fresh enough
+            // Older than 120 min: refresh now, write it to Supabase, then show the new data.
+            // If the refresh fails or is slow, keep showing the old cached row.
+            const refreshed = await Promise.race([
+                requestCacheRefresh(kid),
+                sleep(CFG.cacheRefreshWaitMs).then(() => false)
+            ]);
+            if (refreshed) {
+                try {
+                    const fresh = await readCacheRow(kid);
+                    if (fresh) return fresh;
+                } catch (_) { /* keep old row */ }
+            }
             return row;
         }
         // Nothing cached yet (first ever load): fetch it once, then read again.
