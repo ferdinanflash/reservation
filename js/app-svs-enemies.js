@@ -31,6 +31,11 @@
         // Within one State, member lists from top alliances also queue.
         memberFetchConcurrency: 2,
         memberFetchDelayMs: 250,
+        // Auto-retry failed State loads (502 / public API / rate-limit, etc.)
+        // until data looks usable or attempts are exhausted.
+        retryMax: 6,
+        retryBaseMs: 800,
+        retryMaxMs: 8000,
         // SvS match history (wosnerds open data, states 3001–3500)
         historyUrl: 'https://data.wosnerds.com/data/svs-history/svs-history-3001-3500.json',
         historyCacheMs: 30 * 60 * 1000
@@ -622,6 +627,72 @@
         return entry;
     }
 
+    function detailLooksOk(entry) {
+        if (!entry || entry.error) return false;
+        if (entry.loading) return false;
+        const hasAlliances = Array.isArray(entry.alliances) && entry.alliances.length > 0;
+        const hasPlayers = Array.isArray(entry.players) && entry.players.length > 0;
+        const hasPower = entry.power && (
+            Number(entry.power.total_power) > 0
+            || (Array.isArray(entry.power.top) && entry.power.top.length > 0)
+        );
+        const hasState = entry.state && (
+            entry.state.server_id != null
+            || entry.state.chiefs != null
+            || entry.state.total_power != null
+            || entry.state.king
+        );
+        return !!(hasAlliances || hasPlayers || hasPower || hasState);
+    }
+
+    function isRetriableDetailFailure(entry, err) {
+        if (err && err.name === 'AbortError') return false;
+        if (!entry) return true;
+        if (entry.error) {
+            const msg = String(entry.error);
+            // Permanent config problems — still retry a few times in case
+            // upstream was briefly down, but message is the same either way.
+            if (/not configured|invalid kid/i.test(msg)) return false;
+            return true;
+        }
+        return !detailLooksOk(entry);
+    }
+
+    /** Load one State and retry with backoff until data is OK or max attempts. */
+    async function loadDetailWithRetry(kid, opts) {
+        const maxAttempts = Math.max(1, (opts && opts.maxAttempts) || CFG.retryMax || 1);
+        const baseMs = Math.max(200, (opts && opts.baseMs) || CFG.retryBaseMs || 800);
+        const maxMs = Math.max(baseMs, (opts && opts.maxMs) || CFG.retryMaxMs || 8000);
+        const shouldStop = (opts && opts.shouldStop) || (() => false);
+        const onAttempt = (opts && opts.onAttempt) || null;
+        let last = null;
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            if (shouldStop()) return last;
+            // Drop failed cache so the next loadDetail actually re-fetches.
+            if (attempt > 1) {
+                const key = Number(kid);
+                const prev = S.cache.get(key);
+                if (prev && (prev.error || !detailLooksOk(prev))) {
+                    S.cache.delete(key);
+                }
+            }
+            if (onAttempt) {
+                try { onAttempt(attempt, maxAttempts); } catch (_) {}
+            }
+            last = await loadDetail(kid);
+            if (shouldStop()) return last;
+            if (detailLooksOk(last)) return last;
+            if (!isRetriableDetailFailure(last) || attempt >= maxAttempts) return last;
+
+            // Exponential backoff + small jitter: 0.8s, 1.6s, 3.2s… capped.
+            const exp = Math.min(maxMs, baseMs * Math.pow(2, attempt - 1));
+            const jitter = Math.floor(Math.random() * 200);
+            await sleep(exp + jitter);
+        }
+        return last;
+    }
+
 
     // ---------- SvS Record (match history) ----------
     async function loadSvSHistory() {
@@ -1006,7 +1077,7 @@
 
         let body = '';
         if (loading) {
-            body = `<p class="svs-en-status">${esc(tr('svs_enemies_loading', 'Loading…'))}</p>`;
+            body = `<p class="svs-en-status">${esc(error || tr('svs_enemies_loading', 'Loading…'))}</p>`;
         } else if (error && !power && !state) {
             body = `<p class="svs-en-status svs-en-error">${esc(error)}</p>`;
         } else {
@@ -1110,7 +1181,23 @@
             kids,
             async (kid) => {
                 if (gen !== S.loadGen) return null;
-                const data = await loadDetail(kid);
+                const data = await loadDetailWithRetry(kid, {
+                    shouldStop: () => gen !== S.loadGen,
+                    onAttempt: (attempt, maxAttempts) => {
+                        if (gen !== S.loadGen) return;
+                        const card = listEl.querySelector(`.svs-en-card[data-kid="${kid}"]`);
+                        if (!card) return;
+                        if (attempt === 1) return; // first try keeps the normal skeleton
+                        const wrap = document.createElement('div');
+                        wrap.innerHTML = renderCard(kid, {
+                            loading: true,
+                            error: tr('svs_enemies_retrying', 'Retrying {{attempt}}/{{max}}…')
+                                .replace('{{attempt}}', String(attempt))
+                                .replace('{{max}}', String(maxAttempts))
+                        });
+                        if (wrap.firstElementChild) card.replaceWith(wrap.firstElementChild);
+                    }
+                });
                 if (gen !== S.loadGen) return data;
                 const card = listEl.querySelector(`.svs-en-card[data-kid="${kid}"]`);
                 if (card) {
