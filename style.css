@@ -7010,6 +7010,16 @@ body h1.page-title.portal-title {
     color: #fcd34d;
     font-size: 0.85rem;
 }
+.svs-en-retry {
+    margin: 4px 0 12px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+    cursor: pointer;
+}
+.svs-en-retry:disabled { opacity: 0.5; cursor: wait; }
 #svs-enemies-kids-input {
     width: 100%;
     resize: vertical;

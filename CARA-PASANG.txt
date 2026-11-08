@@ -1,0 +1,18 @@
+Perubahan SvS Enemies (rate limit + error per State)
+
+File dalam zip ini (timpa / tambahkan ke repo dengan path yang sama):
+  js/app-svs-enemies.js
+  style.css
+  supabase/functions/wosatlas-states/index.ts
+  supabase_migration_svs_enemy_cache.sql   (file baru)
+
+Urutan pasang:
+1. Supabase SQL Editor -> jalankan supabase_migration_svs_enemy_cache.sql
+2. Deploy ulang edge function:  supabase functions deploy wosatlas-states
+3. Deploy file web (js + css) seperti biasa.
+4. (Opsional) aktifkan jadwal 15 menit: ikuti bagian OPTIONAL di akhir file SQL.
+   Tanpa itu, cache tetap diperbarui otomatis saat ada yang membuka halaman
+   dan datanya lebih tua dari 15 menit.
+
+Catatan: WOSATLAS_API_KEY tidak wajib. SUPABASE_SERVICE_ROLE_KEY sudah otomatis
+tersedia di edge function.
