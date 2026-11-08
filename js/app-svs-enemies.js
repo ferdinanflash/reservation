@@ -1,15 +1,17 @@
 // ================= SVS ENEMIES =================
 // Main-menu page that shows live WoS Atlas info for enemy States configured
 // by the President (President Panel → SvS Enemies Settings).
-// Data source: api.wosatlas.com (requires API key since ~Nov 2026).
-// Browser calls the Supabase edge function `wosatlas-states` which holds the
-// key in secrets. Direct browser calls are kept as a last-resort fallback.
+// Data source: public wosatlas.com/api/v1 (same as TAL State Tracker).
+// Browser tries the public endpoints first; Supabase edge function
+// `wosatlas-states` is the fallback (also uses public site endpoints).
 
 (function () {
     'use strict';
 
     const CFG = {
-        apiBase: 'https://api.wosatlas.com/v1',
+        // Public site API — no key required (same base TAL uses successfully).
+        // Do NOT point this at api.wosatlas.com; that host always needs a key.
+        apiBase: 'https://wosatlas.com/api/v1',
         proxyFunction: 'wosatlas-states',
         sourceUrl: 'https://wosatlas.com/states/',
         myState: 3475,
@@ -18,9 +20,8 @@
         topPlayersLimit: 100,
         storageKey: 'svs_enemies_kids',
         maxEnemies: 20,
-        // Prefer proxy: api.wosatlas.com now requires an API key that must
-        // live only in the edge function (never in the browser).
-        preferProxy: true,
+        // Prefer browser-direct public API first (works on TAL); proxy is fallback.
+        preferProxy: false,
         // SvS match history (wosnerds open data, states 3001–3500)
         historyUrl: 'https://data.wosnerds.com/data/svs-history/svs-history-3001-3500.json',
         historyCacheMs: 30 * 60 * 1000
@@ -236,35 +237,101 @@
         return Object.assign({}, state, { king: king });
     }
 
+    function mapAllianceRow(a) {
+        const held = (a && a.held_members) || {};
+        return {
+            aid: Number(a.alliance_id),
+            abbr: a.tag || '',
+            name: a.name || '',
+            members: Number(a.member_count) || 0,
+            memberMax: Number(a.max_members) || 0,
+            totalPower: Number(a.power) || 0,
+            maxPower: Number(held.power_max) || 0,
+            publicRecruit: !!a.public_recruit
+        };
+    }
+
     async function fetchDetailDirect(kid, signal) {
+        // Public site endpoints used by TAL State Tracker (no API key).
         const base = CFG.apiBase;
         const results = await Promise.allSettled([
-            fetchJson(`${base}/states/${kid}`, signal),
-            fetchJson(`${base}/kingdoms/${kid}/power`, signal),
-            fetchJson(`${base}/alliances/leaderboard?kid=${kid}&limit=${CFG.allianceLimit}`, signal),
-            // Full leaderboard (up to topPlayersLimit). kingdoms/.../power only has ~5 in "top".
-            fetchJson(`${base}/power/leaderboard?kid=${kid}&limit=${CFG.topPlayersLimit}`, signal)
+            fetchJson(`${base}/servers/${kid}`, signal),
+            (async () => {
+                const out = [];
+                const seen = new Set();
+                let cursor = null;
+                for (let page = 0; page < 5 && out.length < 50; page++) {
+                    const qs = cursor
+                        ? `?sort=power&limit=50&cursor=${encodeURIComponent(cursor)}`
+                        : '?sort=power&limit=50';
+                    const data = await fetchJson(`${base}/servers/${kid}/alliances${qs}`, signal);
+                    const items = (data && Array.isArray(data.items)) ? data.items
+                        : Array.isArray(data) ? data : [];
+                    let added = 0;
+                    for (const a of items) {
+                        const id = String(a && a.alliance_id != null ? a.alliance_id : '');
+                        if (!id || seen.has(id)) continue;
+                        seen.add(id);
+                        out.push(a);
+                        added++;
+                    }
+                    if (!added) break;
+                    cursor = (data && typeof data.next === 'string' && data.next) ? data.next : null;
+                    if (!cursor) break;
+                }
+                return out;
+            })()
         ]);
-        const state = results[0].status === 'fulfilled' ? results[0].value : null;
-        const power = results[1].status === 'fulfilled' ? results[1].value : null;
-        let alliances = results[2].status === 'fulfilled' ? results[2].value : null;
-        const leaderboard = results[3].status === 'fulfilled' ? results[3].value : null;
+        const server = results[0].status === 'fulfilled' ? results[0].value : null;
+        const allianceItems = results[1].status === 'fulfilled' ? results[1].value : null;
+        if (!server && !(allianceItems && allianceItems.length)) throw new Error('direct-detail-failed');
 
-        if (alliances && Array.isArray(alliances.entries)) alliances = alliances.entries;
-        else if (alliances && Array.isArray(alliances)) { /* ok */ }
-        else if (alliances && Array.isArray(alliances.alliances)) alliances = alliances.alliances;
-        else alliances = null;
-
-        // Dedicated player list: prefer /power/leaderboard, else short power.top
-        let players = [];
-        if (leaderboard && Array.isArray(leaderboard.entries) && leaderboard.entries.length) {
-            players = leaderboard.entries.slice(0, CFG.topPlayersLimit);
-        } else if (power && Array.isArray(power.top) && power.top.length) {
-            players = power.top.slice(0, CFG.topPlayersLimit);
+        // Top players: merge members of the strongest alliances (public API has no power leaderboard).
+        let top = [];
+        if (allianceItems && allianceItems.length) {
+            const lists = await Promise.allSettled(
+                allianceItems.slice(0, 8).map((a) => fetchAllianceMembersDirect(a.alliance_id, signal))
+            );
+            const seen = new Set();
+            const merged = [];
+            for (const l of lists) {
+                if (l.status !== 'fulfilled') continue;
+                for (const m of l.value) {
+                    const id = String(m && m.uid != null ? m.uid : '');
+                    if (!id || seen.has(id)) continue;
+                    seen.add(id);
+                    merged.push(m);
+                }
+            }
+            merged.sort((a, b) => (Number(b.power) || 0) - (Number(a.power) || 0));
+            top = merged.slice(0, CFG.topPlayersLimit).map(mapMemberRow);
         }
 
-        if (!state && !power && !alliances && !players.length) throw new Error('direct-detail-failed');
-        return { state, power, alliances, players };
+        const rollup = (server && server.rollup) || {};
+        const kingRole = server && Array.isArray(server.roles)
+            ? server.roles.find((r) => r && (r.role === 'king' || r.role === 'president'))
+            : null;
+        let kingObj = null;
+        if (kingRole && kingRole.uid) {
+            const nm = await resolvePlayerName(kingRole.uid, signal);
+            kingObj = { uid: kingRole.uid, name: nm || null, nick_name: nm || null };
+        }
+        const state = server ? {
+            server_id: server.server_id,
+            chiefs: Number(rollup.players) || null,
+            total_power: Number(rollup.player_power) || null,
+            king: kingObj
+        } : null;
+        const power = server ? {
+            player_count: Number(rollup.players) || null,
+            total_power: Number(rollup.player_power) || null,
+            recorded_at: rollup.refreshed_at || null,
+            top: top
+        } : null;
+        const alliances = allianceItems
+            ? allianceItems.slice(0, CFG.allianceLimit).map(mapAllianceRow)
+            : null;
+        return { state, power, alliances, players: top };
     }
 
     async function fetchDetailProxy(kid, signal) {
@@ -352,9 +419,9 @@
 
         try {
             let payload = null;
-            // Prefer proxy first: upstream now requires an API key that only the
-            // edge function can hold. Fall back to direct only if proxy fails.
-            const tryProxyFirst = CFG.preferProxy || S.mode === 'proxy' || S.mode == null;
+            // Same order as TAL: public direct first, proxy only as fallback.
+            // Stick with whichever mode already worked this session.
+            const tryProxyFirst = CFG.preferProxy || S.mode === 'proxy';
             if (tryProxyFirst) {
                 try {
                     payload = await fetchDetailProxy(key);
@@ -365,7 +432,6 @@
                         payload = await fetchDetailDirect(key);
                         S.mode = 'direct';
                     } catch (directErr) {
-                        // Direct calls fail with 401/CORS now; the proxy error is the useful one.
                         throw proxyErr;
                     }
                 }
@@ -373,7 +439,8 @@
                 try {
                     payload = await fetchDetailDirect(key);
                     S.mode = 'direct';
-                } catch (_) {
+                } catch (directErr) {
+                    console.warn('SvS Enemies direct failed, trying proxy', directErr);
                     payload = await fetchDetailProxy(key);
                     S.mode = 'proxy';
                 }
@@ -948,8 +1015,111 @@
 
 
     // ---------- Alliance detail modal ----------
+    // Same strategy as TAL State Tracker: public site first, then proxy.
+    // alliance_id = "<serverId><6-digit seq>" e.g. 1199000147 → kid 1199.
+    function mapMemberRow(m) {
+        if (!m || typeof m !== 'object') return m;
+        return {
+            rank: m.rank || 0,
+            uid: m.uid ?? null,
+            nick_name: m.name || m.nick_name || m.nickname || m.nickName || null,
+            power: Number(m.power) || 0,
+            stove_lv: m.hq_level ?? m.stove_lv ?? m.stove ?? m.lv ?? null,
+            lv: m.hq_level ?? m.lv ?? null,
+            x: m.x ?? null,
+            y: m.y ?? null,
+            alliance_tag: m.alliance_tag || null
+        };
+    }
+
+    async function fetchAllianceMembersDirect(aid, signal) {
+        const out = [];
+        const seen = new Set();
+        let cursor = null;
+        for (let page = 0; page < 10 && out.length < 300; page++) {
+            const qs = cursor
+                ? `?limit=200&cursor=${encodeURIComponent(cursor)}`
+                : '?limit=200';
+            const data = await fetchJson(`${CFG.apiBase}/alliances/${aid}/members${qs}`, signal);
+            const items = (data && Array.isArray(data.items)) ? data.items
+                : (data && Array.isArray(data.members)) ? data.members
+                : Array.isArray(data) ? data : [];
+            let added = 0;
+            for (const m of items) {
+                const id = String(m && m.uid != null ? m.uid : '');
+                if (!id || seen.has(id)) continue;
+                seen.add(id);
+                out.push(m);
+                added++;
+            }
+            if (!added) break;
+            cursor = (data && typeof data.next === 'string' && data.next) ? data.next : null;
+            if (!cursor) break;
+        }
+        return out;
+    }
+
     async function fetchAllianceDirect(aid, signal) {
-        return fetchJson(`${CFG.apiBase}/alliances/${aid}/members`, signal);
+        // Meta from state alliance list + full member roster (TAL approach).
+        const kid = Math.floor(Number(aid) / 1000000);
+        const [listRes, memRes] = await Promise.allSettled([
+            (async () => {
+                if (!Number.isFinite(kid) || kid < 1) return [];
+                const out = [];
+                const seen = new Set();
+                let cursor = null;
+                for (let page = 0; page < 25 && out.length < 400; page++) {
+                    const qs = cursor
+                        ? `?sort=power&limit=50&cursor=${encodeURIComponent(cursor)}`
+                        : '?sort=power&limit=50';
+                    const data = await fetchJson(`${CFG.apiBase}/servers/${kid}/alliances${qs}`, signal);
+                    const items = (data && Array.isArray(data.items)) ? data.items
+                        : Array.isArray(data) ? data : [];
+                    let added = 0;
+                    for (const a of items) {
+                        const id = String(a && a.alliance_id != null ? a.alliance_id : '');
+                        if (!id || seen.has(id)) continue;
+                        seen.add(id);
+                        out.push(a);
+                        added++;
+                    }
+                    if (!added) break;
+                    cursor = (data && typeof data.next === 'string' && data.next) ? data.next : null;
+                    if (!cursor) break;
+                }
+                return out;
+            })(),
+            fetchAllianceMembersDirect(aid, signal)
+        ]);
+        const list = listRes.status === 'fulfilled' ? listRes.value : [];
+        const membersRaw = memRes.status === 'fulfilled' ? memRes.value : [];
+        const a = list.find((x) => Number(x.alliance_id) === Number(aid));
+        if (!a && !membersRaw.length) throw new Error('direct-alliance-failed');
+        const src = a || {};
+        const members = membersRaw.map(mapMemberRow);
+        members.sort((x, y) => (Number(y.power) || 0) - (Number(x.power) || 0));
+        members.forEach((m, i) => { m.rank = i + 1; });
+        return {
+            aid: Number(aid),
+            abbr: src.tag || (members[0] && members[0].alliance_tag) || '',
+            name: src.name || '',
+            memberCount: src.member_count != null ? src.member_count : members.length,
+            memberMax: src.max_members,
+            serverPower: src.power,
+            totalPower: src.power,
+            leaderUid: src.leader_uid,
+            leaderName: src.leader_name,
+            lv: src.alliance_level,
+            joinMinLevel: src.join_min_level,
+            joinMinPower: src.join_min_power,
+            publicRecruit: !!src.public_recruit,
+            homeKid: Number(src.home_server_id) || kid || null,
+            honorLevel: src.honor_level,
+            members: members,
+            memberList: members,
+            players: members,
+            source: 'public-site'
+        };
     }
 
     function alliancePayloadUsable(data) {
@@ -999,18 +1169,19 @@
         S.allianceCache.set(key, entry);
         try {
             let data = null;
-            // Always prefer proxy first (API key lives only in the edge function).
-            // Direct browser calls to api.wosatlas.com fail without a key.
+            // Same order as TAL: public direct first, proxy only as fallback.
             try {
-                data = await fetchAllianceProxy(key);
-                S.mode = 'proxy';
-            } catch (proxyErr) {
-                console.warn('SvS Enemies alliance proxy failed, trying direct', proxyErr);
+                data = await fetchAllianceDirect(key);
+                S.mode = 'direct';
+            } catch (directErr) {
+                if (directErr && directErr.name === 'AbortError') throw directErr;
+                console.warn('SvS Enemies alliance direct failed, trying proxy', directErr);
                 try {
-                    data = await fetchAllianceDirect(key);
-                    S.mode = 'direct';
-                } catch (directErr) {
-                    throw proxyErr;
+                    data = await fetchAllianceProxy(key);
+                    S.mode = 'proxy';
+                } catch (proxyErr) {
+                    if (proxyErr && proxyErr.name === 'AbortError') throw proxyErr;
+                    throw directErr;
                 }
             }
             entry.loading = false;
@@ -1023,7 +1194,9 @@
             entry.fetchedAt = Date.now();
             const msg = (err && err.message) ? String(err.message) : '';
             const base = tr('svs_enemies_alliance_load_failed', 'Could not load alliance detail');
-            entry.error = msg && msg !== 'proxy-alliance-failed' ? base + ' — ' + msg : base;
+            entry.error = msg && msg !== 'proxy-alliance-failed' && msg !== 'direct-alliance-failed'
+                ? base + ' — ' + msg
+                : base;
         }
         S.allianceCache.set(key, entry);
         return entry;
