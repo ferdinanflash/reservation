@@ -23,6 +23,14 @@
         maxEnemies: 20,
         // Prefer browser-direct public API first (works on TAL); proxy is fallback.
         preferProxy: false,
+        // Queue loading so WoS Atlas / edge function is not hit with many
+        // parallel State requests (rate-limit / block risk).
+        // concurrency 1 = strict queue; delayMs = pause between States.
+        loadConcurrency: 1,
+        loadDelayMs: 600,
+        // Within one State, member lists from top alliances also queue.
+        memberFetchConcurrency: 2,
+        memberFetchDelayMs: 250,
         // SvS match history (wosnerds open data, states 3001–3500)
         historyUrl: 'https://data.wosnerds.com/data/svs-history/svs-history-3001-3500.json',
         historyCacheMs: 30 * 60 * 1000
@@ -46,8 +54,53 @@
         historyLoading: null, // Promise while in flight
         availableDates: [], // sorted desc, only from configured enemy states
         selectedDates: new Set(), // dates to show
-        loadedAt: 0
+        loadedAt: 0,
+        // Bumps on each renderEnemiesView / leave so in-flight queue can stop.
+        loadGen: 0
     };
+
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, Math.max(0, ms || 0)));
+    }
+
+    /** Run async jobs with limited concurrency + optional delay between starts. */
+    async function runQueue(items, worker, opts) {
+        const list = Array.isArray(items) ? items : [];
+        if (!list.length) return [];
+        const concurrency = Math.max(1, Math.min((opts && opts.concurrency) || 1, list.length));
+        const delayMs = Math.max(0, (opts && opts.delayMs) || 0);
+        const shouldStop = (opts && opts.shouldStop) || (() => false);
+        const onProgress = (opts && opts.onProgress) || null;
+        let idx = 0;
+        let done = 0;
+        const results = new Array(list.length);
+
+        async function runOne() {
+            while (idx < list.length) {
+                if (shouldStop()) return;
+                const i = idx++;
+                const startedAt = Date.now();
+                try {
+                    results[i] = await worker(list[i], i);
+                } catch (err) {
+                    results[i] = { error: err };
+                }
+                done++;
+                if (onProgress) {
+                    try { onProgress(done, list.length, list[i], results[i]); } catch (_) {}
+                }
+                if (shouldStop()) return;
+                // Pace the next start from this worker (not after the last item).
+                if (idx < list.length && delayMs > 0) {
+                    const wait = delayMs - (Date.now() - startedAt);
+                    if (wait > 0) await sleep(wait);
+                }
+            }
+        }
+
+        await Promise.all(Array.from({ length: concurrency }, () => runOne()));
+        return results;
+    }
 
     // ---------- Settings (localStorage + Supabase) ----------
     function parseKids(raw) {
@@ -353,17 +406,23 @@
         const allianceItems = results[1].status === 'fulfilled' ? results[1].value : null;
         if (!server && !(allianceItems && allianceItems.length)) throw new Error('direct-detail-failed');
 
-        // Top players: merge members of the strongest alliances (public API has no power leaderboard).
+        // Top players: merge members of strongest alliances (queued, not all at once).
         let top = [];
         if (allianceItems && allianceItems.length) {
-            const lists = await Promise.allSettled(
-                allianceItems.slice(0, 8).map((a) => fetchAllianceMembersDirect(a.alliance_id, signal))
+            const aids = allianceItems.slice(0, 8).map((a) => a.alliance_id);
+            const lists = await runQueue(
+                aids,
+                async (aid) => fetchAllianceMembersDirect(aid, signal),
+                {
+                    concurrency: CFG.memberFetchConcurrency,
+                    delayMs: CFG.memberFetchDelayMs
+                }
             );
             const seen = new Set();
             const merged = [];
-            for (const l of lists) {
-                if (l.status !== 'fulfilled') continue;
-                for (const m of l.value) {
+            for (const list of lists) {
+                if (!list || list.error || !Array.isArray(list)) continue;
+                for (const m of list) {
                     const id = String(m && m.uid != null ? m.uid : '');
                     if (!id || seen.has(id)) continue;
                     seen.add(id);
@@ -1038,23 +1097,45 @@
         await loadSvSHistory();
         rebuildRecordFiltersAndMatrix();
 
-        // Load in parallel (capped concurrency)
-        const concurrency = 3;
-        let idx = 0;
-        async function worker() {
-            while (idx < kids.length) {
-                const i = idx++;
-                const kid = kids[i];
+        // Queue State loads (sequential by default + delay) to avoid API blocks.
+        const gen = ++S.loadGen;
+        const total = kids.length;
+        if (metaEl) {
+            metaEl.textContent = tr('svs_enemies_loading_queue', 'Loading {{done}}/{{total}}…')
+                .replace('{{done}}', '0')
+                .replace('{{total}}', String(total));
+        }
+
+        await runQueue(
+            kids,
+            async (kid) => {
+                if (gen !== S.loadGen) return null;
                 const data = await loadDetail(kid);
+                if (gen !== S.loadGen) return data;
                 const card = listEl.querySelector(`.svs-en-card[data-kid="${kid}"]`);
                 if (card) {
                     const wrap = document.createElement('div');
                     wrap.innerHTML = renderCard(kid, data);
-                    card.replaceWith(wrap.firstElementChild);
+                    if (wrap.firstElementChild) card.replaceWith(wrap.firstElementChild);
+                }
+                return data;
+            },
+            {
+                concurrency: total > 1 ? CFG.loadConcurrency : 1,
+                delayMs: total > 1 ? CFG.loadDelayMs : 0,
+                shouldStop: () => gen !== S.loadGen,
+                onProgress: (done, n) => {
+                    if (gen !== S.loadGen || !metaEl) return;
+                    if (done < n) {
+                        metaEl.textContent = tr('svs_enemies_loading_queue', 'Loading {{done}}/{{total}}…')
+                            .replace('{{done}}', String(done))
+                            .replace('{{total}}', String(n));
+                    }
                 }
             }
-        }
-        await Promise.all(Array.from({ length: Math.min(concurrency, kids.length) }, () => worker()));
+        );
+
+        if (gen !== S.loadGen) return;
         S.loadedAt = Date.now();
         if (metaEl) {
             const when = new Date(S.loadedAt).toLocaleString();
@@ -1076,6 +1157,8 @@
     }
 
     function hideSvSEnemiesView() {
+        // Cancel any in-flight State load queue
+        S.loadGen++;
         const enemies = document.getElementById('svs-enemies-view');
         if (enemies) enemies.classList.add('hidden');
     }
