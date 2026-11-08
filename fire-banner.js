@@ -18,6 +18,7 @@
 	const SEASONS = {
 		halloween: { startMonth: 9, startDay: 1, endMonth: 10, endDay: 2 },   // 1 Okt - 2 Nov
 		christmas: { startMonth: 11, startDay: 1, endMonth: 11, endDay: 30 }, // 1 - 30 Des
+		thanksgiving: { startMonth: 10, startDay: 3, endMonth: 10, endDay: 30 }, // 3 - 30 Nov
 		valentine: { startMonth: 1, startDay: 1, endMonth: 1, endDay: 14 },   // 1 - 14 Feb
 		midautumn: { startMonth: 8, startDay: 19, endMonth: 8, endDay: 27 }   // 19 - 27 Sep
 	};
@@ -47,10 +48,11 @@
 	//   localStorage.setItem('svs_theme_override', 'cny')        -> paksa Tahun Baru Imlek
 	//   localStorage.setItem('svs_theme_override', 'midautumn')  -> paksa Mid-Autumn Festival
 	//   localStorage.setItem('svs_theme_override', 'eid')        -> paksa Idul Fitri (hanya bisa manual)
+	//   localStorage.setItem('svs_theme_override', 'thanksgiving') -> paksa Thanksgiving (otomatis 3 - 30 Nov)
 	//   localStorage.setItem('svs_theme_override', 'none')       -> paksa banner api biasa
 	//   localStorage.removeItem('svs_theme_override')            -> ikut tanggal asli (Auto)
 	const OVERRIDE_KEY = 'svs_theme_override';
-	const VALID_THEMES = ['halloween', 'christmas', 'valentine', 'cny', 'eid', 'midautumn', 'bluefire', 'none'];
+	const VALID_THEMES = ['halloween', 'christmas', 'valentine', 'cny', 'eid', 'midautumn', 'bluefire', 'thanksgiving', 'none'];
 
 	// Kunci lama (per-musim on/off) tetap didukung untuk kompatibilitas
 	// mundur, tapi override terpadu di atas selalu diprioritaskan.
@@ -109,6 +111,9 @@
 		if (legacyOverride('christmas') === 'off') { /* dipaksa mati, lewati */ }
 		else if (legacyOverride('christmas') === 'on' || isInSeason(d, SEASONS.christmas)) return 'christmas';
 
+		// Thanksgiving: 3 - 30 November (setelah Halloween berakhir 2 Nov, sebelum Natal 1 Des).
+		if (isInSeason(d, SEASONS.thanksgiving)) return 'thanksgiving';
+
 		// Mid-Autumn: 19 - 27 September (tidak beririsan dengan tema lain).
 		if (isInSeason(d, SEASONS.midautumn)) return 'midautumn';
 
@@ -140,6 +145,7 @@
 		eid: 'eid-banner-v1.jpg',
 		midautumn: 'midautumn-banner-v1.jpg',
 		bluefire: 'bluefire-banner-v1.png',
+		thanksgiving: 'thanksgiving-banner-v1.jpg',
 		halloween: 'halloween-banner-v2.jpg'
 	};
 	const artState = {}; // tema -> 'loading' | 'ok' | 'failed'
@@ -241,6 +247,7 @@
 		container.classList.toggle('eid-theme', theme === 'eid');
 		container.classList.toggle('midautumn-theme', theme === 'midautumn');
 		container.classList.toggle('bluefire-theme', theme === 'bluefire');
+		container.classList.toggle('thanksgiving-theme', theme === 'thanksgiving');
 		// Also flag it on <body> so page-wide elements (buttons, etc.) that
 		// aren't inside the banner can react to the same season via CSS,
 		// e.g. `body.christmas-theme .btn-apply { ... }`.
@@ -251,9 +258,10 @@
 		document.body.classList.toggle('eid-theme', theme === 'eid');
 		document.body.classList.toggle('midautumn-theme', theme === 'midautumn');
 		document.body.classList.toggle('bluefire-theme', theme === 'bluefire');
-		// Video banners (Blue Fire + Halloween): play only while their theme is active.
+		document.body.classList.toggle('thanksgiving-theme', theme === 'thanksgiving');
+		// Video banners (Blue Fire + Thanksgiving + Halloween): play only while their theme is active.
 		const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		[['bluefire', '.bluefire-video'], ['halloween', '.halloween-video']].forEach(([name, selector]) => {
+		[['bluefire', '.bluefire-video'], ['thanksgiving', '.thanksgiving-video'], ['halloween', '.halloween-video']].forEach(([name, selector]) => {
 			const video = container.querySelector(selector);
 			if (!video) return;
 			video.muted = true;
@@ -363,6 +371,18 @@
 					colorPick: Math.random(), sway: Math.random() * Math.PI * 2,
 					star: Math.random() < 0.3
 				});
+			} else if (theme === 'thanksgiving') {
+				// Warm amber / pumpkin embers drifting up from the campfire in the
+				// Thanksgiving artwork, with a few icy white sparkles for the snow.
+				particles.push({
+					x: w * (0.08 + Math.random() * 0.84),
+					y: h * (0.78 + Math.random() * 0.24),
+					size: 0.7 + Math.random() * 1.8, vy: -(0.22 + Math.random() * 0.42),
+					vx: (Math.random() - 0.5) * 0.3,
+					life: 0, maxLife: 130 + Math.random() * 120,
+					colorPick: Math.random(), sway: Math.random() * Math.PI * 2,
+					star: Math.random() < 0.2
+				});
 			} else if (theme === 'bluefire') {
 				// Cool cyan/ice sparks rising from the animated Blue Fire artwork.
 				particles.push({
@@ -415,6 +435,8 @@
 				if (Math.random() < 0.55) spawnParticle();
 			} else if (theme === 'eid') {
 				if (Math.random() < 0.5) spawnParticle();
+			} else if (theme === 'thanksgiving') {
+				if (Math.random() < 0.6) spawnParticle();
 			} else if (theme === 'bluefire') {
 				if (Math.random() < 0.65) spawnParticle();
 			} else if (theme === 'midautumn') {
@@ -426,7 +448,7 @@
 
 			for (let i = particles.length - 1; i >= 0; i--) {
 				const p = particles[i];
-				if (theme === 'christmas' || theme === 'valentine' || theme === 'cny' || theme === 'eid' || theme === 'midautumn' || theme === 'bluefire') {
+				if (theme === 'christmas' || theme === 'valentine' || theme === 'cny' || theme === 'eid' || theme === 'midautumn' || theme === 'bluefire' || theme === 'thanksgiving') {
 					p.x += p.vx + Math.sin((p.life + p.sway * 20) * 0.04) * 0.3;
 					p.y += p.vy;
 				} else {
@@ -436,7 +458,7 @@
 				}
 				p.life++;
 				const t = p.life / p.maxLife;
-				if (t >= 1 || p.y > canvas.height + 10 || ((theme === 'valentine' || theme === 'cny' || theme === 'eid' || theme === 'midautumn' || theme === 'bluefire') && p.y < -10)) { particles.splice(i, 1); continue; }
+				if (t >= 1 || p.y > canvas.height + 10 || ((theme === 'valentine' || theme === 'cny' || theme === 'eid' || theme === 'midautumn' || theme === 'bluefire' || theme === 'thanksgiving') && p.y < -10)) { particles.splice(i, 1); continue; }
 				const alpha = Math.sin(Math.PI * t) * 0.9;
 				let r, g, b;
 				if (theme === 'halloween') {
@@ -463,6 +485,11 @@
 					else if (p.colorPick < 0.72) { r = 255; g = 240; b = 205; }  // warm pearl
 					else if (p.colorPick < 0.88) { r = 80; g = 220; b = 150; }   // emerald
 					else { r = 255; g = 255; b = 255; }                          // white sparkle
+				} else if (theme === 'thanksgiving') {
+					if (p.colorPick < 0.40) { r = 255; g = 168; b = 50; }        // amber ember
+					else if (p.colorPick < 0.68) { r = 255; g = 118; b = 28; }  // pumpkin orange
+					else if (p.colorPick < 0.86) { r = 255; g = 214; b = 110; } // harvest gold
+					else { r = 235; g = 246; b = 255; }                         // icy white
 				} else if (theme === 'bluefire') {
 					if (p.colorPick < 0.38) { r = 45; g = 220; b = 255; }        // cyan
 					else if (p.colorPick < 0.68) { r = 30; g = 140; b = 255; }   // electric blue
@@ -480,10 +507,10 @@
 				}
 				ctx.beginPath();
 				ctx.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${alpha})`;
-				ctx.shadowColor = (theme === 'halloween' || theme === 'christmas' || theme === 'valentine' || theme === 'cny' || theme === 'eid' || theme === 'midautumn' || theme === 'bluefire') ? `rgba(${r | 0},${g | 0},${b | 0},${alpha})` : `rgba(255,140,0,${alpha})`;
-				ctx.shadowBlur = theme === 'bluefire' ? 7 : (theme === 'halloween' ? 4 : 5);
+				ctx.shadowColor = (theme === 'halloween' || theme === 'christmas' || theme === 'valentine' || theme === 'cny' || theme === 'eid' || theme === 'midautumn' || theme === 'bluefire' || theme === 'thanksgiving') ? `rgba(${r | 0},${g | 0},${b | 0},${alpha})` : `rgba(255,140,0,${alpha})`;
+				ctx.shadowBlur = (theme === 'bluefire' || theme === 'thanksgiving') ? 7 : (theme === 'halloween' ? 4 : 5);
 				const radius = p.size * (1 - t * 0.4);
-				if ((theme === 'eid' || theme === 'midautumn' || theme === 'bluefire') && p.star) {
+				if ((theme === 'eid' || theme === 'midautumn' || theme === 'bluefire' || theme === 'thanksgiving') && p.star) {
 					// Tiny 4-point sparkle star.
 					const k = radius * 2.2;
 					ctx.moveTo(p.x, p.y - k);
@@ -647,7 +674,7 @@
 
 	// ============ PUBLIC API (dipakai oleh menu Theme Switcher President) ============
 	window.SVSSeasonalTheme = {
-		// 'halloween' | 'christmas' | 'valentine' | 'cny' | 'eid' | 'midautumn' | 'bluefire' | 'none' | 'auto'
+		// 'halloween' | 'christmas' | 'valentine' | 'cny' | 'eid' | 'midautumn' | 'bluefire' | 'thanksgiving' | 'none' | 'auto'
 		// Menyimpan ke database supaya berlaku untuk semua pengguna. Mengembalikan
 		// Promise<boolean>: true kalau berhasil disimpan, false kalau gagal
 		// (mis. bukan staff yang login, atau migrasi SQL belum dijalankan).
@@ -674,7 +701,7 @@
 		getActiveTheme: function () {
 			return computeActiveTheme();
 		},
-		// 'halloween' | 'christmas' | 'valentine' | 'cny' | 'eid' | 'midautumn' | 'bluefire' | 'none' jika dipaksa manual, atau null jika Auto.
+		// 'halloween' | 'christmas' | 'valentine' | 'cny' | 'eid' | 'midautumn' | 'bluefire' | 'thanksgiving' | 'none' jika dipaksa manual, atau null jika Auto.
 		getOverride: getOverride,
 		onChange: function (cb) { onThemeChangeCb = cb; }
 	};

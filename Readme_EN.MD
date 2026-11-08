@@ -34,7 +34,7 @@ Every project below is **live and running**, and serves as proof of what we can 
 - **Internal notes** and **time logs** to audit every status change
 - **Push notifications** and announcements to users
 - Integrated **Redeem Code** feature via a Supabase Edge Function
-- Automatic **seasonal themes** (Halloween, Christmas, Valentine, Lunar New Year, Eid al-Fitr, Mid-Autumn, Blue Fire)
+- Automatic **seasonal themes** (Halloween, Christmas, Valentine, Lunar New Year, Eid al-Fitr, Mid-Autumn, Blue Fire, Thanksgiving)
 - *Self-healing* Service Worker cache so updates always reach users
 
 **Tech:** Vanilla JavaScript (ES6 Modules), HTML5, CSS3, Service Worker, Supabase (PostgreSQL, Auth, Edge Functions)

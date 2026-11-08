@@ -276,6 +276,26 @@ body.bluefire-theme {
     --t-neon-b: #65eaff;
 }
 
+/* ---- Thanksgiving ---- */
+body.thanksgiving-theme {
+    --t-strong: #fff9ef;
+    --t-primary: #ffeccf;
+    --t-soft: #ffd9a8;
+    --t-secondary: #e8c197;
+    --t-muted: #c29c78;
+    --t-faint: #8e7157;
+    --t-accent: #ffa63d;
+    --t-accent-strong: #ff8a1f;
+    --t-link: #ffc36b;
+    --t-link-hi: #ffe0ad;
+    --t-gold: #ffd27a;
+    --t-gold-hi: #ffeab8;
+    --t-amber: #ffa63d;
+    --t-glow: 255, 150, 50;
+    --t-neon-a: #ff9a2e;
+    --t-neon-b: #ffd27a;
+}
+
 /* ---- Halloween ---- */
 body.halloween-theme {
     --t-strong: #fff7ee;
@@ -609,8 +629,8 @@ body.halloween-theme {
 }
 
 /* hide old digits: the default art already contains the "3475" */
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme):not(.bluefire-theme) .fire-glow-back,
-.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme):not(.bluefire-theme) .fire-numbers {
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme):not(.bluefire-theme):not(.thanksgiving-theme) .fire-glow-back,
+.fire-banner:not(.halloween-theme):not(.christmas-theme):not(.valentine-theme):not(.cny-theme):not(.eid-theme):not(.midautumn-theme):not(.bluefire-theme):not(.thanksgiving-theme) .fire-numbers {
     display: none;
 }
 
@@ -634,7 +654,8 @@ body.halloween-theme {
 .fire-banner.cny-theme .fire-default-art,
 .fire-banner.eid-theme .fire-default-art,
 .fire-banner.midautumn-theme .fire-default-art,
-.fire-banner.bluefire-theme .fire-default-art {
+.fire-banner.bluefire-theme .fire-default-art,
+.fire-banner.thanksgiving-theme .fire-default-art {
     display: none;
 }
 
@@ -713,6 +734,78 @@ body.halloween-theme {
 
 @media (prefers-reduced-motion: reduce) {
     .bluefire-art, .bluefire-vignette { animation: none !important; }
+}
+
+/* ==================== THANKSGIVING SEASONAL BANNER ====================
+   The supplied 10-second Thanksgiving MP4 (already contains the "STATE 3475
+   THANKSGIVING" lettering) is the primary banner. Its first frame stays
+   underneath as an instant poster/fallback, with a warm amber glow and a
+   subtle breathing effect. Automatic 3 - 30 November (or via the President's Theme Switcher). */
+.fire-banner.thanksgiving-theme {
+    background: radial-gradient(ellipse at 50% 55%, #26425f 0%, #11233a 48%, #050b14 100%);
+    box-shadow: 0 0 28px rgba(255, 150, 50, 0.30), inset 0 0 45px rgba(110, 165, 230, 0.16);
+}
+
+.fire-banner.thanksgiving-theme .fire-glow-back,
+.fire-banner.thanksgiving-theme .fire-numbers {
+    display: none;
+}
+
+.thanksgiving-art {
+    position: absolute;
+    inset: -2.5%;
+    z-index: 2;
+    overflow: hidden;
+    background: #0c1a2b;
+    animation: thanksgivingBreathe 6s ease-in-out infinite;
+}
+
+.thanksgiving-video,
+.thanksgiving-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.thanksgiving-video { z-index: 2; }
+.thanksgiving-poster { z-index: 1; }
+
+.thanksgiving-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 62% 45%, rgba(255, 170, 70, 0.10) 0%, transparent 56%),
+        linear-gradient(180deg, rgba(4, 10, 20, 0.06), rgba(4, 8, 16, 0.22));
+    mix-blend-mode: screen;
+    animation: thanksgivingGlowPulse 3.6s ease-in-out infinite;
+}
+
+@keyframes thanksgivingBreathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.012); }
+}
+
+@keyframes thanksgivingGlowPulse {
+    0%, 100% { opacity: .55; }
+    50%      { opacity: .9; }
+}
+
+.thanksgiving-art,
+.thanksgiving-art .thanksgiving-video,
+.thanksgiving-art .thanksgiving-poster { backface-visibility: hidden; }
+
+/* Hidden until the theme is active. */
+.thanksgiving-art { display: none; }
+.fire-banner.thanksgiving-theme .thanksgiving-art { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+    .thanksgiving-art, .thanksgiving-vignette { animation: none !important; }
 }
 
 /* ==================== HALLOWEEN SEASONAL BANNER OVERLAY ====================
@@ -2715,6 +2808,41 @@ body.bluefire-theme .footer-current-president {
     text-shadow: 0 0 8px rgba(0, 190, 255, 0.38);
 }
 
+/* ---- Thanksgiving ---- */
+/* Header title + President/Guild info use the harvest palette (amber /
+   pumpkin / gold with an icy white highlight) to match the banner. */
+body.thanksgiving-theme .navbar .logo.fire-text,
+body.thanksgiving-theme .site-footer .fire-text {
+    background-image: linear-gradient(
+        to right,
+        #ff8a1f 0%,
+        #ffe3b0 16%,
+        #ffffff 30%,
+        #ffb347 46%,
+        #cfe6ff 60%,
+        #ffd27a 76%,
+        #ff8a1f 100%
+    );
+    background-size: 200% auto;
+    filter:
+        drop-shadow(0 0 6px rgba(255, 150, 40, 0.55))
+        drop-shadow(0 0 14px rgba(255, 100, 20, 0.26))
+        drop-shadow(0 2px 4px rgba(0, 0, 0, 0.78));
+}
+
+body.thanksgiving-theme .navbar .logo.fire-text::before {
+    content: '\1F983';           /* turkey */
+    display: inline-block;
+    margin-right: 6px;
+    -webkit-text-fill-color: initial;
+    letter-spacing: 0;
+}
+
+body.thanksgiving-theme .footer-current-president {
+    color: #ffc36b;
+    text-shadow: 0 0 8px rgba(255, 150, 40, 0.38);
+}
+
 @media (prefers-reduced-motion: reduce) {
     body.christmas-theme .navbar .logo.fire-text,
     body.christmas-theme .site-footer .fire-text,
@@ -2729,7 +2857,9 @@ body.bluefire-theme .footer-current-president {
     body.halloween-theme .navbar .logo.fire-text,
     body.halloween-theme .site-footer .fire-text,
     body.bluefire-theme .navbar .logo.fire-text,
-    body.bluefire-theme .site-footer .fire-text {
+    body.bluefire-theme .site-footer .fire-text,
+    body.thanksgiving-theme .navbar .logo.fire-text,
+    body.thanksgiving-theme .site-footer .fire-text {
         animation: none !important;
     }
 }
@@ -5859,6 +5989,69 @@ body.bluefire-theme .svs-opening-sparks::after {
     box-shadow: 0 0 18px rgba(0, 190, 255, .82);
 }
 
+/* ---------- Thanksgiving: pumpkin amber / harvest gold / frost ----------
+   Intro follows the other themes: only palette + CSS effects change.
+   The Thanksgiving video stays exclusive to the main banner. */
+body.thanksgiving-theme .svs-opening {
+    background:
+        radial-gradient(circle at 50% 48%, rgba(255, 150, 40, 0.18) 0%, rgba(120, 70, 20, 0.08) 22%, transparent 46%),
+        #0a0f18;
+}
+body.thanksgiving-theme .svs-opening-glow {
+    background: radial-gradient(circle, rgba(255, 160, 50, .32) 0%, rgba(255, 110, 20, .14) 24%, transparent 67%);
+    filter: blur(5px);
+}
+body.thanksgiving-theme .svs-opening-number {
+    background: linear-gradient(180deg, #fffaf0 0%, #ffe3b0 24%, #ffb347 52%, #e06a12 76%, #8a3a08 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(255, 220, 150, .98))
+            drop-shadow(0 0 22px rgba(255, 140, 30, .78))
+            drop-shadow(0 0 55px rgba(200, 80, 10, .48));
+    animation-name: svs-number-pulse-thanksgiving;
+}
+@keyframes svs-number-pulse-thanksgiving {
+    0%   { filter: drop-shadow(0 0 4px rgba(255, 210, 130, .68)); }
+    100% { filter: drop-shadow(0 0 9px rgba(255, 235, 180, 1)) drop-shadow(0 0 35px rgba(255, 140, 30, .78)) drop-shadow(0 0 60px rgba(200, 80, 10, .45)); }
+}
+body.thanksgiving-theme .svs-opening-line {
+    background: linear-gradient(90deg, transparent, #ff8a1f, #fff0d0, #ffc36b, transparent);
+    box-shadow: 0 0 10px rgba(255, 160, 40, .95), 0 0 28px rgba(200, 90, 10, .58);
+}
+body.thanksgiving-theme .svs-opening-title {
+    display: inline-block;
+    text-shadow: none;
+    background-image: linear-gradient(90deg, #ff9a2e 0%, #fff4dc 30%, #ffd27a 50%, #ff8a1f 80%, #dcecff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(255, 150, 40, .50)) drop-shadow(0 0 16px rgba(200, 90, 10, .38));
+}
+body.thanksgiving-theme .svs-opening-title::before,
+body.thanksgiving-theme .svs-opening-title::after {
+    -webkit-text-fill-color: initial;
+    letter-spacing: 0;
+    display: inline-block;
+}
+body.thanksgiving-theme .svs-opening-title::before { content: '\1F983'; margin-right: .5em; }
+body.thanksgiving-theme .svs-opening-title::after  { content: '\1F983'; margin-left: .5em; }
+body.thanksgiving-theme .svs-opening-sparks {
+    background-image:
+        radial-gradient(circle at 50% 50%, #fff4dc 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 35%, #ffa63d 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #ff7a1a 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 70%, #ffd27a 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, #e8f3ff 0 1px, transparent 2px);
+}
+body.thanksgiving-theme .svs-opening-sparks::before {
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255, 160, 50, .72) 0deg 0.7deg, transparent 0.7deg 18deg);
+}
+body.thanksgiving-theme .svs-opening-sparks::after {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 140, 30, .62) 49%, rgba(255, 244, 220, .95) 50%, rgba(255, 190, 90, .62) 51%, transparent 100%);
+    box-shadow: 0 0 18px rgba(255, 150, 40, .82);
+}
+
 /* ==================== PAUSE ANIMATIONS WHILE APPLY MODAL IS OPEN ====================
    Freezes every CSS keyframe animation on the page (fire banner glow/flicker,
    seasonal decorations, spinners, pulses, etc.) at its current frame while the
@@ -6606,6 +6799,7 @@ body.cny-theme        .portal-title { --pt-base: #fff0c8; --pt-hot: #ff4a3d; --p
 body.eid-theme        .portal-title { --pt-base: #fff4d0; --pt-hot: #3fd18a; --pt-g1: rgba(63, 209, 138, 0.58); --pt-g2: rgba(255, 210, 94, 0.36); }
 body.midautumn-theme  .portal-title { --pt-base: #fff4d0; --pt-hot: #ffb347; --pt-g1: rgba(255, 179, 71, 0.62); --pt-g2: rgba(201, 160, 255, 0.36); }
 body.bluefire-theme   .portal-title { --pt-base: #e5fcff; --pt-hot: #18dfff; --pt-g1: rgba(24, 223, 255, 0.62); --pt-g2: rgba(11, 114, 255, 0.40); }
+body.thanksgiving-theme .portal-title { --pt-base: #fff1d6; --pt-hot: #ff9a2e; --pt-g1: rgba(255, 154, 46, 0.62); --pt-g2: rgba(160, 205, 255, 0.36); }
 
 body h1.page-title.portal-title {
     background-image: linear-gradient(100deg,

@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-06-1';
+			var APP_BUILD = '2026-11-08-2';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -170,11 +170,11 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=111">
+		<link rel="stylesheet" href="style.css?v=112">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=8" defer=""></script>
-		<script src="lang.js?v=48" defer=""></script>
+		<script src="lang.js?v=50" defer=""></script>
 					<script src="js/app-core.js?v=55" defer=""></script>
 					<script src="js/app-auth.js?v=52" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
@@ -185,7 +185,7 @@
 					<script src="js/app-extras.js?v=58" defer=""></script>
 					<script src="js/app-notifications.js?v=7" defer=""></script>
 					<script src="js/app-svs-enemies.js?v=19" defer=""></script>
-					<script src="fire-banner.js?v=15" defer=""></script>
+					<script src="fire-banner.js?v=17" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
 		<script>
@@ -209,12 +209,14 @@
 		(function () {
 			function ls(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 			var t = ls('svs_theme_override');
-			if (t !== 'halloween' && t !== 'christmas' && t !== 'valentine' && t !== 'cny' && t !== 'eid' && t !== 'midautumn' && t !== 'bluefire' && t !== 'none') {
+			if (t !== 'halloween' && t !== 'christmas' && t !== 'valentine' && t !== 'cny' && t !== 'eid' && t !== 'midautumn' && t !== 'bluefire' && t !== 'thanksgiving' && t !== 'none') {
 				t = 'none';
 				var d = new Date(), m = d.getMonth(), day = d.getDate();
 				var h = ls('svs_halloween_override'), c = ls('svs_christmas_override');
 				if (h !== 'off' && (h === 'on' || m === 9 || (m === 10 && day <= 2))) t = 'halloween';
 				else if (c !== 'off' && (c === 'on' || (m === 11 && day <= 30))) t = 'christmas';
+				// Thanksgiving: 3 - 30 November every year (same as SEASONS.thanksgiving).
+				else if (m === 10 && day >= 3 && day <= 30) t = 'thanksgiving';
 				// Mid-Autumn Festival: 19 - 27 September every year (same as SEASONS.midautumn).
 				else if (m === 8 && day >= 19 && day <= 27) t = 'midautumn';
 				// Chinese New Year: lunar dates, listed per year (same table as CNY_DATES).
@@ -224,7 +226,7 @@
 				// Eid al-Fitr ('eid') is intentionally NOT automatic: it only appears
 				// when the President picks it in the Theme Switcher (cached override above).
 			}
-			if (t === 'halloween' || t === 'christmas' || t === 'valentine' || t === 'cny' || t === 'eid' || t === 'midautumn' || t === 'bluefire') document.body.classList.add(t + '-theme');
+			if (t === 'halloween' || t === 'christmas' || t === 'valentine' || t === 'cny' || t === 'eid' || t === 'midautumn' || t === 'bluefire' || t === 'thanksgiving') document.body.classList.add(t + '-theme');
 		})();
 		</script>
 
@@ -328,6 +330,20 @@
 							</video>
 							<img class="bluefire-poster" src="bluefire-banner-v1.png" alt="">
 							<div class="bluefire-vignette"></div>
+						</div>
+
+						<!-- ============ THANKSGIVING SEASONAL BANNER (VIDEO) ============
+						     Uses the supplied animated video (thanksgiving-banner-v1.mp4, which
+						     already contains the "STATE 3475 THANKSGIVING" lettering) as the
+						     artwork, with its first frame (thanksgiving-banner-v1.jpg) as
+						     poster/fallback. Same structure as the Blue Fire banner.
+						     Automatic 3 - 30 November, or via the President's Theme Switcher. -->
+						<div class="thanksgiving-art" aria-hidden="true">
+							<video class="thanksgiving-video" muted playsinline loop preload="metadata" poster="thanksgiving-banner-v1.jpg">
+								<source src="thanksgiving-banner-v1.mp4" type="video/mp4">
+							</video>
+							<img class="thanksgiving-poster" src="thanksgiving-banner-v1.jpg" alt="">
+							<div class="thanksgiving-vignette"></div>
 						</div>
 
 						<!-- ============ HALLOWEEN SEASONAL BANNER (VIDEO) ============
@@ -1086,6 +1102,14 @@
 						<span class="theme-option-text">
 							<span data-i18n="theme_option_bluefire">Blue Fire</span>
 							<span class="theme-option-sub" data-i18n="theme_option_bluefire_sub">Force the Blue Fire banner on</span>
+						</span>
+						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
+					</button>
+					<button type="button" class="theme-option-btn" data-theme-value="thanksgiving" onclick="selectSeasonalTheme('thanksgiving')">
+						<span class="theme-option-icon">🦃</span>
+						<span class="theme-option-text">
+							<span data-i18n="theme_option_thanksgiving">Thanksgiving</span>
+							<span class="theme-option-sub" data-i18n="theme_option_thanksgiving_sub">Force the Thanksgiving banner on</span>
 						</span>
 						<span class="theme-option-check"><img class="check-icon" src="images/check.svg" alt="" width="24" height="24" decoding="async" draggable="false"></span>
 					</button>
