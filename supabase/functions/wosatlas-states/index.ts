@@ -116,6 +116,13 @@ async function siteGet(path: string): Promise<any | null> {
       }
       // retry on rate-limit / upstream errors
       if (res.status !== 429 && res.status < 500) return null;
+      if (res.status === 429) {
+        // Respect Retry-After (seconds), capped so the function does not hang.
+        const ra = Number(res.headers.get('retry-after'));
+        const waitMs = Number.isFinite(ra) && ra > 0 ? Math.min(ra * 1000, 6000) : 1500 * (attempt + 1);
+        await new Promise((r) => setTimeout(r, waitMs));
+        continue;
+      }
     } catch (_) { /* retry */ }
     await new Promise((r) => setTimeout(r, 300 + attempt * 200));
   }
@@ -206,7 +213,8 @@ async function fetchAllianceMembers(aid: number): Promise<any[]> {
 }
 
 // Build player leaderboard from strongest alliances (TAL approach).
-const PLAYER_SOURCE_ALLIANCES = 12;
+const PLAYER_SOURCE_ALLIANCES = 8;
+const MEMBER_FETCH_DELAY_MS = 250;
 
 async function fetchServerPlayers(kid: number, limit: number): Promise<any[]> {
   const key = `players:${kid}:${limit}`;
@@ -215,11 +223,12 @@ async function fetchServerPlayers(kid: number, limit: number): Promise<any[]> {
     try { return JSON.parse(hit); } catch (_) { /* ignore */ }
   }
   const alliances = (await fetchServerAlliances(kid, 50)) || [];
-  const lists = await Promise.all(
-    alliances.slice(0, PLAYER_SOURCE_ALLIANCES).map((a: any) =>
-      fetchAllianceMembers(Number(a.alliance_id)).catch(() => [] as any[]),
-    ),
-  );
+  // Sequential (not Promise.all) so we never burst the upstream and trip its rate limit.
+  const lists: any[][] = [];
+  for (const a of alliances.slice(0, PLAYER_SOURCE_ALLIANCES)) {
+    lists.push(await fetchAllianceMembers(Number(a.alliance_id)).catch(() => [] as any[]));
+    await new Promise((r) => setTimeout(r, MEMBER_FETCH_DELAY_MS));
+  }
   const seen = new Set<string>();
   const merged: any[] = [];
   for (const m of lists.flat()) {
@@ -557,6 +566,100 @@ async function handlePlayerSearch(input: Record<string, unknown>) {
   return json(up.body);
 }
 
+// ---------- Persistent cache (table public.svs_enemy_cache) ----------
+// Browsers read the table; only this function (service role) writes it, so the
+// upstream is hit at a fixed, throttled rate no matter how many people open the page.
+const SB_URL = Deno.env.get('SUPABASE_URL') || '';
+const SB_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+const REFRESH_MIN_INTERVAL_MS = 10 * 60 * 1000; // per-State throttle between attempts
+const REFRESH_GAP_MS = 1000; // pause between States
+
+async function sbRest(path: string, init: RequestInit = {}): Promise<Response> {
+  return await fetch(`${SB_URL}/rest/v1/${path}`, {
+    ...init,
+    headers: {
+      apikey: SB_KEY,
+      Authorization: `Bearer ${SB_KEY}`,
+      'Content-Type': 'application/json',
+      ...((init.headers as Record<string, string>) || {}),
+    },
+  });
+}
+
+async function configuredKids(): Promise<number[]> {
+  const res = await sbRest('svs_enemies_settings?id=eq.main&select=enemy_kids');
+  if (!res.ok) return [];
+  const rows = await res.json();
+  const raw = rows && rows[0] && typeof rows[0].enemy_kids === 'string' ? rows[0].enemy_kids : '';
+  const out: number[] = [];
+  for (const p of raw.split(/[\s,;]+/)) {
+    const n = Math.trunc(Number(p));
+    if (Number.isFinite(n) && n > 0 && n <= 99999 && !out.includes(n)) out.push(n);
+  }
+  return out.slice(0, 20);
+}
+
+async function cacheUpsert(row: Record<string, unknown>) {
+  // merge-duplicates only touches the columns we send (payload stays on failure)
+  await sbRest('svs_enemy_cache?on_conflict=kid', {
+    method: 'POST',
+    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify(row),
+  });
+}
+
+/** body: { action: 'refresh', kids?: number[] } — only States configured by the President are refreshed. */
+async function handleRefresh(input: Record<string, unknown>) {
+  if (!SB_URL || !SB_KEY) return jsonObj({ error: 'no-service-role' }, 500);
+  const configured = await configuredKids();
+  const asked = Array.isArray(input.kids)
+    ? (input.kids as unknown[]).map((k) => Math.trunc(Number(k))).filter((k) => Number.isFinite(k))
+    : configured;
+  const kids = asked.filter((k) => configured.includes(k));
+  if (!kids.length) return jsonObj({ results: [] });
+
+  const exRes = await sbRest(
+    `svs_enemy_cache?kid=in.(${kids.join(',')})&select=kid,attempted_at`,
+  );
+  const existing: Record<number, number> = {};
+  if (exRes.ok) {
+    for (const r of await exRes.json()) {
+      existing[Number(r.kid)] = r.attempted_at ? Date.parse(r.attempted_at) : 0;
+    }
+  }
+
+  const results: { kid: number; status: string }[] = [];
+  for (const kid of kids) {
+    const last = existing[kid] || 0;
+    if (Date.now() - last < REFRESH_MIN_INTERVAL_MS) {
+      results.push({ kid, status: 'throttled' });
+      continue;
+    }
+    // Mark the attempt first so concurrent callers skip this State.
+    await cacheUpsert({ kid, attempted_at: new Date().toISOString() });
+    try {
+      const detail = await detailFromPublicSite(kid, 15, 100);
+      if (detail && (detail.state || detail.power || detail.alliances)) {
+        await cacheUpsert({
+          kid,
+          payload: detail,
+          fetched_at: new Date().toISOString(),
+          last_error: null,
+        });
+        results.push({ kid, status: 'ok' });
+      } else {
+        await cacheUpsert({ kid, last_error: 'upstream returned no data' });
+        results.push({ kid, status: 'failed' });
+      }
+    } catch (e) {
+      await cacheUpsert({ kid, last_error: String((e as Error)?.message || e).slice(0, 300) });
+      results.push({ kid, status: 'failed' });
+    }
+    await new Promise((r) => setTimeout(r, REFRESH_GAP_MS));
+  }
+  return jsonObj({ results });
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return jsonObj({ error: 'method-not-allowed' }, 405);
@@ -568,6 +671,7 @@ Deno.serve(async (req: Request) => {
   }
   const action = typeof input.action === 'string' ? input.action : 'summary';
   try {
+    if (action === 'refresh') return await handleRefresh(input);
     if (action === 'detail') return await handleDetail(input);
     if (action === 'power-leaderboard') return await handlePowerLeaderboard(input);
     if (action === 'alliance') return await handleAlliance(input);
