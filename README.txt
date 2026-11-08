@@ -1,7 +1,7 @@
 Reservation updates — ready to use
 =================================
 
-Copy these files into the site root (keep folders):
+Copy into site root (keep folders):
 
   index.html
   style.css
@@ -11,15 +11,13 @@ Copy these files into the site root (keep folders):
   supabase_migration_svs_enemies_menu_label.sql   (optional)
 
 Steps
------
-1. Upload / replace ALL files above (especially lang.js — without it
-   the settings modal shows raw keys like svs_enemies_menu_label_title).
-2. Optional — run the SQL migration in Supabase SQL Editor.
-3. Deploy edge function:
-     supabase functions deploy wosatlas-states
-4. Hard refresh the site (clear PWA / browser cache if needed).
+1. Replace the files above on the server.
+2. Optional: run SQL migration in Supabase.
+3. supabase functions deploy wosatlas-states
+4. Hard refresh / clear PWA cache.
 
-What you get
-------------
-- Alliance / State load via public WoS Atlas (same approach as TAL)
-- President Panel can switch menu button name: SvS Enemies ↔ TAL Enemies
+Included fixes
+- WoS Atlas public API path (like TAL)
+- Menu label switch: SvS Enemies ↔ TAL Enemies (President Panel)
+- Queued State loading with delay when >1 enemy State
+  (avoids parallel API bursts / blocks)
