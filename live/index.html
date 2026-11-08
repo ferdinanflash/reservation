@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>State 3475 – SvS Enemies (Live)</title>
+		<meta name="description" content="Live State info for SvS enemy States of State 3475: power rank, leaderboard, top alliances and SvS record.">
+		<link rel="canonical" href="https://3475.web.id/live/">
+		<link rel="icon" href="/favicon-32-v8.png" type="image/png">
+		<link rel="stylesheet" href="/style.css?v=113">
+
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+		<script src="/common.js?v=8" defer></script>
+		<script src="/lang.js?v=51" defer></script>
+		<script src="/js/app-svs-enemies.js?v=20" defer></script>
+	</head>
+	<body class="ui-v2-theme">
+		<noscript>
+			<div style="max-width:720px;margin:24px auto;padding:16px;color:#fff;font-family:sans-serif;line-height:1.6">
+				<h1>State 3475 – SvS Enemies</h1>
+				<p>Please enable JavaScript to see the live SvS Enemies data.</p>
+			</div>
+		</noscript>
+
+		<header class="navbar">
+			<a class="logo fire-text" href="/" style="text-decoration:none">State 3475</a>
+			<div class="navbar-actions"><div id="lang-toggle-btn" class="lang-toggle" data-lang="en" role="group" aria-label="Language"><button type="button" class="lang-trigger" onclick="toggleLangDropdown(event)" aria-haspopup="listbox" aria-expanded="false" aria-label="Change language"><svg class="lang-globe-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9s1.3-6.3 3.8-9z"></path></svg><span class="lang-chevron" aria-hidden="true">▾</span><span class="lang-current lang-current-en"><strong>ENG</strong><span class="lang-flag-emoji lang-flag lang-flag-us" role="img" aria-hidden="true"></span></span><span class="lang-current lang-current-cn"><strong>CN</strong><span class="lang-flag-emoji lang-flag lang-flag-cn" role="img" aria-hidden="true"></span></span><span class="lang-current lang-current-id"><strong>ID</strong><span class="lang-flag-emoji lang-flag lang-flag-id" role="img" aria-hidden="true"></span></span><span class="lang-current lang-current-ph"><strong>PH</strong><span class="lang-flag-emoji lang-flag lang-flag-ph" role="img" aria-hidden="true"></span></span><span class="lang-current lang-current-th"><strong>TH</strong><span class="lang-flag-emoji lang-flag lang-flag-th" role="img" aria-hidden="true"></span></span><span class="lang-current lang-current-it"><strong>IT</strong><span class="lang-flag-emoji lang-flag lang-flag-it" role="img" aria-hidden="true"></span></span><span class="lang-current lang-current-ru"><strong>RU</strong><span class="lang-flag-emoji lang-flag lang-flag-ru" role="img" aria-hidden="true"></span></span><span class="lang-current lang-current-fr"><strong>FR</strong><span class="lang-flag-emoji lang-flag lang-flag-fr" role="img" aria-hidden="true"></span></span></button><div class="lang-dropdown" role="listbox"><button type="button" class="lang-option lang-eng" onclick="setLanguage('en')" aria-label="English"><span class="lang-flag-emoji lang-flag lang-flag-us" role="img" aria-hidden="true"></span><span class="lang-code">ENG</span></button><button type="button" class="lang-option lang-cn" onclick="setLanguage('cn')" aria-label="中文"><span class="lang-flag-emoji lang-flag lang-flag-cn" role="img" aria-hidden="true"></span><span class="lang-code">CN</span></button><button type="button" class="lang-option lang-id" onclick="setLanguage('id')" aria-label="Bahasa Indonesia"><span class="lang-flag-emoji lang-flag lang-flag-id" role="img" aria-hidden="true"></span><span class="lang-code">ID</span></button><button type="button" class="lang-option lang-ph" onclick="setLanguage('ph')" aria-label="Filipino"><span class="lang-flag-emoji lang-flag lang-flag-ph" role="img" aria-hidden="true"></span><span class="lang-code">PH</span></button><button type="button" class="lang-option lang-th" onclick="setLanguage('th')" aria-label="ภาษาไทย"><span class="lang-flag-emoji lang-flag lang-flag-th" role="img" aria-hidden="true"></span><span class="lang-code">TH</span></button><button type="button" class="lang-option lang-it" onclick="setLanguage('it')" aria-label="Italiano"><span class="lang-flag-emoji lang-flag lang-flag-it" role="img" aria-hidden="true"></span><span class="lang-code">IT</span></button><button type="button" class="lang-option lang-ru" onclick="setLanguage('ru')" aria-label="Русский"><span class="lang-flag-emoji lang-flag lang-flag-ru" role="img" aria-hidden="true"></span><span class="lang-code">RU</span></button><button type="button" class="lang-option lang-fr" onclick="setLanguage('fr')" aria-label="Français"><span class="lang-flag-emoji lang-flag lang-flag-fr" role="img" aria-hidden="true"></span><span class="lang-code">FR</span></button></div></div></div>
+		</header>
+
+		<main class="container">
+			<div id="svs-enemies-view">
+				<div class="svs-en-header-row">
+					<div>
+						<h2 class="page-title" data-i18n="svs_enemies_title">SvS Enemies</h2>
+						<p class="page-subtitle" data-i18n="svs_enemies_subtitle">Live State info from ACE for enemy States set by the President.</p>
+						<p id="svs-enemies-meta" class="svs-en-meta"></p>
+					</div>
+					<button type="button" class="btn-apply svs-en-refresh-btn" onclick="refreshSvSEnemiesView()" data-i18n="svs_enemies_refresh">Refresh</button>
+				</div>
+				<p id="svs-enemies-empty" class="svs-en-empty hidden" >No enemy States configured yet.</p>
+				<div id="svs-enemies-record-panel" class="svs-en-record-panel hidden">
+					<div class="svs-en-record-panel-head">
+						<h3 class="svs-en-h" data-i18n="svs_enemies_record_title">SvS Record</h3>
+						<p class="svs-en-record-panel-hint" data-i18n="svs_enemies_record_filter_hint">Match history for enemy States set by the President. Filter by date below.</p>
+					</div>
+					<div class="svs-en-date-filter">
+						<div class="svs-en-date-filter-actions">
+							<button type="button" class="btn-apply svs-en-date-btn" onclick="svsEnemiesSelectAllDates()" data-i18n="svs_enemies_record_add_all_dates">Add All Dates</button>
+							<button type="button" class="btn-back svs-en-date-btn" onclick="svsEnemiesClearAllDates()" data-i18n="svs_enemies_record_clear_all_dates">Clear All Dates</button>
+						</div>
+						<div id="svs-enemies-date-list" class="svs-en-date-list" role="group" aria-label="Filter dates"></div>
+					</div>
+					<div id="svs-enemies-record-matrix-wrap" class="svs-en-table-wrap svs-en-matrix-wrap">
+						<table class="svs-en-table svs-en-matrix-table">
+							<thead id="svs-enemies-matrix-head"></thead>
+							<tbody id="svs-enemies-matrix-body"></tbody>
+						</table>
+					</div>
+				</div>
+				<div id="svs-enemies-list" class="svs-en-list"></div>
+			</div>
+		</main>
+
+		<!-- Modal Alliance Detail (SvS Enemies) -->
+		<div id="svs-alliance-detail-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="svs-alliance-detail-title">
+			<div class="modal-content custom-form-modal svs-alliance-modal-content">
+				<button type="button" class="close-modal" onclick="closeSvSAllianceDetail()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 id="svs-alliance-detail-title" class="modal-title" data-i18n="svs_enemies_alliance_title">Alliance Info</h2>
+				<div id="svs-alliance-detail-body" class="svs-alliance-detail-body"></div>
+				<div class="form-actions">
+					<button type="button" class="btn-back modal-action-btn" onclick="closeSvSAllianceDetail()" data-i18n="btn_close">Close</button>
+				</div>
+			</div>
+		</div>
+
+		<script>
+		// /live shows ONLY the SvS Enemies page: open it straight away.
+		// Deferred scripts have already run when DOMContentLoaded fires.
+		window.addEventListener('DOMContentLoaded', function () {
+			if (typeof showSvSEnemiesMenu === 'function') showSvSEnemiesMenu();
+			// Keep a page left open reasonably fresh. The server cache makes this cheap
+			// (it only re-fetches WoS Atlas when the cached data is older than 2 hours).
+			setInterval(function () {
+				if (document.visibilityState === 'visible' && typeof refreshSvSEnemiesView === 'function') {
+					refreshSvSEnemiesView();
+				}
+			}, 10 * 60 * 1000);
+		});
+		</script>
+	</body>
+</html>
