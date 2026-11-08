@@ -163,6 +163,8 @@ function mapPublicMember(m: any, i: number) {
     power: Number(m.power) || 0,
     stove_lv: m.hq_level ?? m.stove_lv ?? m.stove ?? null,
     lv: m.hq_level ?? m.lv ?? null,
+    x: m.x ?? null,
+    y: m.y ?? null,
     alliance_tag: m.alliance_tag ?? null,
   };
 }
@@ -417,137 +419,85 @@ async function handlePowerLeaderboard(input: Record<string, unknown>) {
 }
 
 async function handleAlliance(input: Record<string, unknown>) {
+  // Same approach as TAL State Tracker (working on tal.3475.web.id):
+  // meta from /servers/{kid}/alliances, members from /alliances/{aid}/members.
+  // Public site endpoints — no API key required.
   const aid = Math.trunc(Number(input.aid));
   if (!Number.isFinite(aid) || aid < 1) return jsonObj({ error: 'bad-aid' }, 400);
   const key = `alliance:${aid}`;
   const hit = cacheGet(key);
   if (hit) return json(hit);
 
-  // TAL logic: alliance_id = "<serverId><6-digit seq>" e.g. 3369000011
-  // Meta comes from /servers/{kid}/alliances; members from /alliances/{aid}/members (paged).
-  const pub = await allianceFromPublicSite(aid);
-  if (pub) {
-    const body = JSON.stringify(pub);
-    cacheSet(key, body);
-    return json(body);
-  }
-
-  // Optional keyed API last resort
-  if (API_KEY) {
-    const up = await upstreamGet(`${API}/alliances/${aid}/members`);
-    if (up.ok) {
-      try {
-        const raw = JSON.parse(up.body);
-        let membersList: any[] = [];
-        if (Array.isArray(raw.members)) membersList = raw.members;
-        else if (Array.isArray(raw.items)) membersList = raw.items;
-        else if (Array.isArray(raw)) membersList = raw;
-        const members = membersList.map(mapPublicMember);
-        const body = JSON.stringify({
-          aid,
-          abbr: raw.abbr || raw.tag || '',
-          name: raw.name || '',
-          memberCount: members.length,
-          members,
-          memberList: members,
-          players: members,
-          source: 'api',
-        });
-        cacheSet(key, body);
-        return json(body);
-      } catch (_) { /* fall through */ }
-    }
-  }
-
-  return jsonObj({
-    error: 'alliance-not-found',
-    message: 'Could not load alliance from public WoS Atlas (and API key path also failed).',
-  }, 502);
-}
-
-async function allianceFromPublicSite(aid: number) {
-  // TAL convention: alliance_id = "<serverId><6-digit seq>" e.g. 3369000011
+  // alliance_id looks like "<serverId><6-digit seq>", e.g. 1199000147
   const kid = Math.trunc(aid / 1_000_000);
-  const aidStr = String(aid);
+  const items = await fetchServerAlliances(kid, 200);
+  const a = items ? items.find((x: any) => Number(x.alliance_id) === aid) : null;
 
-  // Members first (cheap, enough to show a useful modal). Public API uses `name`.
-  let memberItems: any[] = [];
-  try {
-    const page = await siteGet(`/alliances/${aid}/members?limit=200`);
-    if (page) {
-      if (Array.isArray(page.items)) memberItems = page.items;
-      else if (Array.isArray(page.members)) memberItems = page.members;
-      else if (Array.isArray(page)) memberItems = page;
-      // follow one extra page if needed
-      if (page.next && memberItems.length < 100) {
-        const page2 = await siteGet(
-          `/alliances/${aid}/members?limit=200&cursor=${encodeURIComponent(String(page.next))}`,
-        );
-        if (page2) {
-          const more = Array.isArray(page2.items) ? page2.items
-            : Array.isArray(page2.members) ? page2.members
-            : Array.isArray(page2) ? page2 : [];
-          const seen = new Set(memberItems.map((m) => String(m.uid)));
-          for (const m of more) {
-            const id = String(m.uid || '');
-            if (id && !seen.has(id)) { seen.add(id); memberItems.push(m); }
-          }
-        }
+  const memberItems = await fetchAllianceMembers(aid);
+  if (!a && !memberItems.length) {
+    // Last resort: keyed official API if secret is present
+    if (API_KEY) {
+      const up = await upstreamGet(`${API}/alliances/${aid}/members`);
+      if (up.ok) {
+        try {
+          const raw = JSON.parse(up.body);
+          let membersList: any[] = [];
+          if (Array.isArray(raw.members)) membersList = raw.members;
+          else if (Array.isArray(raw.items)) membersList = raw.items;
+          else if (Array.isArray(raw)) membersList = raw;
+          const members = membersList.map(mapPublicMember);
+          const body = JSON.stringify({
+            aid,
+            abbr: raw.abbr || raw.tag || '',
+            name: raw.name || '',
+            memberCount: members.length,
+            members,
+            memberList: members,
+            players: members,
+            source: 'api',
+          });
+          cacheSet(key, body);
+          return json(body);
+        } catch (_) { /* fall through */ }
       }
     }
-  } catch (_) { /* ignore */ }
-
-  // Meta: scan top alliances of the state (string compare — alliance_id is a string in API)
-  let meta: any = null;
-  if (kid >= 1) {
-    try {
-      const list = await siteGet(`/servers/${kid}/alliances?sort=power&limit=50`);
-      const items = list && Array.isArray(list.items) ? list.items
-        : Array.isArray(list) ? list : [];
-      meta = items.find((x: any) => String(x.alliance_id) === aidStr) || null;
-      // if not in first page, try paged search (capped)
-      if (!meta) {
-        const more = await siteGetPaged(
-          `/servers/${kid}/alliances?sort=power&limit=50`,
-          (a) => String(a.alliance_id),
-          200,
-          8,
-        );
-        if (more) meta = more.find((x: any) => String(x.alliance_id) === aidStr) || null;
-      }
-    } catch (_) { /* ignore */ }
+    return jsonObj({
+      error: 'alliance-not-found',
+      message: 'Could not load alliance from public WoS Atlas (and API key path also failed).',
+    }, 502);
   }
-
-  if (!meta && !memberItems.length) return null;
 
   const members = memberItems.map(mapPublicMember);
-  members.sort((a, b) => (Number(b.power) || 0) - (Number(a.power) || 0));
+  members.sort((x, y) => (Number(y.power) || 0) - (Number(x.power) || 0));
   members.forEach((m, i) => { m.rank = i + 1; });
 
-  const a = meta || {};
-  return {
+  const held = (a && a.held_members) || {};
+  const body = JSON.stringify({
     aid,
-    abbr: a.tag || (members[0] && members[0].alliance_tag) || '',
-    name: a.name || '',
-    memberCount: a.member_count ?? members.length,
-    memberMax: a.max_members ?? 0,
-    serverPower: a.power ?? members.reduce((s, m) => s + (Number(m.power) || 0), 0),
-    totalPower: a.power ?? null,
-    leaderUid: a.leader_uid ?? (members[0] && members[0].uid) ?? 0,
-    leaderName: a.leader_name ?? (members[0] && members[0].nick_name) ?? '',
-    lv: a.alliance_level ?? 0,
-    joinMinLevel: a.join_min_level ?? 0,
-    joinMinPower: a.join_min_power ?? 0,
-    publicRecruit: !!a.public_recruit,
-    homeKid: Number(a.home_server_id) || kid || null,
-    honorLevel: a.honor_level ?? null,
-    notice: a.notice || '',
-    manifesto: a.manifesto || '',
+    abbr: (a && a.tag) || (members[0] && members[0].alliance_tag) || '',
+    name: (a && a.name) || '',
+    memberCount: (a && a.member_count) != null ? a.member_count : members.length,
+    memberMax: (a && a.max_members) ?? 0,
+    serverPower: (a && a.power) ?? members.reduce((s, m) => s + (Number(m.power) || 0), 0),
+    totalPower: (a && a.power) ?? null,
+    leaderUid: (a && a.leader_uid) ?? (members[0] && members[0].uid) ?? 0,
+    leaderName: (a && a.leader_name) ?? (members[0] && members[0].nick_name) ?? '',
+    lv: (a && a.alliance_level) ?? 0,
+    joinMinLevel: (a && a.join_min_level) ?? 0,
+    joinMinPower: (a && a.join_min_power) ?? 0,
+    publicRecruit: !!(a && a.public_recruit),
+    homeKid: Number(a && a.home_server_id) || kid || null,
+    honorLevel: (a && a.honor_level) ?? null,
+    notice: (a && a.notice) || '',
+    manifesto: (a && a.manifesto) || '',
+    heldMembers: held,
     members,
     memberList: members,
     players: members,
     source: 'public-site',
-  };
+  });
+  cacheSet(key, body);
+  return json(body);
 }
 
 async function handlePlayer(input: Record<string, unknown>) {
