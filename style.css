@@ -7259,3 +7259,6 @@ body h1.page-title.portal-title {
 .svsr-official-history { margin: 0 0 20px; }
 .svsr-official-history .svs-en-record-panel-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px 12px; }
 .svsr-official-history .svs-en-h { margin:0 0 8px; }
+
+/* Keep Event Records menu button dimensions identical to WoS Tool. */
+.event-records-menu-link { box-sizing: border-box; width: 100%; min-height: 44px; }
