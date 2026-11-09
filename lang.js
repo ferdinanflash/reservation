@@ -1936,7 +1936,6 @@
             btn_finish_svs: "结束SvS",
             btn_announcement: "📢 公告",
             btn_svs_enemies_settings: "SvS 敌对州设置",
-            btn_save: "保存",
             link_svs_enemies: "SvS 敌对州",
             link_tal_enemies: "TAL Enemies",
             svs_enemies_menu_label_title: "Menu button name",
