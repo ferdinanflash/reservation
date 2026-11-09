@@ -356,7 +356,7 @@ function openWaitingModal(timeStr) {
     appsInSlot.forEach(app => {
         const mainRow = document.createElement('tr');
         let adminButtons = isAdmin ? `
-            <div class="admin-action-buttons" role="group" aria-label="Application actions">
+            <div class="admin-action-buttons" role="group" aria-label="${t("application_actions")}">
                 <button type="button" class="btn-apply btn-compact admin-action-btn admin-accept-btn" onclick="acceptApp(${app.id})">${t("btn_accept")}</button>
                 <button type="button" class="btn-apply btn-danger btn-compact admin-action-btn admin-reject-btn" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
             </div>
