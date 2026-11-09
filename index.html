@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-08-5';
+			var APP_BUILD = '2026-11-10-1';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -170,15 +170,15 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=113">
+		<link rel="stylesheet" href="style.css?v=114">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=8" defer=""></script>
 		<script src="lang.js?v=51" defer=""></script>
 					<script src="js/app-core.js?v=55" defer=""></script>
-					<script src="js/app-auth.js?v=52" defer=""></script>
+					<script src="js/app-auth.js?v=53" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
-					<script src="js/app-schedule.js?v=51" defer=""></script>
+					<script src="js/app-schedule.js?v=52" defer=""></script>
 					<script src="js/app-applications.js?v=52" defer=""></script>
 					<script src="js/app-waiting.js?v=51" defer=""></script>
 					<script src="js/app-bulk.js?v=3" defer=""></script>
@@ -431,6 +431,7 @@
 						<button type="button" class="list-item list-item-small" id="svs-enemies-menu-btn" onclick="showSvSEnemiesMenu()">
 							<span id="svs-enemies-menu-label" data-i18n="link_svs_enemies">SvS Enemies</span>
 						</button>
+						<button type="button" class="list-item list-item-small" onclick="showSvSRecordMenu()"><span>SvS Record</span></button>
 						<a class="list-item list-item-small" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer">
 							<span data-i18n="link_leaderboard">Events Leaderboard Record</span>
 						</a>
@@ -477,6 +478,16 @@
 						</div>
 					</div>
 					<div id="svs-enemies-list" class="svs-en-list"></div>
+				</div>
+
+				<div id="svs-record-view" class="hidden">
+					<button type="button" class="btn-back action-no-bottom" onclick="showMainMenu()">&lt; Back to menu</button>
+					<div class="svsr-wrap">
+						<div class="svsr-heading"><h3>MATCHUP TIMELINE</h3><button type="button" id="svs-record-refresh" class="btn-back">Refresh</button></div>
+						<div id="svs-record-timeline" class="svsr-timeline"></div>
+						<div class="svsr-legend"><span class="conquered">Conquered</span><span class="defended">Defended</span><span class="repelled">Repelled</span><span class="lost">Castle lost</span></div>
+						<div id="svs-record-list" class="svsr-list"></div><p id="svs-record-empty" class="svsr-loading hidden">No SvS records yet.</p>
+					</div>
 				</div>
 
 				<div id="minister-reservation-view" class="hidden">
@@ -928,6 +939,7 @@
 						<span class="president-panel-option-label"><span data-i18n="btn_announcement">📢 Announcement</span></span>
 						<span class="arrow">&#8250;</span>
 					</button>
+					<button type="button" id="president-panel-svs-record-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenSvSRecords()"><span class="president-panel-option-label">🏆 <span>Manage SvS Records</span></span><span class="arrow">&#8250;</span></button>
 					<button type="button" id="president-panel-svs-enemies-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenSvSEnemies()">
 						<span class="president-panel-option-label"><span class="president-panel-option-icon">⚔️</span> <span data-i18n="btn_svs_enemies_settings">SvS Enemies Settings</span></span>
 						<span class="arrow">&#8250;</span>
@@ -985,6 +997,24 @@
 				<div class="form-actions">
 					<button type="button" class="btn-back modal-action-btn" onclick="closeSvSAllianceDetail()" data-i18n="btn_close">Close</button>
 				</div>
+			</div>
+		</div>
+
+		<div id="svs-record-form-modal" class="modal hidden" role="dialog" aria-modal="true">
+			<div class="modal-content custom-form-modal svsr-form-content">
+				<button type="button" class="close-modal" onclick="closeSvSRecordForm()">&times;</button><h2 id="svsr-form-title" class="modal-title">Add SvS Record</h2><input id="svsr-id" type="hidden">
+				<div class="svsr-form-grid">
+					<div class="form-group"><label>Server</label><input id="svsr-server" type="text" placeholder="3369"></div>
+					<div class="form-group"><label>Side</label><select id="svsr-side"><option>ATK</option><option>DEF</option></select></div>
+					<div class="form-group"><label>Result</label><select id="svsr-result"><option>Conquered</option><option>Defended</option><option>Repelled</option><option>Castle lost</option></select></div>
+					<div class="form-group"><label>Opponent / Alliance</label><input id="svsr-opponent" maxlength="100"></div>
+					<div class="form-group"><label>Prep score</label><input id="svsr-prep" type="number" value="0"></div>
+					<div class="form-group"><label>Prep change</label><input id="svsr-prep-delta" type="number" value="0"></div>
+					<div class="form-group"><label>Battle score</label><input id="svsr-battle" type="number" value="0"></div>
+					<div class="form-group"><label>Battle change</label><input id="svsr-battle-delta" type="number" value="0"></div>
+					<div class="form-group"><label>Match date</label><input id="svsr-date" type="date"></div>
+				</div>
+				<div class="form-actions svsr-form-actions"><button type="button" id="svsr-delete-btn" class="btn-back hidden" onclick="deleteSvSRecord()">Delete</button><button type="button" class="btn-back" onclick="closeSvSRecordForm()">Cancel</button><button type="button" id="svsr-save-btn" class="btn-apply" onclick="saveSvSRecord()">Save</button></div>
 			</div>
 		</div>
 
