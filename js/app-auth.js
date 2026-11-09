@@ -83,7 +83,7 @@ function presidentPanelOpenSvSRecords() {
         window.showSvSRecordMenu();
     } else {
         console.error('SvS Record module is not available. Check js/app-svs-record.js loading.');
-        showToast('SvS Record could not be opened. Please refresh the page.', 'error');
+        showToast(t('auth_svs_record_open_failed'), 'error');
     }
 }
 
