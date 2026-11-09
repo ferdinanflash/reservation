@@ -4490,6 +4490,17 @@
         whatsnew_13_desc: "Sur ordinateur, les boutons sont désormais répartis sur trois rangées équilibrées. Le bouton Event Leaderboard Record est renommé Events Record et adopte la même taille que le bouton WoS Tool."
     });
 
+
+    // SvS/TAL Enemies menu labels.
+    Object.assign(TRANSLATIONS.en, { link_svs_enemies: "SvS Enemies", link_tal_enemies: "TAL Enemies" });
+    Object.assign(TRANSLATIONS.id, { link_svs_enemies: "Musuh SvS", link_tal_enemies: "Musuh TAL" });
+    Object.assign(TRANSLATIONS.it, { link_svs_enemies: "Nemici SvS", link_tal_enemies: "Nemici TAL" });
+    Object.assign(TRANSLATIONS.ph, { link_svs_enemies: "Mga Kalaban sa SvS", link_tal_enemies: "Mga Kalaban sa TAL" });
+    Object.assign(TRANSLATIONS.cn, { link_svs_enemies: "SvS 敌方", link_tal_enemies: "TAL 敌方" });
+    Object.assign(TRANSLATIONS.th, { link_svs_enemies: "ศัตรู SvS", link_tal_enemies: "ศัตรู TAL" });
+    Object.assign(TRANSLATIONS.ru, { link_svs_enemies: "Противники SvS", link_tal_enemies: "Противники TAL" });
+    Object.assign(TRANSLATIONS.fr, { link_svs_enemies: "Ennemis SvS", link_tal_enemies: "Ennemis TAL" });
+
     // Expose globally so script.js / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
