@@ -5,6 +5,8 @@
   const TABLE = 'svs_records';
   const $ = (id) => document.getElementById(id);
   let rows = [];
+  let state3475History = [];
+  let historyLoading = false;
   let channel = null;
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const fmt = (v) => Number(v || 0).toLocaleString();
@@ -16,6 +18,7 @@
     ['main-menu-view','minister-reservation-view','svs-enemies-view'].forEach(id=>$(id)?.classList.add('hidden'));
     $('svs-record-view')?.classList.remove('hidden');
     load();
+    loadState3475History();
   }
   function render(){
     const timeline=$('svs-record-timeline'), list=$('svs-record-list'), empty=$('svs-record-empty'), add=$('svs-record-add');
@@ -33,6 +36,29 @@
         '</article>';
     }).join('');
   }
+  // Official historical SvS results for State 3475 only (same dataset used in SvS Enemies).
+  const HISTORY_URL = 'https://data.wosnerds.com/data/svs-history/svs-history-3001-3500.json';
+  async function loadState3475History(){
+    const host=$('svs-record-state-history'); if(!host || historyLoading) return;
+    historyLoading=true; host.innerHTML='<p class="svs-en-status">Loading State 3475 history…</p>';
+    try{
+      const response=await fetch(HISTORY_URL,{headers:{accept:'application/json, text/plain, */*'},credentials:'omit',mode:'cors'});
+      if(!response.ok) throw new Error('HTTP '+response.status);
+      const json=await response.json(), dataset=(json && json['svs-data-per-state']) || json || {}, own=dataset['3475'] || dataset[3475] || {};
+      state3475History=Object.keys(own).map(date=>{const m=own[date]||{};return {date,opponent:Number(m['opposition-state'])||null,hadMatch:m['had-svs-match']!==false,wonPrep:!!m['won-prep'],wonCastle:!!m['won-castle']};}).filter(r=>r.hadMatch).sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);
+      renderState3475History();
+    }catch(error){console.error('State 3475 SvS history:',error);host.innerHTML='<p class="svs-en-status svs-en-error">Could not load State 3475 historical SvS results. Please try again.</p><button type="button" class="svs-en-retry" onclick="refreshState3475SvSHistory()">Retry</button>';}
+    finally{historyLoading=false;}
+  }
+  function renderState3475History(){
+    const host=$('svs-record-state-history');if(!host)return;
+    if(!state3475History.length){host.innerHTML='<p class="svs-en-status">No historical SvS results found for State 3475.</p>';return;}
+    const pw=state3475History.filter(r=>r.wonPrep).length,pl=state3475History.length-pw,cw=state3475History.filter(r=>r.wonCastle).length,cl=state3475History.length-cw;
+    const body=state3475History.map(r=>'<tr><td>'+esc(dateLabel(r.date))+'</td><td class="st-num">'+(r.opponent?'S'+esc(r.opponent):'—')+'</td><td><span class="svs-en-result '+(r.wonPrep?'is-win':'is-loss')+'">'+(r.wonPrep?'Win':'Loss')+'</span></td><td><span class="svs-en-result '+(r.wonCastle?'is-win':'is-loss')+'">'+(r.wonCastle?'Win':'Loss')+'</span></td></tr>').join('');
+    host.innerHTML='<div class="svs-en-record-summary"><span>Prep: <strong class="svs-en-win-text">'+pw+'</strong>–<strong class="svs-en-loss-text">'+pl+'</strong></span><span>Castle: <strong class="svs-en-win-text">'+cw+'</strong>–<strong class="svs-en-loss-text">'+cl+'</strong></span><span>Matches: <strong>'+state3475History.length+'</strong></span></div><div class="svs-en-table-wrap"><table class="svs-en-table"><thead><tr><th>Date</th><th class="st-num">Opponent</th><th>Prep</th><th>Castle</th></tr></thead><tbody>'+body+'</tbody></table></div>';
+  }
+  window.refreshState3475SvSHistory=()=>{state3475History=[];loadState3475History();};
+
   async function load(){
     const c=client(); if(!c) return;
     const list=$('svs-record-list'); if(list&&!rows.length) list.innerHTML='<p class="svsr-loading">Loading SvS records…</p>';
@@ -85,7 +111,7 @@
   window.deleteSvSRecord=remove;
   window.presidentPanelOpenSvSRecords=()=>{if(typeof isAdmin === 'undefined' || !isAdmin)return;document.getElementById('president-panel-modal')?.classList.add('hidden');showSvSRecordMenu();};
   function init(){
-    $('svs-record-refresh')?.addEventListener('click',load);
+    $('svs-record-refresh')?.addEventListener('click',()=>{load();window.refreshState3475SvSHistory();});
     const c=client(); if(c&&!channel){channel=c.channel('svs_records_changes').on('postgres_changes',{event:'*',schema:'public',table:TABLE},load).subscribe();}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
