@@ -717,6 +717,13 @@
 						</div>
 					</li>
 					<li class="whatsnew-item">
+						<span class="whatsnew-icon" aria-hidden="true">🌐</span>
+						<div class="whatsnew-body">
+							<div class="whatsnew-item-title"><span class="whatsnew-badge whatsnew-badge-new" data-i18n="whatsnew_badge_new">New</span><span data-i18n="whatsnew_16_title"></span></div>
+							<p class="whatsnew-item-desc" data-i18n="whatsnew_16_desc"></p>
+						</div>
+					</li>
+					<li class="whatsnew-item">
 						<span class="whatsnew-icon" aria-hidden="true">📜</span>
 						<div class="whatsnew-body">
 							<div class="whatsnew-item-title"><span class="whatsnew-badge whatsnew-badge-new" data-i18n="whatsnew_badge_new">New</span><span data-i18n="whatsnew_14_title"></span></div>
@@ -1024,19 +1031,19 @@
 
 		<div id="svs-record-form-modal" class="modal hidden" role="dialog" aria-modal="true">
 			<div class="modal-content custom-form-modal svsr-form-content">
-				<button type="button" class="close-modal" onclick="closeSvSRecordForm()">&times;</button><h2 id="svsr-form-title" class="modal-title">Add SvS Record</h2><input id="svsr-id" type="hidden">
+				<button type="button" class="close-modal" onclick="closeSvSRecordForm()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button><h2 id="svsr-form-title" class="modal-title" data-i18n="svsr_add_title">Add SvS Record</h2><input id="svsr-id" type="hidden">
 				<div class="svsr-form-grid">
-					<div class="form-group"><label>Server</label><input id="svsr-server" type="text" placeholder="3369"></div>
-					<div class="form-group"><label>Side</label><select id="svsr-side"><option>ATK</option><option>DEF</option></select></div>
-					<div class="form-group"><label>Result</label><select id="svsr-result"><option>Conquered</option><option>Defended</option><option>Repelled</option><option>Castle lost</option></select></div>
-					<div class="form-group"><label>Opponent / Alliance</label><input id="svsr-opponent" maxlength="100"></div>
-					<div class="form-group"><label>Prep score</label><input id="svsr-prep" type="number" value="0"></div>
-					<div class="form-group"><label>Prep change</label><input id="svsr-prep-delta" type="number" value="0"></div>
-					<div class="form-group"><label>Battle score</label><input id="svsr-battle" type="number" value="0"></div>
-					<div class="form-group"><label>Battle change</label><input id="svsr-battle-delta" type="number" value="0"></div>
-					<div class="form-group"><label>Match date</label><input id="svsr-date" type="date"></div>
+					<div class="form-group"><label data-i18n="svsr_server">Server</label><input id="svsr-server" type="text" placeholder="3369"></div>
+					<div class="form-group"><label data-i18n="svsr_side">Side</label><select id="svsr-side"><option>ATK</option><option>DEF</option></select></div>
+					<div class="form-group"><label data-i18n="svsr_result">Result</label><select id="svsr-result"><option value="Conquered" data-i18n="svsr_conquered">Conquered</option><option value="Defended" data-i18n="svsr_defended">Defended</option><option value="Repelled" data-i18n="svsr_repelled">Repelled</option><option value="Castle lost" data-i18n="svsr_castle_lost">Castle lost</option></select></div>
+					<div class="form-group"><label data-i18n="svsr_opponent_alliance">Opponent / Alliance</label><input id="svsr-opponent" maxlength="100"></div>
+					<div class="form-group"><label data-i18n="svsr_prep_score">Prep score</label><input id="svsr-prep" type="number" value="0"></div>
+					<div class="form-group"><label data-i18n="svsr_prep_change">Prep change</label><input id="svsr-prep-delta" type="number" value="0"></div>
+					<div class="form-group"><label data-i18n="svsr_battle_score">Battle score</label><input id="svsr-battle" type="number" value="0"></div>
+					<div class="form-group"><label data-i18n="svsr_battle_change">Battle change</label><input id="svsr-battle-delta" type="number" value="0"></div>
+					<div class="form-group"><label data-i18n="svsr_match_date">Match date</label><input id="svsr-date" type="date"></div>
 				</div>
-				<div class="form-actions svsr-form-actions"><button type="button" id="svsr-delete-btn" class="btn-back hidden" onclick="deleteSvSRecord()">Delete</button><button type="button" class="btn-back" onclick="closeSvSRecordForm()">Cancel</button><button type="button" id="svsr-save-btn" class="btn-apply" onclick="saveSvSRecord()">Save</button></div>
+				<div class="form-actions svsr-form-actions"><button type="button" id="svsr-delete-btn" class="btn-back hidden" onclick="deleteSvSRecord()" data-i18n="svsr_delete">Delete</button><button type="button" class="btn-back" onclick="closeSvSRecordForm()" data-i18n="btn_cancel">Cancel</button><button type="button" id="svsr-save-btn" class="btn-apply" onclick="saveSvSRecord()" data-i18n="btn_save">Save</button></div>
 			</div>
 		</div>
 
