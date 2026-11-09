@@ -1408,9 +1408,11 @@
     function showSvSEnemiesMenu() {
         const main = document.getElementById('main-menu-view');
         const minister = document.getElementById('minister-reservation-view');
+        const record = document.getElementById('svs-record-view');
         const enemies = document.getElementById('svs-enemies-view');
         if (main) main.classList.add('hidden');
         if (minister) minister.classList.add('hidden');
+        if (record) record.classList.add('hidden');
         if (enemies) enemies.classList.remove('hidden');
         renderEnemiesView();
     }
