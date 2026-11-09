@@ -366,7 +366,7 @@ async function showGuestStatusNotification(status, application) {
         title = t('notification_title_approved', { player });
         body = t('notification_body_approved_changed', { old: originalTime, new: newTime });
     } else if (normalized === 'accepted' || normalized === 'approved') {
-        title = `${player} — Reservation Approved 🎉`;
+        title = t('notification_title_approved', { player });
         body = newTime
             ? t('notification_body_approved_for', { time: newTime })
             : t('notification_body_approved_generic');
