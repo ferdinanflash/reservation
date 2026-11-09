@@ -7399,3 +7399,20 @@ body.thanksgiving-theme .dashboard-welcome { --pt-base:#fff1d6; --pt-hot:#ff9a2e
 @media(prefers-reduced-motion:reduce) {
     .dashboard-welcome h2,.dashboard-emblem,.dashboard-emblem::before,.dashboard-emblem::after { animation:none!important; }
 }
+
+
+/* Prevent native image/video save callouts and text selection on the seasonal banner. */
+#fire-banner,
+#fire-banner img,
+#fire-banner video,
+#fire-banner .fire-default-art,
+#fire-banner .seasonal-art {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+#fire-banner img,
+#fire-banner video {
+    pointer-events: none;
+}
