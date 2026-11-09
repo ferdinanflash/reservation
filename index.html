@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-10-2';
+			var APP_BUILD = '2026-11-10-3';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -170,7 +170,7 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=114">
+		<link rel="stylesheet" href="style.css?v=115">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=8" defer=""></script>
@@ -185,7 +185,7 @@
 					<script src="js/app-extras.js?v=58" defer=""></script>
 					<script src="js/app-notifications.js?v=7" defer=""></script>
 					<script src="js/app-svs-enemies.js?v=21" defer=""></script>
-					<script src="js/app-svs-record.js?v=2" defer=""></script>
+					<script src="js/app-svs-record.js?v=3" defer=""></script>
 					<script src="fire-banner.js?v=17" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
 
@@ -484,6 +484,7 @@
 				<div id="svs-record-view" class="hidden">
 					<button type="button" class="btn-back action-no-bottom" onclick="showMainMenu()">&lt; Back to menu</button>
 					<div class="svsr-wrap">
+						<section class="svs-en-record-panel svsr-official-history"><div class="svs-en-record-panel-head"><h3 class="svs-en-h">STATE 3475 — OFFICIAL SvS HISTORY</h3><span class="svs-en-h-meta">State 3475 only</span></div><div id="svs-record-state-history"><p class="svs-en-status">History will load when this page opens.</p></div></section>
 						<div class="svsr-heading"><h3>3475 MATCHUP TIMELINE</h3><div class="svsr-tools"><button type="button" id="svs-record-add" class="btn-apply hidden" onclick="openSvSRecordForm()">+ Add Record</button><button type="button" id="svs-record-refresh" class="btn-back">Refresh</button></div></div>
 						<div id="svs-record-timeline" class="svsr-timeline"></div>
 						<div class="svsr-legend"><span class="conquered">Conquered</span><span class="defended">Defended</span><span class="repelled">Repelled</span><span class="lost">Castle lost</span></div>
