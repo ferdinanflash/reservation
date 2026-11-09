@@ -18,7 +18,8 @@
     load();
   }
   function render(){
-    const timeline=$('svs-record-timeline'), list=$('svs-record-list'), empty=$('svs-record-empty');
+    const timeline=$('svs-record-timeline'), list=$('svs-record-list'), empty=$('svs-record-empty'), add=$('svs-record-add');
+    if(add) add.classList.toggle('hidden', !(typeof isAdmin !== 'undefined' && isAdmin));
     if(!timeline||!list) return;
     timeline.innerHTML=rows.length ? rows.slice(0,24).map(r=>'<span class="svsr-segment '+(colors[r.result]||'lost')+'" title="'+esc(r.server_id+' · '+r.result+' · '+dateLabel(r.played_at))+'"></span>').join('') : '';
     empty?.classList.toggle('hidden', rows.length>0);
