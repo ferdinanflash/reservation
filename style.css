@@ -1566,6 +1566,7 @@ body.halloween-theme {
 
 /* Minister Reservation + WoS Tool = full-width; the middle 4 portals sit in a 2x2 grid. */
 .external-link-container .list-item-small:nth-child(1),
+.external-link-container .list-item-small:nth-child(5),
 .external-link-container .list-item-small:nth-child(6) {
     grid-column: 1 / -1;
     padding: 14px 16px;
@@ -7260,5 +7261,5 @@ body h1.page-title.portal-title {
 .svsr-official-history .svs-en-record-panel-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px 12px; }
 .svsr-official-history .svs-en-h { margin:0 0 8px; }
 
-/* Keep Event Records menu button dimensions identical to WoS Tool. */
-.event-records-menu-link { box-sizing: border-box; width: 100%; min-height: 44px; }
+/* Event Records (item 5) shares the exact full-width sizing used by WoS Tool (item 6). */
+.external-link-container .event-records-menu-link { box-sizing: border-box; width: 100%; min-height: 44px; }
