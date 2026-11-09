@@ -7307,6 +7307,17 @@ body h1.page-title.portal-title {
 @media(max-width:360px){.dashboard-emblem{display:none}.external-link-container.dashboard-menu-grid{grid-template-columns:1fr}#main-menu-links>.menu-card-primary{grid-column:auto}.dashboard-state-chip{display:none}}
 @media(prefers-reduced-motion:reduce){.dashboard-whatsnew{transition:none}}
 
+/* Shared dashboard accent roles follow the selected seasonal theme. */
+.dashboard-welcome { --dashboard-accent:#f59e0b; --dashboard-accent-soft:#fde68a; }
+body.halloween-theme .dashboard-welcome { --dashboard-accent:#ff8a1f; --dashboard-accent-soft:#b56bff; }
+body.christmas-theme .dashboard-welcome { --dashboard-accent:#ff4d5a; --dashboard-accent-soft:#3fd18a; }
+body.valentine-theme .dashboard-welcome { --dashboard-accent:#ff5c9a; --dashboard-accent-soft:#ffb3cf; }
+body.cny-theme .dashboard-welcome { --dashboard-accent:#ff4a3d; --dashboard-accent-soft:#ffd25e; }
+body.eid-theme .dashboard-welcome { --dashboard-accent:#3fd18a; --dashboard-accent-soft:#ffd25e; }
+body.midautumn-theme .dashboard-welcome { --dashboard-accent:#ffb347; --dashboard-accent-soft:#c9a0ff; }
+body.bluefire-theme .dashboard-welcome { --dashboard-accent:#18dfff; --dashboard-accent-soft:#70bfff; }
+body.thanksgiving-theme .dashboard-welcome { --dashboard-accent:#ff9a2e; --dashboard-accent-soft:#a0cdff; }
+
 /* Dashboard accents reuse the exact seasonal palette of the former Portal title. */
 .dashboard-welcome h2 {
     --pt-base:#ffe3b0; --pt-hot:#ff8a1f;
