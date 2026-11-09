@@ -28,7 +28,7 @@
         '<div class="svsr-main"><div class="svsr-meta"><span class="svsr-side '+(side==='DEF'?'def':'atk')+'">'+esc(side)+'</span><strong class="svsr-server">S'+esc(r.server_id)+'</strong><span class="svsr-result">'+(r.result==='Conquered'?'👑 ':'')+esc(r.result)+'</span><span class="svsr-opponent">'+esc(r.opponent||'')+'</span></div>'+
         '<div class="svsr-scores"><div><small>PREP</small><b>'+fmt(r.prep_score)+'</b><em class="'+(Number(r.prep_delta)>=0?'positive':'negative')+'">'+signed(r.prep_delta)+'</em></div><div><small>BATTLE</small><b>'+fmt(r.battle_score)+'</b><em class="'+(Number(r.battle_delta)>=0?'positive':'negative')+'">'+signed(r.battle_delta)+'</em></div></div></div>'+
         '<time class="svsr-date">'+dateLabel(r.played_at)+'</time>'+
-        (window.isAdmin?'<button class="svsr-edit" type="button" onclick="editSvSRecord(\''+r.id+'\')" aria-label="Edit record">✎</button>':'')+
+        ((typeof isAdmin !== 'undefined' && isAdmin)?'<button class="svsr-edit" type="button" onclick="editSvSRecord(\''+r.id+'\')" aria-label="Edit record">✎</button>':'')+
         '</article>';
     }).join('');
   }
