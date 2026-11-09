@@ -319,10 +319,10 @@ function setGuestNotificationPreference(enabled) {
 
 function getNotificationStatusText(status) {
     const normalized = String(status || '').toLowerCase();
-    if (normalized === 'accepted' || normalized === 'approved') return 'Approved';
-    if (normalized === 'rejected') return 'Rejected';
-    if (normalized === 'waiting' || normalized === 'pending') return 'Waiting';
-    return String(status || 'Updated');
+    if (normalized === 'accepted' || normalized === 'approved') return t('notification_approved');
+    if (normalized === 'rejected') return t('notification_rejected');
+    if (normalized === 'waiting' || normalized === 'pending') return t('notification_waiting');
+    return String(status || t('notification_updated'));
 }
 
 function updateGuestApplicationStatusUI(status, application) {
@@ -359,23 +359,23 @@ async function showGuestStatusNotification(status, application) {
     const newTime = String(application?.time_slot || '').trim();
     const originalTime = String(application?.__original_time_slot || '').trim();
 
-    let title = `${player} — Reservation Update`;
-    let body = `Your reservation status is now ${getNotificationStatusText(status)}.`;
+    let title = t('notification_title_update', { player });
+    let body = t('notification_body_status', { status: getNotificationStatusText(status) });
 
     if ((normalized === 'accepted' || normalized === 'approved') && newTime && originalTime && newTime !== originalTime) {
-        title = `${player} — Reservation Approved 🎉`;
-        body = `Your reservation has been approved, but the time slot was changed from your original request (${originalTime} UTC) to ${newTime} UTC. Please use ${newTime} UTC as your confirmed slot.`;
+        title = t('notification_title_approved', { player });
+        body = t('notification_body_approved_changed', { old: originalTime, new: newTime });
     } else if (normalized === 'accepted' || normalized === 'approved') {
         title = `${player} — Reservation Approved 🎉`;
         body = newTime
-            ? `Your reservation has been approved for ${newTime} UTC.`
-            : 'Your reservation has been approved. Please check the reservation schedule for the latest details.';
+            ? t('notification_body_approved_for', { time: newTime })
+            : t('notification_body_approved_generic');
     } else if (normalized === 'rejected') {
-        title = `${player} — Reservation Rejected`;
-        body = 'Your reservation request has been rejected. Please check the reservation details for more information.';
+        title = t('notification_title_rejected', { player });
+        body = t('notification_body_rejected');
     } else if ((normalized === 'waiting' || normalized === 'pending') && oldTime && newTime && oldTime !== newTime) {
-        title = `${player} — Reservation Time Moved`;
-        body = `Your reservation slot was moved from ${oldTime} UTC to ${newTime} UTC. Your reservation is still Waiting. ${newTime} UTC is the new slot assigned to your application.`;
+        title = t('notification_title_moved', { player });
+        body = t('notification_body_moved', { old: oldTime, new: newTime });
     }
 
     const applicationId = application?.id ? String(application.id) : null;
