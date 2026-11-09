@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-10-7';
+			var APP_BUILD = '2026-11-10-8';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -170,7 +170,7 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=118">
+		<link rel="stylesheet" href="style.css?v=119">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=8" defer=""></script>
@@ -272,7 +272,7 @@
 
 		<main class="container">
 			<section id="positions-page">
-				<h1 class="page-title portal-title" data-i18n="page_title">Portal of State 3475</h1>
+				<h1 class="page-title portal-title dashboard-page-title" data-i18n="page_title">Portal of State 3475</h1>
 
 				<div class="banner-container">
 					<div id="fire-banner" class="fire-banner" role="img" aria-label="3475">
@@ -423,31 +423,30 @@
 					</div>
             </div>
 
-				<div id="main-menu-view">
-					<p class="page-subtitle" data-i18n="page_subtitle_menu">Select an option below</p>
-					<div class="external-link-container" id="main-menu-links">
-						<button type="button" class="list-item list-item-small" onclick="showMinisterReservationMenu()">
-							<span data-i18n="link_minister_reservation">Minister Reservation</span>
-						</button>
-						<button type="button" class="list-item list-item-small" id="svs-enemies-menu-btn" onclick="showSvSEnemiesMenu()">
-							<span id="svs-enemies-menu-label" data-i18n="link_svs_enemies">SvS Enemies</span>
-						</button>
-						<button type="button" class="list-item list-item-small" onclick="showSvSRecordMenu()"><span>SvS Record</span></button>
-						<a class="list-item list-item-small" href="https://tal.3475.web.id" target="_blank" rel="noopener noreferrer">
-							<span data-i18n="link_tal">Battle Events</span>
-						</a>
-						<a class="list-item list-item-small" href="https://transfer.3475.web.id" target="_blank" rel="noopener noreferrer">
-							<span data-i18n="link_transfer_portal">Transfer Portal</span>
-						</a>
-						<a class="list-item list-item-small event-records-menu-link" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer">
-							<span data-i18n="link_leaderboard">Event Records</span>
-						</a>
-						<a class="list-item list-item-small" href="https://calc.3475.web.id" target="_blank" rel="noopener noreferrer">
-							<span data-i18n="link_wos_tool">WoS Tool</span>
-						</a>
+				<div class="dashboard-welcome" aria-label="State 3475 dashboard">
+					<div class="dashboard-welcome-copy">
+						<span class="dashboard-eyebrow">WELCOME TO</span>
+						<h2>STATE <strong>3475</strong></h2>
+						<p data-i18n="page_subtitle_menu">Select an option below</p>
 					</div>
+					<div class="dashboard-emblem" aria-hidden="true">3475</div>
 				</div>
-
+				<div id="main-menu-view">
+					<div class="dashboard-section-heading">
+						<div><span class="dashboard-section-kicker">YOUR COMMAND CENTER</span><h2>Game Tools &amp; Records</h2></div>
+						<span class="dashboard-state-chip"><span></span> STATE 3475</span>
+					</div>
+					<div class="external-link-container dashboard-menu-grid" id="main-menu-links">
+						<button type="button" class="list-item list-item-small menu-card menu-card-primary" onclick="showMinisterReservationMenu()"><span class="menu-card-icon" aria-hidden="true">👑</span><span class="menu-card-label" data-i18n="link_minister_reservation">Minister Reservation</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
+						<button type="button" class="list-item list-item-small menu-card" id="svs-enemies-menu-btn" onclick="showSvSEnemiesMenu()"><span class="menu-card-icon" aria-hidden="true">⚔️</span><span class="menu-card-label" id="svs-enemies-menu-label" data-i18n="link_svs_enemies">SvS Enemies</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
+						<button type="button" class="list-item list-item-small menu-card" onclick="showSvSRecordMenu()"><span class="menu-card-icon" aria-hidden="true">📜</span><span class="menu-card-label">SvS Record</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
+						<a class="list-item list-item-small menu-card" href="https://tal.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">🏆</span><span class="menu-card-label" data-i18n="link_tal">Battle Events</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
+						<a class="list-item list-item-small menu-card" href="https://transfer.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">🛡️</span><span class="menu-card-label" data-i18n="link_transfer_portal">Transfer Portal</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
+						<a class="list-item list-item-small menu-card event-records-menu-link" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">📊</span><span class="menu-card-label" data-i18n="link_leaderboard">Event Records</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
+						<a class="list-item list-item-small menu-card" href="https://calc.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">🧰</span><span class="menu-card-label" data-i18n="link_wos_tool">WoS Tool</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
+					</div>
+					<button type="button" class="dashboard-whatsnew" onclick="openWhatsNewModal()"><span class="dashboard-whatsnew-icon" aria-hidden="true">✨</span><span><strong data-i18n="whatsnew_btn">What’s New?</strong><small>See the latest State 3475 updates</small></span><span class="dashboard-whatsnew-arrow" aria-hidden="true">→</span></button>
+				</div>
 				<div id="svs-enemies-view" class="hidden">
 					<button type="button" class="btn-back action-no-bottom" onclick="showMainMenu()" data-i18n="btn_back_main_menu">&lt; Back to menu</button>
 					<div class="svs-en-header-row">
