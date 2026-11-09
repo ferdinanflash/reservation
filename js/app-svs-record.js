@@ -13,6 +13,7 @@
   const fmt = (v) => Number(v || 0).toLocaleString();
   const signed = (v) => Number(v || 0) > 0 ? '+' + fmt(v) : Number(v || 0) < 0 ? '−' + fmt(Math.abs(v)) : '0';
   const colors = {Conquered:'conquered',Defended:'defended',Repelled:'repelled','Castle lost':'lost'};
+  const resultLabel = (value) => tr(({Conquered:'svsr_conquered',Defended:'svsr_defended',Repelled:'svsr_repelled','Castle lost':'svsr_castle_lost'})[value] || 'svsr_conquered');
   function client(){ return typeof getSupabase === 'function' ? getSupabase() : null; }
   function dateLabel(v){ if(!v) return '—'; return new Date(v+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
   function showSvSRecordMenu(){
@@ -30,8 +31,8 @@
     list.innerHTML=rows.map(r=>{
       const side=(r.side||'ATK').toUpperCase();
       return '<article class="svsr-card '+(colors[r.result]||'lost')+'">'+
-        '<div class="svsr-main"><div class="svsr-meta"><span class="svsr-side '+(side==='DEF'?'def':'atk')+'">'+esc(side)+'</span><strong class="svsr-server">S'+esc(r.server_id)+'</strong><span class="svsr-result">'+(r.result==='Conquered'?'👑 ':'')+esc(r.result)+'</span><span class="svsr-opponent">'+esc(r.opponent||'')+'</span></div>'+
-        '<div class="svsr-scores"><div><small>PREP</small><b>'+fmt(r.prep_score)+'</b><em class="'+(Number(r.prep_delta)>=0?'positive':'negative')+'">'+signed(r.prep_delta)+'</em></div><div><small>BATTLE</small><b>'+fmt(r.battle_score)+'</b><em class="'+(Number(r.battle_delta)>=0?'positive':'negative')+'">'+signed(r.battle_delta)+'</em></div></div></div>'+
+        '<div class="svsr-main"><div class="svsr-meta"><span class="svsr-side '+(side==='DEF'?'def':'atk')+'">'+esc(side)+'</span><strong class="svsr-server">S'+esc(r.server_id)+'</strong><span class="svsr-result">'+(r.result==='Conquered'?'👑 ':'')+esc(resultLabel(r.result))+'</span><span class="svsr-opponent">'+esc(r.opponent||'')+'</span></div>'+
+        '<div class="svsr-scores"><div><small>'+esc(tr('svsr_prep'))+'</small><b>'+fmt(r.prep_score)+'</b><em class="'+(Number(r.prep_delta)>=0?'positive':'negative')+'">'+signed(r.prep_delta)+'</em></div><div><small>'+esc(tr('svsr_battle'))+'</small><b>'+fmt(r.battle_score)+'</b><em class="'+(Number(r.battle_delta)>=0?'positive':'negative')+'">'+signed(r.battle_delta)+'</em></div></div></div>'+
         '<time class="svsr-date">'+dateLabel(r.played_at)+'</time>'+
         ((typeof isAdmin !== 'undefined' && isAdmin)?'<button class="svsr-edit" type="button" onclick="editSvSRecord(\''+r.id+'\')" aria-label="'+esc(tr('svsr_edit'))+'">✎</button>':'')+
         '</article>';
@@ -41,30 +42,30 @@
   const HISTORY_URL = 'https://data.wosnerds.com/data/svs-history/svs-history-3001-3500.json';
   async function loadState3475History(){
     const host=$('svs-record-state-history'); if(!host || historyLoading) return;
-    historyLoading=true; host.innerHTML='<p class="svs-en-status">Loading State 3475 history…</p>';
+    historyLoading=true; host.innerHTML='<p class="svs-en-status">'+esc(tr('svsr_state_loading'))+'</p>';
     try{
       const response=await fetch(HISTORY_URL,{headers:{accept:'application/json, text/plain, */*'},credentials:'omit',mode:'cors'});
       if(!response.ok) throw new Error('HTTP '+response.status);
       const json=await response.json(), dataset=(json && json['svs-data-per-state']) || json || {}, own=dataset['3475'] || dataset[3475] || {};
       state3475History=Object.keys(own).map(date=>{const m=own[date]||{};return {date,opponent:Number(m['opposition-state'])||null,hadMatch:m['had-svs-match']!==false,wonPrep:!!m['won-prep'],wonCastle:!!m['won-castle']};}).filter(r=>r.hadMatch).sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);
       renderState3475History();
-    }catch(error){console.error('State 3475 SvS history:',error);host.innerHTML='<p class="svs-en-status svs-en-error">Could not load State 3475 historical SvS results. Please try again.</p><button type="button" class="svs-en-retry" onclick="refreshState3475SvSHistory()">Retry</button>';}
+    }catch(error){console.error('State 3475 SvS history:',error);host.innerHTML='<p class="svs-en-status svs-en-error">'+esc(tr('svsr_state_load_failed'))+'</p><button type="button" class="svs-en-retry" onclick="refreshState3475SvSHistory()">'+esc(tr('svsr_retry'))+'</button>';}
     finally{historyLoading=false;}
   }
   function renderState3475History(){
     const host=$('svs-record-state-history');if(!host)return;
-    if(!state3475History.length){host.innerHTML='<p class="svs-en-status">No historical SvS results found for State 3475.</p>';return;}
+    if(!state3475History.length){host.innerHTML='<p class="svs-en-status">'+esc(tr('svsr_state_empty'))+'</p>';return;}
     const pw=state3475History.filter(r=>r.wonPrep).length,pl=state3475History.length-pw,cw=state3475History.filter(r=>r.wonCastle).length,cl=state3475History.length-cw;
     const body=state3475History.map(r=>'<tr><td>'+esc(dateLabel(r.date))+'</td><td class="st-num">'+(r.opponent?'S'+esc(r.opponent):'—')+'</td><td><span class="svs-en-result '+(r.wonPrep?'is-win':'is-loss')+'">'+(r.wonPrep?tr('svsr_win'):tr('svsr_loss'))+'</span></td><td><span class="svs-en-result '+(r.wonCastle?'is-win':'is-loss')+'">'+(r.wonCastle?tr('svsr_win'):tr('svsr_loss'))+'</span></td></tr>').join('');
-    host.innerHTML='<div class="svs-en-record-summary"><span>Prep: <strong class="svs-en-win-text">'+pw+'</strong>–<strong class="svs-en-loss-text">'+pl+'</strong></span><span>Castle: <strong class="svs-en-win-text">'+cw+'</strong>–<strong class="svs-en-loss-text">'+cl+'</strong></span><span>Matches: <strong>'+state3475History.length+'</strong></span></div><div class="svs-en-table-wrap"><table class="svs-en-table"><thead><tr><th>Date</th><th class="st-num">Opponent</th><th>Prep</th><th>Castle</th></tr></thead><tbody>'+body+'</tbody></table></div>';
+    host.innerHTML='<div class="svs-en-record-summary"><span>'+esc(tr('svsr_prep'))+': <strong class="svs-en-win-text">'+pw+'</strong>–<strong class="svs-en-loss-text">'+pl+'</strong></span><span>'+esc(tr('svsr_battle'))+': <strong class="svs-en-win-text">'+cw+'</strong>–<strong class="svs-en-loss-text">'+cl+'</strong></span><span>'+esc(tr('svsr_matches'))+': <strong>'+state3475History.length+'</strong></span></div><div class="svs-en-table-wrap"><table class="svs-en-table"><thead><tr><th>'+esc(tr('svsr_date'))+'</th><th class="st-num">'+esc(tr('svsr_opponent'))+'</th><th>'+esc(tr('svsr_prep'))+'</th><th>'+esc(tr('svsr_battle'))+'</th></tr></thead><tbody>'+body+'</tbody></table></div>';
   }
   window.refreshState3475SvSHistory=()=>{state3475History=[];loadState3475History();};
 
   async function load(){
     const c=client(); if(!c) return;
-    const list=$('svs-record-list'); if(list&&!rows.length) list.innerHTML='<p class="svsr-loading">Loading SvS records…</p>';
+    const list=$('svs-record-list'); if(list&&!rows.length) list.innerHTML='<p class="svsr-loading">'+esc(tr('svsr_loading'))+'</p>';
     const {data,error}=await c.from(TABLE).select('*').order('played_at',{ascending:false}).order('created_at',{ascending:false});
-    if(error){console.error('SvS records load:',error); if(list) list.innerHTML='<p class="svsr-error">Could not load records. Run the SvS Record SQL migration in Supabase first.</p>';return;}
+    if(error){console.error('SvS records load:',error); if(list) list.innerHTML='<p class="svsr-error">'+esc(tr('svsr_load_failed'))+'</p>';return;}
     rows=data||[]; render();
   }
   function openForm(row){
