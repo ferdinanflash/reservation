@@ -8,6 +8,7 @@
   let state3475History = [];
   let historyLoading = false;
   let channel = null;
+  const tr = (key) => typeof t === 'function' ? t(key) : key;
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const fmt = (v) => Number(v || 0).toLocaleString();
   const signed = (v) => Number(v || 0) > 0 ? '+' + fmt(v) : Number(v || 0) < 0 ? '−' + fmt(Math.abs(v)) : '0';
@@ -32,7 +33,7 @@
         '<div class="svsr-main"><div class="svsr-meta"><span class="svsr-side '+(side==='DEF'?'def':'atk')+'">'+esc(side)+'</span><strong class="svsr-server">S'+esc(r.server_id)+'</strong><span class="svsr-result">'+(r.result==='Conquered'?'👑 ':'')+esc(r.result)+'</span><span class="svsr-opponent">'+esc(r.opponent||'')+'</span></div>'+
         '<div class="svsr-scores"><div><small>PREP</small><b>'+fmt(r.prep_score)+'</b><em class="'+(Number(r.prep_delta)>=0?'positive':'negative')+'">'+signed(r.prep_delta)+'</em></div><div><small>BATTLE</small><b>'+fmt(r.battle_score)+'</b><em class="'+(Number(r.battle_delta)>=0?'positive':'negative')+'">'+signed(r.battle_delta)+'</em></div></div></div>'+
         '<time class="svsr-date">'+dateLabel(r.played_at)+'</time>'+
-        ((typeof isAdmin !== 'undefined' && isAdmin)?'<button class="svsr-edit" type="button" onclick="editSvSRecord(\''+r.id+'\')" aria-label="Edit record">✎</button>':'')+
+        ((typeof isAdmin !== 'undefined' && isAdmin)?'<button class="svsr-edit" type="button" onclick="editSvSRecord(\''+r.id+'\')" aria-label="'+esc(tr('svsr_edit'))+'">✎</button>':'')+
         '</article>';
     }).join('');
   }
@@ -54,7 +55,7 @@
     const host=$('svs-record-state-history');if(!host)return;
     if(!state3475History.length){host.innerHTML='<p class="svs-en-status">No historical SvS results found for State 3475.</p>';return;}
     const pw=state3475History.filter(r=>r.wonPrep).length,pl=state3475History.length-pw,cw=state3475History.filter(r=>r.wonCastle).length,cl=state3475History.length-cw;
-    const body=state3475History.map(r=>'<tr><td>'+esc(dateLabel(r.date))+'</td><td class="st-num">'+(r.opponent?'S'+esc(r.opponent):'—')+'</td><td><span class="svs-en-result '+(r.wonPrep?'is-win':'is-loss')+'">'+(r.wonPrep?'Win':'Loss')+'</span></td><td><span class="svs-en-result '+(r.wonCastle?'is-win':'is-loss')+'">'+(r.wonCastle?'Win':'Loss')+'</span></td></tr>').join('');
+    const body=state3475History.map(r=>'<tr><td>'+esc(dateLabel(r.date))+'</td><td class="st-num">'+(r.opponent?'S'+esc(r.opponent):'—')+'</td><td><span class="svs-en-result '+(r.wonPrep?'is-win':'is-loss')+'">'+(r.wonPrep?tr('svsr_win'):tr('svsr_loss'))+'</span></td><td><span class="svs-en-result '+(r.wonCastle?'is-win':'is-loss')+'">'+(r.wonCastle?tr('svsr_win'):tr('svsr_loss'))+'</span></td></tr>').join('');
     host.innerHTML='<div class="svs-en-record-summary"><span>Prep: <strong class="svs-en-win-text">'+pw+'</strong>–<strong class="svs-en-loss-text">'+pl+'</strong></span><span>Castle: <strong class="svs-en-win-text">'+cw+'</strong>–<strong class="svs-en-loss-text">'+cl+'</strong></span><span>Matches: <strong>'+state3475History.length+'</strong></span></div><div class="svs-en-table-wrap"><table class="svs-en-table"><thead><tr><th>Date</th><th class="st-num">Opponent</th><th>Prep</th><th>Castle</th></tr></thead><tbody>'+body+'</tbody></table></div>';
   }
   window.refreshState3475SvSHistory=()=>{state3475History=[];loadState3475History();};
@@ -68,7 +69,7 @@
   }
   function openForm(row){
     if(typeof isAdmin === 'undefined' || !isAdmin){return;}
-    $('svsr-form-title').textContent=row?'Edit SvS Record':'Add SvS Record';
+    $('svsr-form-title').textContent=row?tr('svsr_edit_title'):tr('svsr_add_title');
     $('svsr-id').value=row?.id||'';
     $('svsr-server').value=row?.server_id||'';
     $('svsr-side').value=row?.side||'ATK';
@@ -87,20 +88,20 @@
     const c=client(); if(!c) return;
     const id=$('svsr-id').value;
     const payload={server_id:$('svsr-server').value.trim().replace(/^S/i,''),side:$('svsr-side').value,result:$('svsr-result').value,opponent:$('svsr-opponent').value.trim(),prep_score:Number($('svsr-prep').value||0),prep_delta:Number($('svsr-prep-delta').value||0),battle_score:Number($('svsr-battle').value||0),battle_delta:Number($('svsr-battle-delta').value||0),played_at:$('svsr-date').value};
-    if(!payload.server_id||!payload.played_at){showToast('Server and date are required','warning');return;}
-    const btn=$('svsr-save-btn'); if(typeof setButtonBusy==='function') setButtonBusy(btn,true,'Saving…');
+    if(!payload.server_id||!payload.played_at){showToast(tr('svsr_required'),'warning');return;}
+    const btn=$('svsr-save-btn'); if(typeof setButtonBusy==='function') setButtonBusy(btn,true,tr('svsr_saving'));
     const q=id?c.from(TABLE).update(payload).eq('id',id):c.from(TABLE).insert(payload);
     const {error}=await q;
     if(typeof setButtonBusy==='function') setButtonBusy(btn,false);
-    if(error){console.error(error);showToast('Could not save SvS record. Check Supabase migration and permissions.','error');return;}
-    closeForm(); showToast('SvS record saved','success'); await load();
+    if(error){console.error(error);showToast(tr('svsr_save_failed'),'error');return;}
+    closeForm(); showToast(tr('svsr_saved'),'success'); await load();
   }
   async function remove(){
     if(typeof isAdmin === 'undefined' || !isAdmin) return;
-    const id=$('svsr-id').value; if(!id||!confirm('Delete this SvS record?')) return;
+    const id=$('svsr-id').value; if(!id||!confirm(tr('svsr_delete_confirm'))) return;
     const {error}=await client().from(TABLE).delete().eq('id',id);
-    if(error){showToast('Could not delete record','error');return;}
-    closeForm();showToast('SvS record deleted','success');await load();
+    if(error){showToast(tr('svsr_delete_failed'),'error');return;}
+    closeForm();showToast(tr('svsr_deleted'),'success');await load();
   }
   function closeForm(){ $('svs-record-form-modal')?.classList.add('hidden'); }
   window.showSvSRecordMenu=showSvSRecordMenu;
