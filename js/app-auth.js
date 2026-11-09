@@ -73,6 +73,20 @@ function presidentPanelFinishSVS() {
     handleFinishSVS();
 }
 
+// Opens the standalone SvS Record manager from the President Panel.
+// Keep this wrapper in the always-loaded auth script so the inline panel
+// action remains available even if the optional SvS Record module loads late.
+function presidentPanelOpenSvSRecords() {
+    if (!isAdmin) return;
+    closePresidentPanelModal();
+    if (typeof window.showSvSRecordMenu === 'function') {
+        window.showSvSRecordMenu();
+    } else {
+        console.error('SvS Record module is not available. Check js/app-svs-record.js loading.');
+        showToast('SvS Record could not be opened. Please refresh the page.', 'error');
+    }
+}
+
 function presidentPanelOpenAnnouncement() {
     closePresidentPanelModal();
     openAnnouncementModal();
