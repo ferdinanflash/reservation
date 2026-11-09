@@ -632,9 +632,9 @@ function openDonateModal() {
     if (!modal) return;
     donateModalTrigger = document.activeElement;
     const hint = document.getElementById('donate-copy-hint');
-    if (hint) hint.textContent = 'Click to copy 👻';
+    if (hint) hint.textContent = t('donate_copy_hint');
     const discordHint = document.getElementById('donate-discord-hint');
-    if (discordHint) discordHint.textContent = 'Click to copy 👻';
+    if (discordHint) discordHint.textContent = t('donate_copy_hint');
     modal.classList.remove('hidden');
     document.body.classList.add('redeem-modal-open');
 }
@@ -670,8 +670,8 @@ async function copyTextToClipboard(text) {
 function showCopyHint(hintId, ok) {
     const hint = document.getElementById(hintId);
     if (!hint) return;
-    hint.textContent = ok ? '✓ Copied! 🎉' : 'Copy failed, please copy manually';
-    setTimeout(() => { hint.textContent = 'Click to copy 👻'; }, 2000);
+    hint.textContent = ok ? t('donate_copied') : t('donate_copy_failed');
+    setTimeout(() => { hint.textContent = t('donate_copy_hint'); }, 2000);
 }
 
 async function copyDonateId() {
