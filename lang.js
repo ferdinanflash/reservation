@@ -4423,6 +4423,73 @@
         if (e.key === 'Escape') closeLangDropdown();
     });
 
+
+    // Main dashboard and navigation labels — keep every visible menu heading localized.
+    Object.assign(TRANSLATIONS.en, {
+        welcome_to: "WELCOME TO",
+        main_menu_title: "Main Menu",
+        main_menu_subtitle: "Everything this State has to offer",
+        link_svs_record: "SvS Record",
+        link_leaderboard: "Events Record",
+        whatsnew_13_desc: "Desktop buttons are now arranged in three balanced rows. The Event Leaderboard Record button is now named Events Record and matches the WoS Tool button size."
+    });
+    Object.assign(TRANSLATIONS.id, {
+        welcome_to: "SELAMAT DATANG DI",
+        main_menu_title: "Menu Utama",
+        main_menu_subtitle: "Semua yang ditawarkan oleh State ini",
+        link_svs_record: "Riwayat SvS",
+        link_leaderboard: "Catatan Event",
+        whatsnew_13_desc: "Tombol desktop kini disusun dalam tiga baris yang seimbang. Tombol Event Leaderboard Record kini bernama Events Record dan memiliki ukuran yang sama dengan tombol WoS Tool."
+    });
+    Object.assign(TRANSLATIONS.it, {
+        welcome_to: "BENVENUTO IN",
+        main_menu_title: "Menu principale",
+        main_menu_subtitle: "Tutto ciò che questo Stato ha da offrire",
+        link_svs_record: "Registro SvS",
+        link_leaderboard: "Registri eventi",
+        whatsnew_13_desc: "I pulsanti desktop sono ora disposti in tre righe equilibrate. Il pulsante Event Leaderboard Record ora si chiama Events Record e ha le stesse dimensioni del pulsante WoS Tool."
+    });
+    Object.assign(TRANSLATIONS.ph, {
+        welcome_to: "MALIGAYANG PAGDATING SA",
+        main_menu_title: "Pangunahing Menu",
+        main_menu_subtitle: "Lahat ng maiaalok ng State na ito",
+        link_svs_record: "Kasaysayan ng SvS",
+        link_leaderboard: "Mga Tala ng Events",
+        whatsnew_13_desc: "Nakaayos na ngayon ang mga desktop button sa tatlong balanseng hanay. Pinalitan na ang pangalan ng Event Leaderboard Record button ng Events Record at kapareho na nito ang laki ng WoS Tool button."
+    });
+    Object.assign(TRANSLATIONS.cn, {
+        welcome_to: "欢迎来到",
+        main_menu_title: "主菜单",
+        main_menu_subtitle: "本州为你提供的所有功能",
+        link_svs_record: "SvS 记录",
+        link_leaderboard: "活动记录",
+        whatsnew_13_desc: "桌面端按钮现在排列为三个均衡的行。Event Leaderboard Record 按钮已更名为 Events Record，尺寸与 WoS Tool 按钮一致。"
+    });
+    Object.assign(TRANSLATIONS.th, {
+        welcome_to: "ยินดีต้อนรับสู่",
+        main_menu_title: "เมนูหลัก",
+        main_menu_subtitle: "ทุกสิ่งที่รัฐนี้มีให้คุณ",
+        link_svs_record: "บันทึก SvS",
+        link_leaderboard: "บันทึกกิจกรรม",
+        whatsnew_13_desc: "ปุ่มบนเดสก์ท็อปจัดเรียงเป็นสามแถวอย่างสมดุลแล้ว ปุ่ม Event Leaderboard Record เปลี่ยนชื่อเป็น Events Record และมีขนาดเท่ากับปุ่ม WoS Tool"
+    });
+    Object.assign(TRANSLATIONS.ru, {
+        welcome_to: "ДОБРО ПОЖАЛОВАТЬ В",
+        main_menu_title: "Главное меню",
+        main_menu_subtitle: "Всё, что предлагает этот штат",
+        link_svs_record: "История SvS",
+        link_leaderboard: "Записи событий",
+        whatsnew_13_desc: "Кнопки на компьютерах теперь расположены в трёх сбалансированных рядах. Кнопка Event Leaderboard Record переименована в Events Record и теперь имеет тот же размер, что и WoS Tool."
+    });
+    Object.assign(TRANSLATIONS.fr, {
+        welcome_to: "BIENVENUE À",
+        main_menu_title: "Menu principal",
+        main_menu_subtitle: "Tout ce que cet État vous propose",
+        link_svs_record: "Historique SvS",
+        link_leaderboard: "Archives des événements",
+        whatsnew_13_desc: "Sur ordinateur, les boutons sont désormais répartis sur trois rangées équilibrées. Le bouton Event Leaderboard Record est renommé Events Record et adopte la même taille que le bouton WoS Tool."
+    });
+
     // Expose globally so script.js / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
