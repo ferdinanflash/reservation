@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-10-18';
+			var APP_BUILD = '2026-11-10-19';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -174,7 +174,7 @@
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer=""></script>
 		<script src="common.js?v=9" defer=""></script>
-		<script src="lang.js?v=59" defer=""></script>
+		<script src="lang.js?v=60" defer=""></script>
 					<script src="js/app-core.js?v=56" defer=""></script>
 					<script src="js/app-auth.js?v=55" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
@@ -425,7 +425,7 @@
 
 				<div class="dashboard-welcome" aria-label="State 3475 dashboard">
 					<div class="dashboard-welcome-copy">
-						<span class="dashboard-eyebrow">WELCOME TO</span>
+						<span class="dashboard-eyebrow" data-i18n="welcome_to">WELCOME TO</span>
 						<h2>STATE <strong>3475</strong></h2>
 						<p data-i18n="page_subtitle_menu">Select an option below</p>
 					</div>
@@ -433,16 +433,16 @@
 				</div>
 				<div id="main-menu-view">
 					<div class="dashboard-section-heading">
-						<div><h2 class="dashboard-main-title">Main Menu</h2><p class="dashboard-main-subtitle">This state provide to you</p></div>
+						<div><h2 class="dashboard-main-title" data-i18n="main_menu_title">Main Menu</h2><p class="dashboard-main-subtitle" data-i18n="main_menu_subtitle">Everything this State has to offer</p></div>
 						<span class="dashboard-state-chip"><span></span> STATE 3475</span>
 					</div>
 					<div class="external-link-container dashboard-menu-grid" id="main-menu-links">
 						<button type="button" class="list-item list-item-small menu-card menu-card-primary" onclick="showMinisterReservationMenu()"><span class="menu-card-icon" aria-hidden="true">👑</span><span class="menu-card-label" data-i18n="link_minister_reservation">Minister Reservation</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
 						<button type="button" class="list-item list-item-small menu-card" id="svs-enemies-menu-btn" onclick="showSvSEnemiesMenu()"><span class="menu-card-icon" aria-hidden="true">⚔️</span><span class="menu-card-label" id="svs-enemies-menu-label" data-i18n="link_svs_enemies">SvS Enemies</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
-						<button type="button" class="list-item list-item-small menu-card" onclick="showSvSRecordMenu()"><span class="menu-card-icon" aria-hidden="true">📜</span><span class="menu-card-label">SvS Record</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
+						<button type="button" class="list-item list-item-small menu-card" onclick="showSvSRecordMenu()"><span class="menu-card-icon" aria-hidden="true">📜</span><span class="menu-card-label" data-i18n="link_svs_record">SvS Record</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
 						<a class="list-item list-item-small menu-card" href="https://tal.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">🏆</span><span class="menu-card-label" data-i18n="link_tal">Battle Events</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
 						<a class="list-item list-item-small menu-card" href="https://transfer.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">🛡️</span><span class="menu-card-label" data-i18n="link_transfer_portal">Transfer Portal</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
-						<a class="list-item list-item-small menu-card event-records-menu-link" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">📊</span><span class="menu-card-label" data-i18n="link_leaderboard">Event Records</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
+						<a class="list-item list-item-small menu-card event-records-menu-link" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">📊</span><span class="menu-card-label" data-i18n="link_leaderboard">Events Record</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
 						<a class="list-item list-item-small menu-card" href="https://calc.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">🧰</span><span class="menu-card-label" data-i18n="link_wos_tool">WoS Tool</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
 					</div>
 					<button type="button" class="dashboard-whatsnew" onclick="openWhatsNewModal()"><span class="dashboard-whatsnew-icon" aria-hidden="true">✨</span><span><strong data-i18n="whatsnew_btn">What’s New?</strong><small>See the latest State 3475 updates</small></span><span class="dashboard-whatsnew-arrow" aria-hidden="true">→</span></button>
@@ -709,13 +709,6 @@
 				<h2 id="whatsnew-modal-title" class="apply-title" data-i18n="whatsnew_title">What's New?</h2>
 				<p class="whatsnew-date" data-i18n="whatsnew_date">Last Update: 10 Nov 2026</p>
 				<ul class="whatsnew-list">
-					<li class="whatsnew-item">
-						<span class="whatsnew-icon" aria-hidden="true">🌐</span>
-						<div class="whatsnew-body">
-							<div class="whatsnew-item-title"><span class="whatsnew-badge whatsnew-badge-new" data-i18n="whatsnew_badge_new">New</span><span data-i18n="whatsnew_16_title"></span></div>
-							<p class="whatsnew-item-desc" data-i18n="whatsnew_16_desc"></p>
-						</div>
-					</li>
 					<li class="whatsnew-item">
 						<span class="whatsnew-icon" aria-hidden="true">🌐</span>
 						<div class="whatsnew-body">
