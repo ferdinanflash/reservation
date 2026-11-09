@@ -8,6 +8,7 @@ function showMinisterReservationMenu() {
     document.getElementById('main-menu-view').classList.add('hidden');
     const enemies = document.getElementById('svs-enemies-view');
     if (enemies) enemies.classList.add('hidden');
+    document.getElementById('svs-record-view')?.classList.add('hidden');
     document.getElementById('minister-reservation-view').classList.remove('hidden');
 }
 
@@ -15,6 +16,7 @@ function showMainMenu() {
     document.getElementById('minister-reservation-view').classList.add('hidden');
     const enemies = document.getElementById('svs-enemies-view');
     if (enemies) enemies.classList.add('hidden');
+    document.getElementById('svs-record-view')?.classList.add('hidden');
     document.getElementById('main-menu-view').classList.remove('hidden');
 }
 
