@@ -285,6 +285,17 @@
 		if (!container || !canvas) return;
 		currentContainer = container;
 
+		// Protect banner artwork from the browser's image/video context menu,
+		// drag-to-save and long-press callout on touch devices.
+		if (!container.dataset.mediaProtectionReady) {
+			container.dataset.mediaProtectionReady = '1';
+			['contextmenu', 'dragstart', 'selectstart'].forEach(eventName => {
+				container.addEventListener(eventName, event => {
+					if (event.cancelable) event.preventDefault();
+				}, true);
+			});
+		}
+
 		// Set class SEBELUM membaca tema, supaya CSS & partikel sinkron.
 		let theme = applySeasonalTheme(container);
 
