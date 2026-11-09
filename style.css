@@ -1564,13 +1564,17 @@ body.halloween-theme {
     margin-top: 16px;
 }
 
-/* Minister Reservation + WoS Tool = full-width; the middle 4 portals sit in a 2x2 grid. */
-.external-link-container .list-item-small:nth-child(1),
-.external-link-container .list-item-small:nth-child(5),
-.external-link-container .list-item-small:nth-child(6) {
+/* Desktop layout: Minister Reservation full-width, then three evenly paired rows.
+   Keep selectors aligned with the current seven-button DOM order. */
+.external-link-container .list-item-small:nth-child(1) {
     grid-column: 1 / -1;
     padding: 14px 16px;
     font-size: 0.95rem;
+}
+.external-link-container .list-item-small:nth-child(n + 2) {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .list-item-small {
