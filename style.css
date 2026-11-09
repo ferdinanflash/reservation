@@ -7319,9 +7319,11 @@ body.bluefire-theme .dashboard-welcome { --dashboard-accent:#18dfff; --dashboard
 body.thanksgiving-theme .dashboard-welcome { --dashboard-accent:#ff9a2e; --dashboard-accent-soft:#a0cdff; }
 
 /* Dashboard accents reuse the exact seasonal palette of the former Portal title. */
-.dashboard-welcome h2 {
+.dashboard-welcome {
     --pt-base:#ffe3b0; --pt-hot:#ff8a1f;
     --pt-g1:rgba(255,138,31,.65); --pt-g2:rgba(255,70,0,.35);
+}
+.dashboard-welcome h2 {
     background-image:linear-gradient(100deg,var(--pt-base) 0%,var(--pt-base) 36%,var(--pt-hot) 44%,#fff 50%,var(--pt-hot) 56%,var(--pt-base) 64%,var(--pt-base) 100%);
     background-size:300% 100%;
     background-position:100% 0;
@@ -7333,20 +7335,23 @@ body.thanksgiving-theme .dashboard-welcome { --dashboard-accent:#ff9a2e; --dashb
     filter:drop-shadow(0 0 6px var(--pt-g1)) drop-shadow(0 0 16px var(--pt-g2)) drop-shadow(0 2px 3px rgba(0,0,0,.85));
     animation:portalTitleSheen 6s ease-in-out infinite,portalTitleFlicker 3.1s linear infinite;
 }
-body.halloween-theme .dashboard-welcome h2 { --pt-base:#ffe3b0; --pt-hot:#ff8a1f; --pt-g1:rgba(255,138,31,.65); --pt-g2:rgba(181,107,255,.38); }
-body.christmas-theme .dashboard-welcome h2 { --pt-base:#fff1cf; --pt-hot:#ff4d5a; --pt-g1:rgba(255,77,90,.60); --pt-g2:rgba(63,209,138,.36); }
-body.valentine-theme .dashboard-welcome h2 { --pt-base:#ffe3ef; --pt-hot:#ff5c9a; --pt-g1:rgba(255,92,154,.62); --pt-g2:rgba(255,61,110,.36); }
-body.cny-theme .dashboard-welcome h2 { --pt-base:#fff0c8; --pt-hot:#ff4a3d; --pt-g1:rgba(255,74,61,.62); --pt-g2:rgba(255,210,94,.36); }
-body.eid-theme .dashboard-welcome h2 { --pt-base:#fff4d0; --pt-hot:#3fd18a; --pt-g1:rgba(63,209,138,.58); --pt-g2:rgba(255,210,94,.36); }
-body.midautumn-theme .dashboard-welcome h2 { --pt-base:#fff4d0; --pt-hot:#ffb347; --pt-g1:rgba(255,179,71,.62); --pt-g2:rgba(201,160,255,.36); }
-body.bluefire-theme .dashboard-welcome h2 { --pt-base:#e5fcff; --pt-hot:#18dfff; --pt-g1:rgba(24,223,255,.62); --pt-g2:rgba(11,114,255,.40); }
-body.thanksgiving-theme .dashboard-welcome h2 { --pt-base:#fff1d6; --pt-hot:#ff9a2e; --pt-g1:rgba(255,154,46,.62); --pt-g2:rgba(160,205,255,.36); }
+body.halloween-theme .dashboard-welcome { --pt-base:#ffe3b0; --pt-hot:#ff8a1f; --pt-g1:rgba(255,138,31,.65); --pt-g2:rgba(181,107,255,.38); }
+body.christmas-theme .dashboard-welcome { --pt-base:#fff1cf; --pt-hot:#ff4d5a; --pt-g1:rgba(255,77,90,.60); --pt-g2:rgba(63,209,138,.36); }
+body.valentine-theme .dashboard-welcome { --pt-base:#ffe3ef; --pt-hot:#ff5c9a; --pt-g1:rgba(255,92,154,.62); --pt-g2:rgba(255,61,110,.36); }
+body.cny-theme .dashboard-welcome { --pt-base:#fff0c8; --pt-hot:#ff4a3d; --pt-g1:rgba(255,74,61,.62); --pt-g2:rgba(255,210,94,.36); }
+body.eid-theme .dashboard-welcome { --pt-base:#fff4d0; --pt-hot:#3fd18a; --pt-g1:rgba(63,209,138,.58); --pt-g2:rgba(255,210,94,.36); }
+body.midautumn-theme .dashboard-welcome { --pt-base:#fff4d0; --pt-hot:#ffb347; --pt-g1:rgba(255,179,71,.62); --pt-g2:rgba(201,160,255,.36); }
+body.bluefire-theme .dashboard-welcome { --pt-base:#e5fcff; --pt-hot:#18dfff; --pt-g1:rgba(24,223,255,.62); --pt-g2:rgba(11,114,255,.40); }
+body.thanksgiving-theme .dashboard-welcome { --pt-base:#fff1d6; --pt-hot:#ff9a2e; --pt-g1:rgba(255,154,46,.62); --pt-g2:rgba(160,205,255,.36); }
 .dashboard-welcome h2 strong { color:inherit; -webkit-text-fill-color:transparent; }
 .dashboard-emblem {
     position:relative;
     isolation:isolate;
     overflow:visible;
+    color:var(--pt-base,#ffe3b0);
+    border-color:color-mix(in srgb,var(--pt-hot,#ff8a1f) 62%,transparent);
     background:radial-gradient(circle,color-mix(in srgb,var(--pt-hot,#ff8a1f) 30%,transparent),rgba(7,26,51,.48) 70%);
+    box-shadow:0 0 24px var(--pt-g1,rgba(255,138,31,.2)),inset 0 0 18px var(--pt-g2,rgba(255,70,0,.1));
     animation:dashboardEmblemBreathe 3.1s ease-in-out infinite;
 }
 .dashboard-emblem::before {
