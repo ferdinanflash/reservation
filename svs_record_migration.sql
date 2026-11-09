@@ -18,6 +18,8 @@ alter table public.svs_records enable row level security;
 drop policy if exists "SvS records are visible to everyone" on public.svs_records;
 create policy "SvS records are visible to everyone" on public.svs_records for select using (true);
 drop policy if exists "Authenticated users manage SvS records" on public.svs_records;
-create policy "Authenticated users manage SvS records" on public.svs_records for all to authenticated using (true) with check (true);
+create policy "President admins manage SvS records" on public.svs_records for all to authenticated
+  using (auth.jwt() ->> 'email' in ('president@3475-staff.internal', 'demon@3475-staff.internal', 'phoenix@3475-staff.internal'))
+  with check (auth.jwt() ->> 'email' in ('president@3475-staff.internal', 'demon@3475-staff.internal', 'phoenix@3475-staff.internal'));
 grant select on public.svs_records to anon, authenticated;
 grant insert, update, delete on public.svs_records to authenticated;
