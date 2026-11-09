@@ -7306,3 +7306,69 @@ body h1.page-title.portal-title {
 @media(max-width:560px){.dashboard-welcome{min-height:104px;padding:17px 18px;border-radius:14px}.dashboard-emblem{flex-basis:66px;width:66px;height:66px;font-size:.9rem}.external-link-container.dashboard-menu-grid{gap:9px}#main-menu-links>.menu-card{min-height:70px;gap:9px;padding:10px 11px}#main-menu-links>.menu-card .menu-card-icon{flex-basis:34px;width:34px;height:34px;font-size:1.08rem}#main-menu-links>.menu-card .menu-card-label{font-size:.78rem}#main-menu-links>.menu-card .menu-card-arrow{display:none}#main-menu-links>.menu-card-primary{min-height:76px;padding:12px 14px}#main-menu-links>.menu-card-primary .menu-card-icon{flex-basis:42px;width:42px;height:42px}.dashboard-section-heading{align-items:center}.dashboard-state-chip{font-size:.55rem;padding:5px 7px}}
 @media(max-width:360px){.dashboard-emblem{display:none}.external-link-container.dashboard-menu-grid{grid-template-columns:1fr}#main-menu-links>.menu-card-primary{grid-column:auto}.dashboard-state-chip{display:none}}
 @media(prefers-reduced-motion:reduce){.dashboard-whatsnew{transition:none}}
+
+/* Match the old Portal title's seasonal flame sheen/flicker on the State 3475 heading. */
+.dashboard-welcome h2 {
+    background-image: linear-gradient(100deg,var(--pt-base,#ffe3b0) 0%,var(--pt-base,#ffe3b0) 36%,var(--pt-hot,#ff8a1f) 44%,#fff 50%,var(--pt-hot,#ff8a1f) 56%,var(--pt-base,#ffe3b0) 64%,var(--pt-base,#ffe3b0) 100%);
+    background-size:300% 100%;
+    background-position:100% 0;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    color:transparent;
+    text-shadow:none;
+    filter:drop-shadow(0 0 6px var(--pt-g1,rgba(255,138,31,.65))) drop-shadow(0 0 16px var(--pt-g2,rgba(255,70,0,.35))) drop-shadow(0 2px 3px rgba(0,0,0,.85));
+    animation:portalTitleSheen 6s ease-in-out infinite,portalTitleFlicker 3.1s linear infinite;
+}
+.dashboard-welcome h2 strong { color:inherit; -webkit-text-fill-color:transparent; }
+.dashboard-emblem {
+    position:relative;
+    isolation:isolate;
+    overflow:visible;
+    background:radial-gradient(circle,rgba(245,158,11,.28),rgba(7,26,51,.42) 68%);
+    animation:dashboardEmblemBreathe 3.1s ease-in-out infinite;
+}
+.dashboard-emblem::before {
+    content:"";
+    position:absolute;
+    inset:-4px;
+    z-index:-1;
+    border-radius:50%;
+    background:conic-gradient(from 0deg,transparent 0 48%,#fff0bd 58%,#f59e0b 68%,transparent 78% 100%);
+    mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1px));
+    -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1px));
+    animation:dashboardEmblemOrbit 5s linear infinite;
+}
+.dashboard-emblem::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    pointer-events:none;
+    background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.65) 49%,transparent 68%);
+    background-size:240% 100%;
+    background-position:130% 0;
+    animation:portalTitleSheen 4.8s ease-in-out infinite;
+}
+.dashboard-main-title {
+    margin:0;
+    color:var(--t-text,#f8fafc);
+    font-size:clamp(1.2rem,2.8vw,1.55rem);
+    font-weight:900;
+    letter-spacing:.025em;
+}
+.dashboard-main-subtitle {
+    margin:4px 0 0;
+    color:var(--t-muted,#94a3b8);
+    font-size:.78rem;
+    font-weight:600;
+    letter-spacing:.02em;
+}
+@keyframes dashboardEmblemBreathe {
+    0%,100% { box-shadow:0 0 18px rgba(245,158,11,.16),inset 0 0 14px rgba(245,158,11,.08); transform:scale(1); }
+    50% { box-shadow:0 0 34px rgba(245,158,11,.34),inset 0 0 22px rgba(245,158,11,.2); transform:scale(1.045); }
+}
+@keyframes dashboardEmblemOrbit { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) {
+    .dashboard-welcome h2,.dashboard-emblem,.dashboard-emblem::before,.dashboard-emblem::after { animation:none!important; }
+}
