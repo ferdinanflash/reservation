@@ -41,7 +41,7 @@
     rows=data||[]; render();
   }
   function openForm(row){
-    if(!window.isAdmin){return;}
+    if(typeof isAdmin === 'undefined' || !isAdmin){return;}
     $('svsr-form-title').textContent=row?'Edit SvS Record':'Add SvS Record';
     $('svsr-id').value=row?.id||'';
     $('svsr-server').value=row?.server_id||'';
@@ -57,7 +57,7 @@
     $('svs-record-form-modal').classList.remove('hidden');
   }
   async function save(){
-    if(!window.isAdmin) return;
+    if(typeof isAdmin === 'undefined' || !isAdmin) return;
     const c=client(); if(!c) return;
     const id=$('svsr-id').value;
     const payload={server_id:$('svsr-server').value.trim().replace(/^S/i,''),side:$('svsr-side').value,result:$('svsr-result').value,opponent:$('svsr-opponent').value.trim(),prep_score:Number($('svsr-prep').value||0),prep_delta:Number($('svsr-prep-delta').value||0),battle_score:Number($('svsr-battle').value||0),battle_delta:Number($('svsr-battle-delta').value||0),played_at:$('svsr-date').value};
@@ -70,7 +70,7 @@
     closeForm(); showToast('SvS record saved','success'); await load();
   }
   async function remove(){
-    if(!window.isAdmin) return;
+    if(typeof isAdmin === 'undefined' || !isAdmin) return;
     const id=$('svsr-id').value; if(!id||!confirm('Delete this SvS record?')) return;
     const {error}=await client().from(TABLE).delete().eq('id',id);
     if(error){showToast('Could not delete record','error');return;}
@@ -83,7 +83,7 @@
   window.closeSvSRecordForm=closeForm;
   window.saveSvSRecord=save;
   window.deleteSvSRecord=remove;
-  window.presidentPanelOpenSvSRecords=()=>{if(!window.isAdmin)return;document.getElementById('president-panel-modal')?.classList.add('hidden');showSvSRecordMenu();};
+  window.presidentPanelOpenSvSRecords=()=>{if(typeof isAdmin === 'undefined' || !isAdmin)return;document.getElementById('president-panel-modal')?.classList.add('hidden');showSvSRecordMenu();};
   function init(){
     $('svs-record-refresh')?.addEventListener('click',load);
     const c=client(); if(c&&!channel){channel=c.channel('svs_records_changes').on('postgres_changes',{event:'*',schema:'public',table:TABLE},load).subscribe();}
