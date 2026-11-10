@@ -6,7 +6,7 @@ Automated daily searches for distinctive code fingerprints from
 
 ## What it does
 
-- Searches GitHub's public code index for six distinctive source fingerprints.
+- Searches GitHub's public code index for five distinctive source fingerprints.
 - Groups matches by external repository.
 - Flags a review candidate only when at least **two different fingerprints**
   appear in the same external repository.
@@ -29,7 +29,7 @@ GitHub requires authentication for code search.
 5. Open **Actions → 3475 Source Protection Monitor → Run workflow** to test it.
 
 GitHub limits authenticated code-search requests to 10 per minute; this workflow
-makes six fingerprint queries per run. See the [GitHub search API documentation](https://docs.github.com/en/rest/search/search).
+makes five fingerprint queries per run. See the [GitHub search API documentation](https://docs.github.com/en/rest/search/search).
 
 The workflow's built-in GITHUB_TOKEN opens an issue in this repository when
 potential matches are found. Its permissions are limited to contents: read
