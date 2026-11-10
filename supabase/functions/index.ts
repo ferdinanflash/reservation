@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // ================= REDEEM GIFT CODE (Edge Function) =================
 // Proxies the "Redeem Code" modal (index.html / js/app-extras.js) to
 // Century Games' own Whiteout Survival gift-code API. Two reasons this has
