@@ -6,8 +6,6 @@
     {"id":"svs-history-loader","file":"js/app-svs-record.js","query":"\"loadState3475History\"","description":"SvS Record history loader"},
     {"id":"enemy-state-config","file":"js/app-svs-enemies.js","query":"\"svs_enemies_kids\"","description":"SvS Enemies state configuration key"},
     {"id":"enemy-cache-refresh","file":"js/app-svs-enemies.js","query":"\"cacheRefreshAfterMs\"","description":"SvS Enemies cache refresh behavior"},
-    {"id":"reservation-stat-icons","file":"js/app-core.js","query":"\"STAT_ICON_SRC\"","description":"Reservation resource and speedup icon mapping"},
-    {"id":"atlas-proxy-cache","file":"supabase/functions/wosatlas-states/index.ts","query":"\"REFRESH_MIN_INTERVAL_MS\" \"detailFromPublicSite\"","description":"WoS Atlas Edge Function cache implementation"},
-    {"id":"source-watermark","file":"js/app-core.js","query":"\"3475 SOURCE OWNERSHIP\"","description":"Comment-only source ownership watermark"}
+    {"id":"reservation-stat-icons","file":"js/app-core.js","query":"\"STAT_ICON_SRC\"","description":"Reservation resource and speedup icon mapping"},    {"id":"source-watermark","file":"js/app-core.js","query":"\"3475 SOURCE OWNERSHIP\"","description":"Comment-only source ownership watermark"}
   ]
 }
