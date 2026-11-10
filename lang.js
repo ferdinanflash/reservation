@@ -4501,6 +4501,17 @@
     Object.assign(TRANSLATIONS.ru, { link_svs_enemies: "Противники SvS", link_tal_enemies: "Противники TAL" });
     Object.assign(TRANSLATIONS.fr, { link_svs_enemies: "Ennemis SvS", link_tal_enemies: "Ennemis TAL" });
 
+
+    // Latest web-interface maintenance update.
+    Object.assign(TRANSLATIONS.en, { whatsnew_date: "Last Update: 11 Nov 2026", whatsnew_17_title: "FIX Web Interface", whatsnew_17_desc: "Fixing UI (Icons, Animation, & Function)." });
+    Object.assign(TRANSLATIONS.id, { whatsnew_date: "Terakhir diperbarui: 11 Nov 2026", whatsnew_17_title: "Perbaikan Antarmuka Web", whatsnew_17_desc: "Perbaikan UI (Ikon, Animasi, & Fungsi)." });
+    Object.assign(TRANSLATIONS.it, { whatsnew_date: "Ultimo aggiornamento: 11 nov 2026", whatsnew_17_title: "FIX interfaccia web", whatsnew_17_desc: "Correzioni dell’interfaccia utente (icone, animazioni e funzionalità)." });
+    Object.assign(TRANSLATIONS.ph, { whatsnew_date: "Huling update: 11 Nob 2026", whatsnew_17_title: "Pag-aayos ng Web Interface", whatsnew_17_desc: "Mga pag-aayos sa UI (mga icon, animation, at functionality)." });
+    Object.assign(TRANSLATIONS.cn, { whatsnew_date: "最后更新：2026年11月11日", whatsnew_17_title: "修复网页界面", whatsnew_17_desc: "修复用户界面问题（图标、动画和功能）。" });
+    Object.assign(TRANSLATIONS.th, { whatsnew_date: "อัปเดตล่าสุด: 11 พ.ย. 2026", whatsnew_17_title: "แก้ไข Web Interface", whatsnew_17_desc: "แก้ไข UI (ไอคอน แอนิเมชัน และฟังก์ชันการทำงาน)" });
+    Object.assign(TRANSLATIONS.ru, { whatsnew_date: "Последнее обновление: 11 ноя 2026", whatsnew_17_title: "Исправления веб-интерфейса", whatsnew_17_desc: "Исправления UI (значки, анимация и функциональность)." });
+    Object.assign(TRANSLATIONS.fr, { whatsnew_date: "Dernière mise à jour : 11 nov. 2026", whatsnew_17_title: "Correction de l’interface web", whatsnew_17_desc: "Corrections de l’interface utilisateur (icônes, animations et fonctionnalités)." });
+
     // Expose globally so script.js / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
