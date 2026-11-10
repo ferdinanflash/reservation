@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // ================= SVS ENEMIES =================
 // Main-menu page that shows live WoS Atlas info for enemy States configured
 // by the President (President Panel → SvS Enemies Settings).
