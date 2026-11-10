@@ -1,3 +1,5 @@
+-- 3475 SOURCE OWNERSHIP | Copyright (c) 2026 Ferdinan | https://3475.web.id
+-- Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
 -- SvS Enemies: persistent cache of WoS Atlas data per State.
 -- Run once in Supabase SQL Editor. Safe to re-run.
 --
