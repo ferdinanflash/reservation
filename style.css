@@ -7659,3 +7659,56 @@ body.christmas-theme .navbar .logo.fire-text::before {
         animation: none !important;
     }
 }
+
+/* Individual icon animations for the navbar Menu actions. */
+.nav-menu.nav-menu-open .nav-menu-discord svg {
+    transform-origin: center;
+    animation: menuDiscordGlow 2.4s ease-in-out infinite;
+}
+.nav-menu.nav-menu-open .nav-menu-redeem svg {
+    transform-origin: center;
+    animation: menuRedeemShine 2.1s ease-in-out infinite;
+}
+.nav-menu.nav-menu-open .nav-menu-donate svg {
+    transform-origin: center;
+    animation: menuDonatePulse 1.45s ease-in-out infinite;
+}
+.nav-menu.nav-menu-open .nav-menu-whatsnew svg {
+    transform-origin: center;
+    animation: menuWhatsNewSparkle 1.9s ease-in-out infinite;
+}
+.nav-menu.nav-menu-open .nav-menu-admin-crown {
+    display: inline-block;
+    transform-origin: center;
+    animation: menuPresidentCrownShimmer 2s ease-in-out infinite;
+}
+
+@keyframes menuDiscordGlow {
+    0%, 100% { filter: drop-shadow(0 0 1px rgba(139, 149, 255, .25)); }
+    50% { filter: drop-shadow(0 0 6px rgba(139, 149, 255, .95)); }
+}
+@keyframes menuRedeemShine {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 1px rgba(245, 197, 107, .2)); }
+    50% { filter: brightness(1.35) drop-shadow(0 0 6px rgba(245, 197, 107, .9)); }
+}
+@keyframes menuDonatePulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 1px rgba(244, 114, 182, .2)); }
+    50% { transform: scale(1.13); filter: drop-shadow(0 0 6px rgba(244, 114, 182, .85)); }
+}
+@keyframes menuWhatsNewSparkle {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 1px rgba(147, 197, 253, .2)); }
+    45% { filter: brightness(1.4) drop-shadow(0 0 7px rgba(147, 197, 253, .95)); }
+    65% { filter: brightness(1.08) drop-shadow(0 0 2px rgba(147, 197, 253, .35)); }
+}
+@keyframes menuPresidentCrownShimmer {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 1px rgba(255, 210, 100, .25)); }
+    50% { filter: brightness(1.35) drop-shadow(0 0 7px rgba(255, 210, 100, .95)); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .nav-menu.nav-menu-open .nav-menu-item svg,
+    .nav-menu.nav-menu-open .nav-menu-admin-crown {
+        animation: none !important;
+        filter: none;
+        transform: none;
+    }
+}
