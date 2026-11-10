@@ -19,15 +19,17 @@ Automated daily searches for distinctive code fingerprints from
 
 GitHub requires authentication for code search.
 
-1. Create a GitHub personal access token with the minimum permissions that allow
-   searching public code outside your own repositories. Fine-grained token
-   availability for global code search can vary; if it cannot search public
-   repositories globally, use a classic token with the narrowest available
-   public-repository/code-search scope.
+1. Create a GitHub personal access token for code search. GitHub's fine-grained
+   token documentation lists the Search code endpoint as requiring no repository
+   permissions; the token is still required to search across public repositories.
+   Prefer a fine-grained token. Avoid granting write access.
 2. In this repository, open **Settings → Secrets and variables → Actions**.
 3. Add a repository secret named **CODE_SEARCH_TOKEN** containing that token.
 4. Ensure GitHub Actions are enabled.
 5. Open **Actions → 3475 Source Protection Monitor → Run workflow** to test it.
+
+GitHub limits authenticated code-search requests to 10 per minute; this workflow
+makes six fingerprint queries per run. See the [GitHub search API documentation](https://docs.github.com/en/rest/search/search).
 
 The workflow's built-in GITHUB_TOKEN opens an issue in this repository when
 potential matches are found. Its permissions are limited to contents: read
