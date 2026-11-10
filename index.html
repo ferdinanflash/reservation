@@ -20,7 +20,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-11-16';
+			var APP_BUILD = '2026-11-11-17';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -184,7 +184,7 @@
 					<script src="js/app-bulk.js?v=3" defer=""></script>
 					<script src="js/app-extras.js?v=62" defer=""></script>
 					<script src="js/app-notifications.js?v=8" defer=""></script>
-					<script src="js/app-svs-enemies.js?v=21" defer=""></script>
+					<script src="js/app-svs-enemies.js?v=22" defer=""></script>
 					<script src="js/app-svs-record.js?v=4" defer=""></script>
 					<script src="fire-banner.js?v=20" defer=""></script>
 					<script src="opening-animation.js" defer=""></script>
@@ -452,8 +452,8 @@
 					<button type="button" class="btn-back action-no-bottom" onclick="showMainMenu()" data-i18n="btn_back_main_menu">&lt; Back to menu</button>
 					<div class="svs-en-header-row">
 						<div>
-							<h2 class="page-title" data-i18n="svs_enemies_title">SvS Enemies</h2>
-							<p class="page-subtitle" data-i18n="svs_enemies_subtitle">Live State info from ACE for enemy States set by the President.</p>
+							<h2 id="svs-enemies-page-title" class="page-title">SvS Enemies</h2>
+							<p id="svs-enemies-page-subtitle" class="page-subtitle">Live State info from ACE for enemy States set by the President.</p>
 							<p id="svs-enemies-meta" class="svs-en-meta"></p>
 						</div>
 						<button type="button" class="btn-apply svs-en-refresh-btn" onclick="refreshSvSEnemiesView()" data-i18n="svs_enemies_refresh">Refresh</button>
