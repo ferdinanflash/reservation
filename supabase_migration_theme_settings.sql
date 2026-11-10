@@ -1,3 +1,5 @@
+-- 3475 SOURCE OWNERSHIP | Copyright (c) 2026 Ferdinan | https://3475.web.id
+-- Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
 -- SVS Ministry: seasonal banner theme shared with ALL visitors.
 -- Run this once in Supabase SQL Editor BEFORE deploying the updated frontend.
 --
