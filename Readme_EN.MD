@@ -1,155 +1,314 @@
-# 🚀 Web App, PWA & Community Management System Services
+# State 3475 — Whiteout Survival Management Portal
 
-> **From idea to a ready-to-use web app** — fast, lightweight, installable on mobile, and connected to a real-time database.
+**Website:** [https://3475.web.id](https://3475.web.id)  
+**Repository:** [ferdinanflash/reservation](https://github.com/ferdinanflash/reservation)  
+**Project status:** Active development  
+**Documentation updated:** 11 November 2026
 
-We build **modern web applications** for communities, guilds, organizations, and small-to-medium businesses: reservation & queue systems, registration portals, member management dashboards, and interactive calculators and tools.
-
-Every project below is **live and running**, and serves as proof of what we can deliver.
-
----
-
-## ✨ Why Work With Us?
-
-| Strength | What it means for you |
-| :--- | :--- |
-| 📱 **PWA (installable like an app)** | Opens fast, feels like a native mobile app, offline-capable |
-| ⚡ **Real-time** | Data and statuses update instantly, no page refresh needed |
-| 🌍 **Multi-language** | Interface supports multiple languages (e.g. ENG / ID / CN) |
-| 🔐 **Role-based access** | Regular users and Admin/President get different permissions |
-| 🔔 **Notifications** | Users get status updates right on their device |
-| 🎨 **Seasonal themes** | The look can follow the season (Halloween, Christmas, Lunar New Year, Eid, etc.) |
-| 💸 **Low-cost hosting** | Static frontend
-| 🌐 **Your own domain** | Ready to deploy on your own domain or subdomain |
+The State 3475 portal is a **Progressive Web App (PWA)** supporting the management of Whiteout Survival State 3475. The main application brings together Minister reservations, SvS enemy-State information, SvS history, recent reservation activity, and links to supporting State portals and tools.
 
 ---
 
-## 🧩 Project Portfolio
+## Contents
 
-### 1️⃣ Reservation System — Booking & Queue Management
-**Best for:** communities, events, service businesses with time slots, and quota-limited registration.
-
-- View **available time slots** in real time and submit a reservation
-- Automatic **waiting list** with queue position tracking
-- **Admin panel (President Mode):** approve / reject applications, manage quotas and time slots, reorder the queue
-- **Internal notes** and **time logs** to audit every status change
-- **Push notifications** and announcements to users
-- Integrated **Redeem Code** feature via a Supabase Edge Function
-- Automatic **seasonal themes** (Halloween, Christmas, Valentine, Lunar New Year, Eid al-Fitr, Mid-Autumn, Blue Fire, Thanksgiving)
-- *Self-healing* Service Worker cache so updates always reach users
-
-**Tech:** Vanilla JavaScript (ES6 Modules), HTML5, CSS3, Service Worker, Supabase (PostgreSQL, Auth, Edge Functions)
+- [Core Features](#core-features)
+- [Main Menu and Connected Portals](#main-menu-and-connected-portals)
+- [Technology Stack](#technology-stack)
+- [Repository Structure](#repository-structure)
+- [Supabase Integration](#supabase-integration)
+- [Languages and Themes](#languages-and-themes)
+- [Run Locally](#run-locally)
+- [Deployment and Maintenance](#deployment-and-maintenance)
 
 ---
 
-### 2️⃣ Transfer Portal — Member Transfer Registration
-**Best for:** guilds and organizations that accept new members with limited slots.
+## Core Features
 
-- Public application form with **atomic quota protection** — the last slot can never be taken twice by simultaneous requests
-- **Private recovery code** (Application ID + Recovery Code) for secure status lookup
-- **Real-time application status** and **notifications** (Android/PWA) when a status changes
-- **President** panel: applicant list, accept/reject, special notes, filters, phase reset, and **CSV export**
-- Player data fields (furnace level, power, target alliance, referrer)
-- **3 languages:** ENG / CN / ID, with the language preference saved automatically
+### 1. Minister Reservation
 
-**Tech:** HTML/CSS/JS, Supabase (RPC + Realtime), Service Worker, Web Notifications
+A time-slot reservation system for Minister positions in State 3475.
 
----
+**Player experience**
+- View the schedule and available time slots.
+- Apply for an available slot.
+- Submit the required in-game information.
+- Track application status, including Waiting and Accepted.
 
-### 3️⃣ Battle League Manager — Member & Roster Dashboard
-**Best for:** communities, guilds, and teams with many members, alliances, and match schedules.
+**President controls**
+- Review applications and applicant details.
+- Change application status or assigned slot, accept or reject applications, and remove records.
+- Manage schedules, capacity, and additional time slots.
+- Manage the waiting list.
+- Add internal notes and review application Time Logs.
+- Manage portal settings, announcements, footer information, and the active theme.
 
-- Full **leaderboard**: search, sorting, pagination
-- **Player management:** add, edit, delete member data
-- **Roster assignment** per Legion (Battle / Substitute), including **bulk assign**
-- Global **Battle Theme switch** — one player pool, two battle modes with separate rosters that never overwrite each other
-- Two battle themes : FDT & TAL
-- **Legion schedules**, alliance navigation, and **CSV export**
-- **Staff accounts** and a **read-only viewer** mode
-- President panel, footer settings, opening animation, and snow effect
-- **Modular** code structure (core, navigation, schedule, leaderboard, player, legion, export, etc.) for easy future development
+### 2. SvS Enemies / TAL Enemies
 
-**Tech:** Modular JavaScript, Supabase (PostgreSQL + SQL migrations), custom CSS
+A view of enemy States configured by the President.
 
----
+- The President manages the enemy-State list.
+- The menu label can switch between **SvS Enemies** and **TAL Enemies**.
+- Displays available State, alliance, player, and related information from WoS Atlas/ACE.
+- Uses queued loading to reduce bursts of upstream requests.
+- Uses persistent Supabase caching so browsers can read stored State data without always calling the upstream service.
+- Older cache entries can be refreshed in the background. Previously cached data can remain visible if a refresh is slow or fails.
+- Includes a date-filtered SvS history/matrix.
 
-### 4️⃣ Calculator & Tools Hub — Interactive Calculators
-**Best for:** gaming communities, utility/tools sites, or businesses that need custom calculators.
+**Data source:** the public `https://wosatlas.com/api/v1` endpoints and the Supabase Edge Function `wosatlas-states`. The integration does not use the retired `api.wosatlas.com/v1/states/summary` endpoint.
 
-Nine modules in a single menu:
+### 3. SvS Record
 
-- 🏗️ Building Calculator — resources, time & upgrades
-- 👥 Training Troops Calculator — training & promotion
-- 🎓 War Academy — Helios, T12 Exalted & Molten
-- 💎 Chief Charm — charm upgrade calculator
-- 🛡️ Chief Gear — gear upgrade calculator
-- 🏅 Hero Gear — hero gear calculator
-- 🏆 SvS Calculator — 5-day prep phase & points
-- 🔥 RFC Simulator — Fire Crystal → Refined FC
-- 🎨 ASCII Art Gallery — community gallery with design submissions, moderation, and anti-spam (Google Apps Script backend, no paid server)
+SvS match history for State 3475.
 
-**Tech:** HTML/CSS/JS, PWA (manifest + full icon set), Google Apps Script + Google Sheets
+- Displays available official State 3475 history.
+- Provides a match timeline.
+- Authorized President users can add, edit, and delete records.
+- Match data can include opponent, date, result, PREP/BATTLE scores, and score differences according to the fields used by the application.
+- Data changes can be received through Supabase Realtime.
 
----
+### 4. Recently Accepted Reservation
 
-## 🛠️ Services We Offer
+- Displays up to **20 recently accepted reservations**, ordered by most recently updated.
+- Shows player and position information.
+- Includes dedicated position tags for VP D1, VP D2, EDU D4, and VP D5.
 
-| Service | Description |
-| :--- | :--- |
-| **Custom Web Apps** | Built from scratch around your workflow |
-| **Reservation / Queue Systems** | Time slots, quotas, waiting lists, admin approval |
-| **Registration & Selection Portals** | Public forms, real-time status, notifications |
-| **Admin Dashboards** | Manage data, access roles, notes, audit logs, CSV export |
-| **Interactive Calculators & Tools** | Compute, simulate, and share results |
-| **PWA & Notifications** | Installable on mobile, push notifications |
-| **Multi-language** | ID / EN / CN interface or any other language |
-| **Supabase Integration** | Database, authentication, realtime, edge functions |
-| **Domain & Hosting Setup** | Domain/subdomain configuration and automated deployment |
-| **Maintenance & Ongoing Development** | Bug fixes, new features, visual updates |
+### 5. Supporting Features
+
+- **Redeem Code:** submits gift-code redemption requests through a Supabase Edge Function, including multi-Player-ID processing and result handling.
+- **Announcements:** the President can send announcements to users.
+- **Push Notifications:** reservation updates and announcements, subject to device permission and push configuration.
+- **Donate and Discord:** community and support links.
+- **What's New:** in-app release notes.
+- **Live Clock:** displays the visitor's local time.
 
 ---
 
-## 🧱 Technologies We Use
+## Main Menu and Connected Portals
 
-- **Frontend:** HTML5, CSS3, Vanilla JavaScript (ES6 Modules)
-- **Backend & Database:** Supabase (PostgreSQL, Auth, Realtime, RPC, Edge Functions)
-- **PWA:** Service Worker, Web App Manifest, Web Push
-- **Lightweight alternative:** Google Apps Script + Google Sheets
-- **Deployment:** GitHub Pages / Netlify / Vercel + custom domain (CNAME), GitHub Actions
+The main menu links to internal features and separate State portals:
 
----
+| Menu | Destination |
+|---|---|
+| Minister Reservation | Minister reservation system in this application |
+| SvS Enemies / TAL Enemies | Enemy-State information |
+| SvS Record | State 3475 SvS history |
+| Battle Events | [tal.3475.web.id](https://tal.3475.web.id) |
+| Transfer Portal | [transfer.3475.web.id](https://transfer.3475.web.id) |
+| Events Record | [events.3475.web.id](https://events.3475.web.id) |
+| WoS Tool | [calc.3475.web.id](https://calc.3475.web.id) |
 
-## 🔄 How We Work
-
-1. **Consultation** — tell us your needs and goals
-2. **Proposal** — clear scope, timeline, and pricing
-3. **Design & Development** — you can follow progress along the way
-4. **Testing & Revisions** — tested together before release
-5. **Launch** — deployed to your domain
-6. **Support** — guidance and further development
+The linked portals are separate applications; they are not subdirectories or submodules of this repository.
 
 ---
 
-## 📦 Packages (Examples)
+## Technology Stack
 
-> Pricing depends on project complexity. Contact us for a quote.
+| Layer | Technology |
+|---|---|
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Database | Supabase PostgreSQL |
+| Authentication | Supabase Auth |
+| Realtime | Supabase Realtime |
+| Backend/API | Supabase Edge Functions (Deno/TypeScript) |
+| PWA | Web App Manifest, Service Worker, Web Push |
+| Hosting | GitHub Pages with a custom domain |
+| Version control | Git and GitHub |
 
-| Package | Includes | Best for |
-| :--- | :--- | :--- |
-| **Starter** | Simple landing page / tool + PWA | Small communities, calculators, info pages |
-| **Standard** | Registration form + database + admin panel | Registration portals, simple reservations |
-| **Pro** | Realtime, notifications, multi-language, multi-role, data export | Full reservation/queue and member management systems |
-| **Custom** | Tailored to your needs | Special projects or advanced integrations |
-
----
-
-## 📞 Contact Us
-
-Ready to build your web app? Tell us your idea and we'll take it from concept to launch.
-
-- 💬 **WhatsApp / Telegram:** ``
-- ✉️ **Email:** `ferdinan.net@gmail.com`
-- 🌐 **Demo / Portfolio:** `3475.web.id`
+The main application uses modular JavaScript without a large frontend framework.
 
 ---
 
-<p align="center"><b>Build faster. Manage easier. Look more professional.</b> ❄️🔥</p>
+## Repository Structure
+
+```text
+reservation/
+├── index.html
+├── style.css
+├── lang.js
+├── common.js
+├── fire-banner.js
+├── opening-animation.js
+├── sw.js
+├── site.webmanifest
+├── CNAME
+├── Readme.MD
+├── Readme_EN.MD
+├── PRD.MD
+├── .github/
+│   └── workflows/
+│       └── static.yml
+├── js/
+│   ├── app-core.js
+│   ├── app-auth.js
+│   ├── app-applications.js
+│   ├── app-bulk.js
+│   ├── app-schedule.js
+│   ├── app-waiting.js
+│   ├── app-notes.js
+│   ├── app-notifications.js
+│   ├── app-extras.js
+│   ├── app-svs-enemies.js
+│   └── app-svs-record.js
+├── images/
+│   ├── furnace/
+│   ├── resources/
+│   ├── speedups/
+│   └── check.svg
+├── fonts/
+├── live/
+│   └── index.html
+├── supabase/
+│   └── functions/
+│       ├── index.ts
+│       ├── redeem-giftcode/
+│       ├── send-announcement/
+│       ├── send-push-notification/
+│       └── wosatlas-states/
+└── supabase_migration_*.sql
+```
+
+This is a high-level map of the important files and directories, not an exhaustive list of every image, video, icon, or migration.
+
+### JavaScript modules
+
+| Module | Responsibility |
+|---|---|
+| `app-core.js` | Application initialization and core behavior |
+| `app-auth.js` | Login, President authorization, admin settings, and announcements |
+| `app-applications.js` | Reservation applications and administration |
+| `app-bulk.js` | Bulk operations on reservation data |
+| `app-schedule.js` | Reservation schedule and time slots |
+| `app-waiting.js` | Waiting-list and queue management |
+| `app-notes.js` | Internal notes and Time Logs |
+| `app-notifications.js` | Notification subscriptions and delivery |
+| `app-extras.js` | Recently Accepted, Redeem Code, What's New, Donate, and supporting UI |
+| `app-svs-enemies.js` | SvS/TAL Enemies and WoS Atlas integration |
+| `app-svs-record.js` | SvS history and record management |
+
+---
+
+## Supabase Integration
+
+Supabase provides the primary database, authentication, realtime updates, and serverless backend.
+
+### Edge Functions
+
+| Function | Purpose |
+|---|---|
+| `wosatlas-states` | Retrieves State, alliance, and player details and refreshes WoS Atlas cache data |
+| `redeem-giftcode` | Processes gift-code redemption |
+| `send-announcement` | Delivers President announcements |
+| `send-push-notification` | Sends push notifications |
+
+Function source files are under `supabase/functions/`.
+
+### Database migrations
+
+The repository includes SQL migrations for:
+- Additional reservation time slots and capacity.
+- Application Time Logs.
+- Fire Crystal Shard.
+- Guest notifications and push subscriptions.
+- SvS Enemies settings, menu labels, and cached State data.
+- Theme settings and seasonal themes.
+- SvS Records.
+
+See the migration files in the repository root. Apply migrations appropriate to the current database schema and deployed features; do not blindly re-run migrations against production.
+
+### Configuration
+
+- Connect the intended Supabase project.
+- Ensure the frontend Supabase URL and anon/public key point to that project.
+- Deploy the required Edge Functions.
+- Configure server-side secrets required by each function. Never expose service-role keys or private API secrets in frontend code or the repository.
+- Configure Auth, Realtime, and Web Push for the features being used.
+
+For WoS Atlas, the Edge Function can try the public-site path first and use a server-side API key as an optional fallback, as implemented in the function.
+
+---
+
+## Languages and Themes
+
+### Languages
+
+The interface supports eight languages:
+
+1. English (EN)
+2. Bahasa Indonesia (ID)
+3. 简体中文 (CN)
+4. Filipino (PH)
+5. ไทย (TH)
+6. Italiano (IT)
+7. Русский (RU)
+8. Français (FR)
+
+Translations are maintained in `lang.js`. Add translations for every supported language whenever new UI text is introduced.
+
+### Visual themes
+
+The application supports a default theme and seasonal themes:
+- Default
+- Halloween
+- Christmas
+- Thanksgiving
+- Valentine
+- Chinese New Year
+- Eid al-Fitr
+- Mid-Autumn Festival
+- Blue Fire
+
+Themes can switch automatically during configured calendar periods or be selected manually by the President through the Theme Switcher. Some themes, such as Eid, are manual-only. Theme dates and priority are maintained in `fire-banner.js` and the early theme-initialization script in `index.html`; keep these definitions synchronized.
+
+Banner effects, icons, menu elements, and UI styling follow the active theme. Respect accessibility preferences such as `prefers-reduced-motion` when adding animations.
+
+---
+
+## Run Locally
+
+### Requirements
+- Git
+- A modern browser
+- A local HTTP server or static hosting
+- A Supabase project for database/backend features
+
+### Steps
+
+```bash
+git clone https://github.com/ferdinanflash/reservation.git
+cd reservation
+python -m http.server 8000
+```
+
+Open [http://localhost:8000](http://localhost:8000).
+
+> Opening `index.html` directly with the `file://` protocol is not recommended because JavaScript modules, fetch, Service Worker, and other browser features require HTTP/HTTPS.
+
+### Deployment
+
+The main application is published as a static site through GitHub Pages with the custom domain `3475.web.id`. The deployment workflow is located at `.github/workflows/static.yml`.
+
+When changing frontend assets, review:
+- JS/CSS query versions in `index.html`.
+- `APP_BUILD` for the browser cache guard.
+- `CACHE_VERSION` in `sw.js`.
+- The precache asset list and versioned asset filenames.
+
+The current Service Worker derives precache URLs from the HTML asset references and refreshes cached assets to help prevent stale files from persisting.
+
+---
+
+## Maintenance
+
+- Check desktop and mobile layouts after UI changes.
+- Test all supported languages after adding or changing text.
+- Test the default theme and seasonal themes after CSS/banner changes.
+- Verify both User and President permissions.
+- Check Supabase and Edge Function logs when an upstream integration fails.
+- Do not remove assets based only on their names or age; confirm they are no longer referenced by HTML, CSS, JavaScript, the manifest, or the Service Worker.
+- Update the README and PRD when features, modules, integrations, or workflows change.
+
+---
+
+## License and Ownership
+
+This project is maintained for the **Whiteout Survival State 3475** community and the `3475.web.id` domain.
