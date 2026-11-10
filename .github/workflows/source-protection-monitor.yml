@@ -1,0 +1,38 @@
+name: 3475 Source Protection Monitor
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *" # Daily 10:17 WIB
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: 3475-source-protection-monitor
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    name: Scan public GitHub code
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run fingerprint scan
+        env:
+          CODE_SEARCH_TOKEN: ${{ secrets.CODE_SEARCH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/source_protection_monitor.py
+      - name: Upload scan report
+        if: always() && hashFiles('source-protection-report.md') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3475-source-protection-report-${{ github.run_number }}
+          path: source-protection-report.md
+          retention-days: 90
