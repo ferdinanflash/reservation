@@ -7580,3 +7580,29 @@ body.christmas-theme .svs-opening-sparks::after {
     background: linear-gradient(90deg, transparent 0%, rgba(216, 58, 77, .65) 35%, rgba(255, 241, 199, .95) 50%, rgba(53, 184, 121, .65) 65%, transparent 100%);
     box-shadow: 0 0 18px rgba(230, 196, 119, .7);
 }
+
+
+/* Christmas tree beside the header logo: a gentle festive sway and glow.
+   Scoped to the Christmas theme so other seasonal logos remain unchanged. */
+body.christmas-theme .navbar .logo.fire-text::before {
+    transform-origin: 50% 85%;
+    animation: christmasTreeSway 2.8s ease-in-out infinite;
+    filter: drop-shadow(0 0 3px rgba(255, 215, 110, .45));
+    will-change: transform, filter;
+}
+@keyframes christmasTreeSway {
+    0%, 100% {
+        transform: rotate(-7deg) translateY(0) scale(1);
+        filter: drop-shadow(0 0 3px rgba(255, 215, 110, .4));
+    }
+    50% {
+        transform: rotate(7deg) translateY(-2px) scale(1.08);
+        filter: drop-shadow(0 0 8px rgba(255, 215, 110, .9));
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    body.christmas-theme .navbar .logo.fire-text::before {
+        animation: none !important;
+        will-change: auto;
+    }
+}
