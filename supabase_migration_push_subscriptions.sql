@@ -1,3 +1,5 @@
+-- 3475 SOURCE OWNERSHIP | Copyright (c) 2026 Ferdinan | https://3475.web.id
+-- Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
 -- SVS Ministry: Web Push subscriptions
 -- Run this once in Supabase SQL Editor. Needed so notifications can reach a
 -- guest's device even when the app/browser is fully closed (Supabase
