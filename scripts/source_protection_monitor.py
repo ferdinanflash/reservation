@@ -39,7 +39,7 @@ def main():
         print("ERROR: CODE_SEARCH_TOKEN is missing. Follow docs/SOURCE_PROTECTION_MONITOR.md.")
         return 2
 
-    hits = defaultdict(lambda: {"fingerprints": set(), "files": set(), "urls": set(), "fork": False})
+    hits = defaultdict(lambda: {"fingerprints": set(), "matches": set(), "fork": False})
     errors = []
     for fp in CONFIG["fingerprints"]:
         query = urllib.parse.quote(fp["query"] + " in:file")
@@ -52,8 +52,7 @@ def main():
                     continue
                 entry = hits[name]
                 entry["fingerprints"].add(fp["id"])
-                entry["files"].add(item.get("path", ""))
-                entry["urls"].add(item.get("html_url", ""))
+                entry["matches"].add((item.get("path", ""), item.get("html_url", "")))
                 entry["fork"] = bool(repo.get("fork", False))
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode("utf-8", "replace")[:400]
@@ -82,7 +81,7 @@ def main():
                 "- Fingerprints: " + ", ".join(sorted(data["fingerprints"])),
                 "- Matching files:"
             ]
-            lines += [f"  - {url or path}" for path, url in zip(sorted(data["files"]), sorted(data["urls"]))]
+            lines += [f"  - [{path}]({url})" if url else f"  - {path}" for path, url in sorted(data["matches"])]
             lines.append("")
     else:
         lines += ["## No multi-fingerprint candidates found", "",
