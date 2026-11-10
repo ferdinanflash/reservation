@@ -18,7 +18,7 @@ The State 3475 portal is a **Progressive Web App (PWA)** supporting the manageme
 - [Supabase Integration](#supabase-integration)
 - [Languages and Themes](#languages-and-themes)
 - [Run Locally](#run-locally)
-- [Deployment and Maintenance](#deployment-and-maintenance)
+- [Deployment and Maintenance](#deployment-and-maintenance)\n- [License and Ownership](#license-and-ownership)
 
 ---
 
