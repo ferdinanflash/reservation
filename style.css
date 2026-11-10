@@ -6533,12 +6533,9 @@ body.svs-apply-modal-open #furnace-picker .furnace-badge:not(.furnace-badge-fall
 /* ==================== MAIN MENU SEQUENTIAL FADE-IN ====================
    Tombol utama muncul satu per satu setelah opening intro selesai.
 ======================================================================= */
-#main-menu-links > .list-item-small {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(16px);
-    will-change: opacity, transform;
-}
+/* Keep menu buttons visible by default as a fail-safe.
+   The entrance animation below may enhance their appearance after intro,
+   but a delayed or unavailable intro script must never hide navigation. */
 
 /* The intro class is added only after the opening intro has completed.
    The single authoritative staggered entrance + shine sequence is defined
