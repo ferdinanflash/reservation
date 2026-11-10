@@ -311,4 +311,12 @@ The current Service Worker derives precache URLs from the HTML asset references 
 
 ## License and Ownership
 
-This project is maintained for the **Whiteout Survival State 3475** community and the `3475.web.id` domain.
+**Copyright © 2026 Ferdinan. All rights reserved.**
+
+The `ferdinanflash/reservation` repository and [3475.web.id](https://3475.web.id) website are owned and maintained by **Ferdinan**.
+
+The original source code, application logic, original designs, documentation, and other materials specifically created for this project are protected by copyright and are licensed as **Proprietary — All Rights Reserved**. No one may copy, reuse, modify, distribute, sell, or create derivative works from these proprietary materials without Ferdinan's prior written permission.
+
+See the [LICENSE](LICENSE) file for the complete terms.
+
+**Exclusions:** Third-party libraries, frameworks, fonts, icons, images, APIs, trademarks, game content, and other materials not originally owned by Ferdinan are not claimed as Ferdinan's property. They remain subject to their respective owners' copyrights, licenses, and terms. This project license does not override any third-party license.
