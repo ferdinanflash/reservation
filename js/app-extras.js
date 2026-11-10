@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // ================= EXTRAS =================
 // Live clock, the "recently accepted reservation" banner, and the snow effect.
 // Part of the app script, split out of the old single script.js.
