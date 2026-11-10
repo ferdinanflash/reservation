@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // ================= LANGUAGE / i18n (ENG / CN) =================
 // Single source of truth for the ENG/CN toggle button + translation
 // dictionaries. Load this AFTER common.js and BEFORE script.js:
