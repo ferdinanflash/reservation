@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // ================= GUEST REAL-TIME NOTIFICATIONS =================
 // Guest users have no account/session. Each successful reservation ID is
 // stored in localStorage and subscribed to independently.
