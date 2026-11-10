@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // ================= SEND PUSH NOTIFICATION (Edge Function) =================
 // Triggered by a Supabase Database Webhook on UPDATE of public.reservation_slots.
 // This is the piece that lets a notification reach the guest's device even
