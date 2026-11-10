@@ -7,7 +7,7 @@
     {"id":"enemy-state-config","file":"js/app-svs-enemies.js","query":"\"svs_enemies_kids\"","description":"SvS Enemies state configuration key"},
     {"id":"enemy-cache-refresh","file":"js/app-svs-enemies.js","query":"\"cacheRefreshAfterMs\"","description":"SvS Enemies cache refresh behavior"},
     {"id":"reservation-stat-icons","file":"js/app-core.js","query":"\"STAT_ICON_SRC\"","description":"Reservation resource and speedup icon mapping"},
-    {"id":"atlas-proxy-cache","file":"supabase/functions/wosatlas-states/index.ts","query":"\"MAX_CACHE_ENTRIES\"","description":"WoS Atlas Edge Function cache implementation"},
+    {"id":"atlas-proxy-cache","file":"supabase/functions/wosatlas-states/index.ts","query":"\"REFRESH_MIN_INTERVAL_MS\"","description":"WoS Atlas Edge Function cache implementation"},
     {"id":"source-watermark","file":"js/app-core.js","query":"\"3475 SOURCE OWNERSHIP\"","description":"Comment-only source ownership watermark"}
   ]
 }
