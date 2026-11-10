@@ -188,7 +188,7 @@ async function loadRecentAccepts() {
             .not('nickname', 'is', null)
             .neq('nickname', '')
             .order('updated_at', { ascending: false })
-            .limit(10);
+            .limit(20);
 
         if (error) throw error;
         if (!data || data.length === 0) {
