@@ -6540,32 +6540,12 @@ body.svs-apply-modal-open #furnace-picker .furnace-badge:not(.furnace-badge-fall
     will-change: opacity, transform;
 }
 
-body.intro-complete #main-menu-links > .list-item-small {
-    /* Keep fade-in and border animations separate. The border delay is set
-       individually below so it begins only after that button has faded in. */
-    animation:
-        menu-button-fade-in 0.58s cubic-bezier(.2,.7,.25,1) both,
-        navBorderRun 12s linear infinite;
-    visibility: visible;
-}
-body.intro-complete #main-menu-links > .list-item-small:nth-child(1) { animation-delay: 0s, 0.58s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(2) { animation-delay: 0.22s, 0.80s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(3) { animation-delay: 0.44s, 1.02s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(4) { animation-delay: 0.66s, 1.24s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation-delay: 0.88s, 1.46s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(6) { animation-delay: 1.10s, 1.68s; }
-body.intro-complete #main-menu-links > .list-item-small:nth-child(7) { animation-delay: 1.32s, 1.90s; }
-
+/* The intro class is added only after the opening intro has completed.
+   The single authoritative staggered entrance + shine sequence is defined
+   with the dashboard menu effects below. */
 @keyframes menu-button-fade-in {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    body.intro-complete #main-menu-links > .list-item-small {
-        animation: navBorderRun 12s linear infinite;
-        opacity: 1; visibility: visible; transform: none;
-    }
 }
 
 /* ==================== MINISTER RESERVATION: REPLAY FADE-IN ON OPEN ====================
@@ -6894,7 +6874,7 @@ html[lang="fr"] #confirm-message { overflow-wrap: anywhere; }
         0 5px 14px rgba(0, 0, 0, 0.28);
 }
 
-/* fade-in keeps its original timing; the shine starts after it, one button after another */
+/* Single source of truth: stagger all seven buttons after the opening intro completes. */
 body.intro-complete #main-menu-links > .list-item-small:nth-child(n) {
     animation:
         menu-button-fade-in 0.58s cubic-bezier(.2,.7,.25,1) both,
