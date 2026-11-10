@@ -3287,6 +3287,52 @@ th {
     margin-left: 2px;
 }
 
+/* Role-specific icon tags in the Recently Accepted Reservation feed. */
+.rar-position-tag {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 5px;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 3px;
+    padding: 3px 8px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.64rem;
+    line-height: 1.2;
+    font-weight: 900;
+    letter-spacing: 0.45px;
+    white-space: nowrap;
+    text-shadow: 0 0 7px currentColor;
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.04), 0 0 8px rgba(0, 0, 0, 0.18);
+}
+.rar-position-icon {
+    font-size: 0.76rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 3px currentColor);
+}
+.rar-tag-vp-d1 {
+    color: #fbbf24;
+    background: linear-gradient(135deg, rgba(120, 75, 8, 0.35), rgba(251, 191, 36, 0.12));
+    border-color: rgba(251, 191, 36, 0.65);
+}
+.rar-tag-vp-d2 {
+    color: #c4b5fd;
+    background: linear-gradient(135deg, rgba(91, 63, 145, 0.35), rgba(196, 181, 253, 0.12));
+    border-color: rgba(196, 181, 253, 0.65);
+}
+.rar-tag-edu-d4 {
+    color: #67e8f9;
+    background: linear-gradient(135deg, rgba(8, 105, 125, 0.35), rgba(103, 232, 249, 0.12));
+    border-color: rgba(103, 232, 249, 0.65);
+}
+.rar-tag-vp-d5 {
+    color: #fb923c;
+    background: linear-gradient(135deg, rgba(154, 72, 15, 0.35), rgba(251, 146, 60, 0.12));
+    border-color: rgba(251, 146, 60, 0.65);
+}
+
 .rar-pos {
     color: var(--t-muted, #8a8d98);
     font-size: 0.68rem;
