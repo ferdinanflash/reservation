@@ -7607,3 +7607,29 @@ body.christmas-theme .navbar .logo.fire-text::before {
         will-change: auto;
     }
 }
+
+
+/* Minister Reservation crown: a restrained royal shimmer and floating motion. */
+#main-menu-links > .menu-card-primary .menu-card-icon {
+    transform-origin: 50% 70%;
+    animation: ministerCrownFloat 2.6s ease-in-out infinite;
+}
+@keyframes ministerCrownFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(-4deg) scale(1);
+        filter: drop-shadow(0 0 2px rgba(255, 205, 90, .35));
+    }
+    50% {
+        transform: translateY(-4px) rotate(4deg) scale(1.09);
+        filter: drop-shadow(0 0 7px rgba(255, 210, 100, .9));
+    }
+}
+#main-menu-links > .menu-card-primary:hover .menu-card-icon {
+    animation-duration: 1.15s;
+}
+@media (prefers-reduced-motion: reduce) {
+    #main-menu-links > .menu-card-primary .menu-card-icon {
+        animation: none !important;
+        transform: none;
+    }
+}
