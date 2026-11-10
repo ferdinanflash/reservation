@@ -6502,6 +6502,7 @@ body.intro-complete #main-menu-links > .list-item-small:nth-child(3) { animation
 body.intro-complete #main-menu-links > .list-item-small:nth-child(4) { animation-delay: 0.66s, 1.24s; }
 body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation-delay: 0.88s, 1.46s; }
 body.intro-complete #main-menu-links > .list-item-small:nth-child(6) { animation-delay: 1.10s, 1.68s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(7) { animation-delay: 1.32s, 1.90s; }
 
 @keyframes menu-button-fade-in {
     from { opacity: 0; transform: translateY(16px); }
