@@ -324,16 +324,18 @@
 					hueShift: Math.random(), warm: Math.random() > 0.35
 				});
 			} else if (theme === 'christmas') {
-				// Gentle falling gold/red/green glitter drifting down over the artwork.
-				const x = w * (0.05 + Math.random() * 0.9);
-				const y = -6;
-				const speed = 0.22 + Math.random() * 0.3;
-				const size = 0.7 + Math.random() * 1.7;
+				// Small Christmas baubles, bells and stars drift down gently.
+				// Keep the count low so the video and page content stay unobstructed.
+				const x = w * (0.04 + Math.random() * 0.92);
+				const y = -12;
+				const size = 2.2 + Math.random() * 2.2;
 				particles.push({
-					x, y, size, vy: speed,
-					vx: (Math.random() - 0.5) * 0.25,
-					life: 0, maxLife: 170 + Math.random() * 140,
-					colorPick: Math.random(), sway: Math.random() * Math.PI * 2
+					x, y, size, vy: 0.28 + Math.random() * 0.34,
+					vx: (Math.random() - 0.5) * 0.22,
+					life: 0, maxLife: 220 + Math.random() * 100,
+					colorPick: Math.random(), sway: Math.random() * Math.PI * 2,
+					rot: (Math.random() - 0.5) * 0.5,
+					ornament: Math.random() < 0.16 ? 'star' : (Math.random() < 0.22 ? 'bell' : 'bauble')
 				});
 			} else if (theme === 'valentine') {
 				// Soft pink / red / gold sparkles and tiny hearts floating gently upward.
@@ -439,7 +441,7 @@
 			if (theme === 'halloween') {
 				if (Math.random() < 0.5) spawnParticle();
 			} else if (theme === 'christmas') {
-				if (Math.random() < 0.55) spawnParticle();
+				if (Math.random() < 0.045) spawnParticle();
 			} else if (theme === 'valentine') {
 				if (Math.random() < 0.5) spawnParticle();
 			} else if (theme === 'cny') {
@@ -460,8 +462,9 @@
 			for (let i = particles.length - 1; i >= 0; i--) {
 				const p = particles[i];
 				if (theme === 'christmas' || theme === 'valentine' || theme === 'cny' || theme === 'eid' || theme === 'midautumn' || theme === 'bluefire' || theme === 'thanksgiving') {
-					p.x += p.vx + Math.sin((p.life + p.sway * 20) * 0.04) * 0.3;
+					p.x += p.vx + Math.sin((p.life + p.sway * 20) * 0.04) * (theme === 'christmas' ? 0.48 : 0.3);
 					p.y += p.vy;
+					if (theme === 'christmas') p.rot += p.ornament === 'star' ? 0.012 : 0.006;
 				} else {
 					p.x += p.vx + (theme === 'halloween' ? Math.sin(p.life * 0.05) * 0.15 : 0);
 					p.y += p.vy;
@@ -476,10 +479,10 @@
 					if (p.warm) { r = 255; g = 170; b = 60; }
 					else { r = 200; g = 225; b = 255; }
 				} else if (theme === 'christmas') {
-					if (p.colorPick < 0.4) { r = 255; g = 215; b = 110; }       // gold
-					else if (p.colorPick < 0.65) { r = 235; g = 60; b = 70; }   // red
-					else if (p.colorPick < 0.85) { r = 70; g = 200; b = 120; }  // green
-					else { r = 255; g = 255; b = 255; }                        // white sparkle
+					if (p.colorPick < 0.38) { r = 220; g = 45; b = 58; }       // ruby red
+					else if (p.colorPick < 0.70) { r = 235; g = 190; b = 82; }  // warm gold
+					else if (p.colorPick < 0.90) { r = 42; g = 155; b = 94; }   // evergreen
+					else { r = 245; g = 242; b = 225; }                        // pearl
 				} else if (theme === 'valentine') {
 					if (p.colorPick < 0.4) { r = 255; g = 105; b = 160; }       // rose pink
 					else if (p.colorPick < 0.65) { r = 235; g = 45; b = 85; }   // crimson
@@ -521,7 +524,45 @@
 				ctx.shadowColor = (theme === 'halloween' || theme === 'christmas' || theme === 'valentine' || theme === 'cny' || theme === 'eid' || theme === 'midautumn' || theme === 'bluefire' || theme === 'thanksgiving') ? `rgba(${r | 0},${g | 0},${b | 0},${alpha})` : `rgba(255,140,0,${alpha})`;
 				ctx.shadowBlur = (theme === 'bluefire' || theme === 'thanksgiving') ? 7 : (theme === 'halloween' ? 4 : 5);
 				const radius = p.size * (1 - t * 0.4);
-				if ((theme === 'eid' || theme === 'midautumn' || theme === 'bluefire' || theme === 'thanksgiving') && p.star) {
+				if (theme === 'christmas' && p.ornament) {
+					// Rotate each ornament slightly as it falls.
+					ctx.save();
+					ctx.translate(p.x, p.y);
+					ctx.rotate(p.rot);
+					ctx.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${alpha})`;
+					ctx.strokeStyle = `rgba(255,245,220,${alpha * 0.9})`;
+					ctx.lineWidth = 0.8;
+					if (p.ornament === 'star') {
+						const outer = radius * 2.25, inner = outer * 0.46;
+						ctx.beginPath();
+						for (let point = 0; point < 10; point++) {
+							const angle = -Math.PI / 2 + point * Math.PI / 5;
+							const rr = point % 2 === 0 ? outer : inner;
+							const px = Math.cos(angle) * rr, py = Math.sin(angle) * rr;
+							if (point === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+						}
+						ctx.closePath(); ctx.fill(); ctx.stroke();
+					} else if (p.ornament === 'bell') {
+						ctx.beginPath();
+						ctx.moveTo(-radius * 0.75, -radius * 0.1);
+						ctx.quadraticCurveTo(-radius * 0.7, -radius * 1.35, 0, -radius * 1.35);
+						ctx.quadraticCurveTo(radius * 0.7, -radius * 1.35, radius * 0.75, -radius * 0.1);
+						ctx.lineTo(radius, radius * 0.65);
+						ctx.lineTo(-radius, radius * 0.65);
+						ctx.closePath(); ctx.fill(); ctx.stroke();
+						ctx.beginPath(); ctx.arc(0, radius * 0.72, radius * 0.18, 0, Math.PI * 2); ctx.fill();
+					} else {
+						ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+						ctx.fillStyle = `rgba(255,255,255,${alpha * 0.42})`;
+						ctx.beginPath(); ctx.ellipse(-radius * 0.32, -radius * 0.32, radius * 0.25, radius * 0.42, -0.55, 0, Math.PI * 2); ctx.fill();
+					}
+					// Tiny metallic cap and hanging loop.
+					ctx.fillStyle = `rgba(232,205,135,${alpha})`;
+					ctx.fillRect(-radius * 0.28, -radius * 1.12, radius * 0.56, radius * 0.3);
+					ctx.strokeStyle = `rgba(232,205,135,${alpha})`;
+					ctx.beginPath(); ctx.arc(0, -radius * 1.25, radius * 0.22, Math.PI, 0); ctx.stroke();
+					ctx.restore();
+				} else if ((theme === 'eid' || theme === 'midautumn' || theme === 'bluefire' || theme === 'thanksgiving') && p.star) {
 					// Tiny 4-point sparkle star.
 					const k = radius * 2.2;
 					ctx.moveTo(p.x, p.y - k);
