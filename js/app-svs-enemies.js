@@ -182,6 +182,18 @@
         S.menuLabel = normalizeMenuLabel(label);
         const el = document.getElementById('svs-enemies-menu-label');
         if (el) el.textContent = menuLabelText(S.menuLabel);
+
+        // The page heading and description must follow the selected menu label,
+        // not remain hard-coded as "SvS Enemies" when the page is opened as TAL.
+        const title = document.getElementById('svs-enemies-page-title');
+        const subtitle = document.getElementById('svs-enemies-page-subtitle');
+        if (title) title.textContent = menuLabelText(S.menuLabel);
+        if (subtitle) {
+            subtitle.textContent = S.menuLabel === 'tal'
+                ? tr('tal_enemies_subtitle', 'Live State info from ACE for TAL enemy States set by the President.')
+                : tr('svs_enemies_subtitle', 'Live State info from ACE for enemy States set by the President.');
+        }
+
         // Keep radio in settings modal in sync if open
         const svsRadio = document.getElementById('svs-enemies-label-svs');
         const talRadio = document.getElementById('svs-enemies-label-tal');
