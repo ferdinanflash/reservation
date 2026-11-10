@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // ================= APPLICATIONS =================
 // Everything about a single application: time log, admin edit controls,
 // detail cards, details/waiting modals, the apply form (incl. additional
