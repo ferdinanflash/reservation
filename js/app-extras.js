@@ -203,33 +203,39 @@ async function loadRecentAccepts() {
     } catch (err) { console.error("Failed to load recent accepts:", err); }
 }
 
-// ================= SNOWFLAKE EFFECT =================
-function createSnowEffect() {
-    const snowContainer = document.getElementById('snow-container');
-    if (!snowContainer) return;
+// ================= CHRISTMAS ORNAMENT FALL EFFECT =================
+// The falling decorations are created only while the Christmas theme is active.
+// Switching to any other theme immediately clears them.
+function createChristmasOrnamentEffect() {
+    const container = document.getElementById('snow-container');
+    if (!container) return;
 
-    const maxSnowflakes = 20; 
-    if (snowContainer.querySelectorAll('.snowflake').length >= maxSnowflakes) return;
+    if (!document.body.classList.contains('christmas-theme')) {
+        container.querySelectorAll('.christmas-fall-item').forEach(item => item.remove());
+        return;
+    }
 
-    const snowflake = document.createElement('div');
-    snowflake.classList.add('snowflake');
-    snowflake.style.left = Math.random() * 100 + 'vw';
+    const maxOrnaments = 18;
+    if (container.querySelectorAll('.christmas-fall-item').length >= maxOrnaments) return;
 
-    const size = Math.random() * 3 + 2 + 'px';
-    snowflake.style.width = size;
-    snowflake.style.height = size;
+    const ornament = document.createElement('span');
+    ornament.className = 'christmas-fall-item';
+    const kinds = ['bauble', 'bauble', 'bauble', 'star', 'bell'];
+    const colors = ['red', 'gold', 'green'];
+    ornament.dataset.kind = kinds[Math.floor(Math.random() * kinds.length)];
+    ornament.dataset.color = colors[Math.floor(Math.random() * colors.length)];
+    ornament.style.left = Math.random() * 100 + 'vw';
+    ornament.style.setProperty('--ornament-size', (11 + Math.random() * 10) + 'px');
 
-    const durationSeconds = Math.random() * 5 + 10; 
-    snowflake.style.animationDuration = durationSeconds + 's';
-    snowflake.style.opacity = Math.random() * 0.5 + 0.2;
+    const duration = 11 + Math.random() * 8;
+    ornament.style.setProperty('--ornament-duration', duration + 's');
+    ornament.style.setProperty('--ornament-sway', (18 + Math.random() * 38) + 'px');
+    ornament.style.opacity = (0.58 + Math.random() * 0.34).toFixed(2);
 
-    snowContainer.appendChild(snowflake);
-
-    setTimeout(() => {
-        snowflake.remove();
-    }, durationSeconds * 1000);
+    container.appendChild(ornament);
+    window.setTimeout(() => ornament.remove(), duration * 1000 + 300);
 }
-setInterval(createSnowEffect, 200);
+setInterval(createChristmasOrnamentEffect, 650);
 // ======================================================
 
 // ================= REDEEM CODE MODAL =================
