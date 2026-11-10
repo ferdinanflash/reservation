@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // Supabase Edge Function: wosatlas-states
 // Proxy for State Tracker / SvS Enemies.
 // api.wosatlas.com now requires an API key (401 without it). The browser
