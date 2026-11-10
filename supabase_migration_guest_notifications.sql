@@ -1,3 +1,5 @@
+-- 3475 SOURCE OWNERSHIP | Copyright (c) 2026 Ferdinan | https://3475.web.id
+-- Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
 -- No new column is required for guest notifications.
 --
 -- The browser stores the reservation_slots.id in localStorage and the client
