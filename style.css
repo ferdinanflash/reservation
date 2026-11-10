@@ -384,6 +384,8 @@ body.halloween-theme {
 
 /* ==================== BANNER & SUBTITLE ==================== */
 .banner-container {
+    position: relative;
+    z-index: 2; /* Banner selalu di atas lapisan ornamen Natal yang berjatuhan. */
     margin-top: 5px;       
     margin-bottom: 2px;    
     padding: 0;
