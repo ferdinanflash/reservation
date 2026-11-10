@@ -173,7 +173,7 @@
 		});
 
 		// Halloween now uses a video banner, so its old image-pinned decorations are skipped.
-		const entries = theme === 'halloween' ? null : SEASONAL_DECORATIONS[theme];
+		const entries = (theme === 'halloween' || theme === 'christmas') ? null : SEASONAL_DECORATIONS[theme];
 		if (!entries) return;
 
 		const layer = container.querySelector(
@@ -259,9 +259,9 @@
 		document.body.classList.toggle('midautumn-theme', theme === 'midautumn');
 		document.body.classList.toggle('bluefire-theme', theme === 'bluefire');
 		document.body.classList.toggle('thanksgiving-theme', theme === 'thanksgiving');
-		// Video banners (Blue Fire + Thanksgiving + Halloween): play only while their theme is active.
+		// Video banners play only while their matching seasonal theme is active.
 		const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		[['bluefire', '.bluefire-video'], ['thanksgiving', '.thanksgiving-video'], ['halloween', '.halloween-video']].forEach(([name, selector]) => {
+		[['bluefire', '.bluefire-video'], ['thanksgiving', '.thanksgiving-video'], ['halloween', '.halloween-video'], ['christmas', '.christmas-video']].forEach(([name, selector]) => {
 			const video = container.querySelector(selector);
 			if (!video) return;
 			video.muted = true;
