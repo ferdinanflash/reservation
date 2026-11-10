@@ -362,3 +362,18 @@ Daftar berikut adalah area peningkatan, bukan klaim bahwa fitur inti belum terse
 ---
 
 **Dokumen ini menggambarkan implementasi repository utama per 11 November 2026.** Perubahan fitur dan struktur berikutnya harus tercermin pada README dan PRD.
+
+
+## 13. Kepemilikan, Hak Cipta, dan Lisensi
+
+**Pemilik proyek:** Ferdinan  
+**Repository:** `ferdinanflash/reservation`  
+**Website:** `https://3475.web.id`  
+**Lisensi materi orisinal:** Proprietary — All Rights Reserved  
+**Pemberitahuan hak cipta:** Copyright © 2026 Ferdinan.
+
+Kode sumber orisinal, logika aplikasi, desain orisinal, dokumentasi, dan materi lain yang dibuat khusus untuk State 3475 Management Portal merupakan materi proprietary milik Ferdinan, sepanjang hak tersebut memang dimiliki atau diperoleh secara sah oleh Ferdinan. Penggunaan ulang, penyalinan, modifikasi, distribusi, penjualan, sublicensing, atau pembuatan karya turunan atas materi proprietary memerlukan izin tertulis terlebih dahulu dari pemilik.
+
+Ketentuan lisensi lengkap tercantum di file `LICENSE` pada root repository.
+
+Klaim kepemilikan ini **tidak mencakup** komponen pihak ketiga seperti library, framework, font, ikon, gambar, API, merek dagang, maupun konten Whiteout Survival yang haknya dimiliki pihak lain. Komponen tersebut tetap mengikuti lisensi dan ketentuan pemilik masing-masing. Hak yang tidak dapat dialihkan menurut hukum yang berlaku juga tidak dianggap dialihkan oleh dokumen ini.
