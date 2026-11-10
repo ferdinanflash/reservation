@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 /* SvS Minister opening animation
  * Overlay-only: tidak mengubah ukuran, posisi, atau tata letak halaman utama.
  * Durasi total 2.5 detik dan selalu tampil setiap kali halaman di-refresh/dibuka.
