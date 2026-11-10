@@ -3435,25 +3435,81 @@ th {
     overflow: hidden;
 }
 
-.snowflake {
-    position: absolute; 
-    top: -10px; 
-    background-color: #ffffff; 
-    border-radius: 50%; 
-    pointer-events: none; 
-    animation-name: fall;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-duration: 12s; 
+.christmas-fall-item {
+    position: absolute;
+    top: -36px;
+    width: var(--ornament-size, 18px);
+    height: var(--ornament-size, 18px);
+    pointer-events: none;
+    animation: christmasOrnamentFall var(--ornament-duration, 14s) linear forwards;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .28));
+    will-change: transform;
 }
-
-@keyframes fall {
-    0% {
-        transform: translateY(0) translateX(0);
-    }
-    100% {
-        transform: translateY(105vh) translateX(20px);
-    }
+.christmas-fall-item::before {
+    content: "";
+    position: absolute;
+    left: 16%;
+    top: 18%;
+    width: 68%;
+    height: 68%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 26%, rgba(255,255,255,.95), transparent 22%), var(--ornament-fill, #c92e42);
+    box-shadow: inset -2px -3px 4px rgba(0,0,0,.28), 0 0 7px rgba(255,220,150,.22);
+}
+.christmas-fall-item::after {
+    content: "";
+    position: absolute;
+    left: 42%;
+    top: 2%;
+    width: 16%;
+    height: 20%;
+    border: 1px solid #e7c77c;
+    border-bottom: 0;
+    border-radius: 5px 5px 0 0;
+}
+.christmas-fall-item[data-color="red"] { --ornament-fill: radial-gradient(circle at 32% 26%, #ffb8b8, #d62d45 52%, #7e1428); }
+.christmas-fall-item[data-color="gold"] { --ornament-fill: radial-gradient(circle at 32% 26%, #fff0b0, #d8a83d 54%, #8b5d17); }
+.christmas-fall-item[data-color="green"] { --ornament-fill: radial-gradient(circle at 32% 26%, #b8ffd0, #24945b 54%, #105233); }
+.christmas-fall-item[data-kind="star"]::before {
+    content: "★";
+    inset: -10%;
+    width: 120%;
+    height: 120%;
+    border-radius: 0;
+    background: none;
+    color: #f4cf72;
+    font-size: calc(var(--ornament-size, 18px) * 1.35);
+    line-height: 1;
+    text-shadow: 0 0 7px rgba(255,220,130,.65);
+    box-shadow: none;
+}
+.christmas-fall-item[data-kind="bell"]::before {
+    left: 12%;
+    top: 22%;
+    width: 76%;
+    height: 62%;
+    border-radius: 45% 45% 35% 35%;
+    background: linear-gradient(100deg, #fff0a8, #d9a53c 48%, #9a681e);
+    clip-path: polygon(30% 0, 70% 0, 82% 68%, 100% 90%, 0 90%, 18% 68%);
+}
+.christmas-fall-item[data-kind="bell"]::after {
+    left: 42%;
+    top: 82%;
+    width: 16%;
+    height: 12%;
+    border: 0;
+    border-radius: 50%;
+    background: #f1cf78;
+}
+@keyframes christmasOrnamentFall {
+    0% { transform: translate3d(0, -4vh, 0) rotate(0deg); }
+    25% { transform: translate3d(calc(var(--ornament-sway, 24px) * .55), 28vh, 0) rotate(85deg); }
+    50% { transform: translate3d(calc(var(--ornament-sway, 24px) * -0.35), 56vh, 0) rotate(175deg); }
+    75% { transform: translate3d(calc(var(--ornament-sway, 24px) * .7), 83vh, 0) rotate(260deg); }
+    100% { transform: translate3d(0, 108vh, 0) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .christmas-fall-item { animation: none !important; display: none !important; }
 }
 
 /* ==================== OPTIMISASI TAMPILAN TABLET ==================== */
