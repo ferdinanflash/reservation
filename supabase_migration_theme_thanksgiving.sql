@@ -1,3 +1,5 @@
+-- 3475 SOURCE OWNERSHIP | Copyright (c) 2026 Ferdinan | https://3475.web.id
+-- Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
 
 -- Add the Thanksgiving theme to the shared President Theme Switcher.
 -- Run this once in Supabase SQL Editor (after the earlier theme migrations).
