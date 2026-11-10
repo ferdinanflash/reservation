@@ -7492,3 +7492,89 @@ body.thanksgiving-theme .dashboard-welcome { --pt-base:#fff1d6; --pt-hot:#ff9a2e
 #fire-banner video {
     pointer-events: none;
 }
+
+
+/* ==================== CHRISTMAS PALETTE POLISH ====================
+   Unify the remaining page-wide accents with evergreen, cranberry, warm
+   ivory and champagne gold. Semantic success/error colors remain intact. */
+body.christmas-theme {
+    --t-accent: #e66a72;
+    --t-accent-strong: #c83245;
+    --t-soft: #d9eee2;
+    --t-secondary: #b9d8c5;
+    --t-muted: #9bbba7;
+    --t-faint: #718f7b;
+    --t-glow: 230, 82, 92;
+    --t-neon-a: #d83a4d;
+    --t-neon-b: #35b879;
+}
+
+/* A warmer frosted-ivory neutral replaces the old icy-blue cast. */
+body.christmas-theme .btn-back {
+    color: #f2e8d5;
+    border-color: rgba(226, 205, 164, .42);
+    background: rgba(255, 245, 220, .035);
+}
+body.christmas-theme .btn-back:hover {
+    color: #ffe19a;
+    border-color: rgba(255, 215, 125, .7);
+    background: rgba(255, 215, 125, .09);
+}
+
+/* Dashboard: deep evergreen + cranberry undertones, with gold highlights. */
+body.christmas-theme .dashboard-welcome {
+    --dashboard-accent: #d83a4d;
+    --dashboard-accent-soft: #58c98b;
+    --pt-base: #fff1cf;
+    --pt-hot: #d83a4d;
+    --pt-g1: rgba(216, 58, 77, .58);
+    --pt-g2: rgba(53, 184, 121, .34);
+    border-color: rgba(221, 184, 103, .34);
+    background:
+        radial-gradient(ellipse at 84% 48%, rgba(53, 184, 121, .17), transparent 42%),
+        radial-gradient(ellipse at 8% 100%, rgba(184, 35, 55, .17), transparent 48%),
+        linear-gradient(115deg, rgba(7, 35, 25, .98), rgba(20, 30, 31, .96) 58%, rgba(48, 20, 27, .94));
+}
+body.christmas-theme .dashboard-emblem {
+    color: #ffe4a0;
+    border-color: rgba(226, 190, 112, .5);
+    background: radial-gradient(circle, rgba(216, 58, 77, .18), rgba(7, 35, 25, .3) 70%);
+    box-shadow: 0 0 28px rgba(53, 184, 121, .13), inset 0 0 18px rgba(255, 215, 125, .12);
+}
+body.christmas-theme #main-menu-links > .menu-card:nth-child(1),
+body.christmas-theme #main-menu-links > .menu-card:nth-child(4),
+body.christmas-theme #main-menu-links > .menu-card:nth-child(7) {
+    --c1: #2caa69;
+    --c2: #b8e6c7;
+}
+body.christmas-theme #main-menu-links > .menu-card:nth-child(2),
+body.christmas-theme #main-menu-links > .menu-card:nth-child(5) {
+    --c1: #c83245;
+    --c2: #ffc2b9;
+}
+body.christmas-theme #main-menu-links > .menu-card:nth-child(3),
+body.christmas-theme #main-menu-links > .menu-card:nth-child(6) {
+    --c1: #c99a3c;
+    --c2: #ffe7a6;
+}
+body.christmas-theme .dashboard-section-kicker,
+body.christmas-theme .dashboard-eyebrow {
+    color: #e6c477;
+}
+
+/* Match the opening animation's sparkles to the same Christmas palette. */
+body.christmas-theme .svs-opening-sparks {
+    background-image:
+        radial-gradient(circle at 50% 50%, #fff1c7 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 35%, #d83a4d 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #35b879 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 70%, #e6c477 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, #f3dca0 0 1px, transparent 2px);
+}
+body.christmas-theme .svs-opening-sparks::before {
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(230, 196, 119, .72) 0deg .7deg, transparent .7deg 18deg);
+}
+body.christmas-theme .svs-opening-sparks::after {
+    background: linear-gradient(90deg, transparent 0%, rgba(216, 58, 77, .65) 35%, rgba(255, 241, 199, .95) 50%, rgba(53, 184, 121, .65) 65%, transparent 100%);
+    box-shadow: 0 0 18px rgba(230, 196, 119, .7);
+}
