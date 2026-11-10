@@ -4503,7 +4503,7 @@
 
 
     // Latest web-interface maintenance update.
-    Object.assign(TRANSLATIONS.en, { whatsnew_date: "Last Update: 11 Nov 2026", whatsnew_17_title: "FIX Web Interface", whatsnew_17_desc: "Fixing UI (Icons, Animation, & Function)." });
+    Object.assign(TRANSLATIONS.en, { whatsnew_date: "Last Update: 11 Nov 2026", whatsnew_17_title: "Web Interface", whatsnew_17_desc: "Fixing UI (Icons, Animation, & Function)." });
     Object.assign(TRANSLATIONS.id, { whatsnew_date: "Terakhir diperbarui: 11 Nov 2026", whatsnew_17_title: "Perbaikan Antarmuka Web", whatsnew_17_desc: "Perbaikan UI (Ikon, Animasi, & Fungsi)." });
     Object.assign(TRANSLATIONS.it, { whatsnew_date: "Ultimo aggiornamento: 11 nov 2026", whatsnew_17_title: "FIX interfaccia web", whatsnew_17_desc: "Correzioni dell’interfaccia utente (icone, animazioni e funzionalità)." });
     Object.assign(TRANSLATIONS.ph, { whatsnew_date: "Huling update: 11 Nob 2026", whatsnew_17_title: "Pag-aayos ng Web Interface", whatsnew_17_desc: "Mga pag-aayos sa UI (mga icon, animation, at functionality)." });
