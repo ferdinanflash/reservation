@@ -6906,6 +6906,7 @@ body.intro-complete #main-menu-links > .list-item-small:nth-child(3) { animation
 body.intro-complete #main-menu-links > .list-item-small:nth-child(4) { animation-delay: 0.66s, 2.4s; }
 body.intro-complete #main-menu-links > .list-item-small:nth-child(5) { animation-delay: 0.88s, 2.9s; }
 body.intro-complete #main-menu-links > .list-item-small:nth-child(6) { animation-delay: 1.10s, 3.4s; }
+body.intro-complete #main-menu-links > .list-item-small:nth-child(7) { animation-delay: 1.32s, 3.9s; }
 
 @media (prefers-reduced-motion: reduce) {
     /* no moving shine: just the static ring */
