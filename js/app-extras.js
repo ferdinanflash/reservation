@@ -236,6 +236,12 @@ function createChristmasOrnamentEffect() {
     window.setTimeout(() => ornament.remove(), duration * 1000 + 300);
 }
 setInterval(createChristmasOrnamentEffect, 650);
+document.addEventListener('svs-theme-changed', event => {
+    if (event.detail && event.detail.theme !== 'christmas') {
+        const container = document.getElementById('snow-container');
+        if (container) container.querySelectorAll('.christmas-fall-item').forEach(item => item.remove());
+    }
+});
 // ======================================================
 
 // ================= REDEEM CODE MODAL =================
