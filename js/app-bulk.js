@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // ================= BULK ACTION (President-only) =================
 // Lets the President accept or reject many applications at once instead of
 // opening each one.
