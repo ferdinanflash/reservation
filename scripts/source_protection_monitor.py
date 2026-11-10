@@ -45,6 +45,8 @@ def main():
         query = urllib.parse.quote(fp["query"] + " in:file")
         try:
             result = request_json(f"{API}/search/code?q={query}&per_page=100")
+            if result.get("incomplete_results") or result.get("total_count", 0) > len(result.get("items", [])):
+                errors.append(f"{fp['id']}: GitHub returned a partial result set (showing up to 100 matches).")
             for item in result.get("items", []):
                 repo = item.get("repository", {})
                 name = repo.get("full_name", "")
