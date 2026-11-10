@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // Animasi bara api oranye untuk banner "3475" — menggantikan gambar statis.
 // Selama musim Halloween, banner otomatis berganti ke tema labu/jack-o'-lantern.
 // Selama musim Natal (1-30 Desember setiap tahun), banner otomatis berganti
