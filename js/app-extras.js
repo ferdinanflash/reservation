@@ -156,6 +156,19 @@ function renderRarStats(container, stats) {
     scheduleNext();
 }
 
+// Compact role icon tags for the four minister positions shown in the recent-accepted feed.
+function recentAcceptedPositionTag(position) {
+    const tags = {
+        'Vice President D1': { label: 'VP D1', icon: '👑', className: 'rar-tag-vp-d1' },
+        'Vice President D2': { label: 'VP D2', icon: '👑', className: 'rar-tag-vp-d2' },
+        'Minister of Education D4': { label: 'EDU D4', icon: '🎓', className: 'rar-tag-edu-d4' },
+        'Vice President D5': { label: 'VP D5', icon: '👑', className: 'rar-tag-vp-d5' }
+    };
+    const tag = tags[position];
+    if (!tag) return `<span class="rar-pos">[${escapeHtml(position || t('label_unknown'))}]</span>`;
+    return `<span class="rar-position-tag ${tag.className}"><span class="rar-position-icon" aria-hidden="true">${tag.icon}</span><span>${tag.label}</span></span>`;
+}
+
 async function loadRecentAccepts() {
     const logListEl = document.getElementById('recent-log-list');
     if (!logListEl) return;
@@ -190,7 +203,7 @@ async function loadRecentAccepts() {
             card.innerHTML = `
                 <div class="rar-info">
                     <div class="rar-name">${typeof nicknameHtml === 'function' ? nicknameHtml(item.nickname, 24) : escapeHtml(capZalgo(item.nickname))} ${buildRarFurnaceLabel(item)}</div>
-                    <div class="rar-pos">[${escapeHtml(shortPos)}]</div>
+                    ${recentAcceptedPositionTag(item.position)}
                 </div>
                 <div class="rar-right">
                     <div class="rar-top"><span class="rar-check"><img class="check-icon" src="images/check.svg" alt="" width="20" height="20" decoding="async" draggable="false"></span><span class="rar-time">${escapeHtml(item.time_slot)} UTC</span></div>
