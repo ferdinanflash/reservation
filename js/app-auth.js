@@ -1,3 +1,8 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
+ */
 // ================= AUTH =================
 // Footer info (president/guild name) and the staff/President login,
 // logout, and session handling.
