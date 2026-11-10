@@ -7712,3 +7712,35 @@ body.christmas-theme .navbar .logo.fire-text::before {
         transform: none;
     }
 }
+
+/* Furnace FC1-FC10 badges: subtle level-staggered shimmer, no rotation or sway. */
+.furnace-badge:not(.furnace-badge-fallback) {
+    animation: furnaceBadgeShimmer 2.8s ease-in-out infinite;
+    will-change: filter;
+}
+.furnace-badge[data-level="1"]  { animation-delay: 0s; }
+.furnace-badge[data-level="2"]  { animation-delay: .16s; }
+.furnace-badge[data-level="3"]  { animation-delay: .32s; }
+.furnace-badge[data-level="4"]  { animation-delay: .48s; }
+.furnace-badge[data-level="5"]  { animation-delay: .64s; }
+.furnace-badge[data-level="6"]  { animation-delay: .80s; }
+.furnace-badge[data-level="7"]  { animation-delay: .96s; }
+.furnace-badge[data-level="8"]  { animation-delay: 1.12s; }
+.furnace-badge[data-level="9"]  { animation-delay: 1.28s; }
+.furnace-badge[data-level="10"] { animation-delay: 1.44s; }
+
+@keyframes furnaceBadgeShimmer {
+    0%, 100% {
+        filter: brightness(1) drop-shadow(0 0 1px rgba(255, 213, 125, .12));
+    }
+    50% {
+        filter: brightness(1.22) drop-shadow(0 0 6px rgba(255, 213, 125, .72));
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .furnace-badge:not(.furnace-badge-fallback) {
+        animation: none !important;
+        filter: none;
+        will-change: auto;
+    }
+}
