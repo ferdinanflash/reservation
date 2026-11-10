@@ -311,4 +311,12 @@ Service Worker saat ini menggunakan precache URL yang mengikuti referensi aset d
 
 ## Lisensi dan Kepemilikan
 
-Project ini dikelola untuk komunitas **Whiteout Survival State 3475** dan domain `3475.web.id`.
+**Hak Cipta © 2026 Ferdinan. Seluruh hak dilindungi.**
+
+Repository `ferdinanflash/reservation` dan website [3475.web.id](https://3475.web.id) merupakan proyek yang dimiliki dan dikelola oleh **Ferdinan**.
+
+Kode sumber orisinal, logika aplikasi, desain orisinal, dokumentasi, dan materi lain yang dibuat khusus untuk proyek ini dilindungi hak cipta dan menggunakan lisensi **Proprietary — All Rights Reserved**. Tanpa izin tertulis terlebih dahulu dari Ferdinan, pihak lain tidak diperkenankan menyalin, menggunakan kembali, memodifikasi, mendistribusikan, menjual, atau membuat karya turunan dari materi proprietary tersebut.
+
+Ketentuan lengkap terdapat pada file [LICENSE](LICENSE).
+
+**Pengecualian:** library, framework, font, ikon, gambar, API, merek dagang, konten game, dan materi pihak ketiga bukan diklaim sebagai milik Ferdinan. Materi tersebut tetap tunduk pada hak cipta, lisensi, dan ketentuan pemilik masing-masing. Lisensi proyek ini tidak membatalkan atau menggantikan lisensi pihak ketiga.
