@@ -6145,6 +6145,12 @@ body.svs-apply-modal-open * {
     animation-play-state: paused !important;
 }
 
+/* Keep the FC1-FC10 shimmer active inside the Apply modal picker.
+   The rest of the page stays paused to avoid distracting background motion. */
+body.svs-apply-modal-open #furnace-picker .furnace-badge:not(.furnace-badge-fallback) {
+    animation-play-state: running !important;
+}
+
 
 /* ==================== MAIN MENU: RUNNING BORDER LIGHT ====================
    A bright "comet" of color circles the border of each of the 5 main menu
