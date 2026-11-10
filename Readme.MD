@@ -18,7 +18,7 @@ Portal State 3475 adalah aplikasi web berbasis **Progressive Web App (PWA)** unt
 - [Integrasi Supabase](#integrasi-supabase)
 - [Bahasa dan Tema](#bahasa-dan-tema)
 - [Menjalankan Project](#menjalankan-project)
-- [Deployment dan Pemeliharaan](#deployment-dan-pemeliharaan)
+- [Deployment dan Pemeliharaan](#deployment-dan-pemeliharaan)\n- [Lisensi dan Kepemilikan](#lisensi-dan-kepemilikan)
 
 ---
 
