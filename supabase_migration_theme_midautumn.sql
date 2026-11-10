@@ -1,3 +1,5 @@
+-- 3475 SOURCE OWNERSHIP | Copyright (c) 2026 Ferdinan | https://3475.web.id
+-- Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
 -- SVS Ministry: allow the new 'midautumn' (Mid-Autumn Festival) seasonal theme (this also keeps 'cny' and 'eid')
 -- in theme_settings.
 -- Run this once in Supabase SQL Editor (safe to re-run) BEFORE the President
