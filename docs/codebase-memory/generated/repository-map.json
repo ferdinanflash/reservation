@@ -191,13 +191,13 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 86,
+    "file_count": 88,
     "digest_algorithm": "sha256",
-    "content_digest": "252c90d28e3099c8c5b6de82a54fbd4907482d72b2133fb7c63dc078ad216dc8",
+    "content_digest": "c7b508c58d635688b0970f9d6c640b2c7ec3b6fe90d1b5ff1e2416f72fa89bea",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
-        "sha256": "04b141ce85afe4ed15c0cc68f500c0419b424f5edd0889bee6fab87ab0ea21f4"
+        "sha256": "233cfcbbb00071280c9d3f7ceb952a4a8faa358423bcb1185d9755d3806f30a9"
       },
       {
         "path": ".github/workflows/codebase-memory-review.yml",
@@ -244,12 +244,20 @@
         "sha256": "50ff2e956cb71bd9b365d1234beb0201ebdc89ac472d97cf06d14f60be674ae1"
       },
       {
+        "path": "docs/codebase-memory/ACCEPTANCE.md",
+        "sha256": "c28a8bde129f84c553e29578870b7959511a6c1cec1b828cb0e263a13d6b68c1"
+      },
+      {
         "path": "docs/codebase-memory/INDEX.md",
         "sha256": "c1562cb65532bc9b9d6398c8b6e4c264773437eae99a0e48cb779f28507e7b79"
       },
       {
+        "path": "docs/codebase-memory/OPERATIONS.md",
+        "sha256": "dc7c1a03be9ef3a195bac6e4f0846bd00eecb85b188321771d29ae968234babd"
+      },
+      {
         "path": "docs/codebase-memory/ROADMAP.md",
-        "sha256": "1b659bf0f998ce00938bc8940943e81db2ef2371403ec1dc4bfacec35c89f6b0"
+        "sha256": "203793f57e6fd2a7df8fcca97a08e2200aa865a3e7272b337047182d2710bd8b"
       },
       {
         "path": "docs/codebase-memory/decisions/ADR-001-classic-script-architecture.md",
@@ -477,7 +485,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/README.md",
-        "sha256": "b14834f3f5d96d72c44e90852e9bf80ab70a56153af3c66e1874b9599572e31f"
+        "sha256": "25a99f9d2f0a4a01a4b45ec769d382378a4ab5d664aac7fb96d9a6b856012933"
       },
       {
         "path": "tools/codebase-memory-mcp/package.json",
@@ -497,7 +505,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/check-project-contracts.mjs",
-        "sha256": "802901fd158847e7c050f28dafe89b02ab1d033bac3c3b539c27c9b4471f042f"
+        "sha256": "acecacd6287d2bca86ad64414ed3299a70384d5b1a03923946100790d73c56c6"
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/review-changes.mjs",
