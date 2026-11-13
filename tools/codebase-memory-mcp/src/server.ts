@@ -95,7 +95,7 @@ const featureFiles: Record<string, string[]> = {
   "shared-core-auth": ["features/shared-core-auth.md", "common.js", "js/app-core.js", "js/app-auth.js"]
 };
 
-const server = new McpServer({ name: "3475-codebase-memory", version: "1.0.0" });
+const server = new McpServer({ name: "3475-codebase-memory", version: "1.2.0" });
 
 server.tool(
   "search_codebase",
