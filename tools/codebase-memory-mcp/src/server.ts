@@ -1,10 +1,11 @@
-import { readFile, readdir, stat } from "node:fs/promises";
+import { lstat, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { isExcludedPath, resolveSafePath } from "./security.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(process.env.CODEBASE_ROOT || path.resolve(HERE, "../../.."));
@@ -17,13 +18,6 @@ const SKIP_DIRS = new Set([
   ".git", "node_modules", ".next", "dist", "build", "coverage",
   ".vercel", ".supabase", ".turbo", ".cache"
 ]);
-const SKIP_FILES = [
-  /^\.env(?:\.|$)/i,
-  /(^|\/)(?:secrets?|credentials?)(?:\/|\.|$)/i,
-  /(^|\/).*\.(?:pem|key|p12|pfx|keystore)$/i,
-  /(^|\/)(?:id_rsa|id_ed25519)(?:\.pub)?$/i,
-  /(^|\/)(?:service-account|supabase-service-role).*\.json$/i
-];
 const TEXT_EXTENSIONS = new Set([
   ".html", ".htm", ".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx",
   ".css", ".scss", ".json", ".md", ".mdx", ".sql", ".yml", ".yaml",
@@ -31,14 +25,6 @@ const TEXT_EXTENSIONS = new Set([
 ]);
 
 type FileRecord = { path: string; content: string; lines: string[] };
-
-function safePath(relativePath: string): string | null {
-  const normalized = relativePath.replaceAll("\\", "/").replace(/^\.\//, "");
-  if (!normalized || normalized.startsWith("/") || normalized.split("/").some(p => p === "..")) return null;
-  if (SKIP_FILES.some(pattern => pattern.test(normalized))) return null;
-  const absolute = path.resolve(ROOT, normalized);
-  return absolute === ROOT || absolute.startsWith(ROOT + path.sep) ? absolute : null;
-}
 
 function isTextFile(filePath: string): boolean {
   return TEXT_EXTENSIONS.has(path.extname(filePath).toLowerCase());
@@ -51,7 +37,7 @@ async function walk(dir = ROOT, prefix = ""): Promise<string[]> {
     const rel = prefix ? prefix + "/" + entry.name : entry.name;
     if (entry.isDirectory()) {
       if (!SKIP_DIRS.has(entry.name)) result.push(...await walk(path.join(dir, entry.name), rel));
-    } else if (entry.isFile() && isTextFile(rel) && !SKIP_FILES.some(p => p.test(rel))) {
+    } else if (entry.isFile() && isTextFile(rel) && !isExcludedPath(rel)) {
       result.push(rel);
     }
   }
@@ -59,11 +45,11 @@ async function walk(dir = ROOT, prefix = ""): Promise<string[]> {
 }
 
 async function readRepoFile(relativePath: string): Promise<FileRecord | null> {
-  const absolute = safePath(relativePath);
-  if (!absolute) return null;
+  const absolute = resolveSafePath(ROOT, relativePath);
+  if (!absolute || isExcludedPath(relativePath)) return null;
   try {
-    const info = await stat(absolute);
-    if (!info.isFile() || info.size > MAX_FILE_BYTES || !isTextFile(relativePath)) return null;
+    const info = await lstat(absolute);
+    if (!info.isFile() || info.isSymbolicLink() || info.size > MAX_FILE_BYTES || !isTextFile(relativePath)) return null;
     const content = await readFile(absolute, "utf8");
     if (content.includes("\u0000")) return null;
     return { path: relativePath.replaceAll("\\", "/"), content, lines: content.split(/\r?\n/) };
