@@ -22,7 +22,7 @@ Status: implemented; CI verification pending.
 - This is static analysis, not an AI reviewer and not proof that a change is safe.
 
 ### Phase 7 — Project contract and regression checks
-Status: planned.
+Status: implemented; CI verification pending.
 
 - Validate translation dictionary key coverage across EN, ID, CN, PH, TH, IT, RU and FR.
 - Validate main HTML script references and critical classic-script load order.
@@ -30,7 +30,7 @@ Status: planned.
 - Keep browser/UI and live-backend checks separate from static CI.
 
 ### Phase 8 — Security and dependency governance
-Status: planned.
+Status: implemented; CI verification pending.
 
 - Add dependency audit reporting and a documented triage process; do not auto-upgrade production dependencies blindly.
 - Review secret boundaries, Supabase RLS/grants, Edge Function authorization, CORS, webhook verification and browser-exposed configuration.
@@ -38,7 +38,7 @@ Status: planned.
 - Live Supabase configuration and Actions secrets cannot be verified from repository source alone.
 
 ### Phase 9 — Operational readiness
-Status: planned.
+Status: implemented.
 
 - Document local MCP installation and client configuration, backup/recovery of generated memory, troubleshooting and safe update steps.
 - Document how to regenerate and validate repository map and AST graph.
@@ -46,7 +46,7 @@ Status: planned.
 - Keep all MCP tools read-only; implementation and deployment remain separate explicit workflows.
 
 ### Phase 10 — Acceptance and maintenance
-Status: planned.
+Status: in progress; final CI acceptance pending.
 
 - Run all automated checks on the final commit and verify generated artifacts are fresh and deterministic.
 - Verify PR review workflow and memory refresh workflow independently.
@@ -57,3 +57,9 @@ Status: planned.
 ## Completion criteria
 
 The project is considered complete when Phases 6–10 have implementation evidence, automated checks pass, documentation matches the shipped behavior, and all checks requiring access outside GitHub are clearly listed as owner-run tasks. Codebase Memory remains a living maintenance system; future source changes should continue updating its generated index and semantic notes.
+
+
+## Operations and acceptance references
+
+- [Operations runbook](OPERATIONS.md)
+- [Final acceptance checklist](ACCEPTANCE.md)
