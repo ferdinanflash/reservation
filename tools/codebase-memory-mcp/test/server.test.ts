@@ -2,35 +2,29 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { isExcludedPath, resolveSafePath } from "../src/security.js";
 
-// Keep these policy tests independent from MCP transport startup.
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../../..");
 
-function isSafeRelativePath(input: string): boolean {
-  const normalized = input.replaceAll("\\", "/").replace(/^\.\//, "");
-  if (!normalized || normalized.startsWith("/") || normalized.split("/").some(p => p === "..")) return false;
-  if (/^\.env(?:\.|$)/i.test(normalized)) return false;
-  if (/(^|\/)(?:secrets?|credentials?)(?:\/|\.|$)/i.test(normalized)) return false;
-  if (/(^|\/).*\.(?:pem|key|p12|pfx|keystore)$/i.test(normalized)) return false;
-  const absolute = path.resolve(ROOT, normalized);
-  return absolute === ROOT || absolute.startsWith(ROOT + path.sep);
-}
-
 test("rejects traversal and absolute paths", () => {
-  assert.equal(isSafeRelativePath("../README.md"), false);
-  assert.equal(isSafeRelativePath("/etc/passwd"), false);
-  assert.equal(isSafeRelativePath("docs/../../.env"), false);
+  assert.equal(resolveSafePath(ROOT, "../README.md"), null);
+  assert.equal(resolveSafePath(ROOT, "/etc/passwd"), null);
+  assert.equal(resolveSafePath(ROOT, "docs/../../.env"), null);
 });
 
 test("allows ordinary project documentation and source", () => {
-  assert.equal(isSafeRelativePath("docs/codebase-memory/INDEX.md"), true);
-  assert.equal(isSafeRelativePath("js/app-core.js"), true);
+  assert.equal(resolveSafePath(ROOT, "docs/codebase-memory/INDEX.md"), path.join(ROOT, "docs/codebase-memory/INDEX.md"));
+  assert.equal(resolveSafePath(ROOT, "js/app-core.js"), path.join(ROOT, "js/app-core.js"));
 });
 
-test("rejects environment and credential material", () => {
-  assert.equal(isSafeRelativePath(".env"), false);
-  assert.equal(isSafeRelativePath(".env.production"), false);
-  assert.equal(isSafeRelativePath("secrets/private.json"), false);
-  assert.equal(isSafeRelativePath("certs/server.pem"), false);
+test("excludes environment and credential material", () => {
+  for (const candidate of [".env", ".env.production", "secrets/private.json", "certs/server.pem", "config/id_rsa"]) {
+    assert.equal(isExcludedPath(candidate), true, candidate);
+    assert.equal(resolveSafePath(ROOT, candidate), null, candidate);
+  }
+});
+
+test("normalizes harmless current-directory prefixes", () => {
+  assert.equal(resolveSafePath(ROOT, "./README.md"), path.join(ROOT, "README.md"));
 });
