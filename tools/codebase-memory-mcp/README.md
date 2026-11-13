@@ -111,3 +111,16 @@ Alternatively, after installing dependencies, configure the client to run the lo
 The MCP now exposes `plan_change`, which ranks source-file candidates and feature maps, seeds a graph traversal from the likely files (or caller-supplied `focus_files`), follows statically indexed imports and function-call edges up to two hops, lists matching literal Supabase/API integrations, flags cross-cutting risks, and creates a verification checklist. The existing `get_change_impact` tool also includes AST-linked candidates when the generated graph is available.
 
 This remains a read-only planning aid. It does not edit source, apply SQL, change Supabase, commit, or deploy. A graph edge is static evidence only; dynamic dispatch, indirect wrappers, data contracts and runtime behavior still need manual verification.
+
+
+## Phase 6 — automated change review
+
+Pull requests that touch application source, Supabase functions, SQL, or the MCP run `../.github/workflows/codebase-memory-review.yml`. The deterministic reviewer is available locally:
+
+```bash
+npm run review
+```
+
+For an accurate PR comparison, set `REVIEW_BASE` to the base branch and `REVIEW_HEAD` to the PR head commit. The workflow does this automatically. It checks changed JavaScript syntax, high-confidence credential patterns, frontend references to `service_role`, dynamic code execution, and local script references when `index.html` changes. It writes `code-review-report.md`; CI uploads this as an artifact. A BLOCKER fails the check. HIGH findings are advisory and need human triage. False positives and false negatives are possible.
+
+See [the completion roadmap](../../docs/codebase-memory/ROADMAP.md) for Phases 6–10 and their acceptance criteria.
