@@ -74,19 +74,28 @@ jobs:
           cp ../../docs/codebase-memory/generated/repository-map.json /tmp/repository-map-first.json
           npm run index
           cmp /tmp/repository-map-first.json ../../docs/codebase-memory/generated/repository-map.json
+      - name: Generate AST dependency graph
+        working-directory: tools/codebase-memory-mcp
+        run: npm run ast
+      - name: Verify deterministic AST graph
+        working-directory: tools/codebase-memory-mcp
+        run: |
+          cp ../../docs/codebase-memory/generated/ast-dependency-graph.json /tmp/ast-graph-first.json
+          npm run ast
+          cmp /tmp/ast-graph-first.json ../../docs/codebase-memory/generated/ast-dependency-graph.json
       - name: Validate generated repository map
         working-directory: tools/codebase-memory-mcp
         run: npm run check:index
       - name: Require generated map updates in pull requests
         if: github.event_name == 'pull_request'
-        run: git diff --exit-code -- docs/codebase-memory/generated/repository-map.json
+        run: git diff --exit-code -- docs/codebase-memory/generated/repository-map.json docs/codebase-memory/generated/ast-dependency-graph.json
       - name: Commit refreshed map
         if: github.event_name != 'pull_request'
         run: |
-          if ! git diff --quiet -- docs/codebase-memory/generated/repository-map.json; then
+          if ! git diff --quiet -- docs/codebase-memory/generated/repository-map.json docs/codebase-memory/generated/ast-dependency-graph.json; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add docs/codebase-memory/generated/repository-map.json
+            git add docs/codebase-memory/generated/repository-map.json docs/codebase-memory/generated/ast-dependency-graph.json
             git commit -m "chore: refresh codebase memory index"
             git pull --rebase origin "$GITHUB_REF_NAME"
             git push
