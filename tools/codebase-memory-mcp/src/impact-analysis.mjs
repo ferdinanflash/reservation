@@ -23,6 +23,7 @@ export function analyzeImpactGraph(graph, seedFiles, maxDepth = 2) {
   const queue = [];
   for (const file of seeds) {
     queue.push({ node: file, depth: 0 });
+    queue.push({ node: file + "#<top-level>", depth: 0 });
     for (const fn of graph?.functions || []) {
       if (fn.file === file) queue.push({ node: fn.id, depth: 0 });
     }
