@@ -12,8 +12,8 @@ const DISCORD_PUBLIC_KEY = Deno.env.get("DISCORD_PUBLIC_KEY") ??
 const DISCORD_API = "https://discord.com/api/v10";
 const ALLIANCES = new Set(["ARX", "IDN", "ZXC", "VNX", "CAT"]);
 const BATCH_DELAY_MS = 1200;
-const MAX_ALLIANCE_FIDS = 500;
-const MAX_TIMEOUT_RETRIES = 10;
+const MAX_ALLIANCE_FIDS = 300;
+const MAX_TIMEOUT_RETRIES = 2;
 
 function json(body: unknown, status = 200) {
     return new Response(JSON.stringify(body), {
@@ -207,7 +207,7 @@ async function sendPublicFollowup(applicationId: string, token: string, content:
     if (!response.ok) console.error("Discord public follow-up failed:", response.status);
 }
 
-function splitPublicLines(lines: string[], maxLength = 1800): string[] {
+function splitPublicLines(lines: string[], maxLength = 1450): string[] {
     const chunks: string[] = [];
     let current = "";
     for (const line of lines) {
