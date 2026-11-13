@@ -7,6 +7,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { isExcludedPath, resolveSafePath } from "./security.js";
+import { analyzeImpactGraph, buildVerificationChecklist } from "./impact-analysis.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(process.env.CODEBASE_ROOT || path.resolve(HERE, "../../.."));
@@ -157,7 +158,7 @@ server.tool(
 
 server.tool(
   "get_change_impact",
-  "Build a conservative change-impact shortlist from feature memory and source keyword matches. All heuristic links are labelled as candidates.",
+  "Build a conservative change-impact shortlist using feature memory, source matches and the generated AST dependency graph.",
   { change_request: z.string().min(5).max(500) },
   async ({ change_request }) => {
     const terms = tokens(change_request);
@@ -170,12 +171,70 @@ server.tool(
     const source = await allTextFiles();
     const candidates = source.map(f => ({ path: f.path, score: terms.reduce((n, t) => n + (f.content.toLowerCase().includes(t) ? 1 : 0), 0) }))
       .filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 15);
+    const graph = await readAstGraph();
+    const seeds = [...new Set([...ranked.slice(0, 3).flatMap(item => item.files), ...candidates.slice(0, 8).map(item => item.path)])];
+    const dependencyImpact = graph ? analyzeImpactGraph(graph, seeds, 2) : null;
     return jsonText({
       request: change_request,
       likely_features: ranked,
       source_candidates: candidates,
-      confidence: "heuristic shortlist; not a verified dependency graph",
-      checklist: ["Confirm the live source and call sites", "Check all 8 language translations when UI text changes", "Check all themes and mobile layout when UI/CSS changes", "Check SQL schema, RLS and migrations for data changes", "Check Edge Function contracts and server secrets for backend changes", "Check APP_BUILD, asset URLs and sw.js cache for frontend assets", "Run relevant tests and inspect browser/runtime behavior"]
+      direct_seed_files: seeds,
+      graph_impact: dependencyImpact,
+      confidence: graph ? "direct matches plus AST-linked candidate dependencies; inspect each relationship and runtime call path" : "heuristic shortlist only; AST graph unavailable",
+      checklist: buildVerificationChecklist(change_request)
+    });
+  }
+);
+
+server.tool(
+  "plan_change",
+  "Create a pre-edit change plan: rank source files, traverse AST dependencies, detect relevant static integrations and produce cross-cutting verification checks. This tool is read-only.",
+  {
+    change_request: z.string().min(5).max(500),
+    focus_files: z.array(z.string().min(1).max(240)).max(20).optional()
+  },
+  async ({ change_request, focus_files = [] }) => {
+    const terms = tokens(change_request);
+    const source = await allTextFiles();
+    const sourceMatches = source.map(file => ({
+      path: file.path,
+      score: terms.reduce((sum, term) => sum + (file.content.toLowerCase().includes(term) ? 1 : 0), 0)
+    })).filter(item => item.score > 0).sort((a,b) => b.score - a.score || a.path.localeCompare(b.path));
+    const featureMatches = await Promise.all(Object.entries(featureFiles).map(async ([id, paths]) => {
+      const doc = await readMemory(`${MEMORY}/${paths[0]}`);
+      const score = terms.reduce((sum, term) => sum + (doc.toLowerCase().includes(term) ? 1 : 0), 0);
+      return { feature_id: id, score, source_files: paths.slice(1) };
+    }));
+    const likelyFeatures = featureMatches.filter(item => item.score > 0).sort((a,b) => b.score - a.score);
+    const seeds = [...new Set([...focus_files, ...likelyFeatures.slice(0, 3).flatMap(item => item.source_files), ...sourceMatches.slice(0, 8).map(item => item.path)])];
+    const graph = await readAstGraph();
+    const impact = graph ? analyzeImpactGraph(graph, seeds, 2) : null;
+    const integrations = (graph?.integrations || []).filter((item: any) => {
+      const haystack = `${item.kind} ${item.value} ${item.function}`.toLowerCase();
+      return terms.some(term => haystack.includes(term));
+    }).slice(0, 50);
+    const risks = [];
+    if (/translation|language|i18n|bahasa|label|text/.test(change_request.toLowerCase())) risks.push("Translation completeness and long-label layout");
+    if (/ui|css|layout|mobile|theme|button|modal|icon|animation/.test(change_request.toLowerCase())) risks.push("Theme consistency, mobile responsiveness and interaction regression");
+    if (/database|sql|table|supabase|rls|policy|migration/.test(change_request.toLowerCase())) risks.push("Schema compatibility, RLS, grants and migration safety");
+    if (/api|edge function|backend|atlas|fetch|webhook/.test(change_request.toLowerCase())) risks.push("API contract, upstream behavior, authorization and secret handling");
+    if (/cache|pwa|service worker|build|asset/.test(change_request.toLowerCase())) risks.push("Build marker, asset versioning and service-worker cache invalidation");
+    return jsonText({
+      change_request,
+      plan_status: graph ? "static-analysis-assisted" : "heuristic-only",
+      likely_features: likelyFeatures,
+      focus_files,
+      direct_file_candidates: sourceMatches.slice(0, 15),
+      dependency_impact: impact,
+      matching_static_integrations: integrations,
+      risk_flags: risks,
+      verification_checklist: buildVerificationChecklist(change_request),
+      execution_boundary: "Planning only. No source files, database records, deployments or Git history are modified.",
+      confidence_notes: [
+        "Direct file matches are keyword evidence, not proof a file must change.",
+        "AST edges are static candidates; ambiguous or dynamic runtime relationships may be missing.",
+        "Inspect current source, feature contracts and live Supabase configuration before implementation."
+      ]
     });
   }
 );
