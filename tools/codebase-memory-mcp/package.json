@@ -7,7 +7,7 @@
   "engines": { "node": ">=20" },
   "scripts": {
     "start": "tsx src/server.ts",
-    "test": "tsx --test test/*.test.ts && node --test scripts/*.test.mjs",
+    "test": "tsx --test test/*.test.ts && node --test test/*.test.mjs",
     "typecheck": "tsc --noEmit",
     "index": "node scripts/build-memory-index.mjs",
     "check:index": "node scripts/check-memory-index.mjs"
