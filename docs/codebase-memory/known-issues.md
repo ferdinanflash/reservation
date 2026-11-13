@@ -30,10 +30,11 @@ SQL files are migration instructions, not proof that they have been applied. Rea
 
 ## 7. MCP analysis limitations
 
-The local MCP server in `tools/codebase-memory-mcp/` is read-only. Search ranking, symbol definition classification, data-flow lookup and change-impact suggestions use text/keyword heuristics; they are not a complete AST or runtime dependency graph. Verify every candidate against current source. The server is not remotely hosted and does not automatically connect to ChatGPT.
+The local MCP server in `tools/codebase-memory-mcp/` is read-only. Search ranking, symbol definition classification and data-flow lookup use text/keyword heuristics. Change-impact planning also traverses the generated AST graph, but it remains a conservative static candidate graph, not a complete runtime dependency graph. Verify every candidate against current source. The server is not remotely hosted and does not automatically connect to ChatGPT.
 
 ## 8. Generated index freshness
 
 The structural inventory in `docs/codebase-memory/generated/repository-map.json` is refreshed by the Phase 3 generator and checked by GitHub Actions on relevant source/documentation changes. The local MCP compares the current tracked-file inventory and content hashes against the generated map and reports added, removed or modified files.
 
-The generator does not infer a complete AST/runtime dependency graph and does not rewrite semantic feature notes. Feature maps, data-flow explanations, known issues and live Supabase configuration still require human review. Re-check current source before every change; source remains authoritative.
+The AST generator infers statically discoverable syntax only and does not model a complete runtime dependency graph or rewrite semantic feature notes. Feature maps, data-flow explanations, known issues and live Supabase configuration still require human review. Re-check current source before every change; source remains authoritative.
+\n## 9. Change-impact planning confidence\n\n`plan_change` ranks likely files from feature notes and keyword evidence, then traverses statically indexed import and function-call edges. The resulting files are candidates, not guaranteed edit targets. Dynamic dispatch, indirect callbacks, event listeners, data flow through runtime state, computed API paths, external consumers and deployed Supabase configuration may be missed or over-included. Inspect every proposed path and verify live contracts before editing.\n
