@@ -3,7 +3,7 @@
 **Project:** State 3475 — Whiteout Survival Management Portal  
 **Repository:** `ferdinanflash/reservation`  
 **Primary site:** https://3475.web.id  
-**Status:** Phases 1–4 implemented: memory foundation, local read-only MCP, automated inventory refresh, and AST dependency analysis  
+**Status:** Phases 1–5 implemented: memory foundation, local read-only MCP, automated inventory refresh, AST dependency analysis, and change-impact planning  
 **Last inspected:** 2026-11-14  
 **Default branch:** `main`
 
@@ -304,7 +304,7 @@ Suggested quality gates:
 - The generated inventory deliberately excludes itself, common credentials, symbolic links, dependency/build folders and oversized files.
 - Structural inventory is automated; semantic feature descriptions, data-flow explanations and known-issue status remain subject to human review. It is not a complete AST/runtime dependency graph.
 
-### Phase 4 — Optional remote MCP
+### Optional future phase — Remote MCP
 - Only if needed, host the same read-only server behind authentication.
 - Define repository access scope and rate limits.
 - Connect a remote client after verifying the endpoint and permissions.
@@ -313,7 +313,7 @@ Suggested quality gates:
 
 ## 11. Current implementation status
 
-Phase 1 memory foundation and Phase 2 local MCP implementation are committed. The MCP package is under `tools/codebase-memory-mcp/`; it uses local stdio transport, exposes seven read-only tools and three resources, excludes common credential files, rejects symbolic-link file reads, and has automated type-check/safety-test CI. It has not been installed or launched on the user's device, and it is not connected to ChatGPT or hosted remotely. Search, symbol tracing and impact analysis remain heuristic. The generated repository inventory now refreshes automatically when relevant changes are pushed; semantic feature notes remain human-maintained. Live Supabase schema, RLS, deployed secrets and webhook configuration remain unverified. Always re-check live source before changing code.
+Phases 1–5 are implemented in `tools/codebase-memory-mcp/`. The local stdio server now exposes ten read-only tools and three resources, including AST tracing, static integration lookup and `plan_change`. It has not been installed or launched on the user's device, and it is not connected to ChatGPT or hosted remotely. GitHub Actions validates type-checks/tests and refreshes the structural inventory and AST graph. Semantic feature notes remain human-maintained. Live Supabase schema, RLS, deployed secrets and webhook configuration remain unverified. Always re-check live source before changing code.
 
 
 ## 9. Phase 4 — AST dependency analysis
@@ -332,3 +332,16 @@ The local MCP exposes `trace_call_graph` and `get_static_integrations` for query
 **Confidence policy:** same-file or unique-name matches are labelled `static-name-match`; ambiguous cross-file matches are labelled `candidate-name-match`. Unresolved imports are retained as unresolved edges. The graph is not a proof of runtime execution.
 
 **Known static-analysis limits:** computed property names, dynamic dispatch, callbacks passed through wrappers, string-built endpoints/table names, runtime script injection, framework behavior, and external services may not be fully discovered. Always inspect current source and runtime contracts before making a change. The graph does not inspect production Supabase data, deployed secrets, RLS state, or live configuration.
+
+
+## 10. Phase 5 — AST-assisted change-impact planning
+
+Phase 5 turns the Phase 4 graph into a conservative pre-edit planning tool.
+
+- Added `src/impact-analysis.mjs` with a bounded, two-hop traversal over statically indexed function-call and relative-import edges.
+- Added `plan_change`, accepting a change request and optional `focus_files`. It returns likely features, direct source candidates, related files with evidence/depth, matching static integrations, risk flags and a verification checklist.
+- Enhanced `get_change_impact` to include AST-linked candidates when the generated graph is available.
+- Added contextual checks for UI/themes/mobile, all eight languages, database/RLS/migrations, Edge Function/API contracts, PWA/cache versioning and push notifications.
+- Added unit tests for graph traversal, missing graph handling and checklist selection.
+
+**Safety and confidence:** this phase remains read-only. It does not modify source, Git, database records, deployments or Supabase settings. The impact graph is a candidate map, not proof of runtime execution; indirect data flow, dynamic dispatch, global event wiring and external consumers still require inspection. A proposed file is not automatically a required edit.
