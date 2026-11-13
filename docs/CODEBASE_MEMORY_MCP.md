@@ -106,6 +106,9 @@ A scheduled weekly integrity check may detect stale feature maps, but human revi
 | `get_data_flow` | `feature_id` or `table_or_endpoint` | Data source, transformations, persistence, and consumers |
 | `get_runbook` | `task` | Safe steps for common maintenance tasks |
 | `get_repository_status` | none | Indexed commit SHA, index timestamp, and stale-index warning |
+| `trace_call_graph` | `symbol`, optional `direction` | AST-indexed definitions, callers and callees with confidence notes |
+| `get_static_integrations` | optional `kind`, `value` | Literal Supabase table, Edge Function and network endpoint references |
+| `plan_change` | `change_request`, optional `focus_files` | Read-only pre-edit plan with direct candidates, AST-linked files, integrations, risks and checklist |
 
 Every result must include file paths and, when possible, line ranges. If a relationship is inferred rather than statically confirmed, it must be labelled **inferred** and include the evidence used.
 
