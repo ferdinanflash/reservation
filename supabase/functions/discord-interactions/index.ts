@@ -3,14 +3,17 @@
  * Copyright (c) 2026 Ferdinan | https://3475.web.id
  * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
  *
- * Discord interaction endpoint for the 3475 bot.
- * Deploy with: supabase functions deploy discord-interactions --no-verify-jwt
+ * Discord interaction endpoint for public 3475 redeem commands.
+ * Deploy: supabase functions deploy discord-interactions --no-verify-jwt
  */
 
 const DISCORD_PUBLIC_KEY = Deno.env.get("DISCORD_PUBLIC_KEY") ??
     "f78d1415e1c63c50cfc2595b21a35b2740d50fae3f06ec73241898145b883518";
 const DISCORD_API = "https://discord.com/api/v10";
-const COMMAND_NAME = "redeem";
+const ALLIANCES = new Set(["ARX", "IDN", "ZXC", "VNX", "CAT"]);
+const BATCH_DELAY_MS = 1200;
+const MAX_ALLIANCE_FIDS = 500;
+const MAX_TIMEOUT_RETRIES = 10;
 
 function json(body: unknown, status = 200) {
     return new Response(JSON.stringify(body), {
@@ -26,17 +29,13 @@ function hexToBytes(hex: string): Uint8Array {
     return out;
 }
 
-function fromHex(hex: string): Uint8Array {
-    if (!/^[0-9a-f]{128}$/i.test(hex)) throw new Error("Invalid signature");
-    const out = new Uint8Array(hex.length / 2);
-    for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
-    return out;
-}
-
 async function verifyDiscordRequest(req: Request, rawBody: string): Promise<boolean> {
     const signature = req.headers.get("x-signature-ed25519") ?? "";
     const timestamp = req.headers.get("x-signature-timestamp") ?? "";
-    if (!signature || !timestamp || !DISCORD_PUBLIC_KEY) return false;
+    if (!signature || !timestamp || !DISCORD_PUBLIC_KEY || !/^\d+$/.test(timestamp)) return false;
+
+    // Reject stale signed payloads to reduce replay risk.
+    if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false;
 
     try {
         const key = await crypto.subtle.importKey(
@@ -46,10 +45,12 @@ async function verifyDiscordRequest(req: Request, rawBody: string): Promise<bool
             false,
             ["verify"],
         );
+        const sig = Uint8Array.from(signature.match(/.{2}/g) ?? [], (byte) => parseInt(byte, 16));
+        if (sig.length !== 64) return false;
         return await crypto.subtle.verify(
             { name: "Ed25519" },
             key,
-            fromHex(signature),
+            sig,
             new TextEncoder().encode(timestamp + rawBody),
         );
     } catch {
@@ -61,106 +62,254 @@ function publicMessage(content: string) {
     return { type: 4, data: { content, allowed_mentions: { parse: [] } } };
 }
 
-function getOptions(interaction: any): Record<string, unknown> {
-    const options = interaction?.data?.options;
-    if (!Array.isArray(options)) return {};
-    return Object.fromEntries(options.map((option: any) => [option.name, option.value]));
+function getCommandOptions(interaction: any): { subcommand: string; values: Record<string, unknown> } {
+    const first = Array.isArray(interaction?.data?.options) ? interaction.data.options[0] : null;
+    if (!first || !Array.isArray(first.options)) return { subcommand: "", values: {} };
+    return {
+        subcommand: String(first.name ?? ""),
+        values: Object.fromEntries(first.options.map((option: any) => [option.name, option.value])),
+    };
 }
 
-async function callRedeemFunction(action: "login" | "redeem", fid: string, cdk?: string) {
+function supabaseConfig() {
     const url = Deno.env.get("SUPABASE_URL");
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
     if (!url || !anonKey) throw new Error("Supabase function configuration is missing");
+    return { url: url.replace(/\/$/, ""), anonKey };
+}
 
-    const response = await fetch(`${url.replace(/\/$/, "")}/functions/v1/redeem-giftcode`, {
+async function callRedeemFunction(action: "redeem", fid: string, cdk: string) {
+    const { url, anonKey } = supabaseConfig();
+    const response = await fetch(`${url}/functions/v1/redeem-giftcode`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "apikey": anonKey,
             "Authorization": `Bearer ${anonKey}`,
         },
-        body: JSON.stringify({ action, fid, ...(cdk ? { cdk } : {}) }),
+        body: JSON.stringify({ action, fid, cdk }),
     });
-
     const result = await response.json().catch(() => ({}));
     return { httpOk: response.ok, result };
 }
 
-function upstreamMessage(payload: any): string {
-    return String(payload?.data?.msg ?? payload?.data?.message ?? payload?.error ?? "").trim();
+async function loadAllianceMembers(alliance: string) {
+    const { url, anonKey } = supabaseConfig();
+    const members: Array<{ fid: string; nickname: string }> = [];
+    const pageSize = 1000;
+
+    for (let offset = 0; ; offset += pageSize) {
+        const query = new URLSearchParams({
+            select: "game_id,nickname",
+            alliance: `eq.${alliance}`,
+            order: "game_id.asc",
+            limit: String(pageSize),
+            offset: String(offset),
+        });
+        const response = await fetch(`${url}/rest/v1/troops_power?${query}`, {
+            headers: {
+                "apikey": anonKey,
+                "Authorization": `Bearer ${anonKey}`,
+                "Accept": "application/json",
+            },
+        });
+        if (!response.ok) {
+            const detail = await response.text().catch(() => "");
+            throw new Error(`Unable to load alliance roster (${response.status}): ${detail.slice(0, 160)}`);
+        }
+
+        const rows = await response.json();
+        if (!Array.isArray(rows)) throw new Error("Invalid alliance roster response");
+
+        for (const row of rows) {
+            const fid = String(row?.game_id ?? "").trim();
+            if (!/^[0-9]{4,20}$/.test(fid)) continue;
+            if (!members.some((member) => member.fid === fid)) {
+                members.push({ fid, nickname: String(row?.nickname ?? "").trim() });
+            }
+        }
+
+        if (rows.length < pageSize || members.length >= MAX_ALLIANCE_FIDS) break;
+    }
+
+    return members.slice(0, MAX_ALLIANCE_FIDS);
 }
 
-function isUpstreamSuccess(payload: any): boolean {
-    const data = payload?.data;
-    const msg = String(data?.msg ?? "").trim().toUpperCase();
-    return payload?.ok === true && (data?.err_code === 0 || data?.code === 0 || msg === "SUCCESS" || msg === "SUCCESS.");
+function upstreamData(result: any) {
+    return result?.data && typeof result.data === "object" ? result.data : {};
 }
 
-async function finishInteraction(applicationId: string, interactionToken: string, content: string) {
-    const url = `${DISCORD_API}/webhooks/${applicationId}/${interactionToken}/messages/@original`;
-    const response = await fetch(url, {
+function upstreamMessage(result: any): string {
+    const data = upstreamData(result);
+    return String(data.msg ?? data.message ?? result?.error ?? "").trim();
+}
+
+function isUpstreamSuccess(result: any): boolean {
+    const data = upstreamData(result);
+    const msg = String(data.msg ?? "").trim().toUpperCase();
+    return result?.ok === true &&
+        (data.err_code === 0 || data.code === 0 || msg === "SUCCESS" || msg === "SUCCESS.");
+}
+
+function resultKind(result: any): "success" | "already" | "invalid" | "expired" | "limit" | "bad_fid" | "error" | "timeout" {
+    const msg = upstreamMessage(result).toUpperCase();
+    if (isUpstreamSuccess(result)) return "success";
+    if (msg.startsWith("USER INFO ERROR")) return "bad_fid";
+    if (msg === "RECEIVED" || msg === "SAME TYPE EXCHANGE") return "already";
+    if (msg.startsWith("CDK NOT FOUND") || msg === "NOT FOUND") return "invalid";
+    if (msg.startsWith("TIME ERROR")) return "expired";
+    if (msg === "USAGE LIMIT" || msg === "USED") return "limit";
+    if (msg.startsWith("TIMEOUT")) return "timeout";
+    return "error";
+}
+
+function resultLabel(kind: ReturnType<typeof resultKind>, result: any): string {
+    switch (kind) {
+        case "success": return "✅ Berhasil";
+        case "already": return "ℹ️ Sudah pernah diklaim";
+        case "invalid": return "❌ Gift Code tidak valid";
+        case "expired": return "⌛ Gift Code kedaluwarsa";
+        case "limit": return "⚠️ Batas penggunaan tercapai";
+        case "bad_fid": return "❌ Player ID tidak ditemukan";
+        case "timeout": return "⚠️ Timeout; hasil belum terkonfirmasi";
+        default: return `❌ Gagal: ${(upstreamMessage(result) || "Kesalahan layanan").slice(0, 100)}`;
+    }
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function redeemOne(fid: string, code: string) {
+    for (let attempt = 0; attempt <= MAX_TIMEOUT_RETRIES; attempt++) {
+        const response = await callRedeemFunction("redeem", fid, code);
+        const result = response.result;
+        const kind = resultKind(result);
+        if (kind !== "timeout") return { kind, result };
+        if (attempt < MAX_TIMEOUT_RETRIES) await sleep(2000);
+    }
+    return { kind: "timeout" as const, result: {} };
+}
+
+async function editOriginal(applicationId: string, token: string, content: string) {
+    const response = await fetch(`${DISCORD_API}/webhooks/${applicationId}/${token}/messages/@original`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, allowed_mentions: { parse: [] } }),
+        body: JSON.stringify({ content: content.slice(0, 1990), allowed_mentions: { parse: [] } }),
     });
-    if (!response.ok) {
-        const detail = await response.text().catch(() => "");
-        console.error("Discord response update failed:", response.status, detail.slice(0, 300));
+    if (!response.ok) console.error("Discord original response update failed:", response.status);
+}
+
+async function sendPublicFollowup(applicationId: string, token: string, content: string) {
+    const response = await fetch(`${DISCORD_API}/webhooks/${applicationId}/${token}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: content.slice(0, 1990), allowed_mentions: { parse: [] } }),
+    });
+    if (!response.ok) console.error("Discord public follow-up failed:", response.status);
+}
+
+function splitPublicLines(lines: string[], maxLength = 1800): string[] {
+    const chunks: string[] = [];
+    let current = "";
+    for (const line of lines) {
+        const next = current ? `${current}\n${line}` : line;
+        if (next.length > maxLength && current) {
+            chunks.push(current);
+            current = line.slice(0, maxLength);
+        } else {
+            current = next;
+        }
+    }
+    if (current) chunks.push(current);
+    return chunks;
+}
+
+async function publishResults(interaction: any, heading: string, rows: Array<{ fid: string; nickname?: string; kind: string; result?: any }>, note = "") {
+    const success = rows.filter((row) => row.kind === "success").length;
+    const already = rows.filter((row) => row.kind === "already").length;
+    const failed = rows.length - success - already;
+    const lines = rows.map((row) => {
+        const name = row.nickname ? `**${row.nickname.replace(/[\r\n]/g, " ").slice(0, 50)}**` : `FID ${row.fid}`;
+        return `• ${name} (${row.fid}) — ${resultLabel(row.kind as any, row.result)}`;
+    });
+    const header = [
+        `🎁 **3475 REDEEM — ${heading}**`,
+        `Total: **${rows.length}** | Berhasil: **${success}** | Sudah diklaim: **${already}** | Gagal: **${failed}**`,
+        note,
+    ].filter(Boolean).join("\n");
+
+    const chunks = splitPublicLines(lines);
+    await editOriginal(interaction.application_id, interaction.token, [header, chunks[0] ?? "Tidak ada hasil."].join("\n"));
+    for (let i = 1; i < chunks.length; i++) {
+        await sendPublicFollowup(interaction.application_id, interaction.token, `**Lanjutan hasil redeem (${i + 1}/${chunks.length})**\n${chunks[i]}`);
     }
 }
 
 async function processRedeem(interaction: any) {
-    const { fid: rawFid, code: rawCode } = getOptions(interaction);
-    const fid = String(rawFid ?? "").trim();
-    const code = String(rawCode ?? "").trim();
-    let message: string;
+    const { subcommand, values } = getCommandOptions(interaction);
+    const code = String(values.code ?? "").trim();
+    let members: Array<{ fid: string; nickname: string }> = [];
+    let heading = "";
 
-    if (!/^[0-9]{4,20}$/.test(fid)) {
-        message = "❌ **Redeem gagal:** Player ID harus berupa 4–20 digit angka.";
-    } else if (!code || code.length > 40) {
-        message = "❌ **Redeem gagal:** Gift Code wajib diisi dan maksimal 40 karakter.";
-    } else {
-        try {
-            const login = await callRedeemFunction("login", fid);
-            const loginData = login.result?.data;
-            if (!login.httpOk || login.result?.ok !== true) {
-                message = `❌ **Redeem gagal untuk Player ID ${fid}.** Tidak dapat menghubungi layanan validasi akun.`;
-            } else if (String(loginData?.msg ?? "").toUpperCase().startsWith("USER INFO ERROR")) {
-                message = `❌ **Redeem gagal:** Player ID ${fid} tidak ditemukan.`;
-            } else {
-                const redeem = await callRedeemFunction("redeem", fid, code);
-                const upstream = redeem.result;
-                if (redeem.httpOk && isUpstreamSuccess(upstream)) {
-                    message = [
-                        "🎉 **3475 — REDEEM BERHASIL!**",
-                        "",
-                        `**Player ID:** ${fid}`,
-                        `**Gift Code:** ${code}`,
-                        "**State:** 3475",
-                        "",
-                        "Gift Code berhasil diklaim melalui 3475 Discord Bot.",
-                    ].join("\n");
-                } else {
-                    const reason = upstreamMessage(upstream) || upstream?.error || "Layanan redeem tidak memberikan konfirmasi berhasil.";
-                    message = `❌ **Redeem tidak berhasil.**\n**Player ID:** ${fid}\n**Gift Code:** ${code}\n**Keterangan:** ${String(reason).slice(0, 250)}`;
-                }
-            }
-        } catch (error) {
-            console.error("Discord redeem processing failed:", error);
-            message = `⚠️ **Redeem belum dapat diproses.**\n**Player ID:** ${fid}\n**Gift Code:** ${code}\nTerjadi gangguan pada layanan 3475. Silakan coba lagi nanti.`;
-        }
+    if (!code || code.length > 40) {
+        await editOriginal(interaction.application_id, interaction.token, "❌ Gift Code wajib diisi dan maksimal 40 karakter.");
+        return;
     }
 
-    await finishInteraction(interaction.application_id, interaction.token, message);
+    if (subcommand === "single") {
+        const fid = String(values.fid ?? "").trim();
+        if (!/^[0-9]{4,20}$/.test(fid)) {
+            await editOriginal(interaction.application_id, interaction.token, "❌ Player ID harus berupa 4–20 digit angka.");
+            return;
+        }
+        members = [{ fid, nickname: "" }];
+        heading = "SINGLE PLAYER";
+    } else if (subcommand === "alliance") {
+        const alliance = String(values.alliance ?? "").trim().toUpperCase();
+        if (!ALLIANCES.has(alliance)) {
+            await editOriginal(interaction.application_id, interaction.token, "❌ Kode aliansi tidak valid. Pilih ARX, IDN, ZXC, VNX, atau CAT.");
+            return;
+        }
+        members = await loadAllianceMembers(alliance);
+        heading = `ALLIANCE ${alliance}`;
+        if (!members.length) {
+            await editOriginal(interaction.application_id, interaction.token, `❌ Tidak ditemukan Player ID untuk aliansi **${alliance}**.`);
+            return;
+        }
+    } else {
+        await editOriginal(interaction.application_id, interaction.token, "❌ Subcommand tidak dikenal. Gunakan /redeem single atau /redeem alliance.");
+        return;
+    }
+
+    const truncated = subcommand === "alliance" && members.length >= MAX_ALLIANCE_FIDS;
+    const results: Array<{ fid: string; nickname?: string; kind: string; result?: any }> = [];
+    for (let i = 0; i < members.length; i++) {
+        const member = members[i];
+        try {
+            const outcome = await redeemOne(member.fid, code);
+            results.push({ fid: member.fid, nickname: member.nickname, kind: outcome.kind, result: outcome.result });
+
+            // Invalid/expired codes stop the remaining batch, matching website behavior.
+            if (outcome.kind === "invalid" || outcome.kind === "expired") {
+                for (const skipped of members.slice(i + 1)) {
+                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "error", result: { msg: "Dilewati: Gift Code tidak valid/kedaluwarsa." } });
+                }
+                break;
+            }
+        } catch (error) {
+            console.error("Redeem failed for one FID:", error);
+            results.push({ fid: member.fid, nickname: member.nickname, kind: "error", result: { msg: "Gangguan layanan" } });
+        }
+        if (i < members.length - 1) await sleep(BATCH_DELAY_MS);
+    }
+
+    const note = truncated ? `⚠️ Roster dibatasi maksimal ${MAX_ALLIANCE_FIDS} anggota untuk satu proses.` : "";
+    await publishResults(interaction, heading, results, note);
 }
 
 Deno.serve(async (req) => {
     if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-
     const rawBody = await req.text();
-    if (!(await verifyDiscordRequest(req, rawBody))) {
-        return json({ error: "invalid_discord_signature" }, 401);
-    }
+    if (!(await verifyDiscordRequest(req, rawBody))) return json({ error: "invalid_discord_signature" }, 401);
 
     let interaction: any;
     try {
@@ -169,20 +318,18 @@ Deno.serve(async (req) => {
         return json({ error: "invalid_json" }, 400);
     }
 
-    // Discord PING handshake.
     if (interaction.type === 1) return json({ type: 1 });
-
-    // Only acknowledge the registered /redeem command. All outcomes are public.
-    if (interaction.type !== 2 || interaction.data?.name !== COMMAND_NAME) {
+    if (interaction.type !== 2 || interaction.data?.name !== "redeem") {
         return json(publicMessage("Perintah tidak dikenal."));
     }
-
     if (!interaction.application_id || !interaction.token) {
         return json(publicMessage("❌ Interaksi Discord tidak lengkap."));
     }
 
-    // Defer immediately to meet Discord's 3-second acknowledgement deadline.
-    // No EPHEMERAL flag is set: the final result is always public in this channel.
-    EdgeRuntime.waitUntil(processRedeem(interaction));
+    // Public deferred response: intentionally no EPHEMERAL flag.
+    EdgeRuntime.waitUntil(processRedeem(interaction).catch(async (error) => {
+        console.error("Discord redeem processing failed:", error);
+        await editOriginal(interaction.application_id, interaction.token, "⚠️ Terjadi gangguan pada layanan redeem 3475.");
+    }));
     return json({ type: 5 });
 });
