@@ -34,4 +34,6 @@ The local MCP server in `tools/codebase-memory-mcp/` is read-only. Search rankin
 
 ## 8. Generated index freshness
 
-This map is manually curated from the tracked repository at baseline commit `7b911f94acfedec5b4a477c0e7a7dc94344c4897`. It is not yet an automatically refreshed dependency graph. The Phase 2 MCP can warn when the local checkout commit differs from the recorded baseline, but it cannot refresh the map. Re-check the live repository before each change. Phase 3 should add deterministic index generation and stale-index validation.
+The structural inventory in `docs/codebase-memory/generated/repository-map.json` is refreshed by the Phase 3 generator and checked by GitHub Actions on relevant source/documentation changes. The local MCP compares the current tracked-file inventory and content hashes against the generated map and reports added, removed or modified files.
+
+The generator does not infer a complete AST/runtime dependency graph and does not rewrite semantic feature notes. Feature maps, data-flow explanations, known issues and live Supabase configuration still require human review. Re-check current source before every change; source remains authoritative.
