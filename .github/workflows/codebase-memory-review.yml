@@ -1,6 +1,18 @@
 name: Codebase Memory Review
 
 on:
+  push:
+    paths:
+      - "index.html"
+      - "common.js"
+      - "lang.js"
+      - "style.css"
+      - "sw.js"
+      - "js/**"
+      - "supabase/**"
+      - "*.sql"
+      - "tools/codebase-memory-mcp/**"
+      - ".github/workflows/**"
   pull_request:
     paths:
       - "index.html"
