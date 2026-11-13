@@ -193,7 +193,7 @@
     "generator_version": 1,
     "file_count": 88,
     "digest_algorithm": "sha256",
-    "content_digest": "890d6b6936b2d1872fda8987904a3776a4fef6385d943f9c018a4289ee4a6069",
+    "content_digest": "98483d9e68a4dde3081ae508eb87b56748a2f5b4fb26259825be56139ccc5843",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -245,7 +245,7 @@
       },
       {
         "path": "docs/codebase-memory/ACCEPTANCE.md",
-        "sha256": "c28a8bde129f84c553e29578870b7959511a6c1cec1b828cb0e263a13d6b68c1"
+        "sha256": "0e459ba41d6abafa4ebd9b7a2c3f74217226da27b01485252512311d0b65ce52"
       },
       {
         "path": "docs/codebase-memory/INDEX.md",
