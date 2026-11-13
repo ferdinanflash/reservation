@@ -41,7 +41,7 @@ if (!Array.isArray(expected)) {
   process.stderr.write("Memory index is missing generated_inventory.files. Run npm run index first.\n");
   process.exit(2);
 }
-const currentPaths = (trackedFiles() || await walk()).filter(file => file !== MAP);
+const currentPaths = (trackedFiles() || await walk()).filter(file => file !== MAP && file !== "docs/codebase-memory/generated/ast-dependency-graph.json");
 const expectedPaths = expected.map(item => item.path).sort();
 const added = currentPaths.filter(file => !expectedPaths.includes(file));
 const removed = expectedPaths.filter(file => !currentPaths.includes(file));
