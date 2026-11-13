@@ -296,10 +296,13 @@ Suggested quality gates:
 - The server is local only. Committing it does not connect ChatGPT or publish a remote MCP endpoint.
 - Local execution and GitHub Actions validation must pass before calling the implementation verified.
 
-### Phase 3 — Automated memory maintenance
-- Add deterministic index generation and GitHub Actions validation.
-- On source changes, identify feature maps that may need review.
-- Require human review for semantic memory changes.
+### Phase 3 — Automated memory maintenance (implemented)
+- Added `tools/codebase-memory-mcp/scripts/build-memory-index.mjs` to deterministically inventory tracked/readable project text files, compute per-file SHA-256 hashes and an aggregate content digest, and extract the current HTML script load order plus frontend modules, Edge Functions, SQL migrations, shared files and feature-map paths.
+- Added `check-memory-index.mjs` to detect added, removed or modified files compared with the committed inventory.
+- Updated the MCP `get_repository_status` tool to compare the generated content digest against the local checkout rather than treating every new Git commit as stale. It reports the exact added/removed/changed paths.
+- GitHub Actions runs type-checks, tests, index generation and freshness validation on relevant pushes and pull requests. Pushes can commit a refreshed map; pull requests must include any generated map changes.
+- The generated inventory deliberately excludes itself, common credentials, symbolic links, dependency/build folders and oversized files.
+- Structural inventory is automated; semantic feature descriptions, data-flow explanations and known-issue status remain subject to human review. It is not a complete AST/runtime dependency graph.
 
 ### Phase 4 — Optional remote MCP
 - Only if needed, host the same read-only server behind authentication.
@@ -310,4 +313,4 @@ Suggested quality gates:
 
 ## 11. Current implementation status
 
-Phase 1 memory foundation and Phase 2 local MCP implementation are committed. The MCP package is under `tools/codebase-memory-mcp/`; it uses local stdio transport, exposes seven read-only tools and three resources, excludes common credential files, rejects symbolic-link file reads, and has automated type-check/safety-test CI. It has not been installed or launched on the user's device, and it is not connected to ChatGPT or hosted remotely. Search, symbol tracing and impact analysis remain heuristic. The curated repository map still needs Phase 3 deterministic refresh automation. Live Supabase schema, RLS, deployed secrets and webhook configuration remain unverified. Always re-check live source before changing code.
+Phase 1 memory foundation and Phase 2 local MCP implementation are committed. The MCP package is under `tools/codebase-memory-mcp/`; it uses local stdio transport, exposes seven read-only tools and three resources, excludes common credential files, rejects symbolic-link file reads, and has automated type-check/safety-test CI. It has not been installed or launched on the user's device, and it is not connected to ChatGPT or hosted remotely. Search, symbol tracing and impact analysis remain heuristic. The generated repository inventory now refreshes automatically when relevant changes are pushed; semantic feature notes remain human-maintained. Live Supabase schema, RLS, deployed secrets and webhook configuration remain unverified. Always re-check live source before changing code.
