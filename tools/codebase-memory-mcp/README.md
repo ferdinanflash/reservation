@@ -4,7 +4,7 @@ Local, read-only Model Context Protocol server for the `ferdinanflash/reservatio
 
 ## What it does
 
-The server helps an assistant navigate the project before making a change. It reads repository source and the maintained `docs/codebase-memory/` notes, and exposes nine read-only tools:
+The server helps an assistant navigate the project before making a change. It reads repository source and the maintained `docs/codebase-memory/` notes, and exposes ten read-only tools:
 
 - `search_codebase` — ranked keyword search with file paths and line excerpts.
 - `get_feature_map` — feature notes plus the existence of mapped source files.
@@ -19,7 +19,7 @@ Resources:
 - `3475://known-issues`
 - `3475://architecture/mcp`
 
-Keyword search and impact results remain navigational/heuristic. Phase 4 adds a TypeScript-compiler AST graph for statically discoverable calls, imports and integrations; dynamic dispatch and runtime behavior are not fully resolved. Always inspect current source before editing.
+Phase 4 adds a TypeScript-compiler AST graph; Phase 5 uses it to build conservative change-impact plans. Direct keyword matches, cross-file function matches and dependency traversal remain candidate evidence, not proof of runtime behavior. Always inspect current source before editing.
 
 ## Security boundary
 
@@ -50,7 +50,7 @@ The inventory generator refreshes `docs/codebase-memory/generated/repository-map
 
 GitHub Actions runs the generator and checks freshness on relevant pushes and pull requests. On a push, the workflow commits a changed generated map using `github-actions[bot]`; on a pull request, the check fails if the generated map was not included in the PR. The workflow requires repository Actions settings/branch rules to permit the bot to push to the target branch.
 
-The generated inventory and AST graph are structural, not a complete runtime graph. The analyzer may miss dynamic/computed calls, wrapper functions, indirect URLs, runtime injection and framework behavior; cross-file classic-script name matches can be ambiguous. It does not verify live Supabase configuration or rewrite feature explanations. Human review remains required for feature maps and known issues.
+The generated inventory and AST graph are structural, not a complete runtime graph. The analyzer may miss dynamic/computed calls, wrapper functions, indirect URLs, runtime injection and framework behavior. Phase 5's impact traversal is conservative and may include false positives or miss indirect runtime dependencies. It does not verify live Supabase configuration or rewrite feature explanations. Human review remains required for feature maps and known issues.
 
 ## Install and test
 
@@ -98,6 +98,7 @@ Alternatively, after installing dependencies, configure the client to run the lo
 ## Current limitations
 
 - AST tracing covers statically discoverable JavaScript/TypeScript syntax only; dynamic and runtime dependencies require manual verification.
-- The current repository map is curated and may be stale until Phase 3 automation is implemented.
+- Generated inventory and AST graph freshness depends on the GitHub Actions workflow completing successfully; semantic feature notes still require human review.
 - Git status detection requires the local checkout to include Git metadata.
 - MCP availability is local to the machine and client where this server is installed. Committing these files does not connect ChatGPT or deploy a remote MCP server.
+\n## Phase 5 — change-impact planning\n\nThe MCP now exposes `plan_change`, which ranks source-file candidates and feature maps, seeds a graph traversal from the likely files (or caller-supplied `focus_files`), follows statically indexed imports and function-call edges up to two hops, lists matching literal Supabase/API integrations, flags cross-cutting risks, and creates a verification checklist. The existing `get_change_impact` tool also includes AST-linked candidates when the generated graph is available.\n\nThis remains a read-only planning aid. It does not edit source, apply SQL, change Supabase, commit, or deploy. A graph edge is static evidence only; dynamic dispatch, indirect wrappers, data contracts and runtime behavior still need manual verification.\n
