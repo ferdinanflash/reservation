@@ -4,7 +4,7 @@ Local, read-only Model Context Protocol server for the `ferdinanflash/reservatio
 
 ## What it does
 
-The server helps an assistant navigate the project before making a change. It reads repository source and the maintained `docs/codebase-memory/` notes, and exposes seven read-only tools:
+The server helps an assistant navigate the project before making a change. It reads repository source and the maintained `docs/codebase-memory/` notes, and exposes nine read-only tools:
 
 - `search_codebase` — ranked keyword search with file paths and line excerpts.
 - `get_feature_map` — feature notes plus the existence of mapped source files.
@@ -12,14 +12,14 @@ The server helps an assistant navigate the project before making a change. It re
 - `get_change_impact` — conservative impact shortlist and verification checklist.
 - `get_data_flow` — retrieve documented feature/table/endpoint flows.
 - `get_runbook` — safe maintenance guidance.
-- `get_repository_status` — compare the checked-out commit with the memory baseline.
+- `get_repository_status` — compare the checked-out commit with the memory baseline.\n- `trace_call_graph` — AST-based function definitions, callers and callees.\n- `get_static_integrations` — AST-detected Supabase tables, Edge Functions and literal network endpoints.
 
 Resources:
 - `3475://project/overview`
 - `3475://known-issues`
 - `3475://architecture/mcp`
 
-Search and impact results are navigational/heuristic, not a complete AST dependency graph. Always inspect current source before editing.
+Keyword search and impact results remain navigational/heuristic. Phase 4 adds a TypeScript-compiler AST graph for statically discoverable calls, imports and integrations; dynamic dispatch and runtime behavior are not fully resolved. Always inspect current source before editing.
 
 ## Security boundary
 
@@ -46,11 +46,11 @@ npm run index
 npm run check:index
 ```
 
-The generator refreshes `docs/codebase-memory/generated/repository-map.json` with the current local text-file inventory, SHA-256 content hashes, HTML script load order, frontend modules, Supabase Edge Functions, SQL migration paths, shared files and feature-map paths. It excludes the generated map itself, build/dependency directories, common credential files, symbolic links and oversized files. Running it twice without source changes should produce no further diff.
+The inventory generator refreshes `docs/codebase-memory/generated/repository-map.json` with the current local text-file inventory, SHA-256 content hashes, HTML script load order, frontend modules, Supabase Edge Functions, SQL migration paths, shared files and feature-map paths. The AST generator refreshes `docs/codebase-memory/generated/ast-dependency-graph.json` with function definitions, statically matched calls, relative imports, and literal Supabase table / Edge Function / network endpoint references. It excludes the generated map itself, build/dependency directories, common credential files, symbolic links and oversized files. Running it twice without source changes should produce no further diff.
 
 GitHub Actions runs the generator and checks freshness on relevant pushes and pull requests. On a push, the workflow commits a changed generated map using `github-actions[bot]`; on a pull request, the check fails if the generated map was not included in the PR. The workflow requires repository Actions settings/branch rules to permit the bot to push to the target branch.
 
-The generated inventory is structural, not semantic. It does not infer complete runtime dependencies, verify live Supabase configuration, or rewrite feature explanations. Human review remains required for feature maps and known issues.
+The generated inventory and AST graph are structural, not a complete runtime graph. The analyzer may miss dynamic/computed calls, wrapper functions, indirect URLs, runtime injection and framework behavior; cross-file classic-script name matches can be ambiguous. It does not verify live Supabase configuration or rewrite feature explanations. Human review remains required for feature maps and known issues.
 
 ## Install and test
 
@@ -97,7 +97,7 @@ Alternatively, after installing dependencies, configure the client to run the lo
 
 ## Current limitations
 
-- Symbol and change-impact tracing use text/keyword heuristics, not a full JavaScript/TypeScript AST or call graph.
+- AST tracing covers statically discoverable JavaScript/TypeScript syntax only; dynamic and runtime dependencies require manual verification.
 - The current repository map is curated and may be stale until Phase 3 automation is implemented.
 - Git status detection requires the local checkout to include Git metadata.
 - MCP availability is local to the machine and client where this server is installed. Committing these files does not connect ChatGPT or deploy a remote MCP server.
