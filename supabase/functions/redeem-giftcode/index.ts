@@ -43,7 +43,7 @@
 
 import md5 from "npm:md5@2.3.0";
 
-const GIFT_CODE_SIGN_SECRET = Deno.env.get("GIFT_CODE_SIGN_SECRET") || "tB87#kPtkxqOS2";
+const GIFT_CODE_SIGN_SECRET = Deno.env.get("GIFT_CODE_SIGN_SECRET") || "";
 const KINGDOM_ID = "3475"; // same alliance/State id as REDEEM_STATE_ID in app-extras.js
 const LOGIN_URL = "https://wos-giftcode-api.centurygame.com/api/player";
 const REDEEM_URL = "https://wos-giftcode-api.centurygame.com/api/gift_code";
@@ -65,6 +65,7 @@ function jsonResponse(body: unknown, status = 200) {
 // exact ordering is what Century Games' own JS signs, confirmed against a
 // real captured request), then appends the secret and MD5-hashes it.
 function sign(params: Record<string, string>): string {
+    if (!GIFT_CODE_SIGN_SECRET) throw new Error("GIFT_CODE_SIGN_SECRET is not configured");
     const qs = Object.keys(params)
         .sort()
         .map((k) => `${k}=${params[k]}`)
@@ -118,6 +119,9 @@ Deno.serve(async (req) => {
     }
     if (req.method !== "POST") {
         return jsonResponse({ ok: false, error: "method_not_allowed" }, 405);
+    }
+    if (!GIFT_CODE_SIGN_SECRET) {
+        return jsonResponse({ ok: false, error: "redeem_service_not_configured" }, 503);
     }
 
     let body: Record<string, unknown>;
