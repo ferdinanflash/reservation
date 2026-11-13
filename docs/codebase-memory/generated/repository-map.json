@@ -4,9 +4,9 @@
   "branch": "main",
   "inspected_commit": "7b911f94acfedec5b4a477c0e7a7dc94344c4897",
   "inspected_at_utc": "2026-11-14",
-  "generated_mode": "curated-initial-inventory",
-  "automation_status": "not-yet-automated",
-  "note": "This is a manually curated initial inventory from the Git tree and source inspection. It is not a complete AST dependency graph. Re-check current source before edits.",
+  "generated_mode": "automated-deterministic-inventory",
+  "automation_status": "automated-inventory; semantic-feature-notes-require-human-review",
+  "note": "Generated inventory and file digests are deterministic for the same repository contents and generator version. Semantic feature maps remain human-maintained. This is not a complete AST dependency graph.",
   "entrypoints": {
     "main": "index.html",
     "shared": "common.js",
@@ -31,37 +31,36 @@
     "opening-animation.js"
   ],
   "feature_maps": [
+    "docs/codebase-memory/features/notifications.md",
+    "docs/codebase-memory/features/redeem-and-extras.md",
     "docs/codebase-memory/features/reservation.md",
+    "docs/codebase-memory/features/shared-core-auth.md",
     "docs/codebase-memory/features/svs-enemies.md",
     "docs/codebase-memory/features/svs-record.md",
-    "docs/codebase-memory/features/redeem-and-extras.md",
-    "docs/codebase-memory/features/notifications.md",
-    "docs/codebase-memory/features/themes-translations-pwa.md",
-    "docs/codebase-memory/features/shared-core-auth.md"
+    "docs/codebase-memory/features/themes-translations-pwa.md"
   ],
   "shared_files": [
-    "index.html",
     "common.js",
-    "lang.js",
-    "style.css",
-    "sw.js",
-    "site.webmanifest",
     "fire-banner.js",
+    "index.html",
+    "lang.js",
+    "live/index.html",
     "opening-animation.js",
-    "live/index.html"
+    "style.css",
+    "sw.js"
   ],
   "frontend_modules": [
-    "js/app-core.js",
-    "js/app-auth.js",
-    "js/app-notes.js",
-    "js/app-schedule.js",
     "js/app-applications.js",
-    "js/app-waiting.js",
+    "js/app-auth.js",
     "js/app-bulk.js",
+    "js/app-core.js",
     "js/app-extras.js",
+    "js/app-notes.js",
     "js/app-notifications.js",
+    "js/app-schedule.js",
     "js/app-svs-enemies.js",
-    "js/app-svs-record.js"
+    "js/app-svs-record.js",
+    "js/app-waiting.js"
   ],
   "edge_functions": [
     "supabase/functions/index.ts",
@@ -161,13 +160,13 @@
     "supabase_migration_svs_enemies.sql",
     "supabase_migration_svs_enemies_menu_label.sql",
     "supabase_migration_svs_enemy_cache.sql",
-    "supabase_migration_theme_settings.sql",
-    "supabase_migration_theme_valentine.sql",
+    "supabase_migration_theme_bluefire.sql",
     "supabase_migration_theme_cny.sql",
     "supabase_migration_theme_eid.sql",
     "supabase_migration_theme_midautumn.sql",
-    "supabase_migration_theme_bluefire.sql",
+    "supabase_migration_theme_settings.sql",
     "supabase_migration_theme_thanksgiving.sql",
+    "supabase_migration_theme_valentine.sql",
     "svs_record_migration.sql"
   ],
   "external_systems": [
@@ -189,5 +188,329 @@
     "docs/codebase-memory/known-issues.md",
     "docs/codebase-memory/decisions/ADR-001-classic-script-architecture.md",
     "docs/codebase-memory/decisions/ADR-002-memory-trust-and-security.md"
+  ],
+  "generated_inventory": {
+    "generator_version": 1,
+    "file_count": 78,
+    "digest_algorithm": "sha256",
+    "content_digest": "8595288e383c8dbf27e17506713eb0e04bf5f04db91f70876f4a275b498bcee0",
+    "files": [
+      {
+        "path": ".github/workflows/codebase-memory-mcp.yml",
+        "sha256": "7872083f51a326b652dc54b0d63a10c0137c7b17675b1f8a306800aebf30c259"
+      },
+      {
+        "path": ".github/workflows/source-protection-monitor.yml",
+        "sha256": "e26b42add425978b808cb81df8bc23a40de5dea7d8328ff9fd0eb74e0f12f4b6"
+      },
+      {
+        "path": ".github/workflows/static.yml",
+        "sha256": "fa14bef2f4b34cc31ec33da90e8ad82db20007e4b921b9c3fdf33ac1911d8b52"
+      },
+      {
+        "path": "LICENSE_ID.md",
+        "sha256": "a9a6c37fd6c38d234453e18ed2420574222dc2e24e3535251bc57f2ae9e46a49"
+      },
+      {
+        "path": "PRD.MD",
+        "sha256": "39c7bd649d5af1c991f7c62c40c54c22e49c3d2bb60089047747cb59c8dc3510"
+      },
+      {
+        "path": "Readme.MD",
+        "sha256": "b638d6524e86dec244ca2c447080ddcd2c175cda60a1ac3aaaca8ad98003b6ee"
+      },
+      {
+        "path": "Readme_EN.MD",
+        "sha256": "660885cb4248fe7f319e1305eece27bab394bbb76e4c8126f673ec2d0145c732"
+      },
+      {
+        "path": "common.js",
+        "sha256": "2bfd67a7a5f4f58f47be61aa3468e9681e7873ada06684330e8660441a208d42"
+      },
+      {
+        "path": "config/source-fingerprints.json",
+        "sha256": "4cce85365a57591f95c01fcb6f90439046bb472842528e3fc29aa7e3b6d74863"
+      },
+      {
+        "path": "docs/CODEBASE_MEMORY_MCP.md",
+        "sha256": "e892a56b5693aed291eee07c2e6e1dcfe9f580d4a1977f8c17164123fa8d2f86"
+      },
+      {
+        "path": "docs/SOURCE_PROTECTION_MONITOR.md",
+        "sha256": "50ff2e956cb71bd9b365d1234beb0201ebdc89ac472d97cf06d14f60be674ae1"
+      },
+      {
+        "path": "docs/codebase-memory/INDEX.md",
+        "sha256": "e730cf3d5941f7169e50fabbf69d4e8cac02d613310491e815f189c626ba5a34"
+      },
+      {
+        "path": "docs/codebase-memory/decisions/ADR-001-classic-script-architecture.md",
+        "sha256": "9200b2b33ba9efca6d680bf3787f7cf1621c6422209e68bac31a7a17fd4e8562"
+      },
+      {
+        "path": "docs/codebase-memory/decisions/ADR-002-memory-trust-and-security.md",
+        "sha256": "4646a15462f094426195197b8fa41a55ef7f634976f2f23a471adcd322d426b4"
+      },
+      {
+        "path": "docs/codebase-memory/features/notifications.md",
+        "sha256": "fc39a312b948b199a5fd761afdb50064868a5c58623780b32afd2ed80851f8cf"
+      },
+      {
+        "path": "docs/codebase-memory/features/redeem-and-extras.md",
+        "sha256": "5d0255e1e767fe1dc8e2f7457e866400074b9fa189e3541197d000ad286733b4"
+      },
+      {
+        "path": "docs/codebase-memory/features/reservation.md",
+        "sha256": "a401c305fd15142f8a741870cf05202de5627bcbcd98d8a536deefc3eec23872"
+      },
+      {
+        "path": "docs/codebase-memory/features/shared-core-auth.md",
+        "sha256": "39f3fa13c7364f404e50dd9c3f47c0715aeb3451ac2e36f488f5c0bdb4d3481e"
+      },
+      {
+        "path": "docs/codebase-memory/features/svs-enemies.md",
+        "sha256": "07560a04febd7358c35f94bd18dd49641cf86bc88ab1fda60b03575a88199c8f"
+      },
+      {
+        "path": "docs/codebase-memory/features/svs-record.md",
+        "sha256": "d9c230c1faef548a132e5f8064ab46fc45195acf93c090099f65fcbbd75744f1"
+      },
+      {
+        "path": "docs/codebase-memory/features/themes-translations-pwa.md",
+        "sha256": "d83db85bfb16694ca0496c87495e1f0c832673cbd5597f74b108f0fad96b8137"
+      },
+      {
+        "path": "docs/codebase-memory/known-issues.md",
+        "sha256": "513b9e17b97fce02350fa278fed1e8498377d35065aa2fc041a882cb38764597"
+      },
+      {
+        "path": "fire-banner.js",
+        "sha256": "46a1a328cfc47edd4c1242bf9fbe88c6f7e274a33c778809d80a418c7c56afe3"
+      },
+      {
+        "path": "fonts/Creepster-OFL.txt",
+        "sha256": "412ba31ea293bf21d4f399f63cd88ff41b6bf0f3a1844f40f26094529e5133e4"
+      },
+      {
+        "path": "icon-src.svg",
+        "sha256": "3632d9b2ca91c811eb977306d7e9b0ac7b99f0b11206b88ea7c0b049224e55ab"
+      },
+      {
+        "path": "images/check.svg",
+        "sha256": "0007230030a98a28bf5cd8dcfb68f189c432774f70382b5df0504ab52d2b5480"
+      },
+      {
+        "path": "index.html",
+        "sha256": "e735ef0b8b86c153f43f980467f1258863e5e1f2946e09e589ad58bf16565d9d"
+      },
+      {
+        "path": "js/app-applications.js",
+        "sha256": "e3b930ad0bccf16665dc159f1e673a84b95892a4d6c81f72fd7669907bee95b7"
+      },
+      {
+        "path": "js/app-auth.js",
+        "sha256": "f4a62c4cae7583f5e5dcd01f0058576ba8084d1bc41a015340f8667e3efc15f8"
+      },
+      {
+        "path": "js/app-bulk.js",
+        "sha256": "c30de9f750a6f0215643d823ce308809507b70b1f6ecee290ed5a5aa701811f1"
+      },
+      {
+        "path": "js/app-core.js",
+        "sha256": "3df4ed78b0e2083463fd61a0ef991fe452db478e96f97fe169584eb7000f5362"
+      },
+      {
+        "path": "js/app-extras.js",
+        "sha256": "36d24409e31fe31bff12d8dca58343f21f43403d4806d8d2174845082c7cfbc2"
+      },
+      {
+        "path": "js/app-notes.js",
+        "sha256": "947038b67a0fdcd682025dbcd699df8d48230f6385d7654a7687b27577cf1f8c"
+      },
+      {
+        "path": "js/app-notifications.js",
+        "sha256": "8aa145fc75a6862ea9e3ef84a8a4d5732309ad785dd7951be5ebc58ef1baf195"
+      },
+      {
+        "path": "js/app-schedule.js",
+        "sha256": "93c11794c627a605ba702f016b65a5e097724bbcf5267fee57f6ba16596314da"
+      },
+      {
+        "path": "js/app-svs-enemies.js",
+        "sha256": "96f5968604ef05a0e09310dbeb2f5ddd72303119d4939a5fc5b61499ed622f8a"
+      },
+      {
+        "path": "js/app-svs-record.js",
+        "sha256": "ee3792c35fa682650e1df68e67c4b5616d4dd9696631976bb8e55f85214a04f4"
+      },
+      {
+        "path": "js/app-waiting.js",
+        "sha256": "916f77ea808f80af10b2d4e1dade344c766022ccc68b1daf9ee9b6e4ce6e7289"
+      },
+      {
+        "path": "lang.js",
+        "sha256": "f85b576bb948965933d4982151a934e6cbf29f24752aca239def049e23073357"
+      },
+      {
+        "path": "live/index.html",
+        "sha256": "64744c66f5597b84d2d8341fb511c8135ac8931eb01507dd3b4b5f39da6bd7f2"
+      },
+      {
+        "path": "opening-animation.js",
+        "sha256": "26fa2348f17a038096767b01f19dee680e3413b02d3e2d5092c3f979c7f27d6b"
+      },
+      {
+        "path": "robots.txt",
+        "sha256": "8c24adb7ba28d7be2645033f97bb020fb7392225ad31059b11f46ae18cf3db4e"
+      },
+      {
+        "path": "scripts/source_protection_monitor.py",
+        "sha256": "f51903b090b25208eb657b1d7fac9624bca0462c2611fbf7f4ef2e738ffb3257"
+      },
+      {
+        "path": "sitemap.xml",
+        "sha256": "08ba07a8a4907f095d37c9c847c735e559b6431542464538342d7acee9b81805"
+      },
+      {
+        "path": "style.css",
+        "sha256": "01e48d7e26275aab43e97324df1a5cd26dc85dc1263611dc748752dcf27203c4"
+      },
+      {
+        "path": "supabase/functions/index.ts",
+        "sha256": "075cf037b5348e62720afb32f265257c491af3e4e82e67f200a8c665f9255189"
+      },
+      {
+        "path": "supabase/functions/redeem-giftcode/index.ts",
+        "sha256": "3163b53f126836f916e2d75bb3f2a39eea25c4f341ed32d9329041654959007e"
+      },
+      {
+        "path": "supabase/functions/send-announcement/index.ts",
+        "sha256": "524add1ff17c107c976385caa23230015ce3222d2100ff8b6f9ab32ee0bd949f"
+      },
+      {
+        "path": "supabase/functions/send-push-notification/index.ts",
+        "sha256": "8e1498cf7e336c5b9ceb501813ef1627c301a452657ffa40a2e0604b1748062d"
+      },
+      {
+        "path": "supabase/functions/wosatlas-states/index.ts",
+        "sha256": "1ddae8389a0e6c05b2a8899b548aa3569b183e98ff094589608ef25515c05871"
+      },
+      {
+        "path": "supabase_migration_additional_time_slots.sql",
+        "sha256": "17d5b9d5b3467837e4a23fb1e7a6e4b921999a219aba717b344a928ad474f2a3"
+      },
+      {
+        "path": "supabase_migration_application_time_log.sql",
+        "sha256": "368b1c34de9b53546d85075e801fb331cedb0b10984a8104e148a67d29a2e299"
+      },
+      {
+        "path": "supabase_migration_fire_crystal_shard.sql",
+        "sha256": "85f94e6e76ea35011bb9525a8b6477cca3e951ad8e91b77deed7f89ee48cd922"
+      },
+      {
+        "path": "supabase_migration_guest_notifications.sql",
+        "sha256": "315ad57e7e88fafe8616d99ee3471065fa2b28db2817484276a5b7f731b201ee"
+      },
+      {
+        "path": "supabase_migration_push_subscriptions.sql",
+        "sha256": "f8ac00f3eb878f3cb8a86119a1eb297336bab0535bf797348e162f9c1f88ddcd"
+      },
+      {
+        "path": "supabase_migration_push_subscriptions_cleanup.sql",
+        "sha256": "aa3ebc1b6cde746478f14f79803a188978dec85b297e675ece2eb36baa7c3967"
+      },
+      {
+        "path": "supabase_migration_svs_enemies.sql",
+        "sha256": "bbdde3b13eb17f5ff8ec0ef8c15b6ecbe3f4feb9d2581c13057a03a036af05ae"
+      },
+      {
+        "path": "supabase_migration_svs_enemies_menu_label.sql",
+        "sha256": "3eff9e95ee8fcaf3f2d447b0a9f1c54f65d821834e7f8e8cbb71042346990eef"
+      },
+      {
+        "path": "supabase_migration_svs_enemy_cache.sql",
+        "sha256": "a068a4a47dd9fc2684a3b205b7728120ed78bb4df673c044869412a333b0a579"
+      },
+      {
+        "path": "supabase_migration_theme_bluefire.sql",
+        "sha256": "be93931350e4dae6c18fbcbb15b307ef718ce81849d418971fe3cd30b691c3b0"
+      },
+      {
+        "path": "supabase_migration_theme_cny.sql",
+        "sha256": "a0ff70ba8339e3e37ca49f0e48d676038962abb46dd27c6f1d1548b46d9f3e7f"
+      },
+      {
+        "path": "supabase_migration_theme_eid.sql",
+        "sha256": "2c4bf5befbf26bfd98cf81027d1ddd2ec3fc0dc24d2ee90e2985e9be94de04fa"
+      },
+      {
+        "path": "supabase_migration_theme_midautumn.sql",
+        "sha256": "b756ede0460b5fba841a322512945b14830ca5f61159601f9f64b2c097b2425d"
+      },
+      {
+        "path": "supabase_migration_theme_settings.sql",
+        "sha256": "a3f4c53e42d2f63f171b01dcde2b790542c72890f570ebe3d9bba99b5328db69"
+      },
+      {
+        "path": "supabase_migration_theme_thanksgiving.sql",
+        "sha256": "b90391c61dad45c93e1ababdb7b337d16fdbd954d5b3783387aaf4d5412cdafa"
+      },
+      {
+        "path": "supabase_migration_theme_valentine.sql",
+        "sha256": "988d52ce6ab0fb75106f9e595e9fbda013ab8f867480e85b61de1da59a9f879e"
+      },
+      {
+        "path": "svs_record_migration.sql",
+        "sha256": "dbba00f93db72d50a1357c7ad521d970e538710735db65744e5c23aa5191b39d"
+      },
+      {
+        "path": "sw.js",
+        "sha256": "3d199459e08b7d3c276e06317d79821612472e892d440aa1ac29e78cf33f874e"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/README.md",
+        "sha256": "62386519438a67527b0d00bd0c91766e407e2f9775f88f8350dca37a2585f4fc"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/package-lock.json",
+        "sha256": "1fbc0a1d9b3114f488fc18512e92d7458cdcb40081984d3c9f1fcc8d21496717"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/package.json",
+        "sha256": "c438d1f323509db56e0a5463292b20a298a4b4a61a16a0a499e9cb706045ab86"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/scripts/build-memory-index.mjs",
+        "sha256": "1a9e23fc4f625164add569a02f9fab747327c750869b562b5d8e67f5330235bc"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/scripts/check-memory-index.mjs",
+        "sha256": "4b8c9ea4a20971eaef88737f5aadf9103f4f284be4c56b6af3028df57be0734f"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/src/security.ts",
+        "sha256": "31badcc575a6c564c5349f806787a07c1e2fac3f2df76501d120c0ba977c8cb2"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/src/server.ts",
+        "sha256": "8160d9569b519ca5dd056f9e87c5c0dd3c942381e76b803737531dcce6ea0552"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/test/indexer.test.mjs",
+        "sha256": "1a1ddaa4b460198a80dd5683300bd62d9f7f275c9a6cd65e9fb1d800bf228aaf"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/test/server.test.ts",
+        "sha256": "584c354608bb74041ce7e03c1cc23daebb07b23f7b9694fd46587b8998c819ad"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/tsconfig.json",
+        "sha256": "eb35dc49d5d7d1d2eaa99f12dfc37728ab3fa104b53d646958760b1865a95f75"
+      }
+    ]
+  },
+  "generation_warnings": [
+    "Static inventory does not prove runtime dependencies or deployed configuration.",
+    "Semantic feature descriptions and known issues require human review."
   ]
 }
