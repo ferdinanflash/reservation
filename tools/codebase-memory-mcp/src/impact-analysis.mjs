@@ -36,7 +36,7 @@ export function analyzeImpactGraph(graph, seedFiles, maxDepth = 2) {
     if (previous !== undefined && previous <= current.depth) continue;
     visited.set(current.node, current.depth);
     if (current.depth >= maxDepth) continue;
-    for (const next of adjacency.get(current.node) || []) {
+    const ownerFile = fileOf(current.node);\n    const neighbors = [...(adjacency.get(current.node) || []), ...(ownerFile && ownerFile !== current.node ? (adjacency.get(ownerFile) || []) : [])];\n    for (const next of neighbors) {
       const targetFile = fileOf(next.node);
       if (targetFile) {
         if (!evidence.has(targetFile)) evidence.set(targetFile, []);
