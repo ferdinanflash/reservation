@@ -191,9 +191,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 81,
+    "file_count": 82,
     "digest_algorithm": "sha256",
-    "content_digest": "cbaa39f71828e7a753f9651dc0893287f74e8cbe4e1806e1f6eae9b6f0c366dc",
+    "content_digest": "d6e6ffb62fdc5f496a6755d17965db436b5ee7d55efe61743174d32534c1e4c4",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -233,7 +233,7 @@
       },
       {
         "path": "docs/CODEBASE_MEMORY_MCP.md",
-        "sha256": "2811057a48f269a9f5712a13a7f5b1a13550a3ba38b89bc2832ad2f9edd0c455"
+        "sha256": "3a8b738379850a35abfda0223d7bd9e0229e8020924a56b4ff87edbcbb653c78"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
@@ -241,7 +241,7 @@
       },
       {
         "path": "docs/codebase-memory/INDEX.md",
-        "sha256": "3b815a4abb407400df9d5d1f597ac2e8d6ce2ad376cf49814c4bc450a2437ede"
+        "sha256": "580bba4cb6ca381af10cbad58f7693065ea5bc055fd91efcf0cfc5586c53cb6e"
       },
       {
         "path": "docs/codebase-memory/decisions/ADR-001-classic-script-architecture.md",
@@ -281,7 +281,7 @@
       },
       {
         "path": "docs/codebase-memory/known-issues.md",
-        "sha256": "1c2e505f27d660b2c0584dc3915087a08424b095fe0a07ad69da4be1092c2070"
+        "sha256": "94b7f325d3c0b16fa0c7c8281886aa44645313e5e1f2e01f8642b2621da54a98"
       },
       {
         "path": "fire-banner.js",
@@ -469,11 +469,11 @@
       },
       {
         "path": "tools/codebase-memory-mcp/README.md",
-        "sha256": "9ed0ab84084173eb247cc77afdcc7bd4a86e15154f25d8cba6428be8d098799a"
+        "sha256": "3536afeed4beb232d31379fdfbd255a4d91e7261ebf821cabf5174b270f276cb"
       },
       {
         "path": "tools/codebase-memory-mcp/package.json",
-        "sha256": "6cb86fabb7cfa582ac98423f8bf1ac2599dde278146ccf4c9389449572111f53"
+        "sha256": "faad85dab0ebd5f42c4da5bc2c4e3d93076237f40efd034e4bf20361e0d2fc43"
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/build-ast-graph.mjs",
@@ -493,7 +493,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/src/impact-analysis.mjs",
-        "sha256": "dc2c7a5e5b117df032886441a67d43237ea0efa38998d4ebb66422dac0f6e932"
+        "sha256": "438f9e56e505b59eecd08a4772e9d203db0c49b4230f3b3bdf40035674a8d367"
       },
       {
         "path": "tools/codebase-memory-mcp/src/security.ts",
@@ -501,11 +501,15 @@
       },
       {
         "path": "tools/codebase-memory-mcp/src/server.ts",
-        "sha256": "676b2a42eef81f24720f1f14e6dda84ffb05f150708c8001e5fba4b6e3da4888"
+        "sha256": "f919e73904ff5b3f63949847036bdebd7633b13c2acd8b5db39666343579c7de"
       },
       {
         "path": "tools/codebase-memory-mcp/test/ast-analysis.test.mjs",
         "sha256": "f471af844ac18a65061cd9c68617c2e8989c9730f1a961e95d6e20ed6cb6152f"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/test/impact-analysis.test.mjs",
+        "sha256": "0312b1726fcfce90af5ad90848207acbe83efd03946a4d5f8eabc25b304d7e09"
       },
       {
         "path": "tools/codebase-memory-mcp/test/indexer.test.mjs",
