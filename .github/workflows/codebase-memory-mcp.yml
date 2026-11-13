@@ -66,13 +66,14 @@ jobs:
         working-directory: tools/codebase-memory-mcp
         run: npm test
       - name: Generate deterministic repository map
-        if: github.event_name != 'pull_request'
         working-directory: tools/codebase-memory-mcp
         run: npm run index
       - name: Validate generated repository map
-        if: github.event_name != 'pull_request'
         working-directory: tools/codebase-memory-mcp
         run: npm run check:index
+      - name: Require generated map updates in pull requests
+        if: github.event_name == 'pull_request'
+        run: git diff --exit-code -- docs/codebase-memory/generated/repository-map.json
       - name: Commit refreshed map
         if: github.event_name != 'pull_request'
         run: |
