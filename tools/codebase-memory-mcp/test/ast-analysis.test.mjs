@@ -22,7 +22,13 @@ test("AST analyzer extracts function definitions, calls and static integrations"
   assert.ok(result.integrations.some(item => item.kind === "fetch" && item.value === "https://example.test/api"));
 });
 
-test("AST analyzer excludes property-method calls from function call edges", () => {\n  const result = analyzeSource("js/methods.js", "function run() { element.remove(); helper(); }");\n  assert.ok(!result.rawCalls.some(item => item.name === "remove"));\n  assert.ok(result.rawCalls.some(item => item.name === "helper" && item.callType === "identifier"));\n});\n\ntest("AST analyzer reports syntax diagnostics without crashing", () => {
+test("AST analyzer excludes property-method calls from function call edges", () => {
+  const result = analyzeSource("js/methods.js", "function run() { element.remove(); helper(); }");
+  assert.ok(!result.rawCalls.some(item => item.name === "remove"));
+  assert.ok(result.rawCalls.some(item => item.name === "helper" && item.callType === "identifier"));
+});
+
+test("AST analyzer reports syntax diagnostics without crashing", () => {
   const result = analyzeSource("broken.js", "function {");
   assert.ok(result.diagnostics.length > 0);
 });
