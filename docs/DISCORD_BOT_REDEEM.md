@@ -20,7 +20,7 @@ Every outcome is public in the channel where the command is used: success, inval
 /redeem alliance alliance:<ARX|IDN|ZXC|VNX|CAT> code:<GIFT_CODE>
 ```
 
-The alliance roster is read from `public.troops_power` using the `alliance` column and `game_id` values, matching the website's alliance quick-load behavior. Nicknames are included when available. Processing is sequential with a 1.2-second pause between members and timeout retries. Invalid/expired gift codes stop the remaining batch, matching website behavior. One command processes at most 500 FIDs to keep the Discord interaction token within its usable lifetime.
+The alliance roster is read from `public.troops_power` using the `alliance` column and `game_id` values, matching the website's alliance quick-load behavior. Nicknames are included when available. Processing is sequential with a 1.2-second pause between members and up to two timeout retries. Invalid/expired gift codes stop the remaining batch, matching website behavior. One command processes at most 300 FIDs to keep the Discord interaction token within its usable lifetime.
 
 ## 1. Configure Supabase secrets
 
