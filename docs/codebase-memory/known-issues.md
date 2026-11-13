@@ -28,6 +28,10 @@ The main menu links to TAL, Transfer Portal, Events Record and WoS Tool as separ
 
 SQL files are migration instructions, not proof that they have been applied. Realtime publication membership, webhook configuration, secrets, RLS policy state and production table schemas require direct verification in Supabase.
 
-## 7. Generated index freshness
+## 7. MCP analysis limitations
 
-This Phase 1 map is manually curated from the tracked repository at baseline commit `7b911f94acfedec5b4a477c0e7a7dc94344c4897`. It is not yet an automated AST/dependency graph. Re-check the live repository before each change. Phase 2/3 should add deterministic index generation and stale-index detection.
+The local MCP server in `tools/codebase-memory-mcp/` is read-only. Search ranking, symbol definition classification, data-flow lookup and change-impact suggestions use text/keyword heuristics; they are not a complete AST or runtime dependency graph. Verify every candidate against current source. The server is not remotely hosted and does not automatically connect to ChatGPT.
+
+## 8. Generated index freshness
+
+This map is manually curated from the tracked repository at baseline commit `7b911f94acfedec5b4a477c0e7a7dc94344c4897`. It is not yet an automatically refreshed dependency graph. The Phase 2 MCP can warn when the local checkout commit differs from the recorded baseline, but it cannot refresh the map. Re-check the live repository before each change. Phase 3 should add deterministic index generation and stale-index validation.
