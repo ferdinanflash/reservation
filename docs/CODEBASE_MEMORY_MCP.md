@@ -3,7 +3,7 @@
 **Project:** State 3475 — Whiteout Survival Management Portal  
 **Repository:** `ferdinanflash/reservation`  
 **Primary site:** https://3475.web.id  
-**Status:** Phases 1–5 implemented: memory foundation, local read-only MCP, automated inventory refresh, AST dependency analysis, and change-impact planning  
+**Status:** Phases 1–5 implemented; Phase 6 static PR review added; Phases 7–10 tracked in the completion roadmap  
 **Last inspected:** 2026-11-14  
 **Default branch:** `main`
 
@@ -348,3 +348,12 @@ Phase 5 turns the Phase 4 graph into a conservative pre-edit planning tool.
 - Added unit tests for graph traversal, missing graph handling and checklist selection.
 
 **Safety and confidence:** this phase remains read-only. It does not modify source, Git, database records, deployments or Supabase settings. The impact graph is a candidate map, not proof of runtime execution; indirect data flow, dynamic dispatch, global event wiring and external consumers still require inspection. A proposed file is not automatically a required edit.
+
+
+## 8. Completion roadmap and review boundary
+
+See [docs/codebase-memory/ROADMAP.md](codebase-memory/ROADMAP.md) for Phases 6–10, implementation status and completion criteria.
+
+Phase 6 adds a pull-request workflow and local deterministic review command. It is intentionally described as **static change review**, not an AI reviewer: it checks changed JavaScript syntax, high-confidence credential patterns, frontend `service_role` references, dynamic code execution, and local script references when the main HTML changes. It uploads a Markdown report artifact. BLOCKER findings fail the workflow; HIGH findings are advisory.
+
+The reviewer does not prove authorization correctness, SQL/RLS safety, browser behavior, accessibility, translation quality, API correctness or production readiness. Those require dedicated regression checks and/or access to the live environment. Never treat a green static review as deployment approval.
