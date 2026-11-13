@@ -48,7 +48,7 @@ function unique(values) { return [...new Set(values)].sort(); }
 
 const mapPath = path.join(ROOT, MAP);
 const current = JSON.parse(await readFile(mapPath, "utf8"));
-const allFiles = (trackedFiles() || await walk()).filter(file => file !== MAP);
+const allFiles = (trackedFiles() || await walk()).filter(file => file !== MAP && file !== "docs/codebase-memory/generated/ast-dependency-graph.json");
 const fileHashes = [];
 for (const rel of allFiles) {
   const content = await readFile(path.join(ROOT, rel));
