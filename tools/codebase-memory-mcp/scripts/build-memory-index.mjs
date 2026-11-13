@@ -32,6 +32,14 @@ async function walk(dir = ROOT, prefix = "") {
   }
   return files.sort();
 }
+function trackedFiles() {
+  try {
+    return execFileSync("git", ["ls-files", "-z"], { cwd: ROOT, encoding: "utf8" })
+      .split("\0").filter(Boolean)
+      .filter(file => !excluded(file) && EXTENSIONS.has(path.extname(file).toLowerCase()))
+      .sort();
+  } catch { return null; }
+}
 function gitValue(args) {
   try { return execFileSync("git", args, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim(); }
   catch { return null; }
@@ -40,7 +48,7 @@ function unique(values) { return [...new Set(values)].sort(); }
 
 const mapPath = path.join(ROOT, MAP);
 const current = JSON.parse(await readFile(mapPath, "utf8"));
-const allFiles = (await walk()).filter(file => file !== MAP);
+const allFiles = (trackedFiles() || await walk()).filter(file => file !== MAP);
 const fileHashes = [];
 for (const rel of allFiles) {
   const content = await readFile(path.join(ROOT, rel));
