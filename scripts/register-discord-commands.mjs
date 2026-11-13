@@ -5,7 +5,7 @@
  * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
  *
  * Register the 3475 /redeem slash command.
- * Required environment: DISCORD_BOT_TOKEN
+ * Required: DISCORD_BOT_TOKEN
  * Optional: DISCORD_APPLICATION_ID, DISCORD_GUILD_ID
  */
 
@@ -20,23 +20,52 @@ if (!token) {
 
 const command = {
   name: "redeem",
-  description: "Redeem a Whiteout Survival gift code for State 3475",
+  description: "Redeem gift codes for a player or an entire alliance",
   options: [
     {
-      type: 3,
-      name: "fid",
-      description: "Your Whiteout Survival Player ID (FID)",
-      required: true,
-      min_length: 4,
-      max_length: 20,
+      type: 1,
+      name: "single",
+      description: "Redeem a gift code for one Player ID",
+      options: [
+        {
+          type: 3,
+          name: "fid",
+          description: "Whiteout Survival Player ID (FID)",
+          required: true,
+          min_length: 4,
+          max_length: 20,
+        },
+        {
+          type: 3,
+          name: "code",
+          description: "Gift Code",
+          required: true,
+          min_length: 1,
+          max_length: 40,
+        },
+      ],
     },
     {
-      type: 3,
-      name: "code",
-      description: "Gift Code to redeem",
-      required: true,
-      min_length: 1,
-      max_length: 40,
+      type: 1,
+      name: "alliance",
+      description: "Redeem a gift code for all members of an alliance",
+      options: [
+        {
+          type: 3,
+          name: "alliance",
+          description: "Choose the alliance",
+          required: true,
+          choices: ["ARX", "IDN", "ZXC", "VNX", "CAT"].map((code) => ({ name: code, value: code })),
+        },
+        {
+          type: 3,
+          name: "code",
+          description: "Gift Code",
+          required: true,
+          min_length: 1,
+          max_length: 40,
+        },
+      ],
     },
   ],
 };
@@ -59,5 +88,5 @@ if (!response.ok) {
   console.error("Discord command registration failed:", response.status, body);
   process.exit(1);
 }
-console.log(`Registered /${command.name} for application ${applicationId}.`);
+console.log(`Registered /redeem with single and alliance subcommands for application ${applicationId}.`);
 console.log(guildId ? `Guild scope: ${guildId}` : "Global scope: command propagation can take some time.");
