@@ -95,7 +95,7 @@ export function analyzeSource(filePath, sourceText) {
       const receiver = ts.isPropertyAccessExpression(node.expression) ? node.expression.name.text : null;
       const value = stringValue(node.arguments?.[0]);
       if (receiver === "from" && value) integrations.push({ kind: "supabase-table", value, function: topLevelId, line: source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1 });
-      if (receiver === "invoke" && value) integrations.push({ kind: "edge-function", value, function: topLevelId, line: source.getLineAndCharacterPosition?.(node.getStart(source))?.line ?? 1 });
+      if (receiver === "invoke" && value) integrations.push({ kind: "edge-function", value, function: topLevelId, line: source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1 });
       if (name === "fetch" && value && /^https?:\/\//i.test(value)) integrations.push({ kind: "fetch", value, function: topLevelId, line: source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1 });
     }
     ts.forEachChild(node, visitTop);
