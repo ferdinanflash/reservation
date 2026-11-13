@@ -239,7 +239,15 @@ server.tool(
       indexedDigest = map.generated_inventory?.content_digest || null;
       const indexedFiles = map.generated_inventory?.files;
       if (Array.isArray(indexedFiles)) {
-        const currentFiles = (await allTextFiles()).filter(file => file.path !== MAP_PATH);
+        let trackedPaths: Set<string> | null = null;
+        try {
+          const { execFile } = await import("node:child_process");
+          const { promisify } = await import("node:util");
+          const run = promisify(execFile);
+          const result = await run("git", ["-C", ROOT, "ls-files", "-z"]);
+          trackedPaths = new Set(result.stdout.split("\\0").filter(Boolean));
+        } catch { /* fall back to readable checkout files when Git metadata is unavailable */ }
+        const currentFiles = (await allTextFiles()).filter(file => file.path !== MAP_PATH && (!trackedPaths || trackedPaths.has(file.path)));
         const currentByPath = new Map(currentFiles.map(file => [file.path, file]));
         const expectedPaths = new Set(indexedFiles.map((item: { path: string }) => item.path));
         const currentPaths = new Set(currentByPath.keys());
