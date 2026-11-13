@@ -191,9 +191,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 81,
+    "file_count": 80,
     "digest_algorithm": "sha256",
-    "content_digest": "3d2850ae88a9db67091c179740a4542d186308a779c93bf3849ab361c8105232",
+    "content_digest": "e706879983318bbc7215d0978252d090441444eab70d8f9fdfa601a22172424e",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -233,7 +233,7 @@
       },
       {
         "path": "docs/CODEBASE_MEMORY_MCP.md",
-        "sha256": "654b109484e4dc31952c02a46fcd8d772af9403f80c8132ef8106d0947bd74ac"
+        "sha256": "2811057a48f269a9f5712a13a7f5b1a13550a3ba38b89bc2832ad2f9edd0c455"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
@@ -241,7 +241,7 @@
       },
       {
         "path": "docs/codebase-memory/INDEX.md",
-        "sha256": "e730cf3d5941f7169e50fabbf69d4e8cac02d613310491e815f189c626ba5a34"
+        "sha256": "3b815a4abb407400df9d5d1f597ac2e8d6ce2ad376cf49814c4bc450a2437ede"
       },
       {
         "path": "docs/codebase-memory/decisions/ADR-001-classic-script-architecture.md",
@@ -278,10 +278,6 @@
       {
         "path": "docs/codebase-memory/features/themes-translations-pwa.md",
         "sha256": "d83db85bfb16694ca0496c87495e1f0c832673cbd5597f74b108f0fad96b8137"
-      },
-      {
-        "path": "docs/codebase-memory/generated/ast-dependency-graph.json",
-        "sha256": "c7a88c09bdab9d2b5db70f26311f8a9bbc72d62d3c106dbce30480141ae12387"
       },
       {
         "path": "docs/codebase-memory/known-issues.md",
@@ -485,11 +481,11 @@
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/build-memory-index.mjs",
-        "sha256": "dd434b0bc9899740fa593535961236f17d02a376937985b3631edae5c9e261cc"
+        "sha256": "3ff15799fd96aca80fcb69946f5811c8ba659793ce477ca9f37414fd455822c3"
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/check-memory-index.mjs",
-        "sha256": "59124248adb4f95b8284e7a20df607f068560dfb00c9b5d30ed16d724cb96160"
+        "sha256": "09b73c78b33d59ca902e0f9c8d2ebe513b834121132190d3caf6d77fc092ec34"
       },
       {
         "path": "tools/codebase-memory-mcp/src/ast-analysis.mjs",
