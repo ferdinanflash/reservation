@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "project": "ferdinanflash/reservation",
+  "branch": "main",
+  "inspected_commit": "7b911f94acfedec5b4a477c0e7a7dc94344c4897",
+  "inspected_at_utc": "2026-11-14",
+  "generated_mode": "curated-initial-inventory",
+  "automation_status": "not-yet-automated",
+  "note": "This is a manually curated initial inventory from the Git tree and source inspection. It is not a complete AST dependency graph. Re-check current source before edits.",
+  "entrypoints": {
+    "main": "index.html",
+    "shared": "common.js",
+    "service_worker": "sw.js",
+    "separate_live_page": "live/index.html"
+  },
+  "script_load_order": [
+    "common.js",
+    "lang.js",
+    "js/app-core.js",
+    "js/app-auth.js",
+    "js/app-notes.js",
+    "js/app-schedule.js",
+    "js/app-applications.js",
+    "js/app-waiting.js",
+    "js/app-bulk.js",
+    "js/app-extras.js",
+    "js/app-notifications.js",
+    "js/app-svs-enemies.js",
+    "js/app-svs-record.js",
+    "fire-banner.js",
+    "opening-animation.js"
+  ],
+  "feature_maps": [
+    "docs/codebase-memory/features/reservation.md",
+    "docs/codebase-memory/features/svs-enemies.md",
+    "docs/codebase-memory/features/svs-record.md",
+    "docs/codebase-memory/features/redeem-and-extras.md",
+    "docs/codebase-memory/features/notifications.md",
+    "docs/codebase-memory/features/themes-translations-pwa.md",
+    "docs/codebase-memory/features/shared-core-auth.md"
+  ],
+  "shared_files": [
+    "index.html",
+    "common.js",
+    "lang.js",
+    "style.css",
+    "sw.js",
+    "site.webmanifest",
+    "fire-banner.js",
+    "opening-animation.js",
+    "live/index.html"
+  ],
+  "frontend_modules": [
+    "js/app-core.js",
+    "js/app-auth.js",
+    "js/app-notes.js",
+    "js/app-schedule.js",
+    "js/app-applications.js",
+    "js/app-waiting.js",
+    "js/app-bulk.js",
+    "js/app-extras.js",
+    "js/app-notifications.js",
+    "js/app-svs-enemies.js",
+    "js/app-svs-record.js"
+  ],
+  "edge_functions": [
+    "supabase/functions/index.ts",
+    "supabase/functions/redeem-giftcode/index.ts",
+    "supabase/functions/send-announcement/index.ts",
+    "supabase/functions/send-push-notification/index.ts",
+    "supabase/functions/wosatlas-states/index.ts"
+  ],
+  "database_tables_observed": [
+    {
+      "name": "reservation_slots",
+      "evidence": [
+        "frontend queries and mutations",
+        "incremental SQL migrations"
+      ],
+      "base_schema_in_repo": false
+    },
+    {
+      "name": "system_settings",
+      "evidence": [
+        "js/app-core.js"
+      ],
+      "base_schema_in_repo": false
+    },
+    {
+      "name": "footer_settings",
+      "evidence": [
+        "js/app-auth.js"
+      ],
+      "base_schema_in_repo": false
+    },
+    {
+      "name": "how_to_use_notes",
+      "evidence": [
+        "js/app-notes.js",
+        "supabase_migration_application_time_log.sql"
+      ],
+      "base_schema_in_repo": true
+    },
+    {
+      "name": "push_subscriptions",
+      "evidence": [
+        "js/app-notifications.js",
+        "push SQL migrations",
+        "notification Edge Functions"
+      ],
+      "base_schema_in_repo": true
+    },
+    {
+      "name": "svs_enemies_settings",
+      "evidence": [
+        "js/app-svs-enemies.js",
+        "supabase_migration_svs_enemies.sql"
+      ],
+      "base_schema_in_repo": true
+    },
+    {
+      "name": "svs_enemy_cache",
+      "evidence": [
+        "js/app-svs-enemies.js",
+        "wosatlas-states Edge Function",
+        "supabase_migration_svs_enemy_cache.sql"
+      ],
+      "base_schema_in_repo": true
+    },
+    {
+      "name": "svs_records",
+      "evidence": [
+        "js/app-svs-record.js",
+        "svs_record_migration.sql"
+      ],
+      "base_schema_in_repo": true
+    },
+    {
+      "name": "theme_settings",
+      "evidence": [
+        "theme migrations"
+      ],
+      "base_schema_in_repo": true
+    },
+    {
+      "name": "troops_power",
+      "evidence": [
+        "js/app-extras.js",
+        "redeem-giftcode Edge Function"
+      ],
+      "base_schema_in_repo": false
+    }
+  ],
+  "sql_migrations": [
+    "supabase_migration_additional_time_slots.sql",
+    "supabase_migration_application_time_log.sql",
+    "supabase_migration_fire_crystal_shard.sql",
+    "supabase_migration_guest_notifications.sql",
+    "supabase_migration_push_subscriptions.sql",
+    "supabase_migration_push_subscriptions_cleanup.sql",
+    "supabase_migration_svs_enemies.sql",
+    "supabase_migration_svs_enemies_menu_label.sql",
+    "supabase_migration_svs_enemy_cache.sql",
+    "supabase_migration_theme_settings.sql",
+    "supabase_migration_theme_valentine.sql",
+    "supabase_migration_theme_cny.sql",
+    "supabase_migration_theme_eid.sql",
+    "supabase_migration_theme_midautumn.sql",
+    "supabase_migration_theme_bluefire.sql",
+    "supabase_migration_theme_thanksgiving.sql",
+    "svs_record_migration.sql"
+  ],
+  "external_systems": [
+    "Supabase Auth / PostgREST / Realtime / Edge Functions",
+    "WoS Atlas public API: https://wosatlas.com/api/v1",
+    "WoS Nerds SvS history JSON: https://data.wosnerds.com/data/svs-history/svs-history-3001-3500.json",
+    "Century Games gift-code API"
+  ],
+  "known_review_items": [
+    "No base schema migration for reservation_slots, system_settings, footer_settings or troops_power in repository snapshot",
+    "wosatlas-states Edge Function retains legacy summary action against api.wosatlas.com",
+    "Gift-code signing secret fallback exists in dedicated Edge Function source; review and remove hard-coded fallback",
+    "Gift-code implementation material exists both at supabase/functions/index.ts and supabase/functions/redeem-giftcode/index.ts",
+    "Live Supabase RLS, secrets, webhook configuration and applied migrations are not verified by repository inspection"
+  ],
+  "memory_files": [
+    "docs/CODEBASE_MEMORY_MCP.md",
+    "docs/codebase-memory/INDEX.md",
+    "docs/codebase-memory/known-issues.md",
+    "docs/codebase-memory/decisions/ADR-001-classic-script-architecture.md",
+    "docs/codebase-memory/decisions/ADR-002-memory-trust-and-security.md"
+  ]
+}
