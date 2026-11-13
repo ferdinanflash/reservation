@@ -247,7 +247,7 @@ server.tool(
           const result = await run("git", ["-C", ROOT, "ls-files", "-z"]);
           trackedPaths = new Set(result.stdout.split("\0").filter(Boolean));
         } catch { /* fall back to readable checkout files when Git metadata is unavailable */ }
-        const currentFiles = (await allTextFiles()).filter(file => file.path !== MAP_PATH && (!trackedPaths || trackedPaths.has(file.path)));
+        const currentFiles = (await allTextFiles()).filter(file => file.path !== MAP_PATH && file.path !== "docs/codebase-memory/generated/ast-dependency-graph.json" && (!trackedPaths || trackedPaths.has(file.path)));
         const currentByPath = new Map(currentFiles.map(file => [file.path, file]));
         const expectedPaths = new Set(indexedFiles.map((item: { path: string }) => item.path));
         const currentPaths = new Set(currentByPath.keys());
