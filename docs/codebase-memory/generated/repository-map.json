@@ -192,9 +192,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 91,
+    "file_count": 92,
     "digest_algorithm": "sha256",
-    "content_digest": "1b174f24b57a403ed58dc80f96fa2c09cfe8a837423f156491d35f97681c13e0",
+    "content_digest": "03348637d3807da5a82f2b79f6a32670d0faed7f2df3c66164ff6722e542ed85",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -203,6 +203,10 @@
       {
         "path": ".github/workflows/codebase-memory-review.yml",
         "sha256": "b4189ae4ade06404b032b33bdd622815c2440e9eb411a8792eb924a68f71af42"
+      },
+      {
+        "path": ".github/workflows/register-discord-commands.yml",
+        "sha256": "387fd8e78d955f7768de4553f6669fbff2bf8f93cc43a172ff1d6ff29d5213cb"
       },
       {
         "path": ".github/workflows/source-protection-monitor.yml",
@@ -242,7 +246,7 @@
       },
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
-        "sha256": "78915921fd0a3736201f92395f4cf08d6f9cf86c779a4c2cad0fb7702b355c47"
+        "sha256": "8f8b293776aa6fcb845c51ed24a83f34aba7a42c1edb7bcb19317c0e474df87e"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
