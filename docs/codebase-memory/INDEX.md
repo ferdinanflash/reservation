@@ -49,6 +49,9 @@ The main shell is `index.html`. Its deferred scripts are loaded in this order:
 - Setup and client configuration: `tools/codebase-memory-mcp/README.md`
 - Local stdio server with seven read-only tools and three resources.
 - The server is not hosted and is not automatically connected to ChatGPT; install and configure it in a compatible local MCP client.
+- Generated file inventory: `generated/repository-map.json`.
+- Refresh/check locally: `cd tools/codebase-memory-mcp && npm run index && npm run check:index`.
+- GitHub Actions refreshes the structural inventory on relevant source changes; semantic notes still need human review.
 
 ## Architecture decisions and known issues
 
