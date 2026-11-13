@@ -43,6 +43,13 @@ The main shell is `index.html`. Its deferred scripts are loaded in this order:
 - [Themes, translations and PWA](features/themes-translations-pwa.md)
 - [Shared core and authentication](features/shared-core-auth.md)
 
+## Local Codebase Memory MCP
+
+- Implementation: `tools/codebase-memory-mcp/`
+- Setup and client configuration: `tools/codebase-memory-mcp/README.md`
+- Local stdio server with seven read-only tools and three resources.
+- The server is not hosted and is not automatically connected to ChatGPT; install and configure it in a compatible local MCP client.
+
 ## Architecture decisions and known issues
 
 - [ADR-001: classic scripts and shared globals](decisions/ADR-001-classic-script-architecture.md)
