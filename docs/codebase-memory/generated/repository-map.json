@@ -63,6 +63,7 @@
     "js/app-waiting.js"
   ],
   "edge_functions": [
+    "supabase/functions/discord-interactions/index.ts",
     "supabase/functions/index.ts",
     "supabase/functions/redeem-giftcode/index.ts",
     "supabase/functions/send-announcement/index.ts",
@@ -191,9 +192,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 88,
+    "file_count": 91,
     "digest_algorithm": "sha256",
-    "content_digest": "98483d9e68a4dde3081ae508eb87b56748a2f5b4fb26259825be56139ccc5843",
+    "content_digest": "3bc7b52bb5c78091a4f68383d6d38ac2a9373a120674e8b376f5aebf02edff93",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -238,6 +239,10 @@
       {
         "path": "docs/CODEBASE_MEMORY_MCP.md",
         "sha256": "a38066665ee01c43dd1338d155441b5b0d63066356294c7d86698a81c2108914"
+      },
+      {
+        "path": "docs/DISCORD_BOT_REDEEM.md",
+        "sha256": "f3aca72b7056abb5125f347939f8268520c6d1c0d8c6aef8e6db133674d89510"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
@@ -380,6 +385,10 @@
         "sha256": "8c24adb7ba28d7be2645033f97bb020fb7392225ad31059b11f46ae18cf3db4e"
       },
       {
+        "path": "scripts/register-discord-commands.mjs",
+        "sha256": "025e82bc304f35bbe866e6345aa42520e7fe01379d9a95f659038b6be9c89d73"
+      },
+      {
         "path": "scripts/source_protection_monitor.py",
         "sha256": "f51903b090b25208eb657b1d7fac9624bca0462c2611fbf7f4ef2e738ffb3257"
       },
@@ -392,12 +401,16 @@
         "sha256": "01e48d7e26275aab43e97324df1a5cd26dc85dc1263611dc748752dcf27203c4"
       },
       {
+        "path": "supabase/functions/discord-interactions/index.ts",
+        "sha256": "9dd3f72f4d30e7120d3b9b47e2b6cea408a1a8c413aae079e3695c8996c9c685"
+      },
+      {
         "path": "supabase/functions/index.ts",
-        "sha256": "075cf037b5348e62720afb32f265257c491af3e4e82e67f200a8c665f9255189"
+        "sha256": "7908e3909fbad40287f959acbecbb2865f174d3ea2b01acce959318cf0d76e68"
       },
       {
         "path": "supabase/functions/redeem-giftcode/index.ts",
-        "sha256": "3163b53f126836f916e2d75bb3f2a39eea25c4f341ed32d9329041654959007e"
+        "sha256": "4e10dd908c7cfb1f8a6daed15a74e981df2cbaeea0d45c9e97a61a8ab47989c3"
       },
       {
         "path": "supabase/functions/send-announcement/index.ts",
