@@ -53,7 +53,8 @@ async function verifyDiscordRequest(req: Request, rawBody: string): Promise<bool
             sig,
             new TextEncoder().encode(timestamp + rawBody),
         );
-    } catch {
+    } catch (error) {
+        console.error("Discord signature verification error:", error instanceof Error ? error.message : String(error));
         return false;
     }
 }
@@ -313,9 +314,20 @@ async function processRedeem(interaction: any) {
 }
 
 Deno.serve(async (req) => {
+    // Public health check: confirms the deployed function is reachable.
+    if (req.method === "GET") {
+        return json({ ok: true, service: "3475-discord-interactions" });
+    }
     if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
     const rawBody = await req.text();
-    if (!(await verifyDiscordRequest(req, rawBody))) return json({ error: "invalid_discord_signature" }, 401);
+    if (!(await verifyDiscordRequest(req, rawBody))) {
+        console.error("Discord request rejected: signature verification failed", {
+            hasSignature: Boolean(req.headers.get("x-signature-ed25519")),
+            hasTimestamp: Boolean(req.headers.get("x-signature-timestamp")),
+            publicKeyLength: DISCORD_PUBLIC_KEY.length,
+        });
+        return json({ error: "invalid_discord_signature" }, 401);
+    }
 
     let interaction: any;
     try {
