@@ -61,7 +61,7 @@ export function analyzeSource(filePath, sourceText) {
     visitWithoutNestedFunctions(node, current => {
       if (ts.isCallExpression(current) || ts.isNewExpression(current)) {
         const target = calledName(current.expression);
-        if (target) rawCalls.push({ caller: record.id, name: target, callType: ts.isIdentifier(current.expression) ? "identifier" : "property", line: source.getLineAndCharacterOfPosition(current.getStart(source)).line + 1 });
+        if (target && ts.isIdentifier(current.expression)) rawCalls.push({ caller: record.id, name: target, callType: "identifier", line: source.getLineAndCharacterOfPosition(current.getStart(source)).line + 1 });
         const receiver = ts.isPropertyAccessExpression(current.expression) ? current.expression.name.text : null;
         const arg = current.arguments?.[0];
         const value = stringValue(arg);
@@ -91,7 +91,7 @@ export function analyzeSource(filePath, sourceText) {
     if (isFunctionLike(node)) return;
     if (ts.isCallExpression(node) || ts.isNewExpression(node)) {
       const name = calledName(node.expression);
-      if (name) topCalls.push({ caller: topLevelId, name, callType: ts.isIdentifier(node.expression) ? "identifier" : "property", line: source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1 });
+      if (name && ts.isIdentifier(node.expression)) topCalls.push({ caller: topLevelId, name, callType: "identifier", line: source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1 });
       const receiver = ts.isPropertyAccessExpression(node.expression) ? node.expression.name.text : null;
       const value = stringValue(node.arguments?.[0]);
       if (receiver === "from" && value) integrations.push({ kind: "supabase-table", value, function: topLevelId, line: source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1 });
