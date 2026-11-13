@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "index": "node scripts/build-memory-index.mjs",
     "check:index": "node scripts/check-memory-index.mjs",
-    "ast": "node scripts/build-ast-graph.mjs"
+    "ast": "node scripts/build-ast-graph.mjs",
+    "review": "node scripts/review-changes.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.12.1",
