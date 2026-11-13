@@ -191,9 +191,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 84,
+    "file_count": 85,
     "digest_algorithm": "sha256",
-    "content_digest": "d8f40205ca4bcc4344314a12b7fcdfbce1eeaa6b5dd28344c7a4d17cfc3f95c2",
+    "content_digest": "44d58f24a478db6bee1d3efe1106460b95db6dee934bfc5d93fbe1f7fac1efbd",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -237,7 +237,7 @@
       },
       {
         "path": "docs/CODEBASE_MEMORY_MCP.md",
-        "sha256": "c1f6c7ba78ee977bd225cb079d05c1e228284e44672b106f1105bbca7cb00116"
+        "sha256": "a38066665ee01c43dd1338d155441b5b0d63066356294c7d86698a81c2108914"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
@@ -245,7 +245,11 @@
       },
       {
         "path": "docs/codebase-memory/INDEX.md",
-        "sha256": "aceacfdfec6f6f06b10a4955112e114abfb280a15d76bd7eb0459b94c638aae1"
+        "sha256": "c1562cb65532bc9b9d6398c8b6e4c264773437eae99a0e48cb779f28507e7b79"
+      },
+      {
+        "path": "docs/codebase-memory/ROADMAP.md",
+        "sha256": "1b659bf0f998ce00938bc8940943e81db2ef2371403ec1dc4bfacec35c89f6b0"
       },
       {
         "path": "docs/codebase-memory/decisions/ADR-001-classic-script-architecture.md",
@@ -473,7 +477,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/README.md",
-        "sha256": "2d73818efa551e6efba0505828302fa32a6c2e87cc61adf60a4ea4ee2810157b"
+        "sha256": "b14834f3f5d96d72c44e90852e9bf80ab70a56153af3c66e1874b9599572e31f"
       },
       {
         "path": "tools/codebase-memory-mcp/package.json",
