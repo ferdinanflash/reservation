@@ -28,7 +28,7 @@ jobs:
       - name: Set up Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.58.5
 
       - name: Deploy existing redeem backend
         run: supabase functions deploy redeem-giftcode --project-ref "$SUPABASE_PROJECT_ID" --yes
