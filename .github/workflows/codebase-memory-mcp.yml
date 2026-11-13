@@ -17,8 +17,6 @@ on:
       - "*.sql"
       - "docs/CODEBASE_MEMORY_MCP.md"
       - "docs/codebase-memory/**"
-      - "docs/codebase-memory/decisions/**"
-      - "docs/codebase-memory/known-issues.md"
       - "tools/codebase-memory-mcp/**"
       - ".github/workflows/codebase-memory-mcp.yml"
   pull_request:
@@ -35,9 +33,8 @@ on:
       - "js/**"
       - "supabase/**"
       - "*.sql"
-      - "docs/codebase-memory/features/**"
-      - "docs/codebase-memory/decisions/**"
-      - "docs/codebase-memory/known-issues.md"
+      - "docs/CODEBASE_MEMORY_MCP.md"
+      - "docs/codebase-memory/**"
       - "tools/codebase-memory-mcp/**"
       - ".github/workflows/codebase-memory-mcp.yml"
   workflow_dispatch:
