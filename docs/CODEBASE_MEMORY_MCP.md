@@ -3,7 +3,7 @@
 **Project:** State 3475 — Whiteout Survival Management Portal  
 **Repository:** `ferdinanflash/reservation`  
 **Primary site:** https://3475.web.id  
-**Status:** Phase 2 local read-only MCP implemented; Phase 3 automation pending  
+**Status:** Phase 1 memory foundation, Phase 2 local read-only MCP, and Phase 3 automated inventory refresh implemented  
 **Last inspected:** 2026-11-14  
 **Default branch:** `main`
 
