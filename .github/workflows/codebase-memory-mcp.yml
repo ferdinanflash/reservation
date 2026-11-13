@@ -3,33 +3,83 @@ name: Codebase Memory MCP
 on:
   push:
     paths:
+      - "index.html"
+      - "live/**"
+      - "common.js"
+      - "lang.js"
+      - "style.css"
+      - "sw.js"
+      - "site.webmanifest"
+      - "fire-banner.js"
+      - "opening-animation.js"
+      - "js/**"
+      - "supabase/**"
+      - "*.sql"
+      - "docs/codebase-memory/features/**"
+      - "docs/codebase-memory/decisions/**"
+      - "docs/codebase-memory/known-issues.md"
       - "tools/codebase-memory-mcp/**"
       - ".github/workflows/codebase-memory-mcp.yml"
   pull_request:
     paths:
+      - "index.html"
+      - "live/**"
+      - "common.js"
+      - "lang.js"
+      - "style.css"
+      - "sw.js"
+      - "site.webmanifest"
+      - "fire-banner.js"
+      - "opening-animation.js"
+      - "js/**"
+      - "supabase/**"
+      - "*.sql"
+      - "docs/codebase-memory/features/**"
+      - "docs/codebase-memory/decisions/**"
+      - "docs/codebase-memory/known-issues.md"
       - "tools/codebase-memory-mcp/**"
       - ".github/workflows/codebase-memory-mcp.yml"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  validate:
+  refresh-and-validate:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: tools/codebase-memory-mcp
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install dependencies
+      - name: Install MCP dependencies
+        working-directory: tools/codebase-memory-mcp
         run: npm install
-      - name: Type-check
+      - name: Type-check MCP
+        working-directory: tools/codebase-memory-mcp
         run: npm run typecheck
-      - name: Run safety tests
+      - name: Run tests
+        working-directory: tools/codebase-memory-mcp
         run: npm test
+      - name: Generate deterministic repository map
+        if: github.event_name != 'pull_request'
+        working-directory: tools/codebase-memory-mcp
+        run: npm run index
+      - name: Validate generated repository map
+        if: github.event_name != 'pull_request'
+        working-directory: tools/codebase-memory-mcp
+        run: npm run check:index
+      - name: Commit refreshed map
+        if: github.event_name != 'pull_request'
+        run: |
+          if ! git diff --quiet -- docs/codebase-memory/generated/repository-map.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add docs/codebase-memory/generated/repository-map.json
+            git commit -m "chore: refresh codebase memory index"
+            git push
+          fi
