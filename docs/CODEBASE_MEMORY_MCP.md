@@ -3,7 +3,7 @@
 **Project:** State 3475 — Whiteout Survival Management Portal  
 **Repository:** `ferdinanflash/reservation`  
 **Primary site:** https://3475.web.id  
-**Status:** Architecture proposal / initial repository map  
+**Status:** Phase 2 local read-only MCP implemented; Phase 3 automation pending  
 **Last inspected:** 2026-11-14  
 **Default branch:** `main`
 
@@ -287,11 +287,14 @@ Suggested quality gates:
 - Create `INDEX.md` and feature maps for Reservation, SvS Enemies, SvS Record, Redeem Code, Notifications, and PWA.
 - Trace exact Supabase tables, RPCs, policies, and script load order from source and SQL.
 
-### Phase 2 — Local MCP
-- Add the TypeScript stdio server.
-- Implement the seven read-only tools and resources above.
-- Add tests for path traversal protection, ignored files, symbol search, stale-index detection, and secret exclusion.
-- Add local setup instructions; do not commit personal MCP client configuration or tokens.
+### Phase 2 — Local MCP (implemented)
+- Added `tools/codebase-memory-mcp/` with a TypeScript stdio server using the official MCP SDK.
+- Implemented seven read-only tools: `search_codebase`, `get_feature_map`, `trace_symbol`, `get_change_impact`, `get_data_flow`, `get_runbook`, and `get_repository_status`.
+- Added three resources for project overview, known issues, and MCP architecture.
+- Added path traversal and credential-file exclusion safeguards, symbolic-link rejection, setup instructions, and CI checks for type-checking and safety tests.
+- Search/impact/symbol tracing are explicitly heuristic; they are not a complete AST dependency graph.
+- The server is local only. Committing it does not connect ChatGPT or publish a remote MCP endpoint.
+- Local execution and GitHub Actions validation must pass before calling the implementation verified.
 
 ### Phase 3 — Automated memory maintenance
 - Add deterministic index generation and GitHub Actions validation.
@@ -307,4 +310,4 @@ Suggested quality gates:
 
 ## 11. Current implementation status
 
-Phase 1 foundation is now committed: the feature index, seven feature maps, two architecture decision records, known-issues register, and structured initial repository inventory are under `docs/codebase-memory/`. These documents were inspected against repository commit `7b911f94acfedec5b4a477c0e7a7dc94344c4897`. The structured inventory is explicitly curated and is not yet an automated AST dependency graph. Live Supabase schema, RLS, deployed secrets and webhook configuration remain unverified. **No MCP server is running or connected to ChatGPT yet.** Next: Phase 2, implement and test the read-only local TypeScript MCP server; Phase 3 will automate deterministic index refresh and stale-index checks. Always re-check live source before changing code.
+Phase 1 memory foundation and Phase 2 local MCP implementation are committed. The MCP package is under `tools/codebase-memory-mcp/`; it uses local stdio transport, exposes seven read-only tools and three resources, excludes common credential files, rejects symbolic-link file reads, and has automated type-check/safety-test CI. It has not been installed or launched on the user's device, and it is not connected to ChatGPT or hosted remotely. Search, symbol tracing and impact analysis remain heuristic. The curated repository map still needs Phase 3 deterministic refresh automation. Live Supabase schema, RLS, deployed secrets and webhook configuration remain unverified. Always re-check live source before changing code.
