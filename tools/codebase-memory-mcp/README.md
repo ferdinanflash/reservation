@@ -36,6 +36,22 @@ Search and impact results are navigational/heuristic, not a complete AST depende
 - npm
 - A local clone of this repository
 
+## Automatic memory index maintenance
+
+The repository includes a deterministic inventory generator and freshness checker:
+
+```bash
+cd tools/codebase-memory-mcp
+npm run index
+npm run check:index
+```
+
+The generator refreshes `docs/codebase-memory/generated/repository-map.json` with the current local text-file inventory, SHA-256 content hashes, HTML script load order, frontend modules, Supabase Edge Functions, SQL migration paths, shared files and feature-map paths. It excludes the generated map itself, build/dependency directories, common credential files, symbolic links and oversized files. Running it twice without source changes should produce no further diff.
+
+GitHub Actions runs the generator and checks freshness on relevant pushes and pull requests. On a push, the workflow commits a changed generated map using `github-actions[bot]`; on a pull request, the check fails if the generated map was not included in the PR. The workflow requires repository Actions settings/branch rules to permit the bot to push to the target branch.
+
+The generated inventory is structural, not semantic. It does not infer complete runtime dependencies, verify live Supabase configuration, or rewrite feature explanations. Human review remains required for feature maps and known issues.
+
 ## Install and test
 
 From the repository root:
