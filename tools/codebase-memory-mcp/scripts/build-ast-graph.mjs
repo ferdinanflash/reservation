@@ -37,10 +37,10 @@ for (const item of parsed) {
   }
   for (const call of item.rawCalls) {
     const sameFile = definitions.filter(def => def.file === item.file && def.name === call.name);
-    const candidates = sameFile.length ? sameFile : (byName.get(call.name) || []);
+    const candidates = sameFile.length ? sameFile : (call.callType === "identifier" ? (byName.get(call.name) || []) : []);
     const uniqueTargets = [...new Map(candidates.map(target => [target.id, target])).values()];
     for (const target of uniqueTargets) {
-      edges.push({ from: call.caller, to: target.id, kind: "call", line: call.line, confidence: sameFile.length || uniqueTargets.length === 1 ? "static-name-match" : "candidate-name-match" });
+      edges.push({ from: call.caller, to: target.id, kind: "call", line: call.line, confidence: uniqueTargets.length === 1 ? "static-name-match" : "candidate-name-match" });
     }
   }
 }
