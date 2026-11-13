@@ -193,7 +193,7 @@
     "generator_version": 1,
     "file_count": 88,
     "digest_algorithm": "sha256",
-    "content_digest": "c7b508c58d635688b0970f9d6c640b2c7ec3b6fe90d1b5ff1e2416f72fa89bea",
+    "content_digest": "7916d142b8610fc97f5de5c6d1a5c17aa3bfcb3a1b419f32af3ca9596756165a",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -201,7 +201,7 @@
       },
       {
         "path": ".github/workflows/codebase-memory-review.yml",
-        "sha256": "7782f44c0ef73b2b00bf3f5be05c170cc9c46545d1325031066a728770486537"
+        "sha256": "b4189ae4ade06404b032b33bdd622815c2440e9eb411a8792eb924a68f71af42"
       },
       {
         "path": ".github/workflows/source-protection-monitor.yml",
@@ -509,7 +509,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/review-changes.mjs",
-        "sha256": "a388e30812450cf90108b45b17c163291732a8585af102df75d399f16d4ed63d"
+        "sha256": "12dc308da3995f04f59d34bcb2ac0fa5d5aece9a942988d18939752e3067d19f"
       },
       {
         "path": "tools/codebase-memory-mcp/src/ast-analysis.mjs",
