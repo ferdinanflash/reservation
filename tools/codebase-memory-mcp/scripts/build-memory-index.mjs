@@ -4,7 +4,7 @@ import { lstat, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
-const ROOT = path.resolve(process.env.CODEBASE_ROOT || process.cwd());
+const ROOT = path.resolve(process.env.CODEBASE_ROOT || path.resolve(process.cwd(), "../.."));
 const MAP = "docs/codebase-memory/generated/repository-map.json";
 const VERSION = 1;
 const SKIP_DIRS = new Set([".git", "node_modules", ".next", "dist", "build", "coverage", ".vercel", ".supabase", ".turbo", ".cache"]);
@@ -40,7 +40,7 @@ function unique(values) { return [...new Set(values)].sort(); }
 
 const mapPath = path.join(ROOT, MAP);
 const current = JSON.parse(await readFile(mapPath, "utf8"));
-const allFiles = await walk();
+const allFiles = (await walk()).filter(file => file !== MAP);
 const fileHashes = [];
 for (const rel of allFiles) {
   const content = await readFile(path.join(ROOT, rel));
