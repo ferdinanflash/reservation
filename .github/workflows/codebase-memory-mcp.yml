@@ -68,6 +68,12 @@ jobs:
       - name: Generate deterministic repository map
         working-directory: tools/codebase-memory-mcp
         run: npm run index
+      - name: Verify deterministic generation
+        working-directory: tools/codebase-memory-mcp
+        run: |
+          cp ../../docs/codebase-memory/generated/repository-map.json /tmp/repository-map-first.json
+          npm run index
+          cmp /tmp/repository-map-first.json ../../docs/codebase-memory/generated/repository-map.json
       - name: Validate generated repository map
         working-directory: tools/codebase-memory-mcp
         run: npm run check:index
