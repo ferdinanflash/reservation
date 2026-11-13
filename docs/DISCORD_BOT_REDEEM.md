@@ -58,6 +58,16 @@ supabase functions deploy redeem-giftcode
 
 The `discord-interactions` function calls the existing `redeem-giftcode` function using the public anon key. Do not put the Supabase service-role key in Discord, GitHub source, or browser code.
 
+
+## Deploy the Edge Functions using GitHub Actions
+
+1. In the GitHub repository, open **Settings → Secrets and variables → Actions**.
+2. Add a repository secret named `SUPABASE_ACCESS_TOKEN`. Generate it from the Supabase account access-token page. Do not paste it into chat or commit it.
+3. Open **Actions → Deploy 3475 Discord Redeem Functions → Run workflow**.
+4. Confirm the workflow completes successfully. It deploys only `redeem-giftcode` and `discord-interactions`; it does not deploy or prune other functions.
+
+The Discord endpoint is deployed with JWT verification disabled because it verifies Discord Ed25519 request signatures itself. The existing `redeem-giftcode` endpoint retains its normal JWT gateway verification.
+
 ## 4. Register slash commands
 
 Use Node.js 20+ locally. Set the bot token only in your local shell; never commit it, send it in chat, or put it in browser code.
