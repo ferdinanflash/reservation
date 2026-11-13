@@ -4,14 +4,14 @@ Use this checklist for a completion review and for future maintenance. A checkbo
 
 ## Repository-verifiable checks
 
-- [ ] MCP TypeScript type-check passes.
-- [ ] MCP unit tests pass.
-- [ ] Project contract check passes; translation warnings have been reviewed.
-- [ ] Static PR review workflow passes and its report artifact is available.
-- [ ] Dependency audit report is available and all HIGH/CRITICAL advisories are triaged.
-- [ ] Repository inventory generation is deterministic.
-- [ ] AST graph generation is deterministic and parse diagnostics are reviewed.
-- [ ] Generated repository map and AST graph are fresh.
+- [x] MCP TypeScript type-check passes (GitHub Actions run [43521506377](https://github.com/ferdinanflash/reservation/actions/runs/43521506377)).
+- [x] MCP unit tests pass (10 tests; run [43521506377](https://github.com/ferdinanflash/reservation/actions/runs/43521506377)).
+- [x] Project contract check passes; translation warnings are recorded in ROADMAP.md and need product-language review (run [43521506377](https://github.com/ferdinanflash/reservation/actions/runs/43521506377)).
+- [x] Static review workflow passes on direct pushes and its report artifact is available; the PR-specific base/head comparison still needs its first real PR test ([run 43521506313](https://github.com/ferdinanflash/reservation/actions/runs/43521506313)).
+- [ ] Dependency audit report is available ([artifact run 43521506377](https://github.com/ferdinanflash/reservation/actions/runs/43521506377)); HIGH/CRITICAL advisories still require owner triage.
+- [x] Repository inventory generation is deterministic (run [43521506377](https://github.com/ferdinanflash/reservation/actions/runs/43521506377)).
+- [x] AST graph generation is deterministic; 0 parse diagnostics in the verified run [43521506377](https://github.com/ferdinanflash/reservation/actions/runs/43521506377).
+- [x] Generated repository map and AST graph are fresh after the verified refresh run [43521506377](https://github.com/ferdinanflash/reservation/actions/runs/43521506377).
 - [ ] Feature maps, known issues and ADRs match current source.
 - [ ] All changes are committed to the intended branch and CI checks correspond to the final commit.
 
@@ -30,3 +30,8 @@ Use this checklist for a completion review and for future maintenance. A checkbo
 Repository-verifiable checks may be marked complete from GitHub Actions evidence. Owner-run checks must not be marked complete based only on source inspection. If any external check cannot be performed, record it as an explicit handoff or open risk in `known-issues.md`.
 
 Codebase Memory is a continuous maintenance system. Completion of this checklist is a point-in-time acceptance, not a guarantee that future changes remain safe without rerunning the checks.
+
+
+## Verification record
+
+Latest complete repository validation: [Codebase Memory MCP run 43521506377](https://github.com/ferdinanflash/reservation/actions/runs/43521506377) — success. The static review run [43521506313](https://github.com/ferdinanflash/reservation/actions/runs/43521506313) also succeeded with zero BLOCKER and zero HIGH findings. These checks validate repository content only; they do not certify production Supabase state or browser/device behavior.
