@@ -13,7 +13,7 @@ Status reviewed against `main` on 2026-11-14.
 ## Completion phases
 
 ### Phase 6 — Automated change review
-Status: implemented; CI verification pending.
+Status: implemented; static review workflow passed on direct push (run 43521319205).
 
 - PR workflow runs deterministic static review against the base branch.
 - Checks changed JavaScript syntax, likely exposed credential patterns, frontend service-role references, dynamic code execution and missing local script references when `index.html` changes.
@@ -22,7 +22,7 @@ Status: implemented; CI verification pending.
 - This is static analysis, not an AI reviewer and not proof that a change is safe.
 
 ### Phase 7 — Project contract and regression checks
-Status: implemented; CI verification pending.
+Status: implemented; contract check passes. Current warnings: 20 EN keys missing in ID/PH/TH/IT and 34 in CN; RU and FR include all 435 EN keys.
 
 - Validate translation dictionary key coverage across EN, ID, CN, PH, TH, IT, RU and FR.
 - Validate main HTML script references and critical classic-script load order.
@@ -30,7 +30,7 @@ Status: implemented; CI verification pending.
 - Keep browser/UI and live-backend checks separate from static CI.
 
 ### Phase 8 — Security and dependency governance
-Status: implemented; CI verification pending.
+Status: implemented; dependency audit artifact is generated (non-blocking); findings still require owner triage.
 
 - Add dependency audit reporting and a documented triage process; do not auto-upgrade production dependencies blindly.
 - Review secret boundaries, Supabase RLS/grants, Edge Function authorization, CORS, webhook verification and browser-exposed configuration.
@@ -46,7 +46,7 @@ Status: implemented.
 - Keep all MCP tools read-only; implementation and deployment remain separate explicit workflows.
 
 ### Phase 10 — Acceptance and maintenance
-Status: in progress; final CI acceptance pending.
+Status: in progress; repository CI is passing on the latest completed run; external owner-run checks remain.
 
 - Run all automated checks on the final commit and verify generated artifacts are fresh and deterministic.
 - Verify PR review workflow and memory refresh workflow independently.
