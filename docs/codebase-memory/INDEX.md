@@ -47,11 +47,11 @@ The main shell is `index.html`. Its deferred scripts are loaded in this order:
 
 - Implementation: `tools/codebase-memory-mcp/`
 - Setup and client configuration: `tools/codebase-memory-mcp/README.md`
-- Local stdio server with seven read-only tools and three resources.
+- Local stdio server with nine read-only tools and three resources, including AST call-graph and static-integration tracing.
 - The server is not hosted and is not automatically connected to ChatGPT; install and configure it in a compatible local MCP client.
-- Generated file inventory: `generated/repository-map.json`.
-- Refresh/check locally: `cd tools/codebase-memory-mcp && npm run index && npm run check:index`.
-- GitHub Actions refreshes the structural inventory on relevant source changes; semantic notes still need human review.
+- Generated file inventory: `generated/repository-map.json`.\n- Generated AST graph: `generated/ast-dependency-graph.json` (function definitions/calls, imports and literal integrations).
+- Refresh/check locally: `cd tools/codebase-memory-mcp && npm run index && npm run ast && npm run check:index`.
+- GitHub Actions refreshes both the structural inventory and AST graph on relevant source changes; semantic notes and ambiguous runtime relationships still need human review.
 
 ## Architecture decisions and known issues
 
