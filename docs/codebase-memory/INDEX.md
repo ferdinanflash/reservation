@@ -103,3 +103,8 @@ Tables directly referenced by current frontend/backend source or included migrat
 - `troops_power` — queried by extras/redeem-related UI and deleted by gift-code backend when upstream confirms an invalid player ID.
 
 The repository does **not** include an authoritative base-schema migration for every table (notably `reservation_slots`, `system_settings`, `footer_settings`, and `troops_power`). Their full columns, constraints, triggers, grants and RLS must be verified against the live Supabase schema before database changes. Do not infer them from client queries alone.
+
+
+## Completion roadmap
+
+The detailed Phase 6–10 plan, status and acceptance criteria are maintained in [ROADMAP.md](ROADMAP.md). Phase 6 currently adds a deterministic static review to pull requests; it is not an AI code review and does not replace human review.
