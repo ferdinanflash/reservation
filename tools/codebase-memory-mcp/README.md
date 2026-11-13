@@ -12,7 +12,10 @@ The server helps an assistant navigate the project before making a change. It re
 - `get_change_impact` — conservative impact shortlist and verification checklist.
 - `get_data_flow` — retrieve documented feature/table/endpoint flows.
 - `get_runbook` — safe maintenance guidance.
-- `get_repository_status` — compare the checked-out commit with the memory baseline.\n- `trace_call_graph` — AST-based function definitions, callers and callees.\n- `get_static_integrations` — AST-detected Supabase tables, Edge Functions and literal network endpoints.
+- `get_repository_status` — compare the checked-out commit with the memory baseline.
+- `trace_call_graph` — AST-based function definitions, callers and callees.
+- `get_static_integrations` — AST-detected Supabase tables, Edge Functions and literal network endpoints.
+- `plan_change` — read-only pre-edit impact plan with related files, risks and checks.
 
 Resources:
 - `3475://project/overview`
@@ -43,6 +46,7 @@ The repository includes a deterministic inventory generator and freshness checke
 ```bash
 cd tools/codebase-memory-mcp
 npm run index
+npm run ast
 npm run check:index
 ```
 
@@ -101,4 +105,9 @@ Alternatively, after installing dependencies, configure the client to run the lo
 - Generated inventory and AST graph freshness depends on the GitHub Actions workflow completing successfully; semantic feature notes still require human review.
 - Git status detection requires the local checkout to include Git metadata.
 - MCP availability is local to the machine and client where this server is installed. Committing these files does not connect ChatGPT or deploy a remote MCP server.
-\n## Phase 5 — change-impact planning\n\nThe MCP now exposes `plan_change`, which ranks source-file candidates and feature maps, seeds a graph traversal from the likely files (or caller-supplied `focus_files`), follows statically indexed imports and function-call edges up to two hops, lists matching literal Supabase/API integrations, flags cross-cutting risks, and creates a verification checklist. The existing `get_change_impact` tool also includes AST-linked candidates when the generated graph is available.\n\nThis remains a read-only planning aid. It does not edit source, apply SQL, change Supabase, commit, or deploy. A graph edge is static evidence only; dynamic dispatch, indirect wrappers, data contracts and runtime behavior still need manual verification.\n
+
+## Phase 5 — change-impact planning
+
+The MCP now exposes `plan_change`, which ranks source-file candidates and feature maps, seeds a graph traversal from the likely files (or caller-supplied `focus_files`), follows statically indexed imports and function-call edges up to two hops, lists matching literal Supabase/API integrations, flags cross-cutting risks, and creates a verification checklist. The existing `get_change_impact` tool also includes AST-linked candidates when the generated graph is available.
+
+This remains a read-only planning aid. It does not edit source, apply SQL, change Supabase, commit, or deploy. A graph edge is static evidence only; dynamic dispatch, indirect wrappers, data contracts and runtime behavior still need manual verification.
