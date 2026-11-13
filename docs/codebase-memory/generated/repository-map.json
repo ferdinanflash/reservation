@@ -191,9 +191,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 80,
+    "file_count": 81,
     "digest_algorithm": "sha256",
-    "content_digest": "75fcbdc95022dee427d4e58ae6dcbf0eb016d48b37c40d890426db7310879e1c",
+    "content_digest": "3d2850ae88a9db67091c179740a4542d186308a779c93bf3849ab361c8105232",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -278,6 +278,10 @@
       {
         "path": "docs/codebase-memory/features/themes-translations-pwa.md",
         "sha256": "d83db85bfb16694ca0496c87495e1f0c832673cbd5597f74b108f0fad96b8137"
+      },
+      {
+        "path": "docs/codebase-memory/generated/ast-dependency-graph.json",
+        "sha256": "c7a88c09bdab9d2b5db70f26311f8a9bbc72d62d3c106dbce30480141ae12387"
       },
       {
         "path": "docs/codebase-memory/known-issues.md",
@@ -469,7 +473,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/README.md",
-        "sha256": "62386519438a67527b0d00bd0c91766e407e2f9775f88f8350dca37a2585f4fc"
+        "sha256": "9ed0ab84084173eb247cc77afdcc7bd4a86e15154f25d8cba6428be8d098799a"
       },
       {
         "path": "tools/codebase-memory-mcp/package.json",
@@ -489,7 +493,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/src/ast-analysis.mjs",
-        "sha256": "317a04f0b2694202810547cefa9d01841c8b1c02d53b75c10d86646187031846"
+        "sha256": "6383064dab438c7ec94b955d7ec6cd216ebb7bd9329db47c76dcc56c9985ab53"
       },
       {
         "path": "tools/codebase-memory-mcp/src/security.ts",
@@ -497,7 +501,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/src/server.ts",
-        "sha256": "28c34c056972b0e2ccfaf3d0018a9ed5974dbf1529b24da8519e0addb3a4fd4e"
+        "sha256": "c7fee177ba6b583faa187052e81906392153e9d4c5ef4502f1cdc94ed474fe62"
       },
       {
         "path": "tools/codebase-memory-mcp/test/ast-analysis.test.mjs",
