@@ -12,7 +12,7 @@ const DISCORD_PUBLIC_KEY = Deno.env.get("DISCORD_PUBLIC_KEY") ??
 const DISCORD_API = "https://discord.com/api/v10";
 const ALLIANCES = new Set(["ARX", "IDN", "ZXC", "VNX", "CAT"]);
 const BATCH_DELAY_MS = 1200;
-const MAX_ALLIANCE_FIDS = 300;
+const MAX_ALLIANCE_FIDS = 100;
 const MAX_TIMEOUT_RETRIES = 2;
 
 function json(body: unknown, status = 200) {
@@ -292,6 +292,12 @@ async function processRedeem(interaction: any) {
             if (outcome.kind === "invalid" || outcome.kind === "expired") {
                 for (const skipped of members.slice(i + 1)) {
                     results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "error", result: { msg: "Dilewati: Gift Code tidak valid/kedaluwarsa." } });
+                }
+                break;
+            }
+            if (outcome.kind === "timeout") {
+                for (const skipped of members.slice(i + 1)) {
+                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "error", result: { msg: "Dilewati karena layanan redeem timeout." } });
                 }
                 break;
             }
