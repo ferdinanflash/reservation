@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { lstat, readFile, readdir } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
 
@@ -10,6 +11,15 @@ const EXTENSIONS = new Set([".html", ".htm", ".js", ".mjs", ".cjs", ".ts", ".tsx
 const SKIP_FILES = [/^\.env(?:\.|$)/i, /(^|\/)(?:secrets?|credentials?)(?:\/|\.|$)/i, /(^|\/).+\.(?:pem|key|p12|pfx|keystore)$/i, /(^|\/)(?:id_rsa|id_ed25519)(?:\.pub)?$/i, /(^|\/)(?:service-account|supabase-service-role).*\.json$/i];
 const excluded = file => file.split("/").some(part => SKIP_DIRS.has(part)) || SKIP_FILES.some(pattern => pattern.test(file));
 const sha = value => createHash("sha256").update(value).digest("hex");
+function trackedFiles() {
+  try {
+    return execFileSync("git", ["ls-files", "-z"], { cwd: ROOT, encoding: "utf8" })
+      .split("\0").filter(Boolean)
+      .filter(file => !excluded(file) && EXTENSIONS.has(path.extname(file).toLowerCase()))
+      .sort();
+  } catch { return null; }
+}
+
 async function walk(dir = ROOT, prefix = "") {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = [];
@@ -31,7 +41,7 @@ if (!Array.isArray(expected)) {
   process.stderr.write("Memory index is missing generated_inventory.files. Run npm run index first.\n");
   process.exit(2);
 }
-const currentPaths = (await walk()).filter(file => file !== MAP);
+const currentPaths = (trackedFiles() || await walk()).filter(file => file !== MAP);
 const expectedPaths = expected.map(item => item.path).sort();
 const added = currentPaths.filter(file => !expectedPaths.includes(file));
 const removed = expectedPaths.filter(file => !currentPaths.includes(file));
