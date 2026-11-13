@@ -194,7 +194,7 @@
     "generator_version": 1,
     "file_count": 91,
     "digest_algorithm": "sha256",
-    "content_digest": "3bc7b52bb5c78091a4f68383d6d38ac2a9373a120674e8b376f5aebf02edff93",
+    "content_digest": "a4f2ecfb959ccc907cafa40db946d05eca31957c00b57c5d3884f3822b492e77",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -406,11 +406,11 @@
       },
       {
         "path": "supabase/functions/index.ts",
-        "sha256": "7908e3909fbad40287f959acbecbb2865f174d3ea2b01acce959318cf0d76e68"
+        "sha256": "6f463379fe2bc04fa2b76473520f0b866a2550db5cdc9c3c41f51eea30f5f47f"
       },
       {
         "path": "supabase/functions/redeem-giftcode/index.ts",
-        "sha256": "4e10dd908c7cfb1f8a6daed15a74e981df2cbaeea0d45c9e97a61a8ab47989c3"
+        "sha256": "ad8bfb123ac777a53a9d67ebf577450b07373ae1050a84e91123c3889ae58d46"
       },
       {
         "path": "supabase/functions/send-announcement/index.ts",
