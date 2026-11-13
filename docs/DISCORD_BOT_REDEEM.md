@@ -78,7 +78,16 @@ node scripts/register-discord-commands.mjs
 
 For quicker testing, optionally set `DISCORD_GUILD_ID` to your server ID. Otherwise the command is registered globally.
 
-## 5. Test
+
+## 5. Register commands through GitHub Actions (no token sharing)
+
+For a mobile-friendly setup, add a repository Actions secret named `DISCORD_BOT_TOKEN` containing the bot token. Never paste it into a commit, issue, or chat. Optionally add a repository Actions variable named `DISCORD_GUILD_ID` containing your Discord server ID for immediate server-only registration.
+
+Then open **GitHub → Actions → Register 3475 Discord Commands → Run workflow**. The workflow registers `/redeem single` and `/redeem alliance`.
+
+If `DISCORD_GUILD_ID` is omitted, commands are registered globally and may take longer to appear.
+
+## 6. Test
 
 Try `/redeem single` first with a player and code you control. Then test `/redeem alliance` with a small alliance/code you control. Every result is public in the channel.
 
