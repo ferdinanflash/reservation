@@ -193,11 +193,11 @@
     "generator_version": 1,
     "file_count": 80,
     "digest_algorithm": "sha256",
-    "content_digest": "9a9b712679c6e5bf2fd874826eb34402b707d5cc0de8e345da5e7320731d5cba",
+    "content_digest": "75fcbdc95022dee427d4e58ae6dcbf0eb016d48b37c40d890426db7310879e1c",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
-        "sha256": "d5cbc18ccc3d9a75533bc583932cc1b24330daffa1154caf32a26c34ff60194b"
+        "sha256": "402b53f87943ab09a633b2a3f01906bc61b60b0390139a4bf23b7793cdf5da30"
       },
       {
         "path": ".github/workflows/source-protection-monitor.yml",
@@ -473,7 +473,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/package.json",
-        "sha256": "c438d1f323509db56e0a5463292b20a298a4b4a61a16a0a499e9cb706045ab86"
+        "sha256": "6cb86fabb7cfa582ac98423f8bf1ac2599dde278146ccf4c9389449572111f53"
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/build-ast-graph.mjs",
