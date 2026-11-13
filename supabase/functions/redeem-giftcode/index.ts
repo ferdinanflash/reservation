@@ -24,7 +24,7 @@
 // frontend already uses via getSupabase().functions.invoke() satisfies it,
 // same as every other Supabase call this app makes.)
 //
-// Optional secret override (defaults to the value below if unset):
+// Required server-side secret (no source-code fallback):
 //   supabase secrets set GIFT_CODE_SIGN_SECRET=...
 //
 // Client contract (see js/app-extras.js):
