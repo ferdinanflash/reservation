@@ -63,6 +63,17 @@ jobs:
       - name: Install MCP dependencies
         working-directory: tools/codebase-memory-mcp
         run: npm install
+      - name: Capture dependency audit report (non-blocking)
+        working-directory: tools/codebase-memory-mcp
+        run: npm audit --json > dependency-audit.json || true
+      - name: Upload dependency audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3475-codebase-memory-dependency-audit
+          path: tools/codebase-memory-mcp/dependency-audit.json
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Type-check MCP
         working-directory: tools/codebase-memory-mcp
         run: npm run typecheck
