@@ -3,7 +3,7 @@ import { lstat, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
-const ROOT = path.resolve(process.env.CODEBASE_ROOT || process.cwd());
+const ROOT = path.resolve(process.env.CODEBASE_ROOT || path.resolve(process.cwd(), "../.."));
 const MAP = "docs/codebase-memory/generated/repository-map.json";
 const SKIP_DIRS = new Set([".git", "node_modules", ".next", "dist", "build", "coverage", ".vercel", ".supabase", ".turbo", ".cache"]);
 const EXTENSIONS = new Set([".html", ".htm", ".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx", ".css", ".scss", ".json", ".md", ".mdx", ".sql", ".yml", ".yaml", ".toml", ".xml", ".txt", ".py", ".sh", ".svg"]);
@@ -31,7 +31,7 @@ if (!Array.isArray(expected)) {
   process.stderr.write("Memory index is missing generated_inventory.files. Run npm run index first.\n");
   process.exit(2);
 }
-const currentPaths = await walk();
+const currentPaths = (await walk()).filter(file => file !== MAP);
 const expectedPaths = expected.map(item => item.path).sort();
 const added = currentPaths.filter(file => !expectedPaths.includes(file));
 const removed = expectedPaths.filter(file => !currentPaths.includes(file));
@@ -41,11 +41,8 @@ for (const item of expected) {
   const content = await readFile(path.join(ROOT, item.path));
   if (sha(content) !== item.sha256) changed.push(item.path);
 }
-const actualDigest = sha(expected.filter(item => currentPaths.includes(item.path) && !changed.includes(item.path)).length === expected.length && !added.length && !removed.length
-  ? expected.map(item => item.path + ":" + item.sha256).join("\n")
-  : currentPaths.map(file => file).join("\n"));
 const stale = added.length > 0 || removed.length > 0 || changed.length > 0;
-process.stdout.write(JSON.stringify({ stale, indexed_file_count: expected.length, current_file_count: currentPaths.length, added, removed, changed, indexed_digest: map.generated_inventory.content_digest, verification_digest: actualDigest }, null, 2) + "\n");
+process.stdout.write(JSON.stringify({ stale, indexed_file_count: expected.length, current_file_count: currentPaths.length, added, removed, changed, indexed_digest: map.generated_inventory.content_digest }, null, 2) + "\n");
 if (stale) {
   process.stderr.write("Codebase memory is stale. Run npm run index and review the generated diff.\n");
   process.exit(1);
