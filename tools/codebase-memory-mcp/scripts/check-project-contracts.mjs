@@ -73,7 +73,7 @@ if (!existsSync(languageFile)) {
           && ts.isIdentifier(node.expression.expression) && node.expression.expression.text === "Object"
           && node.expression.name.text === "assign" && node.arguments.length > 1) {
           const target = propertyPath(node.arguments[0]);
-          if (target && ["ru", "fr"].includes(target)) {
+          if (target && languages.has(target)) {
             for (const arg of node.arguments.slice(1)) mergeObject(target, arg);
           }
         }
