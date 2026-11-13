@@ -1,0 +1,47 @@
+name: Codebase Memory Review
+
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "common.js"
+      - "lang.js"
+      - "style.css"
+      - "sw.js"
+      - "js/**"
+      - "supabase/**"
+      - "*.sql"
+      - "tools/codebase-memory-mcp/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-review:
+    name: Static change review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pull request and base history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run deterministic review checks
+        env:
+          REVIEW_BASE: ${{ github.base_ref }}
+          REVIEW_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          REVIEW_REPORT: code-review-report.md
+        run: node tools/codebase-memory-mcp/scripts/review-changes.mjs
+      - name: Upload review report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3475-static-code-review
+          path: code-review-report.md
+          if-no-files-found: ignore
+          retention-days: 14
