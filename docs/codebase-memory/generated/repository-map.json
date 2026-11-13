@@ -191,13 +191,13 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 85,
+    "file_count": 86,
     "digest_algorithm": "sha256",
-    "content_digest": "44d58f24a478db6bee1d3efe1106460b95db6dee934bfc5d93fbe1f7fac1efbd",
+    "content_digest": "252c90d28e3099c8c5b6de82a54fbd4907482d72b2133fb7c63dc078ad216dc8",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
-        "sha256": "5610091221a7ca9624ac843d8cd9221aaae719b8dcccd3fa6de93df17619a4d4"
+        "sha256": "04b141ce85afe4ed15c0cc68f500c0419b424f5edd0889bee6fab87ab0ea21f4"
       },
       {
         "path": ".github/workflows/codebase-memory-review.yml",
@@ -481,7 +481,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/package.json",
-        "sha256": "206e458405e60c1691c2ca93b7529eefa7d09e671bebbcb0026af2f7d871e2cd"
+        "sha256": "d5d5f0102ec50a51079150e27e140232374994d77c4e46d2a311a0a980527967"
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/build-ast-graph.mjs",
@@ -494,6 +494,10 @@
       {
         "path": "tools/codebase-memory-mcp/scripts/check-memory-index.mjs",
         "sha256": "09b73c78b33d59ca902e0f9c8d2ebe513b834121132190d3caf6d77fc092ec34"
+      },
+      {
+        "path": "tools/codebase-memory-mcp/scripts/check-project-contracts.mjs",
+        "sha256": "802901fd158847e7c050f28dafe89b02ab1d033bac3c3b539c27c9b4471f042f"
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/review-changes.mjs",
