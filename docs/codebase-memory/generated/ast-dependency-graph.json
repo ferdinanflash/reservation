@@ -5,15 +5,8 @@
   "source_files": 21,
   "function_count": 379,
   "import_count": 5,
-  "call_edge_count": 1192,
+  "call_edge_count": 1120,
   "edges": [
-    {
-      "from": "common.js#closeNavMenu",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 203,
-      "confidence": "static-name-match"
-    },
     {
       "from": "common.js#displayNickname",
       "to": "common.js#capZalgo",
@@ -246,13 +239,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "fire-banner.js#draw",
-      "to": "js/app-svs-record.js#save",
-      "kind": "call",
-      "line": 534,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "fire-banner.js#fetchRemoteTheme",
       "to": "fire-banner.js#applyRemoteValue",
       "kind": "call",
@@ -439,13 +425,6 @@
       "to": "js/app-core.js#showToast",
       "kind": "call",
       "line": 485,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#applySlot",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 528,
       "confidence": "static-name-match"
     },
     {
@@ -960,13 +939,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-applications.js#closeApplyModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 546,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-applications.js#formatApplicationLogTime",
       "to": "common.js#escapeHtml",
       "kind": "call",
@@ -978,20 +950,6 @@
       "to": "lang.js#getLang",
       "kind": "call",
       "line": 37,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#getAdditionalTimeSlots",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 627,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#getApplicationTimeLog",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 20,
       "confidence": "static-name-match"
     },
     {
@@ -1143,23 +1101,9 @@
     },
     {
       "from": "js/app-applications.js#openDetailsModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 335,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#openDetailsModal",
       "to": "lang.js#t",
       "kind": "call",
       "line": 329,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#openWaitingModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 412,
       "confidence": "static-name-match"
     },
     {
@@ -1195,13 +1139,6 @@
       "to": "lang.js#t",
       "kind": "call",
       "line": 356,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#removeAdditionalTimeSlot",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 604,
       "confidence": "static-name-match"
     },
     {
@@ -1506,31 +1443,10 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-applications.js#toggleAdditionalTimeSlots",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 558,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-auth.js#handleAdminLogin",
       "to": "js/app-auth.js#handleStaffLogout",
       "kind": "call",
       "line": 288,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#handleAdminLogin",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 293,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#handleEditFooter",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 184,
       "confidence": "static-name-match"
     },
     {
@@ -1569,31 +1485,10 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-auth.js#openAnnouncementModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 114,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#openPresidentPanelModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 57,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-auth.js#openThemeSwitcherModal",
       "to": "js/app-auth.js#refreshThemeSwitcherUI",
       "kind": "call",
       "line": 243,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#openThemeSwitcherModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 244,
       "confidence": "static-name-match"
     },
     {
@@ -1654,13 +1549,6 @@
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenSvSRecords",
-      "to": "js/app-svs-record.js#showSvSRecordMenu",
-      "kind": "call",
-      "line": 88,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#presidentPanelOpenSvSRecords",
       "to": "lang.js#t",
       "kind": "call",
       "line": 91,
@@ -1678,13 +1566,6 @@
       "to": "js/app-auth.js#openThemeSwitcherModal",
       "kind": "call",
       "line": 73,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#refreshThemeSwitcherUI",
-      "to": "fire-banner.js#getOverride",
-      "kind": "call",
-      "line": 258,
       "confidence": "static-name-match"
     },
     {
@@ -1762,13 +1643,6 @@
       "to": "lang.js#t",
       "kind": "call",
       "line": 228,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#selectSeasonalTheme",
-      "to": "fire-banner.js#setTheme",
-      "kind": "call",
-      "line": 270,
       "confidence": "static-name-match"
     },
     {
@@ -1902,13 +1776,6 @@
       "to": "lang.js#t",
       "kind": "call",
       "line": 169,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#sendAnnouncement",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 163,
       "confidence": "static-name-match"
     },
     {
@@ -2200,13 +2067,6 @@
     },
     {
       "from": "js/app-bulk.js#openBulkModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 32,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-bulk.js#openBulkModal",
       "to": "lang.js#translatePositionName",
       "kind": "call",
       "line": 29,
@@ -2486,20 +2346,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-core.js#setFurnaceLevel",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 98,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-core.js#showCustomConfirm",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 462,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-core.js#subscribeToRealtimeUpdates",
       "to": "common.js#getSupabase",
       "kind": "call",
@@ -2553,27 +2399,6 @@
       "to": "lang.js#t",
       "kind": "call",
       "line": 117,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#closeDonateModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 676,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#closeRedeemModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 620,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#closeWhatsNewModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 747,
       "confidence": "static-name-match"
     },
     {
@@ -2746,13 +2571,6 @@
     },
     {
       "from": "js/app-extras.js#openDonateModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 668,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#openDonateModal",
       "to": "lang.js#t",
       "kind": "call",
       "line": 665,
@@ -2770,20 +2588,6 @@
       "to": "js/app-extras.js#resetRedeemForm",
       "kind": "call",
       "line": 606,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#openRedeemModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 608,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#openWhatsNewModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 739,
       "confidence": "static-name-match"
     },
     {
@@ -2868,20 +2672,6 @@
       "to": "js/app-extras.js#setRedeemStatus",
       "kind": "call",
       "line": 518,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#setRedeemAllianceStatus",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 536,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#setRedeemStatus",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 280,
       "confidence": "static-name-match"
     },
     {
@@ -3221,20 +3011,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-notes.js#openHowToUseModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 60,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-notes.js#openHowToUseModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 63,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-notes.js#saveHowToUseNotes",
       "to": "common.js#getSupabase",
       "kind": "call",
@@ -3571,13 +3347,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-notifications.js#getOriginalTimeSlotFromApplication",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 350,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-notifications.js#getSavedApplicationId",
       "to": "js/app-notifications.js#getSavedApplicationIds",
       "kind": "call",
@@ -3603,13 +3372,6 @@
       "to": "js/app-notifications.js#isValidApplicationId",
       "kind": "call",
       "line": 244,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-notifications.js#readGuestApplicationRecords",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 229,
       "confidence": "static-name-match"
     },
     {
@@ -3673,13 +3435,6 @@
       "to": "js/app-notifications.js#pushDebugAlert",
       "kind": "call",
       "line": 97,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-notifications.js#savePushSubscriptionRow",
-      "to": "js/app-notifications.js#toJSON",
-      "kind": "call",
-      "line": 101,
       "confidence": "static-name-match"
     },
     {
@@ -4152,27 +3907,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-schedule.js#showMainMenu",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 25,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-schedule.js#showMinisterReservationMenu",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 17,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-schedule.js#showPositions",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 104,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-schedule.js#showSchedule",
       "to": "js/app-core.js#checkReservationStatus",
       "kind": "call",
@@ -4184,13 +3918,6 @@
       "to": "js/app-schedule.js#detectAndSetTimezone",
       "kind": "call",
       "line": 35,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-schedule.js#showSchedule",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 33,
       "confidence": "static-name-match"
     },
     {
@@ -4285,13 +4012,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-svs-enemies.js#fetchAllianceProxy",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 1576,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-svs-enemies.js#fetchDetailCache",
       "to": "js/app-svs-enemies.js#readCacheRow",
       "kind": "call",
@@ -4359,20 +4079,6 @@
       "to": "common.js#getSupabase",
       "kind": "call",
       "line": 492,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-svs-enemies.js#fetchDetailProxy",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 508,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-svs-enemies.js#fetchJson",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 299,
       "confidence": "static-name-match"
     },
     {
@@ -4635,13 +4341,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-svs-enemies.js#loadStale",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 763,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-svs-enemies.js#matrixCellHtml",
       "to": "js/app-svs-enemies.js#esc",
       "kind": "call",
@@ -4845,13 +4544,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-svs-enemies.js#openSvSAllianceDetail",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 1740,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-svs-enemies.js#openSvSEnemiesSettingsModal",
       "to": "js/app-auth.js#closePresidentPanelModal",
       "kind": "call",
@@ -4887,24 +4579,10 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-svs-enemies.js#openSvSEnemiesSettingsModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 1784,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-svs-enemies.js#readCacheRow",
       "to": "common.js#getSupabase",
       "kind": "call",
       "line": 562,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-svs-enemies.js#readCacheRow",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 570,
       "confidence": "static-name-match"
     },
     {
@@ -5804,13 +5482,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-svs-enemies.js#renderDateFilterUI",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 944,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-svs-enemies.js#renderEnemiesView",
       "to": "js/app-svs-enemies.js#getEnemyKids",
       "kind": "call",
@@ -5885,13 +5556,6 @@
       "to": "js/app-svs-enemies.js#tr",
       "kind": "call",
       "line": 1418,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-svs-enemies.js#renderEnemiesView",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 1324,
       "confidence": "static-name-match"
     },
     {
@@ -6336,13 +6000,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-svs-enemies.js#showSvSEnemiesMenu",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 1433,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-svs-enemies.js#svsEnemiesClearAllDates",
       "to": "js/app-svs-enemies.js#getEnemyKids",
       "kind": "call",
@@ -6396,13 +6053,6 @@
       "to": "js/app-svs-enemies.js#renderRecordMatrix",
       "kind": "call",
       "line": 1018,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-svs-enemies.js#svsEnemiesToggleDate",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 1029,
       "confidence": "static-name-match"
     },
     {
@@ -6553,13 +6203,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-svs-record.js#loadState3475History",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 54,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-svs-record.js#openForm",
       "to": "js/app-svs-record.js#$",
       "kind": "call",
@@ -6646,13 +6289,6 @@
     {
       "from": "js/app-svs-record.js#openForm",
       "to": "js/app-svs-record.js#$",
-      "kind": "call",
-      "line": 90,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-svs-record.js#openForm",
-      "to": "js/app-svs-record.js#remove",
       "kind": "call",
       "line": 90,
       "confidence": "static-name-match"
@@ -7071,13 +6707,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-svs-record.js#showSvSRecordMenu",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 26,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "js/app-svs-record.js#signed",
       "to": "js/app-svs-record.js#fmt",
       "kind": "call",
@@ -7240,13 +6869,6 @@
     },
     {
       "from": "js/app-waiting.js#openReassignModal",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 56,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-waiting.js#openReassignModal",
       "to": "js/app-waiting.js#renderReassignRows",
       "kind": "call",
       "line": 55,
@@ -7299,13 +6921,6 @@
       "to": "lang.js#t",
       "kind": "call",
       "line": 4298,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "lang.js#closeLangDropdown",
-      "to": "js/app-svs-record.js#remove",
-      "kind": "call",
-      "line": 4416,
       "confidence": "static-name-match"
     },
     {
@@ -7430,13 +7045,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "supabase/functions/index.ts#callUpstream",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 101,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "supabase/functions/redeem-giftcode/index.ts",
       "to": null,
       "kind": "import",
@@ -7452,33 +7060,12 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "supabase/functions/redeem-giftcode/index.ts#callUpstream",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 100,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "supabase/functions/send-announcement/index.ts",
       "to": null,
       "kind": "import",
       "specifier": "npm:web-push@3.6.7",
       "line": 32,
       "confidence": "unresolved"
-    },
-    {
-      "from": "supabase/functions/send-announcement/index.ts#fetchAllSubscriptions",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 105,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/send-announcement/index.ts#getAuthenticatedUserId",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 85,
-      "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts",
@@ -7573,13 +7160,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "supabase/functions/send-push-notification/index.ts#fetchSubscriptions",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 193,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "supabase/functions/send-push-notification/index.ts#getLatestLogEntry",
       "to": "supabase/functions/send-push-notification/index.ts#getTimeLog",
       "kind": "call",
@@ -7594,13 +7174,6 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "supabase/functions/send-push-notification/index.ts#getTimeLog",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 75,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "supabase/functions/send-push-notification/index.ts#statusText",
       "to": "supabase/functions/send-push-notification/index.ts#normalizeStatus",
       "kind": "call",
@@ -7612,13 +7185,6 @@
       "to": "supabase/functions/wosatlas-states/index.ts#sbRest",
       "kind": "call",
       "line": 611,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#configuredKids",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 599,
       "confidence": "static-name-match"
     },
     {
@@ -7700,13 +7266,6 @@
     },
     {
       "from": "supabase/functions/wosatlas-states/index.ts#fetchAllianceMembers",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 208,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#fetchAllianceMembers",
       "to": "supabase/functions/wosatlas-states/index.ts#siteGetPaged",
       "kind": "call",
       "line": 210,
@@ -7731,13 +7290,6 @@
       "to": "supabase/functions/wosatlas-states/index.ts#cacheSet",
       "kind": "call",
       "line": 200,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#fetchServerAlliances",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 192,
       "confidence": "static-name-match"
     },
     {
@@ -7773,13 +7325,6 @@
       "to": "supabase/functions/wosatlas-states/index.ts#fetchServerAlliances",
       "kind": "call",
       "line": 230,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#fetchServerPlayers",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 228,
       "confidence": "static-name-match"
     },
     {
@@ -7850,13 +7395,6 @@
       "to": "supabase/functions/wosatlas-states/index.ts#jsonObj",
       "kind": "call",
       "line": 478,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#handleAlliance",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 457,
       "confidence": "static-name-match"
     },
     {
@@ -8246,13 +7784,6 @@
     },
     {
       "from": "supabase/functions/wosatlas-states/index.ts#handleRefresh",
-      "to": "supabase/functions/wosatlas-states/index.ts#json",
-      "kind": "call",
-      "line": 643,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#handleRefresh",
       "to": "supabase/functions/wosatlas-states/index.ts#jsonObj",
       "kind": "call",
       "line": 629,
@@ -8270,13 +7801,6 @@
       "to": "supabase/functions/wosatlas-states/index.ts#jsonObj",
       "kind": "call",
       "line": 679,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#handleRefresh",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 644,
       "confidence": "static-name-match"
     },
     {
@@ -8350,38 +7874,10 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "supabase/functions/wosatlas-states/index.ts#parse",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 382,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#siteGet",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 120,
-      "confidence": "static-name-match"
-    },
-    {
       "from": "supabase/functions/wosatlas-states/index.ts#siteGetPaged",
       "to": "supabase/functions/wosatlas-states/index.ts#siteGet",
       "kind": "call",
       "line": 149,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#stableForCompare",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 621,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/wosatlas-states/index.ts#upstreamGet",
-      "to": "supabase/functions/wosatlas-states/index.ts#parse",
-      "kind": "call",
-      "line": 82,
       "confidence": "static-name-match"
     },
     {
@@ -11212,5 +10708,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "58770482cd24e461fc12a950aa3af8bd66448c5a1d6ec6c34d0e988314e587be"
+  "source_digest": "c64ccb03c5046fd9e76a974212a98cfe008a5a15b993d3cbddda433fcad9cc25"
 }
