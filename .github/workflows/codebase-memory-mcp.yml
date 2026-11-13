@@ -44,6 +44,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: codebase-memory-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   refresh-and-validate:
     runs-on: ubuntu-latest
@@ -91,12 +95,25 @@ jobs:
         run: git diff --exit-code -- docs/codebase-memory/generated/repository-map.json docs/codebase-memory/generated/ast-dependency-graph.json
       - name: Commit refreshed map
         if: github.event_name != 'pull_request'
+        working-directory: tools/codebase-memory-mcp
         run: |
-          if ! git diff --quiet -- docs/codebase-memory/generated/repository-map.json docs/codebase-memory/generated/ast-dependency-graph.json; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add docs/codebase-memory/generated/repository-map.json docs/codebase-memory/generated/ast-dependency-graph.json
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch origin "$GITHUB_REF_NAME"
+            git reset --hard "origin/$GITHUB_REF_NAME"
+            npm run index
+            npm run ast
+            if git diff --quiet -- ../../docs/codebase-memory/generated/repository-map.json ../../docs/codebase-memory/generated/ast-dependency-graph.json; then
+              exit 0
+            fi
+            git add ../../docs/codebase-memory/generated/repository-map.json ../../docs/codebase-memory/generated/ast-dependency-graph.json
             git commit -m "chore: refresh codebase memory index"
-            git pull --rebase origin "$GITHUB_REF_NAME"
-            git push
-          fi
+            if git push origin "HEAD:$GITHUB_REF_NAME"; then
+              exit 0
+            fi
+            echo "Push race detected; retrying against latest branch head (attempt $attempt)."
+          done
+          echo "Could not publish generated memory files after three attempts."
+          exit 1
