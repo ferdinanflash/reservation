@@ -276,6 +276,52 @@ server.tool(
   }
 );
 
+
+const AST_GRAPH_PATH = `${MEMORY}/generated/ast-dependency-graph.json`;
+
+async function readAstGraph(): Promise<any | null> {
+  try { return JSON.parse(await readMemory(AST_GRAPH_PATH)); }
+  catch { return null; }
+}
+
+server.tool(
+  "trace_call_graph",
+  "Trace AST-indexed function definitions, incoming callers and outgoing calls. Cross-file classic-script name matches may be candidates, not proven runtime calls.",
+  { symbol: z.string().min(2).max(160), direction: z.enum(["both", "callers", "callees"]).optional() },
+  async ({ symbol, direction = "both" }) => {
+    const graph = await readAstGraph();
+    if (!graph) return jsonText({ error: "AST dependency graph is not available. Run npm run ast from tools/codebase-memory-mcp." });
+    const needle = symbol.toLowerCase();
+    const definitions = graph.functions.filter((item: any) => item.name.toLowerCase() === needle || item.id.toLowerCase().includes(needle));
+    const ids = new Set(definitions.map((item: any) => item.id));
+    const callers = direction === "callees" ? [] : graph.edges.filter((edge: any) => edge.kind === "call" && ids.has(edge.to));
+    const callees = direction === "callers" ? [] : graph.edges.filter((edge: any) => edge.kind === "call" && ids.has(edge.from));
+    return jsonText({
+      symbol, definitions, callers, callees,
+      confidence_note: "static-name-match indicates a statically resolved name; candidate-name-match means multiple cross-file definitions share the name. Dynamic dispatch and runtime behavior are not resolved.",
+      parse_diagnostics_for_definitions: graph.parse_diagnostics.filter((item: any) => definitions.some((def: any) => def.file === item.file))
+    });
+  }
+);
+
+server.tool(
+  "get_static_integrations",
+  "List AST-detected static Supabase table, Edge Function and literal network endpoint references.",
+  { kind: z.enum(["all", "supabase-table", "edge-function", "fetch", "websocket", "eventsource"]).optional(), value: z.string().optional() },
+  async ({ kind = "all", value }) => {
+    const graph = await readAstGraph();
+    if (!graph) return jsonText({ error: "AST dependency graph is not available. Run npm run ast from tools/codebase-memory-mcp." });
+    const integrations = graph.integrations.filter((item: any) =>
+      (kind === "all" || item.kind === kind) && (!value || item.value.toLowerCase().includes(value.toLowerCase()))
+    );
+    return jsonText({
+      count: integrations.length,
+      integrations,
+      limitation: "Only literal strings passed directly to recognized calls are detected. Computed URLs/table names and indirect wrappers may be missed."
+    });
+  }
+);
+
 server.resource("project-overview", "3475://project/overview", async uri => ({
   contents: [{ uri: uri.href, mimeType: "text/markdown", text: await readMemory("docs/codebase-memory/INDEX.md") }]
 }));
