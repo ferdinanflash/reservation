@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 3475 static change reviewer.
+ * 3475 static change reviewer. Run against a base/head Git diff.
  * Heuristic guardrails only; this is not an AI review or a substitute for human review.
  */
 import { execFileSync } from "node:child_process";
