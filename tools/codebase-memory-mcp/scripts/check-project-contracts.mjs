@@ -46,6 +46,41 @@ if (!existsSync(languageFile)) {
         const keys = new Set(property.initializer.properties.map(getName).filter(Boolean));
         languages.set(language, keys);
       }
+      // RU and FR are layered on top of EN using TRANSLATIONS.xx = Object.assign(...).
+      // Merge those assignments and later Object.assign patches into their key sets.
+      const propertyPath = expression => ts.isPropertyAccessExpression(expression)
+        && ts.isIdentifier(expression.expression)
+        && expression.expression.text === "TRANSLATIONS"
+        ? expression.name.text : null;
+      const objectKeys = object => ts.isObjectLiteralExpression(object)
+        ? object.properties.map(getName).filter(Boolean) : [];
+      const mergeObject = (target, object) => {
+        if (!languages.has(target)) languages.set(target, new Set(languages.get("en") || []));
+        for (const key of objectKeys(object)) languages.get(target).add(key);
+      };
+      const mergeVisitor = node => {
+        if (ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+          const target = propertyPath(node.left);
+          if (target && ["ru", "fr"].includes(target) && ts.isCallExpression(node.right)) {
+            const args = node.right.arguments;
+            if (args.some(arg => ts.isPropertyAccessExpression(arg) && propertyPath(arg) === "en")) {
+              languages.set(target, new Set(languages.get("en") || []));
+            }
+            for (const arg of args) mergeObject(target, arg);
+          }
+        }
+        if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)
+          && ts.isIdentifier(node.expression.expression) && node.expression.expression.text === "Object"
+          && node.expression.name.text === "assign" && node.arguments.length > 1) {
+          const target = propertyPath(node.arguments[0]);
+          if (target && ["ru", "fr"].includes(target)) {
+            for (const arg of node.arguments.slice(1)) mergeObject(target, arg);
+          }
+        }
+        ts.forEachChild(node, mergeVisitor);
+      };
+      mergeVisitor(ast);
+
       const expected = ["en", "id", "cn", "ph", "th", "it", "ru", "fr"];
       for (const language of expected) {
         if (!languages.has(language)) report("BLOCKER", `Missing language dictionary: ${language}`);
