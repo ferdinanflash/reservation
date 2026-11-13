@@ -192,9 +192,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 92,
+    "file_count": 93,
     "digest_algorithm": "sha256",
-    "content_digest": "f1f6e903bc6f6df729a065e96c7b2f34573323ce80069e49528c145f003fc3c9",
+    "content_digest": "b6b5c649b10ded007f049bc6961ac1c7f25b2302d50e1fcb3d555149c77253fd",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -203,6 +203,10 @@
       {
         "path": ".github/workflows/codebase-memory-review.yml",
         "sha256": "b4189ae4ade06404b032b33bdd622815c2440e9eb411a8792eb924a68f71af42"
+      },
+      {
+        "path": ".github/workflows/deploy-discord-redeem.yml",
+        "sha256": "9aeb4d22922522e622fa911fa7e9e10eb1fa424eb3c6feb6466cdc6b11ce6b5b"
       },
       {
         "path": ".github/workflows/register-discord-commands.yml",
@@ -246,7 +250,7 @@
       },
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
-        "sha256": "e7b9caf7558d11b7edbd21bc5d3ae7073f53f24b846912dfd29e3e794ad92b42"
+        "sha256": "f71c17c8501d3f44d87510089eec6a885b93bfd04ed99734d785504a8d8a304c"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
@@ -406,7 +410,7 @@
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
-        "sha256": "ca01e185c3da7fce80dcc653ce21bc7d50ed3dd79cbf408ccd5ed0689343ef2f"
+        "sha256": "201745250d14b9f4dbae9e996da96bab8ff4e711b54737a9c94b618ecad2c304"
       },
       {
         "path": "supabase/functions/index.ts",
