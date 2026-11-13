@@ -115,7 +115,7 @@ This remains a read-only planning aid. It does not edit source, apply SQL, chang
 
 ## Phase 6 — automated change review
 
-Pull requests that touch application source, Supabase functions, SQL, or the MCP run `../.github/workflows/codebase-memory-review.yml`. The deterministic reviewer is available locally:
+Pull requests that touch application source, Supabase functions, SQL, or the MCP run `../../.github/workflows/codebase-memory-review.yml`. The deterministic reviewer is available locally:
 
 ```bash
 npm run review
@@ -124,3 +124,6 @@ npm run review
 For an accurate PR comparison, set `REVIEW_BASE` to the base branch and `REVIEW_HEAD` to the PR head commit. The workflow does this automatically. It checks changed JavaScript syntax, high-confidence credential patterns, frontend references to `service_role`, dynamic code execution, and local script references when `index.html` changes. It writes `code-review-report.md`; CI uploads this as an artifact. A BLOCKER fails the check. HIGH findings are advisory and need human triage. False positives and false negatives are possible.
 
 See [the completion roadmap](../../docs/codebase-memory/ROADMAP.md) for Phases 6–10 and their acceptance criteria.
+
+
+Operational procedures and final owner-run checks are documented in [OPERATIONS.md](../../docs/codebase-memory/OPERATIONS.md) and [ACCEPTANCE.md](../../docs/codebase-memory/ACCEPTANCE.md).
