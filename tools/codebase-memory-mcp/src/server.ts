@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { lstat, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
@@ -226,13 +227,44 @@ server.tool(
     } catch { /* git metadata may not be available in a packaged checkout */ }
     let baseline: string | null = null;
     let indexedAt: string | null = null;
+    let indexedDigest: string | null = null;
+    let currentDigest: string | null = null;
+    let addedFiles: string[] = [];
+    let removedFiles: string[] = [];
+    let changedFiles: string[] = [];
     try {
       const map = JSON.parse(await readFile(path.join(ROOT, MAP_PATH), "utf8"));
-      baseline = map.baseline_commit || map.commit_sha || null;
-      indexedAt = map.generated_at || map.last_updated || null;
+      baseline = map.inspected_commit || null;
+      indexedAt = map.inspected_at_utc || null;
+      indexedDigest = map.generated_inventory?.content_digest || null;
+      const indexedFiles = map.generated_inventory?.files;
+      if (Array.isArray(indexedFiles)) {
+        const currentFiles = (await allTextFiles()).filter(file => file.path !== MAP_PATH);
+        const currentByPath = new Map(currentFiles.map(file => [file.path, file]));
+        const expectedPaths = new Set(indexedFiles.map((item: { path: string }) => item.path));
+        const currentPaths = new Set(currentByPath.keys());
+        addedFiles = [...currentPaths].filter(file => !expectedPaths.has(file)).sort();
+        removedFiles = [...expectedPaths].filter(file => !currentPaths.has(file)).sort();
+        const actualHashes = currentFiles.map(file => ({ path: file.path, sha256: createHash("sha256").update(file.content).digest("hex") }));
+        const expectedHashes = new Map(indexedFiles.map((item: { path: string; sha256: string }) => [item.path, item.sha256]));
+        changedFiles = actualHashes.filter(item => expectedHashes.get(item.path) !== item.sha256).map(item => item.path).sort();
+        currentDigest = createHash("sha256").update(actualHashes.map(item => item.path + ":" + item.sha256).sort().join("\\n")).digest("hex");
+      }
     } catch { /* missing or invalid map */ }
-    const stale = head !== "unavailable" && !!baseline && !head.startsWith(baseline);
-    return jsonText({ repository_root: ROOT, current_commit: head, memory_baseline_commit: baseline, index_timestamp: indexedAt, stale_index: stale, warning: stale ? "The structured repository map is older than the checked-out commit. Source code takes precedence; refresh the map before relying on its inventory." : baseline ? "No commit mismatch detected against the recorded baseline." : "Could not determine the memory baseline. Check generated/repository-map.json." });
+    const stale = !indexedDigest || !currentDigest || indexedDigest !== currentDigest || addedFiles.length > 0 || removedFiles.length > 0 || changedFiles.length > 0;
+    return jsonText({
+      repository_root: ROOT,
+      current_commit: head,
+      indexed_commit_at_initial_inspection: baseline,
+      index_timestamp: indexedAt,
+      indexed_digest: indexedDigest,
+      current_digest: currentDigest,
+      stale_index: stale,
+      added_files: addedFiles,
+      removed_files: removedFiles,
+      changed_files: changedFiles,
+      warning: stale ? "The generated file inventory does not match the current checkout. Run npm run index in tools/codebase-memory-mcp, then review the map diff. Semantic feature notes still require human review." : "Generated inventory matches the current checkout. Semantic feature notes remain human-maintained."
+    });
   }
 );
 
