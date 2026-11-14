@@ -116,6 +116,29 @@ async function callRedeemFunction(action: "redeem", fid: string, cdk: string) {
     return { httpOk: response.ok, result };
 }
 
+async function loadPlayerNickname(fid: string): Promise<string> {
+    const { url, anonKey } = supabaseConfig();
+    const query = new URLSearchParams({
+        select: "nickname",
+        game_id: `eq.${fid}`,
+        limit: "1",
+    });
+    const response = await fetch(`${url}/rest/v1/troops_power?${query}`, {
+        headers: {
+            "apikey": anonKey,
+            "Authorization": `Bearer ${anonKey}`,
+            "Accept": "application/json",
+        },
+    });
+    if (!response.ok) {
+        const detail = await response.text().catch(() => "");
+        throw new Error(`Unable to load player nickname (${response.status}): ${detail.slice(0, 120)}`);
+    }
+    const rows = await response.json();
+    if (!Array.isArray(rows) || !rows.length) return "";
+    return String(rows[0]?.nickname ?? "").trim();
+}
+
 async function loadAllianceMembers(alliance: string) {
     const { url, anonKey } = supabaseConfig();
     const members: Array<{ fid: string; nickname: string }> = [];
@@ -284,7 +307,14 @@ async function processRedeem(interaction: any) {
             await editOriginal(interaction.application_id, interaction.token, "❌ Player ID harus berupa 4–20 digit angka.");
             return;
         }
-        members = [{ fid, nickname: "" }];
+        let nickname = "";
+        try {
+            nickname = await loadPlayerNickname(fid);
+        } catch (error) {
+            // A nickname lookup must never block an otherwise valid redeem.
+            console.error("Unable to resolve single-player nickname:", error);
+        }
+        members = [{ fid, nickname }];
         heading = "SINGLE PLAYER";
     } else if (subcommand === "alliance") {
         const alliance = String(values.alliance ?? "").trim().toUpperCase();
