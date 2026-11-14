@@ -211,14 +211,14 @@ function resultKind(result: any): "success" | "already" | "invalid" | "expired" 
 
 function resultLabel(kind: ReturnType<typeof resultKind>, result: any): string {
     switch (kind) {
-        case "success": return "✅ Berhasil";
-        case "already": return "ℹ️ Sudah pernah diklaim";
-        case "invalid": return "❌ Gift Code tidak valid";
-        case "expired": return "⌛ Gift Code kedaluwarsa";
-        case "limit": return "⚠️ Batas penggunaan tercapai";
-        case "bad_fid": return "❌ Player ID tidak ditemukan";
-        case "timeout": return "⚠️ Timeout; hasil belum terkonfirmasi";
-        default: return `❌ Gagal: ${(upstreamMessage(result) || "Kesalahan layanan").slice(0, 100)}`;
+        case "success": return "✅ Successful";
+        case "already": return "ℹ️ Already claimed";
+        case "invalid": return "❌ Invalid gift code";
+        case "expired": return "⌛ Gift code expired";
+        case "limit": return "⚠️ Usage limit reached";
+        case "bad_fid": return "❌ Player ID not found";
+        case "timeout": return "⚠️ Timed out; result not confirmed";
+        default: return `❌ Gagal: ${(upstreamMessage(result) || "Service error").slice(0, 100)}`;
     }
 }
 
@@ -279,15 +279,15 @@ async function publishResults(interaction: any, heading: string, rows: Array<{ f
     });
     const header = [
         `🎁 **3475 REDEEM — ${heading}**`,
-        `Kode Redeem: **${code}**`,
-        `Total: **${rows.length}** | Berhasil: **${success}** | Sudah diklaim: **${already}** | Gagal: **${failed}**`,
+        `Redeem Code: **${code}**`,
+        `Total: **${rows.length}** | Successful: **${success}** | Already Claimed: **${already}** | Failed: **${failed}**`,
         note,
     ].filter(Boolean).join("\n");
 
     const chunks = splitPublicLines(lines);
-    await editOriginal(interaction.application_id, interaction.token, [header, chunks[0] ?? "Tidak ada hasil."].join("\n"));
+    await editOriginal(interaction.application_id, interaction.token, [header, chunks[0] ?? "No results."].join("\n"));
     for (let i = 1; i < chunks.length; i++) {
-        await sendPublicFollowup(interaction.application_id, interaction.token, `**Lanjutan hasil redeem (${i + 1}/${chunks.length})**\n${chunks[i]}`);
+        await sendPublicFollowup(interaction.application_id, interaction.token, `**Redeem Results — Continued (${i + 1}/${chunks.length})**\n${chunks[i]}`);
     }
 }
 
@@ -298,14 +298,14 @@ async function processRedeem(interaction: any) {
     let heading = "";
 
     if (!code || code.length > 40) {
-        await editOriginal(interaction.application_id, interaction.token, "❌ Gift Code wajib diisi dan maksimal 40 karakter.");
+        await editOriginal(interaction.application_id, interaction.token, "❌ Gift code is required and must be no more than 40 characters.");
         return;
     }
 
     if (subcommand === "single") {
         const fid = String(values.fid ?? "").trim();
         if (!/^[0-9]{4,20}$/.test(fid)) {
-            await editOriginal(interaction.application_id, interaction.token, "❌ Player ID harus berupa 4–20 digit angka.");
+            await editOriginal(interaction.application_id, interaction.token, "❌ Player ID must contain 4–20 digits.");
             return;
         }
         let nickname = "";
@@ -320,17 +320,17 @@ async function processRedeem(interaction: any) {
     } else if (subcommand === "alliance") {
         const alliance = String(values.alliance ?? "").trim().toUpperCase();
         if (!ALLIANCES.has(alliance)) {
-            await editOriginal(interaction.application_id, interaction.token, "❌ Kode aliansi tidak valid. Pilih ARX, IDN, ZXC, VNX, atau CAT.");
+            await editOriginal(interaction.application_id, interaction.token, "❌ Invalid alliance. Choose ARX, IDN, ZXC, VNX, or CAT.");
             return;
         }
         members = await loadAllianceMembers(alliance);
         heading = `ALLIANCE ${alliance}`;
         if (!members.length) {
-            await editOriginal(interaction.application_id, interaction.token, `❌ Tidak ditemukan Player ID untuk aliansi **${alliance}**.`);
+            await editOriginal(interaction.application_id, interaction.token, `❌ No Player IDs found for alliance **${alliance}**.`);
             return;
         }
     } else {
-        await editOriginal(interaction.application_id, interaction.token, "❌ Subcommand tidak dikenal. Gunakan /redeem single atau /redeem alliance.");
+        await editOriginal(interaction.application_id, interaction.token, "❌ Unknown subcommand. Use /redeem single or /redeem alliance.");
         return;
     }
 
@@ -345,24 +345,24 @@ async function processRedeem(interaction: any) {
             // Invalid/expired codes stop the remaining batch, matching website behavior.
             if (outcome.kind === "invalid" || outcome.kind === "expired") {
                 for (const skipped of members.slice(i + 1)) {
-                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "error", result: { msg: "Dilewati: Gift Code tidak valid/kedaluwarsa." } });
+                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "error", result: { msg: "Skipped: gift code is invalid or expired." } });
                 }
                 break;
             }
             if (outcome.kind === "timeout") {
                 for (const skipped of members.slice(i + 1)) {
-                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "error", result: { msg: "Dilewati karena layanan redeem timeout." } });
+                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "error", result: { msg: "Skipped because the redeem service timed out." } });
                 }
                 break;
             }
         } catch (error) {
             console.error("Redeem failed for one FID:", error);
-            results.push({ fid: member.fid, nickname: member.nickname, kind: "error", result: { msg: "Gangguan layanan" } });
+            results.push({ fid: member.fid, nickname: member.nickname, kind: "error", result: { msg: "Service interruption" } });
         }
         if (i < members.length - 1) await sleep(BATCH_DELAY_MS);
     }
 
-    const note = truncated ? `⚠️ Roster dibatasi maksimal ${MAX_ALLIANCE_FIDS} anggota untuk satu proses.` : "";
+    const note = truncated ? `⚠️ The roster is limited to ${MAX_ALLIANCE_FIDS} members per run.` : "";
     await publishResults(interaction, heading, results, note, code);
 }
 
@@ -391,16 +391,16 @@ Deno.serve(async (req) => {
 
     if (interaction.type === 1) return json({ type: 1 });
     if (interaction.type !== 2 || interaction.data?.name !== "redeem") {
-        return json(publicMessage("Perintah tidak dikenal."));
+        return json(publicMessage("Unknown command."));
     }
     if (!interaction.application_id || !interaction.token) {
-        return json(publicMessage("❌ Interaksi Discord tidak lengkap."));
+        return json(publicMessage("❌ Incomplete Discord interaction."));
     }
 
     // Public deferred response: intentionally no EPHEMERAL flag.
     EdgeRuntime.waitUntil(processRedeem(interaction).catch(async (error) => {
         console.error("Discord redeem processing failed:", error);
-        await editOriginal(interaction.application_id, interaction.token, "⚠️ Terjadi gangguan pada layanan redeem 3475.");
+        await editOriginal(interaction.application_id, interaction.token, "⚠️ The 3475 redeem service encountered an error.");
     }));
     return json({ type: 5 });
 });
