@@ -44,6 +44,8 @@
 import md5 from "npm:md5@2.3.0";
 
 const GIFT_CODE_SIGN_SECRET = Deno.env.get("GIFT_CODE_SIGN_SECRET") || "";
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 const KINGDOM_ID = "3475"; // same alliance/State id as REDEEM_STATE_ID in app-extras.js
 const LOGIN_URL = "https://wos-giftcode-api.centurygame.com/api/player";
 const REDEEM_URL = "https://wos-giftcode-api.centurygame.com/api/gift_code";
@@ -105,6 +107,36 @@ async function callUpstream(url: string, params: Record<string, string>) {
     return { ok: res.ok, status: res.status, data };
 }
 
+
+// Remove a stale Player ID only after Century Games explicitly confirms
+// USER INFO ERROR. The service-role key stays server-side in Edge Function secrets.
+async function removeInvalidFid(fid: string): Promise<boolean> {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+        console.error("Cannot remove invalid FID: Supabase service-role configuration is missing");
+        return false;
+    }
+    try {
+        const query = new URLSearchParams({ game_id: `eq.${fid}` });
+        const response = await fetch(`${SUPABASE_URL.replace(/\\/$/, "")}/rest/v1/troops_power?${query}`, {
+            method: "DELETE",
+            headers: {
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+                "Prefer": "return=representation",
+            },
+        });
+        if (!response.ok) {
+            console.error("Invalid FID cleanup failed:", response.status, (await response.text().catch(() => "")).slice(0, 200));
+            return false;
+        }
+        const deleted = await response.json().catch(() => []);
+        return Array.isArray(deleted) && deleted.length > 0;
+    } catch (error) {
+        console.error("Invalid FID cleanup request failed:", error instanceof Error ? error.message : String(error));
+        return false;
+    }
+}
+
 function isValidFid(fid: unknown): fid is string {
     return typeof fid === "string" && /^[0-9]{4,20}$/.test(fid);
 }
@@ -153,6 +185,12 @@ Deno.serve(async (req) => {
             kid: KINGDOM_ID,
             time,
         });
+        const upstream = result.data as Record<string, unknown> | null;
+        const message = String(upstream?.msg ?? "").trim().toUpperCase();
+        if (message.startsWith("USER INFO ERROR")) {
+            const removed = await removeInvalidFid(fid);
+            return jsonResponse({ ...result, removed });
+        }
         return jsonResponse(result);
     }
 
