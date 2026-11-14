@@ -123,49 +123,80 @@ Tidak menggunakan framework frontend besar; aplikasi utama dibuat dengan JavaScr
 
 ```text
 reservation/
-├── index.html
-├── style.css
-├── lang.js
-├── common.js
-├── fire-banner.js
-├── opening-animation.js
-├── sw.js
-├── site.webmanifest
-├── CNAME
-├── Readme.MD
-├── Readme_EN.MD
-├── PRD.MD
-├── .github/
-│   └── workflows/
-│       └── static.yml
-├── js/
-│   ├── app-core.js
-│   ├── app-auth.js
-│   ├── app-applications.js
-│   ├── app-bulk.js
-│   ├── app-schedule.js
-│   ├── app-waiting.js
-│   ├── app-notes.js
-│   ├── app-notifications.js
-│   ├── app-extras.js
-│   ├── app-svs-enemies.js
-│   └── app-svs-record.js
-├── images/
-│   ├── furnace/
-│   ├── resources/
-│   ├── speedups/
-│   └── check.svg
-├── fonts/
+├── index.html                    # Entry point, UI markup, script references
+├── style.css                     # Main styles, responsive layout, themes
+├── lang.js                       # EN, ID, CN, PH, TH, IT, RU, FR translations
+├── common.js                     # Shared browser utilities
+├── fire-banner.js                # Seasonal banner/theme behavior
+├── opening-animation.js          # Opening animation
+├── sw.js                         # PWA service worker and cache versioning
+├── site.webmanifest              # PWA manifest
+├── CNAME                         # GitHub Pages custom domain
+├── PRD.MD                        # Product requirements
+├── Readme.MD                     # Indonesian project documentation
+├── Readme_EN.MD                  # English project documentation
+├── LICENSE / LICENSE_ID.md       # Proprietary ownership terms
+├── config/                       # Project configuration files
+├── fonts/                        # Local font assets
+├── images/                       # UI and game-related image assets
 ├── live/
-│   └── index.html
+│   └── index.html                # Live/status page
+├── scripts/                      # Repository utility scripts
+├── js/                            # Modular frontend application
+│   ├── app-core.js               # Initialization and shared core
+│   ├── app-auth.js               # Authentication and President controls
+│   ├── app-applications.js       # Reservation applications
+│   ├── app-bulk.js               # Bulk reservation operations
+│   ├── app-schedule.js           # Schedule and time slots
+│   ├── app-waiting.js            # Waiting-list management
+│   ├── app-notes.js              # Notes and Time Log
+│   ├── app-notifications.js      # Notification subscriptions/delivery
+│   ├── app-extras.js             # Redeem, Recently Accepted, What's New, extras
+│   ├── app-svs-enemies.js        # SvS/TAL Enemies and WoS Atlas
+│   └── app-svs-record.js         # SvS Record history
 ├── supabase/
 │   └── functions/
-│       ├── index.ts
+│       ├── index.ts              # Legacy/root function source; verify before deployment
+│       ├── discord-interactions/
+│       │   └── index.ts          # Discord slash-command endpoint (Ed25519)
 │       ├── redeem-giftcode/
+│       │   └── index.ts          # Shared website + Discord redeem backend
 │       ├── send-announcement/
 │       ├── send-push-notification/
 │       └── wosatlas-states/
-└── supabase_migration_*.sql
+├── supabase_migration_*.sql      # Database migrations (root-level)
+├── svs_record_migration.sql
+├── .github/
+│   └── workflows/
+│       ├── static.yml                    # Website publishing
+│       ├── deploy-discord-redeem.yml     # Discord/redeem Edge Function deployment
+│       ├── register-discord-commands.yml # Discord slash-command registration
+│       ├── codebase-memory-mcp.yml       # Memory inventory, AST, tests/contracts
+│       ├── codebase-memory-review.yml    # Static change review
+│       └── source-protection-monitor.yml # Source-protection monitoring
+└── docs/
+    ├── CODEBASE_MEMORY_MCP.md
+    ├── DISCORD_BOT_REDEEM.md
+    ├── SOURCE_PROTECTION_MONITOR.md
+    └── codebase-memory/
+        ├── INDEX.md
+        ├── ROADMAP.md
+        ├── ACCEPTANCE.md
+        ├── OPERATIONS.md
+        ├── known-issues.md
+        ├── decisions/
+        ├── features/             # Feature architecture and data-flow maps
+        └── generated/
+            ├── repository-map.json       # Tracked-source inventory and digests
+            └── ast-dependency-graph.json # Static AST dependency graph
+└── tools/
+    └── codebase-memory-mcp/
+        ├── README.md
+        ├── package.json
+        ├── tsconfig.json
+        ├── src/                  # Read-only MCP server and analysis modules
+        ├── scripts/              # Inventory, AST, contracts, review generators
+        └── test/                 # MCP, indexer, AST and impact-analysis tests
 ```
 
 **Catatan:** daftar di atas menggambarkan file dan direktori penting, bukan seluruh aset gambar, video, ikon, atau file migrasi.
@@ -197,11 +228,11 @@ Supabase digunakan sebagai database utama, autentikasi, realtime, dan backend se
 | Function | Kegunaan |
 |---|---|
 | `wosatlas-states` | Mengambil detail State, alliance, pemain, dan memperbarui cache data WoS Atlas |
-| `redeem-giftcode` | Memproses penukaran gift code |
+| `redeem-giftcode` | Backend redeem bersama untuk website dan Discord bot |\n| `discord-interactions` | Verifikasi signature Discord dan pemrosesan slash command redeem |
 | `send-announcement` | Mengirim pengumuman President |
 | `send-push-notification` | Mengirim push notification |
 
-File function berada di `supabase/functions/`.
+File function berada di `supabase/functions/`. Endpoint Discord memverifikasi signature Ed25519 dan dideploy dengan `--no-verify-jwt`; verifikasi signature di dalam function tetap wajib. `redeem-giftcode` tetap menggunakan verifikasi JWT normal dari gateway Supabase.
 
 ### Tabel dan migrasi
 
