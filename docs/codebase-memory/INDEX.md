@@ -2,7 +2,7 @@
 
 **Repository:** `ferdinanflash/reservation`  
 **Branch:** `main`  
-**Baseline commit inspected:** `7b911f94acfedec5b4a477c0e7a7dc94344c4897`  
+**Baseline commit inspected:** `fecdca4a28e551cd7f72bc6f55bc4e1092501e46`  
 **Inspection date:** 2026-11-14  
 **Authority:** live source at the inspected commit; this memory is a navigation aid, not a substitute for source verification.
 
@@ -38,7 +38,8 @@ The main shell is `index.html`. Its deferred scripts are loaded in this order:
 - [Reservation and President operations](features/reservation.md)
 - [SvS Enemies / TAL Enemies](features/svs-enemies.md)
 - [SvS Record](features/svs-record.md)
-- [Redeem Code and Recently Accepted](features/redeem-and-extras.md)
+- [Redeem Code, Discord bot and Recently Accepted](features/redeem-and-extras.md)
+- [Discord bot deployment and operations](../DISCORD_BOT_REDEEM.md)
 - [Notifications and announcements](features/notifications.md)
 - [Themes, translations and PWA](features/themes-translations-pwa.md)
 - [Shared core and authentication](features/shared-core-auth.md)
@@ -72,7 +73,7 @@ The main shell is `index.html`. Its deferred scripts are loaded in this order:
 | How To Use notes | `js/app-notes.js`, `supabase_migration_application_time_log.sql` |
 | Enemy State data | `js/app-svs-enemies.js`, `supabase/functions/wosatlas-states/index.ts` |
 | SvS history records | `js/app-svs-record.js`, `svs_record_migration.sql` |
-| Redeem gift code | `js/app-extras.js`, `supabase/functions/redeem-giftcode/index.ts` |
+| Redeem gift code / Discord slash commands | `js/app-extras.js`, `supabase/functions/redeem-giftcode/index.ts`, `supabase/functions/discord-interactions/index.ts`, `docs/DISCORD_BOT_REDEEM.md` |
 | Push notifications | `js/app-notifications.js`, notification Edge Functions and push SQL migrations |
 | Theme / language / PWA cache | `style.css`, `lang.js`, `index.html`, `sw.js` |
 
