@@ -7053,168 +7053,168 @@
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 326,
+      "line": 337,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 333,
+      "line": 344,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 348,
+      "line": 359,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 354,
+      "line": 365,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 358,
+      "line": 369,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 364,
+      "line": 375,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#getCommandOptions",
       "kind": "call",
-      "line": 320,
+      "line": 331,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#loadAllianceMembers",
       "kind": "call",
-      "line": 351,
+      "line": 362,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#loadPlayerNickname",
       "kind": "call",
-      "line": 338,
+      "line": 349,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#publishProgress",
       "kind": "call",
-      "line": 393,
+      "line": 409,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#publishResults",
       "kind": "call",
-      "line": 398,
+      "line": 414,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "kind": "call",
-      "line": 372,
+      "line": 383,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#sleep",
       "kind": "call",
-      "line": 394,
+      "line": 410,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishProgress",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 316,
+      "line": 327,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishProgress",
       "to": "supabase/functions/discord-interactions/index.ts#splitPublicLines",
       "kind": "call",
-      "line": 314,
+      "line": 325,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishResults",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 288,
+      "line": 299,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishResults",
       "to": "supabase/functions/discord-interactions/index.ts#sendPublicFollowup",
       "kind": "call",
-      "line": 290,
+      "line": 301,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishResults",
       "to": "supabase/functions/discord-interactions/index.ts#splitPublicLines",
       "kind": "call",
-      "line": 287,
+      "line": 298,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "to": "supabase/functions/discord-interactions/index.ts#callRedeemFunction",
       "kind": "call",
-      "line": 229,
+      "line": 236,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "to": "supabase/functions/discord-interactions/index.ts#resultKind",
       "kind": "call",
-      "line": 231,
+      "line": 242,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "to": "supabase/functions/discord-interactions/index.ts#sleep",
       "kind": "call",
-      "line": 233,
+      "line": 244,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#resultKind",
       "to": "supabase/functions/discord-interactions/index.ts#isUpstreamSuccess",
       "kind": "call",
-      "line": 202,
+      "line": 203,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#resultKind",
       "to": "supabase/functions/discord-interactions/index.ts#upstreamMessage",
       "kind": "call",
-      "line": 201,
+      "line": 202,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#resultLabel",
       "to": "supabase/functions/discord-interactions/index.ts#upstreamMessage",
       "kind": "call",
-      "line": 221,
+      "line": 223,
       "confidence": "static-name-match"
     },
     {
@@ -10364,7 +10364,7 @@
       "id": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "name": "editOriginal",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 238,
+      "line": 249,
       "kind": "function"
     },
     {
@@ -10413,7 +10413,7 @@
       "id": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "name": "processRedeem",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 319,
+      "line": 330,
       "kind": "function"
     },
     {
@@ -10427,21 +10427,21 @@
       "id": "supabase/functions/discord-interactions/index.ts#publishProgress",
       "name": "publishProgress",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 294,
+      "line": 305,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#publishResults",
       "name": "publishResults",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 272,
+      "line": 283,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "name": "redeemOne",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 227,
+      "line": 234,
       "kind": "function"
     },
     {
@@ -10455,28 +10455,28 @@
       "id": "supabase/functions/discord-interactions/index.ts#resultLabel",
       "name": "resultLabel",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 212,
+      "line": 213,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#sendPublicFollowup",
       "name": "sendPublicFollowup",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 247,
+      "line": 258,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#sleep",
       "name": "sleep",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 225,
+      "line": 232,
       "kind": "function-expression"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#splitPublicLines",
       "name": "splitPublicLines",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 256,
+      "line": 267,
       "kind": "function"
     },
     {
@@ -11072,5 +11072,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "d6d87a553a56cf43cdbab4307afb0f7824c1b26c4414fee37ba0b91f8169a241"
+  "source_digest": "0d452ac7237f7cedd81379b6dead5efe19bebe85d339fd5be5f0d54717af4a94"
 }
