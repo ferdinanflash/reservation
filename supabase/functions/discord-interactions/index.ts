@@ -200,10 +200,13 @@ function isUpstreamSuccess(result: any): boolean {
 
 function resultKind(result: any): "success" | "already" | "invalid" | "expired" | "limit" | "bad_fid" | "error" | "timeout" {
     if (result?.__httpOk === false) return "error";
-    const msg = upstreamMessage(result).toUpperCase();
+    const data = upstreamData(result);
+    const msg = upstreamMessage(result).toUpperCase().replace(/[.]+$/, "");
+    const errCode = Number(data.err_code);
     if (isUpstreamSuccess(result)) return "success";
     if (msg.startsWith("USER INFO ERROR")) return "bad_fid";
-    if (msg === "RECEIVED" || msg === "SAME TYPE EXCHANGE") return "already";
+    // 40011 is Century Games' SAME TYPE EXCHANGE response. It is not success.
+    if (errCode === 40011 || msg === "RECEIVED" || msg === "SAME TYPE EXCHANGE") return "already";
     if (msg.startsWith("CDK NOT FOUND") || msg === "NOT FOUND") return "invalid";
     if (msg.startsWith("TIME ERROR")) return "expired";
     if (msg === "USAGE LIMIT" || msg === "USED") return "limit";
