@@ -291,6 +291,31 @@ async function publishResults(interaction: any, heading: string, rows: Array<{ f
     }
 }
 
+async function publishProgress(
+    interaction: any,
+    heading: string,
+    code: string,
+    completed: Array<{ fid: string; nickname?: string; kind: string; result?: any }>,
+    total: number,
+) {
+    const success = completed.filter((row) => row.kind === "success").length;
+    const already = completed.filter((row) => row.kind === "already").length;
+    const failed = completed.length - success - already;
+    const lines = completed.map((row) => {
+        const name = row.nickname ? `**${row.nickname.replace(/[\\r\\n]/g, " ").slice(0, 50)}**` : `FID ${row.fid}`;
+        return `• ${name} (${row.fid}) — ${resultLabel(row.kind as any, row.result)}`;
+    });
+    const header = [
+        `🎁 **3475 REDEEM — ${heading}**`,
+        `Redeem Code: **${code}**`,
+        `Progress: **${completed.length}/${total}** | Successful: **${success}** | Already Claimed: **${already}** | Failed: **${failed}**`,
+        "",
+    ].join("\\n");
+    const visibleLines = splitPublicLines(lines, 1500);
+    const content = header + (visibleLines[0] ?? "Processing...");
+    await editOriginal(interaction.application_id, interaction.token, content);
+}
+
 async function processRedeem(interaction: any) {
     const { subcommand, values } = getCommandOptions(interaction);
     const code = String(values.code ?? "").trim();
@@ -336,6 +361,11 @@ async function processRedeem(interaction: any) {
 
     const truncated = subcommand === "alliance" && members.length >= MAX_ALLIANCE_FIDS;
     const results: Array<{ fid: string; nickname?: string; kind: string; result?: any }> = [];
+    await editOriginal(
+        interaction.application_id,
+        interaction.token,
+        `🎁 **3475 REDEEM — ${heading}**\\nRedeem Code: **${code}**\\nStarting redeem for **${members.length}** player(s)...`,
+    );
     for (let i = 0; i < members.length; i++) {
         const member = members[i];
         try {
@@ -359,6 +389,8 @@ async function processRedeem(interaction: any) {
             console.error("Redeem failed for one FID:", error);
             results.push({ fid: member.fid, nickname: member.nickname, kind: "error", result: { msg: "Service interruption" } });
         }
+        // Update the same public Discord message after every player is processed.
+        await publishProgress(interaction, heading, code, results, members.length);
         if (i < members.length - 1) await sleep(BATCH_DELAY_MS);
     }
 
