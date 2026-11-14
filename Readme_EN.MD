@@ -18,7 +18,8 @@ The State 3475 portal is a **Progressive Web App (PWA)** supporting the manageme
 - [Supabase Integration](#supabase-integration)
 - [Languages and Themes](#languages-and-themes)
 - [Run Locally](#run-locally)
-- [Deployment and Maintenance](#deployment-and-maintenance)\n- [License and Ownership](#license-and-ownership)
+- [Deployment and Maintenance](#deployment-and-maintenance)
+- [License and Ownership](#license-and-ownership)
 
 ---
 
@@ -228,7 +229,8 @@ Supabase provides the primary database, authentication, realtime updates, and se
 | Function | Purpose |
 |---|---|
 | `wosatlas-states` | Retrieves State, alliance, and player details and refreshes WoS Atlas cache data |
-| `redeem-giftcode` | Shared redeem backend for the website and Discord bot |\n| `discord-interactions` | Verifies Discord signatures and processes redeem slash commands |
+| `redeem-giftcode` | Shared redeem backend for the website and Discord bot |
+| `discord-interactions` | Verifies Discord signatures and processes redeem slash commands |
 | `send-announcement` | Delivers President announcements |
 | `send-push-notification` | Sends push notifications |
 
