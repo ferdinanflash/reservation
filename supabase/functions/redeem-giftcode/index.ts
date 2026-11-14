@@ -137,6 +137,31 @@ async function removeInvalidFid(fid: string): Promise<boolean> {
     }
 }
 
+// Diagnostic only: log the upstream response shape and result fields, never FID/CDK or secrets.
+function logUpstreamDiagnostic(action: string, result: { ok: boolean; status: number; data: unknown }) {
+    const data = result.data && typeof result.data === "object"
+        ? result.data as Record<string, unknown>
+        : null;
+    const nested = data?.data && typeof data.data === "object"
+        ? data.data as Record<string, unknown>
+        : null;
+    console.log("[redeem-giftcode] upstream diagnostic", JSON.stringify({
+        action,
+        httpOk: result.ok,
+        httpStatus: result.status,
+        dataType: Array.isArray(result.data) ? "array" : typeof result.data,
+        topLevelKeys: data ? Object.keys(data).slice(0, 20) : [],
+        msg: typeof data?.msg === "string" ? data.msg.slice(0, 160) : null,
+        message: typeof data?.message === "string" ? data.message.slice(0, 160) : null,
+        err_code: data?.err_code ?? null,
+        code: data?.code ?? null,
+        nestedKeys: nested ? Object.keys(nested).slice(0, 20) : [],
+        nestedMsg: typeof nested?.msg === "string" ? nested.msg.slice(0, 160) : null,
+        nestedErrCode: nested?.err_code ?? null,
+        nestedCode: nested?.code ?? null,
+    }));
+}
+
 function isValidFid(fid: unknown): fid is string {
     return typeof fid === "string" && /^[0-9]{4,20}$/.test(fid);
 }
@@ -172,6 +197,7 @@ Deno.serve(async (req) => {
 
     if (action === "login") {
         const result = await callUpstream(LOGIN_URL, { fid, time });
+        logUpstreamDiagnostic("login", result);
         return jsonResponse(result);
     }
 
@@ -185,6 +211,7 @@ Deno.serve(async (req) => {
             kid: KINGDOM_ID,
             time,
         });
+        logUpstreamDiagnostic("redeem", result);
         const upstream = result.data as Record<string, unknown> | null;
         const message = String(upstream?.msg ?? "").trim().toUpperCase();
         if (message.startsWith("USER INFO ERROR")) {
