@@ -5,7 +5,7 @@
   "source_files": 23,
   "function_count": 403,
   "import_count": 5,
-  "call_edge_count": 1152,
+  "call_edge_count": 1153,
   "edges": [
     {
       "from": "common.js#displayNickname",
@@ -2405,28 +2405,28 @@
       "from": "js/app-extras.js#copyDiscordUsername",
       "to": "js/app-extras.js#copyTextToClipboard",
       "kind": "call",
-      "line": 714,
+      "line": 716,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#copyDiscordUsername",
       "to": "js/app-extras.js#showCopyHint",
       "kind": "call",
-      "line": 714,
+      "line": 716,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#copyDonateId",
       "to": "js/app-extras.js#copyTextToClipboard",
       "kind": "call",
-      "line": 710,
+      "line": 712,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#copyDonateId",
       "to": "js/app-extras.js#showCopyHint",
       "kind": "call",
-      "line": 710,
+      "line": 712,
       "confidence": "static-name-match"
     },
     {
@@ -2447,98 +2447,98 @@
       "from": "js/app-extras.js#loadAllianceFidsForRedeem",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 558,
+      "line": 560,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#loadAllianceFidsForRedeem",
       "to": "js/app-extras.js#setActiveAllianceLoadButton",
       "kind": "call",
-      "line": 565,
+      "line": 567,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#loadAllianceFidsForRedeem",
       "to": "js/app-extras.js#setAllianceLoadButtonsBusy",
       "kind": "call",
-      "line": 564,
+      "line": 566,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#loadAllianceFidsForRedeem",
       "to": "js/app-extras.js#setAllianceLoadButtonsBusy",
+      "kind": "call",
+      "line": 601,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
+      "to": "js/app-extras.js#setRedeemAllianceStatus",
+      "kind": "call",
+      "line": 562,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
+      "to": "js/app-extras.js#setRedeemAllianceStatus",
+      "kind": "call",
+      "line": 568,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
+      "to": "js/app-extras.js#setRedeemAllianceStatus",
+      "kind": "call",
+      "line": 591,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
+      "to": "js/app-extras.js#setRedeemAllianceStatus",
+      "kind": "call",
+      "line": 596,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
+      "to": "js/app-extras.js#setRedeemAllianceStatus",
       "kind": "call",
       "line": 599,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#loadAllianceFidsForRedeem",
-      "to": "js/app-extras.js#setRedeemAllianceStatus",
+      "to": "lang.js#t",
       "kind": "call",
-      "line": 560,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
-      "to": "js/app-extras.js#setRedeemAllianceStatus",
-      "kind": "call",
-      "line": 566,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
-      "to": "js/app-extras.js#setRedeemAllianceStatus",
-      "kind": "call",
-      "line": 589,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
-      "to": "js/app-extras.js#setRedeemAllianceStatus",
-      "kind": "call",
-      "line": 594,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
-      "to": "js/app-extras.js#setRedeemAllianceStatus",
-      "kind": "call",
-      "line": 597,
+      "line": 562,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#loadAllianceFidsForRedeem",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 560,
+      "line": 568,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#loadAllianceFidsForRedeem",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 566,
+      "line": 591,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#loadAllianceFidsForRedeem",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 589,
+      "line": 596,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#loadAllianceFidsForRedeem",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 594,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#loadAllianceFidsForRedeem",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 597,
+      "line": 599,
       "confidence": "static-name-match"
     },
     {
@@ -2559,21 +2559,14 @@
       "from": "js/app-extras.js#loadRedeemNames",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 385,
+      "line": 387,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#loadRedeemNames",
       "to": "js/app-extras.js#pickRedeemName",
       "kind": "call",
-      "line": 394,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#openDonateModal",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 667,
+      "line": 396,
       "confidence": "static-name-match"
     },
     {
@@ -2584,17 +2577,24 @@
       "confidence": "static-name-match"
     },
     {
+      "from": "js/app-extras.js#openDonateModal",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 671,
+      "confidence": "static-name-match"
+    },
+    {
       "from": "js/app-extras.js#openRedeemModal",
       "to": "js/app-extras.js#resetRedeemForm",
       "kind": "call",
-      "line": 608,
+      "line": 610,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#pickRedeemName",
       "to": "common.js#capZalgo",
       "kind": "call",
-      "line": 377,
+      "line": 379,
       "confidence": "static-name-match"
     },
     {
@@ -2615,21 +2615,21 @@
       "from": "js/app-extras.js#redeemWithTimeoutRetry",
       "to": "js/app-extras.js#invokeGiftCodeApi",
       "kind": "call",
-      "line": 429,
+      "line": 431,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#redeemWithTimeoutRetry",
       "to": "js/app-extras.js#redeemUpstreamIsTimeout",
       "kind": "call",
-      "line": 431,
+      "line": 433,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#redeemWithTimeoutRetry",
       "to": "js/app-extras.js#sleep",
       "kind": "call",
-      "line": 433,
+      "line": 435,
       "confidence": "static-name-match"
     },
     {
@@ -2650,28 +2650,28 @@
       "from": "js/app-extras.js#resetRedeemForm",
       "to": "js/app-extras.js#renderRedeemResultList",
       "kind": "call",
-      "line": 521,
+      "line": 523,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#resetRedeemForm",
       "to": "js/app-extras.js#setActiveAllianceLoadButton",
       "kind": "call",
-      "line": 523,
+      "line": 525,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#resetRedeemForm",
       "to": "js/app-extras.js#setRedeemAllianceStatus",
       "kind": "call",
-      "line": 522,
+      "line": 524,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#resetRedeemForm",
       "to": "js/app-extras.js#setRedeemStatus",
       "kind": "call",
-      "line": 520,
+      "line": 522,
       "confidence": "static-name-match"
     },
     {
@@ -2685,14 +2685,14 @@
       "from": "js/app-extras.js#showCopyHint",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 705,
+      "line": 707,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#showCopyHint",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 705,
+      "line": 707,
       "confidence": "static-name-match"
     },
     {
@@ -2706,77 +2706,70 @@
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "common.js#escapeHtml",
       "kind": "call",
-      "line": 484,
+      "line": 486,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 456,
+      "line": 458,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 498,
+      "line": 500,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 512,
+      "line": 514,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#loadRedeemNames",
       "kind": "call",
-      "line": 457,
+      "line": 459,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#parseRedeemFidList",
       "kind": "call",
-      "line": 442,
+      "line": 444,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#redeemCodeIsFatalForBatch",
       "kind": "call",
-      "line": 492,
+      "line": 494,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#redeemMessageKeyFor",
       "kind": "call",
-      "line": 474,
+      "line": 476,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#redeemMessageKeyFor",
       "kind": "call",
-      "line": 483,
+      "line": 485,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#redeemUpstreamIsSuccess",
       "kind": "call",
-      "line": 474,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#submitRedeemCode",
-      "to": "js/app-extras.js#redeemUpstreamIsUserInfoError",
-      "kind": "call",
-      "line": 474,
+      "line": 476,
       "confidence": "static-name-match"
     },
     {
@@ -2788,184 +2781,191 @@
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
+      "to": "js/app-extras.js#redeemUpstreamIsUserInfoError",
+      "kind": "call",
+      "line": 478,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#redeemWithTimeoutRetry",
       "kind": "call",
-      "line": 469,
+      "line": 471,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#renderRedeemResultList",
       "kind": "call",
-      "line": 445,
+      "line": 447,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#renderRedeemResultList",
       "kind": "call",
-      "line": 459,
+      "line": 461,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#renderRedeemResultList",
       "kind": "call",
-      "line": 496,
+      "line": 498,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#renderRedeemResultList",
       "kind": "call",
-      "line": 506,
+      "line": 508,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#setRedeemStatus",
       "kind": "call",
-      "line": 444,
+      "line": 446,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#setRedeemStatus",
       "kind": "call",
-      "line": 448,
+      "line": 450,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#setRedeemStatus",
       "kind": "call",
-      "line": 452,
+      "line": 454,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "js/app-extras.js#setRedeemStatus",
-      "kind": "call",
-      "line": 463,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#submitRedeemCode",
-      "to": "js/app-extras.js#setRedeemStatus",
-      "kind": "call",
-      "line": 497,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#submitRedeemCode",
-      "to": "js/app-extras.js#setRedeemStatus",
-      "kind": "call",
-      "line": 511,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#submitRedeemCode",
-      "to": "js/app-extras.js#sleep",
-      "kind": "call",
-      "line": 507,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#submitRedeemCode",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 448,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#submitRedeemCode",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 452,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#submitRedeemCode",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 456,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-extras.js#submitRedeemCode",
-      "to": "lang.js#t",
       "kind": "call",
       "line": 465,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
-      "to": "lang.js#t",
+      "to": "js/app-extras.js#setRedeemStatus",
       "kind": "call",
-      "line": 475,
+      "line": 499,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#submitRedeemCode",
+      "to": "js/app-extras.js#setRedeemStatus",
+      "kind": "call",
+      "line": 513,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#submitRedeemCode",
+      "to": "js/app-extras.js#sleep",
+      "kind": "call",
+      "line": 509,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 480,
+      "line": 450,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 480,
+      "line": 454,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 484,
+      "line": 458,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 484,
+      "line": 467,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 484,
+      "line": 477,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 494,
+      "line": 482,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 497,
+      "line": 482,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 504,
+      "line": 486,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-extras.js#submitRedeemCode",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 511,
+      "line": 486,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#submitRedeemCode",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 486,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#submitRedeemCode",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 496,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#submitRedeemCode",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 499,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#submitRedeemCode",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 506,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-extras.js#submitRedeemCode",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 513,
       "confidence": "static-name-match"
     },
     {
@@ -7067,168 +7067,175 @@
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 338,
+      "line": 341,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 345,
+      "line": 348,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
-      "kind": "call",
-      "line": 360,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
-      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
-      "kind": "call",
-      "line": 366,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
-      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
-      "kind": "call",
-      "line": 370,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
-      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
-      "kind": "call",
-      "line": 376,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
-      "to": "supabase/functions/discord-interactions/index.ts#getCommandOptions",
-      "kind": "call",
-      "line": 332,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
-      "to": "supabase/functions/discord-interactions/index.ts#loadAllianceMembers",
       "kind": "call",
       "line": 363,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
+      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
+      "kind": "call",
+      "line": 369,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
+      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
+      "kind": "call",
+      "line": 373,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
+      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
+      "kind": "call",
+      "line": 379,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
+      "to": "supabase/functions/discord-interactions/index.ts#getCommandOptions",
+      "kind": "call",
+      "line": 335,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
+      "to": "supabase/functions/discord-interactions/index.ts#loadAllianceMembers",
+      "kind": "call",
+      "line": 366,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#loadPlayerNickname",
       "kind": "call",
-      "line": 350,
+      "line": 353,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#publishProgress",
       "kind": "call",
-      "line": 410,
+      "line": 413,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#publishResults",
       "kind": "call",
-      "line": 415,
+      "line": 418,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "kind": "call",
-      "line": 384,
+      "line": 387,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "to": "supabase/functions/discord-interactions/index.ts#sleep",
       "kind": "call",
-      "line": 411,
+      "line": 414,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishProgress",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 328,
+      "line": 331,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishProgress",
       "to": "supabase/functions/discord-interactions/index.ts#splitPublicLines",
       "kind": "call",
-      "line": 326,
+      "line": 329,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishResults",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 300,
+      "line": 303,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishResults",
       "to": "supabase/functions/discord-interactions/index.ts#sendPublicFollowup",
       "kind": "call",
-      "line": 302,
+      "line": 305,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#publishResults",
       "to": "supabase/functions/discord-interactions/index.ts#splitPublicLines",
       "kind": "call",
-      "line": 299,
+      "line": 302,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "to": "supabase/functions/discord-interactions/index.ts#callRedeemFunction",
       "kind": "call",
-      "line": 237,
+      "line": 240,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "to": "supabase/functions/discord-interactions/index.ts#resultKind",
       "kind": "call",
-      "line": 243,
+      "line": 246,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "to": "supabase/functions/discord-interactions/index.ts#sleep",
       "kind": "call",
-      "line": 245,
+      "line": 248,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#resultKind",
       "to": "supabase/functions/discord-interactions/index.ts#isUpstreamSuccess",
       "kind": "call",
-      "line": 204,
+      "line": 206,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#resultKind",
+      "to": "supabase/functions/discord-interactions/index.ts#upstreamData",
+      "kind": "call",
+      "line": 203,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#resultKind",
       "to": "supabase/functions/discord-interactions/index.ts#upstreamMessage",
       "kind": "call",
-      "line": 203,
+      "line": 204,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#resultLabel",
       "to": "supabase/functions/discord-interactions/index.ts#upstreamMessage",
       "kind": "call",
-      "line": 224,
+      "line": 227,
       "confidence": "static-name-match"
     },
     {
@@ -8950,42 +8957,42 @@
       "id": "js/app-extras.js#closeDonateModal",
       "name": "closeDonateModal",
       "file": "js/app-extras.js",
-      "line": 674,
+      "line": 676,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#closeRedeemModal",
       "name": "closeRedeemModal",
       "file": "js/app-extras.js",
-      "line": 617,
+      "line": 619,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#closeWhatsNewModal",
       "name": "closeWhatsNewModal",
       "file": "js/app-extras.js",
-      "line": 745,
+      "line": 747,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#copyDiscordUsername",
       "name": "copyDiscordUsername",
       "file": "js/app-extras.js",
-      "line": 713,
+      "line": 715,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#copyDonateId",
       "name": "copyDonateId",
       "file": "js/app-extras.js",
-      "line": 709,
+      "line": 711,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#copyTextToClipboard",
       "name": "copyTextToClipboard",
       "file": "js/app-extras.js",
-      "line": 683,
+      "line": 685,
       "kind": "function"
     },
     {
@@ -9013,7 +9020,7 @@
       "id": "js/app-extras.js#loadAllianceFidsForRedeem",
       "name": "loadAllianceFidsForRedeem",
       "file": "js/app-extras.js",
-      "line": 554,
+      "line": 556,
       "kind": "function"
     },
     {
@@ -9027,42 +9034,42 @@
       "id": "js/app-extras.js#loadRedeemNames",
       "name": "loadRedeemNames",
       "file": "js/app-extras.js",
-      "line": 383,
+      "line": 385,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#openDonateModal",
       "name": "openDonateModal",
       "file": "js/app-extras.js",
-      "line": 662,
+      "line": 664,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#openRedeemModal",
       "name": "openRedeemModal",
       "file": "js/app-extras.js",
-      "line": 603,
+      "line": 605,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#openWhatsNewModal",
       "name": "openWhatsNewModal",
       "file": "js/app-extras.js",
-      "line": 737,
+      "line": 739,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#parseRedeemFidList",
       "name": "parseRedeemFidList",
       "file": "js/app-extras.js",
-      "line": 352,
+      "line": 354,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#pickRedeemName",
       "name": "pickRedeemName",
       "file": "js/app-extras.js",
-      "line": 372,
+      "line": 374,
       "kind": "function"
     },
     {
@@ -9076,7 +9083,7 @@
       "id": "js/app-extras.js#redeemCodeIsFatalForBatch",
       "name": "redeemCodeIsFatalForBatch",
       "file": "js/app-extras.js",
-      "line": 345,
+      "line": 347,
       "kind": "function"
     },
     {
@@ -9111,7 +9118,7 @@
       "id": "js/app-extras.js#redeemWithTimeoutRetry",
       "name": "redeemWithTimeoutRetry",
       "file": "js/app-extras.js",
-      "line": 427,
+      "line": 429,
       "kind": "function"
     },
     {
@@ -9132,14 +9139,14 @@
       "id": "js/app-extras.js#renderRedeemResultList",
       "name": "renderRedeemResultList",
       "file": "js/app-extras.js",
-      "line": 403,
+      "line": 405,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#resetRedeemForm",
       "name": "resetRedeemForm",
       "file": "js/app-extras.js",
-      "line": 515,
+      "line": 517,
       "kind": "function"
     },
     {
@@ -9153,21 +9160,21 @@
       "id": "js/app-extras.js#setActiveAllianceLoadButton",
       "name": "setActiveAllianceLoadButton",
       "file": "js/app-extras.js",
-      "line": 542,
+      "line": 544,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#setAllianceLoadButtonsBusy",
       "name": "setAllianceLoadButtonsBusy",
       "file": "js/app-extras.js",
-      "line": 548,
+      "line": 550,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#setRedeemAllianceStatus",
       "name": "setRedeemAllianceStatus",
       "file": "js/app-extras.js",
-      "line": 534,
+      "line": 536,
       "kind": "function"
     },
     {
@@ -9188,14 +9195,14 @@
       "id": "js/app-extras.js#showCopyHint",
       "name": "showCopyHint",
       "file": "js/app-extras.js",
-      "line": 702,
+      "line": 704,
       "kind": "function"
     },
     {
       "id": "js/app-extras.js#sleep",
       "name": "sleep",
       "file": "js/app-extras.js",
-      "line": 421,
+      "line": 423,
       "kind": "function-expression"
     },
     {
@@ -9209,7 +9216,7 @@
       "id": "js/app-extras.js#submitRedeemCode",
       "name": "submitRedeemCode",
       "file": "js/app-extras.js",
-      "line": 437,
+      "line": 439,
       "kind": "function"
     },
     {
@@ -10378,7 +10385,7 @@
       "id": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "name": "editOriginal",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 250,
+      "line": 253,
       "kind": "function"
     },
     {
@@ -10427,7 +10434,7 @@
       "id": "supabase/functions/discord-interactions/index.ts#processRedeem",
       "name": "processRedeem",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 331,
+      "line": 334,
       "kind": "function"
     },
     {
@@ -10441,21 +10448,21 @@
       "id": "supabase/functions/discord-interactions/index.ts#publishProgress",
       "name": "publishProgress",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 306,
+      "line": 309,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#publishResults",
       "name": "publishResults",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 284,
+      "line": 287,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#redeemOne",
       "name": "redeemOne",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 235,
+      "line": 238,
       "kind": "function"
     },
     {
@@ -10469,28 +10476,28 @@
       "id": "supabase/functions/discord-interactions/index.ts#resultLabel",
       "name": "resultLabel",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 214,
+      "line": 217,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#sendPublicFollowup",
       "name": "sendPublicFollowup",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 259,
+      "line": 262,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#sleep",
       "name": "sleep",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 233,
+      "line": 236,
       "kind": "function-expression"
     },
     {
       "id": "supabase/functions/discord-interactions/index.ts#splitPublicLines",
       "name": "splitPublicLines",
       "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 268,
+      "line": 271,
       "kind": "function"
     },
     {
@@ -11084,13 +11091,13 @@
       "kind": "supabase-table",
       "value": "troops_power",
       "function": "js/app-extras.js#loadAllianceFidsForRedeem",
-      "line": 569
+      "line": 571
     },
     {
       "kind": "supabase-table",
       "value": "troops_power",
       "function": "js/app-extras.js#loadRedeemNames",
-      "line": 390
+      "line": 392
     },
     {
       "kind": "supabase-table",
@@ -11100,5 +11107,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "858ab323549034c173808c3d5d3a427a09a66b7d3c6327b409b87413e407ac25"
+  "source_digest": "d9b7dc4099e9d584229cf52d5c3a9acf84d2fb2855b8cdfd94626e3317bdde5a"
 }
