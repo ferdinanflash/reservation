@@ -296,9 +296,11 @@ async function invokeGiftCodeApi(payload) {
 // known message strings and otherwise falls back to showing their raw `msg`
 // rather than a wrong-sounding generic error.
 function redeemUpstreamIsSuccess(upstream) {
-    if (!upstream) return false;
-    const msg = String(upstream.msg || '').trim().toUpperCase();
-    return upstream.err_code === 0 || upstream.code === 0 || msg === 'SUCCESS' || msg === 'SUCCESS.';
+    if (!upstream || typeof upstream !== 'object') return false;
+    // Fail closed: HTTP 200 / err_code 0 alone does not prove a claim succeeded.
+    // Only an explicit success message from Century Games counts as redeemed.
+    const msg = String(upstream.msg ?? upstream.message ?? '').trim().toUpperCase();
+    return msg === 'SUCCESS' || msg === 'SUCCESS.';
 }
 
 // Century Games occasionally answers with a plain `{ msg: "Timeout" }` (their
