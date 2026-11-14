@@ -3,7 +3,7 @@
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
   "source_files": 23,
-  "function_count": 402,
+  "function_count": 403,
   "import_count": 5,
   "call_edge_count": 1152,
   "edges": [
@@ -10581,14 +10581,14 @@
       "id": "supabase/functions/redeem-giftcode/index.ts#isValidCdk",
       "name": "isValidCdk",
       "file": "supabase/functions/redeem-giftcode/index.ts",
-      "line": 144,
+      "line": 169,
       "kind": "function"
     },
     {
       "id": "supabase/functions/redeem-giftcode/index.ts#isValidFid",
       "name": "isValidFid",
       "file": "supabase/functions/redeem-giftcode/index.ts",
-      "line": 140,
+      "line": 165,
       "kind": "function"
     },
     {
@@ -10596,6 +10596,13 @@
       "name": "jsonResponse",
       "file": "supabase/functions/redeem-giftcode/index.ts",
       "line": 59,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/redeem-giftcode/index.ts#logUpstreamDiagnostic",
+      "name": "logUpstreamDiagnostic",
+      "file": "supabase/functions/redeem-giftcode/index.ts",
+      "line": 141,
       "kind": "function"
     },
     {
@@ -11093,5 +11100,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "b15f22768ab20590dbd421a97fe43e63a6de06283e29f83f6bcec80255baf20f"
+  "source_digest": "213fc2dafce76f4f9e9a2c38d504d82cff30bed4898490703e898c220eef3304"
 }
