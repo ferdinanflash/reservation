@@ -18,7 +18,8 @@ Portal State 3475 adalah aplikasi web berbasis **Progressive Web App (PWA)** unt
 - [Integrasi Supabase](#integrasi-supabase)
 - [Bahasa dan Tema](#bahasa-dan-tema)
 - [Menjalankan Project](#menjalankan-project)
-- [Deployment dan Pemeliharaan](#deployment-dan-pemeliharaan)\n- [Lisensi dan Kepemilikan](#lisensi-dan-kepemilikan)
+- [Deployment dan Pemeliharaan](#deployment-dan-pemeliharaan)
+- [Lisensi dan Kepemilikan](#lisensi-dan-kepemilikan)
 
 ---
 
@@ -228,7 +229,8 @@ Supabase digunakan sebagai database utama, autentikasi, realtime, dan backend se
 | Function | Kegunaan |
 |---|---|
 | `wosatlas-states` | Mengambil detail State, alliance, pemain, dan memperbarui cache data WoS Atlas |
-| `redeem-giftcode` | Backend redeem bersama untuk website dan Discord bot |\n| `discord-interactions` | Verifikasi signature Discord dan pemrosesan slash command redeem |
+| `redeem-giftcode` | Backend redeem bersama untuk website dan Discord bot |
+| `discord-interactions` | Verifikasi signature Discord dan pemrosesan slash command redeem |
 | `send-announcement` | Mengirim pengumuman President |
 | `send-push-notification` | Mengirim push notification |
 
