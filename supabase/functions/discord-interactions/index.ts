@@ -192,7 +192,13 @@ function upstreamMessage(result: any): string {
 
 function isUpstreamSuccess(result: any): boolean {
     const data = upstreamData(result);
-    const msg = String(data.msg ?? "").trim().toUpperCase();
+    const msg = String(data.msg ?? data.message ?? "").trim().toUpperCase();
+    // Some upstream replies carry err_code=0 even for non-success outcomes.
+    // Explicit result messages must take precedence over the numeric code.
+    if (msg.startsWith("USER INFO ERROR") ||
+        ["RECEIVED", "SAME TYPE EXCHANGE", "CDK NOT FOUND", "CDK NOT FOUND.", "NOT FOUND",
+         "TIME ERROR", "TIME ERROR.", "USAGE LIMIT", "USED"].includes(msg) ||
+        msg.startsWith("TIMEOUT")) return false;
     return result?.ok === true &&
         (data.err_code === 0 || data.code === 0 || msg === "SUCCESS" || msg === "SUCCESS.");
 }
