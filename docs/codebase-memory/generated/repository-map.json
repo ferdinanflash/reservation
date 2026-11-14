@@ -194,7 +194,7 @@
     "generator_version": 1,
     "file_count": 93,
     "digest_algorithm": "sha256",
-    "content_digest": "b6b5c649b10ded007f049bc6961ac1c7f25b2302d50e1fcb3d555149c77253fd",
+    "content_digest": "591273b5deb69cffc353b5a1f490b2feeb31da5f32ae73ec1de50aed8ea6ce83",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -206,7 +206,7 @@
       },
       {
         "path": ".github/workflows/deploy-discord-redeem.yml",
-        "sha256": "9aeb4d22922522e622fa911fa7e9e10eb1fa424eb3c6feb6466cdc6b11ce6b5b"
+        "sha256": "fa60390f1028842d3b57861d8bf2c9637f30118edba34fe50eb80c2a5024747d"
       },
       {
         "path": ".github/workflows/register-discord-commands.yml",
@@ -410,7 +410,7 @@
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
-        "sha256": "201745250d14b9f4dbae9e996da96bab8ff4e711b54737a9c94b618ecad2c304"
+        "sha256": "f11efae2430ede63870c8c2c5312694c6db2f02962d7855e92a633dc6f9bcdb0"
       },
       {
         "path": "supabase/functions/index.ts",
