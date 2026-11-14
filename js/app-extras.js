@@ -469,7 +469,7 @@ async function submitRedeemCode() {
                 renderRedeemResultList(rows);
             });
             const upstream = (result && result.data) || {};
-            if (result.ok && redeemUpstreamIsSuccess(upstream)) {
+            if (result.ok && redeemUpstreamIsSuccess(upstream) && !redeemUpstreamIsUserInfoError(upstream) && !redeemMessageKeyFor(upstream)) {
                 rows[i] = { fid, status: 'success', message: t('redeem_success') };
             } else if (redeemUpstreamIsUserInfoError(upstream)) {
                 rows[i] = {
