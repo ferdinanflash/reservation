@@ -34,7 +34,14 @@ async function verifyDiscordRequest(req: Request, rawBody: string): Promise<bool
     if (!signature || !timestamp || !DISCORD_PUBLIC_KEY || !/^\d+$/.test(timestamp)) return false;
 
     // Reject stale signed payloads to reduce replay risk.
-    if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false;
+    const timestampAgeSeconds = Math.round(Date.now() / 1000 - Number(timestamp));
+    if (Math.abs(timestampAgeSeconds) > 300) {
+        console.error("Discord signature rejected: timestamp outside allowed window", {
+            timestampAgeSeconds,
+            bodyLength: rawBody.length,
+        });
+        return false;
+    }
 
     try {
         const key = await crypto.subtle.importKey(
@@ -44,14 +51,29 @@ async function verifyDiscordRequest(req: Request, rawBody: string): Promise<bool
             false,
             ["verify"],
         );
+        if (!/^[0-9a-f]{128}$/i.test(signature)) {
+            console.error("Discord signature rejected: malformed signature header", {
+                signatureLength: signature.length,
+                timestampAgeSeconds,
+                bodyLength: rawBody.length,
+            });
+            return false;
+        }
         const sig = Uint8Array.from(signature.match(/.{2}/g) ?? [], (byte) => parseInt(byte, 16));
-        if (sig.length !== 64) return false;
-        return await crypto.subtle.verify(
+        const verified = await crypto.subtle.verify(
             { name: "Ed25519" },
             key,
             sig,
             new TextEncoder().encode(timestamp + rawBody),
         );
+        if (!verified) {
+            console.error("Discord signature cryptographic mismatch", {
+                signatureLength: signature.length,
+                timestampAgeSeconds,
+                bodyLength: rawBody.length,
+            });
+        }
+        return verified;
     } catch (error) {
         console.error("Discord signature verification error:", error instanceof Error ? error.message : String(error));
         return false;
