@@ -5384,7 +5384,10 @@ body.halloween-theme .svs-opening-sparks::after {
 /* Modal: native Player ID check + gift code form (replaces the old embedded
    iframe). Reuses .custom-form-modal as its base; only what differs from
    the other .custom-form-modal forms (apply-modal etc.) is added here. */
-.modal-content.redeem-modal-content {
+.modal-content.redeem-discord-invite { margin: -8px 0 14px; text-align: center; }
+.redeem-discord-invite a { display: inline-block; padding: 7px 14px; border: 1px solid rgba(88, 101, 242, 0.55); border-radius: 8px; background: rgba(88, 101, 242, 0.12); color: #a5b4fc; font-weight: 700; text-decoration: none; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+.redeem-discord-invite a:hover { background: rgba(88, 101, 242, 0.22); border-color: #818cf8; transform: translateY(-1px); }
+.redeem-modal-content {
     max-width: 420px;
     width: 95%;
     max-height: 94dvh;
