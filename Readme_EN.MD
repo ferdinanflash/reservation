@@ -3,7 +3,7 @@
 **Website:** [https://3475.web.id](https://3475.web.id)  
 **Repository:** [ferdinanflash/reservation](https://github.com/ferdinanflash/reservation)  
 **Project status:** Active development  
-**Documentation updated:** 11 November 2026
+**Documentation updated:** 14 November 2026
 
 The State 3475 portal is a **Progressive Web App (PWA)** supporting the management of Whiteout Survival State 3475. The main application brings together Minister reservations, SvS enemy-State information, SvS history, recent reservation activity, and links to supporting State portals and tools.
 
@@ -75,6 +75,7 @@ SvS match history for State 3475.
 ### 5. Supporting Features
 
 - **Redeem Code:** submits gift-code redemption requests through a Supabase Edge Function, including multi-Player-ID processing and result handling.
+- **Discord Redeem Bot:** provides `/redeem single` for one Player ID and `/redeem alliance` for alliance members. The bot processes members sequentially and posts progress and redemption results. Setup details are in [docs/DISCORD_BOT_REDEEM.md](docs/DISCORD_BOT_REDEEM.md).
 - **Announcements:** the President can send announcements to users.
 - **Push Notifications:** reservation updates and announcements, subject to device permission and push configuration.
 - **Donate and Discord:** community and support links.
@@ -306,6 +307,27 @@ The current Service Worker derives precache URLs from the HTML asset references 
 - Check Supabase and Edge Function logs when an upstream integration fails.
 - Do not remove assets based only on their names or age; confirm they are no longer referenced by HTML, CSS, JavaScript, the manifest, or the Service Worker.
 - Update the README and PRD when features, modules, integrations, or workflows change.
+
+---
+
+## Codebase Memory
+
+This repository also includes **Codebase Memory MCP** documentation and tooling to help explain source structure, data flows, integrations, and the impact of proposed changes.
+
+- Main architecture and usage: [docs/CODEBASE_MEMORY_MCP.md](docs/CODEBASE_MEMORY_MCP.md).
+- Feature maps and risk notes: [docs/codebase-memory/INDEX.md](docs/codebase-memory/INDEX.md), `docs/codebase-memory/features/`, and `docs/codebase-memory/known-issues.md`.
+- Generated source inventory: `docs/codebase-memory/generated/repository-map.json`.
+- Generated AST dependency graph: `docs/codebase-memory/generated/ast-dependency-graph.json`.
+- Local MCP implementation: `tools/codebase-memory-mcp/`. The server is read-only and is not automatically connected to ChatGPT or hosted as a remote service.
+- The `.github/workflows/codebase-memory-mcp.yml` workflow runs its configured typecheck, tests, project-contract checks, index/graph generation, and determinism checks. Inspect the actual GitHub Actions run before reporting any check as successful.
+
+### Limitations and maintenance
+
+The inventory and AST graph are static-analysis outputs; they do not prove that a path executes at runtime. Feature maps and known issues still require human review. Active source code is authoritative whenever documentation or generated maps disagree.
+
+Phase 1–10 status and acceptance criteria are maintained in [docs/CODEBASE_MEMORY_MCP.md](docs/CODEBASE_MEMORY_MCP.md) and [docs/codebase-memory/ROADMAP.md](docs/codebase-memory/ROADMAP.md). Do not assume every phase is complete based only on its phase number or a single successful workflow run.
+
+**Redeem note (14 November 2026):** the website and Discord bot use the same `redeem-giftcode` Edge Function. The Century Games signing investigation identified value canonicalization before MD5 (ordinary values are URL-encoded and objects are serialized as JSON). Redemption on the live service was reported working after the fix, but the reviewed GitHub source still needs to be reconciled with the tested live implementation before the next deployment. Never place signing secrets, bot tokens, or server credentials in this README or public source.
 
 ---
 
