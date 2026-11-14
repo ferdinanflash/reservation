@@ -34,3 +34,10 @@ Do not infer the final live CHECK constraint from a single historical migration.
 - [ ] If assets or script behavior changes, inspect service-worker cache names/precache and URL version query parameters.
 - [ ] Bump `APP_BUILD` for Safari/WebKit cache-bust behavior when deploying a fix, as documented in `index.html`.
 - [ ] Verify install/update behavior and offline fallback after cache changes.
+
+## Recent release note — 2026-11-14
+
+- Added the What's New entry `whatsnew_19_title` / `whatsnew_19_desc` for the Century Games gift-code signing correction and shared website/Discord redeem service.
+- Added localized title/description and date strings across all eight dictionaries: EN, ID, IT, PH, CN, TH, RU and FR.
+- Updated the visible Last Update date, `APP_BUILD`, the `lang.js` cache query and the service-worker cache version to invalidate stale frontend assets. Confirm exact live values from current `index.html` and `sw.js` before another cache-related edit.
+- These GitHub changes were committed and source-verified in the 2026-11-14 work session; public deployment/live browser visibility was not independently verified in this memory update.
