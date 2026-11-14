@@ -3,7 +3,7 @@
 **Website:** [https://3475.web.id](https://3475.web.id)  
 **Repository:** [ferdinanflash/reservation](https://github.com/ferdinanflash/reservation)  
 **Project status:** Active development  
-**Documentation updated:** 11 November 2026
+**Documentation updated:** 14 November 2026
 
 Portal State 3475 adalah aplikasi web berbasis **Progressive Web App (PWA)** untuk mendukung pengelolaan State 3475 di Whiteout Survival. Aplikasi utama menggabungkan sistem reservasi Minister, pengelolaan SvS Enemies, riwayat SvS, informasi aktivitas terbaru, serta pintasan ke portal dan tools pendukung State.
 
@@ -75,6 +75,7 @@ Halaman riwayat pertandingan SvS untuk State 3475.
 ### 5. Fitur Pendukung
 
 - **Redeem Code:** mengirim permintaan penukaran gift code melalui Supabase Edge Function, termasuk pemrosesan beberapa Player ID dan penanganan hasil.
+- **Discord Redeem Bot:** menyediakan slash command `/redeem single` untuk satu Player ID dan `/redeem alliance` untuk anggota aliansi. Bot memproses anggota secara berurutan dan menampilkan progres serta hasil redeem. Detail setup tersedia di [docs/DISCORD_BOT_REDEEM.md](docs/DISCORD_BOT_REDEEM.md).
 - **Announcement:** President dapat mengirim pengumuman kepada pengguna.
 - **Push Notification:** notifikasi untuk pembaruan reservasi dan pengumuman, bergantung pada izin perangkat dan konfigurasi push.
 - **Donate dan Discord:** akses informasi dukungan dan komunitas.
@@ -306,6 +307,27 @@ Service Worker saat ini menggunakan precache URL yang mengikuti referensi aset d
 - Periksa log Supabase dan Edge Function saat integrasi API gagal.
 - Jangan menghapus aset hanya berdasarkan nama atau usia file; pastikan tidak lagi direferensikan oleh HTML, CSS, JavaScript, manifest, atau Service Worker.
 - Perbarui README dan PRD ketika fitur, struktur modul, integrasi, atau alur kerja berubah.
+
+---
+
+## Codebase Memory
+
+Repository ini juga menyertakan dokumentasi arsitektur dan alat **Codebase Memory MCP** untuk membantu memahami struktur kode, alur data, integrasi, serta dampak perubahan.
+
+- Dokumentasi utama: [docs/CODEBASE_MEMORY_MCP.md](docs/CODEBASE_MEMORY_MCP.md).
+- Peta fitur dan catatan risiko: [docs/codebase-memory/INDEX.md](docs/codebase-memory/INDEX.md), folder `docs/codebase-memory/features/`, dan `docs/codebase-memory/known-issues.md`.
+- Indeks inventaris source: `docs/codebase-memory/generated/repository-map.json`.
+- Grafik dependensi AST: `docs/codebase-memory/generated/ast-dependency-graph.json`.
+- Implementasi MCP lokal: `tools/codebase-memory-mcp/`. Server ini bersifat read-only dan tidak otomatis terhubung ke ChatGPT atau di-host sebagai layanan remote.
+- Workflow `.github/workflows/codebase-memory-mcp.yml` menjalankan pemeriksaan yang dikonfigurasi untuk typecheck, tests, project contracts, pembaruan indeks/grafik, dan determinisme. Periksa hasil GitHub Actions aktual sebelum menyatakan pemeriksaan berhasil.
+
+### Batasan dan pemeliharaan
+
+Indeks inventaris dan grafik AST adalah hasil analisis statis; keduanya bukan bukti bahwa suatu jalur benar-benar berjalan saat runtime. Peta fitur dan known issues tetap perlu ditinjau manusia. Source aktif adalah acuan utama jika dokumentasi atau generated map berbeda.
+
+Status Phase 1–10 dan kriteria penerimaan dipelihara di [docs/CODEBASE_MEMORY_MCP.md](docs/CODEBASE_MEMORY_MCP.md) dan [docs/codebase-memory/ROADMAP.md](docs/codebase-memory/ROADMAP.md); jangan menganggap semua fase selesai hanya berdasarkan nomor fase atau satu workflow yang sukses.
+
+**Catatan redeem (14 November 2026):** website dan Discord bot menggunakan Edge Function `redeem-giftcode` yang sama. Investigasi signing Century Games menemukan canonicalization nilai sebelum MD5 (nilai biasa menggunakan URL encoding dan object menggunakan JSON). Redeem pada layanan live dilaporkan berhasil setelah perbaikan, tetapi source GitHub yang diperiksa masih perlu direkonsiliasi dengan implementasi live yang telah diuji sebelum deployment berikutnya. Jangan menaruh signing secret, bot token, atau kredensial server di README maupun source publik.
 
 ---
 
