@@ -117,7 +117,7 @@ async function removeInvalidFid(fid: string): Promise<boolean> {
     }
     try {
         const query = new URLSearchParams({ game_id: `eq.${fid}` });
-        const response = await fetch(`${SUPABASE_URL.replace(/\\/$/, "")}/rest/v1/troops_power?${query}`, {
+        const response = await fetch(`${SUPABASE_URL.replace(/\/$/, "")}/rest/v1/troops_power?${query}`, {
             method: "DELETE",
             headers: {
                 "apikey": SUPABASE_SERVICE_ROLE_KEY,
