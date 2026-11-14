@@ -194,7 +194,7 @@
     "generator_version": 1,
     "file_count": 93,
     "digest_algorithm": "sha256",
-    "content_digest": "c59abfbb3b409da3594aa012f62911973ce24b04636abce3044c2a6eceb943b9",
+    "content_digest": "6cf9e08359e924eeac1523050face4750e2d351e319fe646467090bc2c3cfd33",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -246,7 +246,7 @@
       },
       {
         "path": "docs/CODEBASE_MEMORY_MCP.md",
-        "sha256": "a38066665ee01c43dd1338d155441b5b0d63066356294c7d86698a81c2108914"
+        "sha256": "657df3d77ecb44afe91b647f3b6be3a64db59596c93fdb7fab6a06e7297357f4"
       },
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
@@ -262,7 +262,7 @@
       },
       {
         "path": "docs/codebase-memory/INDEX.md",
-        "sha256": "c1562cb65532bc9b9d6398c8b6e4c264773437eae99a0e48cb779f28507e7b79"
+        "sha256": "57718a4fa9f85912ec4e198709c1bc96b078ab693d9f1402f5d5caeab37438d5"
       },
       {
         "path": "docs/codebase-memory/OPERATIONS.md",
@@ -286,7 +286,7 @@
       },
       {
         "path": "docs/codebase-memory/features/redeem-and-extras.md",
-        "sha256": "5d0255e1e767fe1dc8e2f7457e866400074b9fa189e3541197d000ad286733b4"
+        "sha256": "49f0198d421f840fb4183f16ee9698a4bb01cac18e5c3f3a93356f87410a47b0"
       },
       {
         "path": "docs/codebase-memory/features/reservation.md",
@@ -306,11 +306,11 @@
       },
       {
         "path": "docs/codebase-memory/features/themes-translations-pwa.md",
-        "sha256": "d83db85bfb16694ca0496c87495e1f0c832673cbd5597f74b108f0fad96b8137"
+        "sha256": "b1df6932bd68154f0a49185c43392f698e9a6fcd49436e86bd4e8bad924eb128"
       },
       {
         "path": "docs/codebase-memory/known-issues.md",
-        "sha256": "359fd681ad30d60528086dac2cfd7c8690f70be360bf6c8cc97136e9cd40dfdb"
+        "sha256": "ab210298863eff985fceef742e8c09e59b3a041ed565d5f7812be6159bf8900f"
       },
       {
         "path": "fire-banner.js",
