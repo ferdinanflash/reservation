@@ -321,15 +321,17 @@ function redeemUpstreamIsUserInfoError(upstream) {
 }
 
 function redeemMessageKeyFor(upstream) {
-    const msg = String((upstream && upstream.msg) || '').trim().toUpperCase();
+    const msg = String((upstream && upstream.msg) || '').trim().toUpperCase().replace(/[.]+$/, '');
+    const errCode = Number(upstream && upstream.err_code);
+    // Century Games uses 40011 for SAME TYPE EXCHANGE. Treat it as an
+    // account-level already-exchanged result, never as a successful claim.
+    if (errCode === 40011 || msg === 'SAME TYPE EXCHANGE' || msg === 'RECEIVED') {
+        return 'redeem_already_used';
+    }
     const map = {
-        'RECEIVED': 'redeem_already_used',
-        'SAME TYPE EXCHANGE': 'redeem_already_used',
         'CDK NOT FOUND': 'redeem_code_invalid',
         'NOT FOUND': 'redeem_code_invalid',
-        'CDK NOT FOUND.': 'redeem_code_invalid',
         'TIME ERROR': 'redeem_code_expired',
-        'TIME ERROR.': 'redeem_code_expired',
         'USAGE LIMIT': 'redeem_code_usage_limit',
         'USED': 'redeem_code_usage_limit',
     };
