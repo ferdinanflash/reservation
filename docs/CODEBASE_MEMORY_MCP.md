@@ -223,7 +223,7 @@ Known flow families to map and verify:
 1. **Reservation:** browser UI ↔ Supabase data/auth/realtime. Exact table names and policies must be extracted from source and migrations before being documented.
 2. **SvS Enemies / State Tracker:** `js/app-svs-enemies.js` → `wosatlas-states` Edge Function and/or Supabase cache → WoS Atlas public API. Keep the currently implemented upstream URL from the Edge Function as the source of truth; do not resurrect retired endpoints from old notes.
 3. **SvS Record:** `js/app-svs-record.js` → Supabase history data → State 3475 history UI. Verify table and column names from the current migration and client query.
-4. **Redeem Code:** `js/app-extras.js` → gift-code Edge Function → Century Games API. Signing secrets must remain server-side.
+4. **Redeem Code + Discord bot:** website `js/app-extras.js` and Discord `discord-interactions` → shared `redeem-giftcode` Edge Function → Century Games API. Signing secrets must remain server-side. The deployed signing fix was reported working on 2026-11-14; reconcile the live function with the committed GitHub implementation before any redeploy.
 5. **Push notifications:** browser subscription/UI → Supabase subscription storage → push Edge Function → push provider. Private VAPID material must remain in server secrets.
 
 The MCP must label incomplete flows as **not yet traced** rather than guessing.
@@ -316,10 +316,10 @@ Suggested quality gates:
 
 ## 11. Current implementation status
 
-Phases 1–5 are implemented in `tools/codebase-memory-mcp/`. The local stdio server now exposes ten read-only tools and three resources, including AST tracing, static integration lookup and `plan_change`. It has not been installed or launched on the user's device, and it is not connected to ChatGPT or hosted remotely. GitHub Actions validates type-checks/tests and refreshes the structural inventory and AST graph. Semantic feature notes remain human-maintained. Live Supabase schema, RLS, deployed secrets and webhook configuration remain unverified. Always re-check live source before changing code.
+Phases 1–9 are implemented in `tools/codebase-memory-mcp/`; Phase 10 acceptance is in progress. The local stdio server now exposes ten read-only tools and three resources, including AST tracing, static integration lookup and `plan_change`. It has not been installed or launched on the user's device, and it is not connected to ChatGPT or hosted remotely. GitHub Actions validates type-checks/tests and refreshes the structural inventory and AST graph. Semantic feature notes remain human-maintained. Live Supabase schema, RLS, deployed secrets and webhook configuration remain unverified. Always re-check live source before changing code.
 
 
-## 9. Phase 4 — AST dependency analysis
+## 12. Phase 4 — AST dependency analysis
 
 The Phase 4 analyzer uses the pinned TypeScript compiler API to parse tracked JavaScript/TypeScript source and generate:
 
@@ -337,7 +337,7 @@ The local MCP exposes `trace_call_graph` and `get_static_integrations` for query
 **Known static-analysis limits:** computed property names, dynamic dispatch, callbacks passed through wrappers, string-built endpoints/table names, runtime script injection, framework behavior, and external services may not be fully discovered. Always inspect current source and runtime contracts before making a change. The graph does not inspect production Supabase data, deployed secrets, RLS state, or live configuration.
 
 
-## 10. Phase 5 — AST-assisted change-impact planning
+## 13. Phase 5 — AST-assisted change-impact planning
 
 Phase 5 turns the Phase 4 graph into a conservative pre-edit planning tool.
 
@@ -350,7 +350,7 @@ Phase 5 turns the Phase 4 graph into a conservative pre-edit planning tool.
 **Safety and confidence:** this phase remains read-only. It does not modify source, Git, database records, deployments or Supabase settings. The impact graph is a candidate map, not proof of runtime execution; indirect data flow, dynamic dispatch, global event wiring and external consumers still require inspection. A proposed file is not automatically a required edit.
 
 
-## 8. Completion roadmap and review boundary
+## 14. Completion roadmap and review boundary
 
 See [docs/codebase-memory/ROADMAP.md](codebase-memory/ROADMAP.md) for Phases 6–10, implementation status and completion criteria.
 
