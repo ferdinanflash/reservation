@@ -7,8 +7,7 @@
  * Deploy: supabase functions deploy discord-interactions --no-verify-jwt
  */
 
-const DISCORD_PUBLIC_KEY = (Deno.env.get("DISCORD_PUBLIC_KEY") ??
-    "f78d1415e1c63c50cfc2595b21a35b2740d50fae3f06ec73241898145b883518").trim().replace(/^0x/i, "");
+const DISCORD_PUBLIC_KEY = "f78d1415e1c63c50cfc2595b21a35b2740d50fae3f06ec73241898145b883518";
 const DISCORD_API = "https://discord.com/api/v10";
 const ALLIANCES = new Set(["ARX", "IDN", "ZXC", "VNX", "CAT"]);
 const BATCH_DELAY_MS = 1200;
