@@ -3,8 +3,8 @@
 **Nama Proyek:** State 3475 — Whiteout Survival Management Portal  
 **Repository:** `ferdinanflash/reservation`  
 **Domain Utama:** `https://3475.web.id`  
-**Versi Dokumen:** 2.0  
-**Tanggal Pembaruan:** 11 November 2026  
+**Versi Dokumen:** 2.1  
+**Tanggal Pembaruan:** 14 November 2026  
 **Status:** Active Development
 
 ---
@@ -19,7 +19,8 @@ Aplikasi utama menyediakan:
 - Informasi State lawan melalui SvS Enemies / TAL Enemies.
 - Riwayat pertandingan SvS State 3475.
 - Ringkasan reservasi terbaru yang diterima.
-- Redeem Code, pengumuman, notifikasi, pengaturan tema, dan dukungan multibahasa.
+- Redeem Code melalui website dan Discord Redeem Bot, pengumuman, notifikasi, pengaturan tema, dan dukungan multibahasa.
+- Tooling Codebase Memory MCP untuk dokumentasi arsitektur, inventaris source, analisis AST, perencanaan dampak perubahan, dan pemeriksaan otomatis repository.
 - Navigasi ke portal Battle Events, Transfer Portal, Events Record, dan WoS Tool yang dikelola sebagai aplikasi terpisah.
 
 Frontend di-host sebagai static site, sedangkan data, autentikasi, realtime, dan proses server-side terintegrasi dengan Supabase.
@@ -46,6 +47,8 @@ Frontend di-host sebagai static site, sedangkan data, autentikasi, realtime, dan
 - Redeem Code, Announcement, push notification UI, What's New, Donate, dan Discord.
 - PWA, service worker, banner, animasi, bahasa, dan tema.
 - Supabase Edge Functions serta SQL migrations yang terkait.
+- Discord application interactions untuk slash command redeem.
+- Dokumentasi, generator, server MCP lokal read-only, generated repository map, AST dependency graph, dan GitHub Actions Codebase Memory.
 
 ### 3.2 Portal eksternal
 
@@ -161,7 +164,24 @@ Hak administratif harus diperiksa melalui mekanisme autentikasi/otorisasi aplika
 - UI menampilkan hasil per Player ID, termasuk sukses, gagal, pending, dan retry untuk kondisi timeout sesuai respons backend.
 - Secret/API key tidak boleh disimpan di frontend.
 
-### 5.6 Announcement dan Push Notification
+### 5.6 Discord Redeem Bot
+
+**FR-DIS-01 — Slash commands**
+- Bot menyediakan `/redeem single` untuk memproses satu Player ID dan `/redeem alliance` untuk memproses anggota aliansi yang didukung.
+- Command alliance membaca roster dari `public.troops_power` melalui kolom alliance dan `game_id`; nickname ditampilkan bila tersedia.
+- Pemrosesan anggota dilakukan berurutan dengan jeda antar-request dan retry terbatas untuk timeout.
+- Batas maksimum satu batch adalah 100 Player ID untuk menjaga waktu hidup Discord interaction token.
+- Kode invalid/kedaluwarsa menghentikan sisa batch sesuai perilaku redeem website.
+
+**FR-DIS-02 — Hasil dan keamanan interaction**
+- Hasil command dipublikasikan pada channel tempat command dijalankan, termasuk hasil sukses, gagal, dan error layanan; respons batch panjang dapat dibagi menjadi beberapa pesan.
+- Endpoint `discord-interactions` memvalidasi signature Ed25519 Discord terhadap raw request body dan menolak request bertanda tangan yang kedaluwarsa.
+- Endpoint Discord dapat menggunakan `--no-verify-jwt` pada gateway Supabase karena autentikasi dilakukan melalui verifikasi signature Discord di function; validasi signature di dalam function tetap wajib.
+- `discord-interactions` meneruskan permintaan ke Edge Function `redeem-giftcode` yang sama dengan website. Tidak boleh ada implementasi signing atau secret duplikat di bot.
+- Bot token, Discord public key, dan signing secret hanya boleh berada pada konfigurasi server/secret store yang sesuai; tidak boleh dimasukkan ke frontend atau repository.
+- Detail setup, konfigurasi, deployment, registrasi command, dan pengujian dijelaskan di `docs/DISCORD_BOT_REDEEM.md`.
+
+### 5.7 Announcement dan Push Notification
 
 **FR-NOT-01**
 - President dapat membuat dan mengirim pengumuman.
@@ -170,14 +190,14 @@ Hak administratif harus diperiksa melalui mekanisme autentikasi/otorisasi aplika
 - Perubahan status reservasi dan pengumuman dapat dikirim melalui Web Push menggunakan Edge Function `send-push-notification`.
 - Kegagalan izin, subscription, atau pengiriman harus ditangani tanpa merusak fungsi reservasi utama.
 
-### 5.7 What's New dan fitur pendukung
+### 5.8 What's New dan fitur pendukung
 
 - Modal What's New menampilkan catatan rilis aplikasi.
 - Donate modal dan Discord menyediakan akses komunitas.
 - Live clock menyesuaikan waktu lokal pengguna.
 - Recently Accepted menampilkan aktivitas reservasi terbaru.
 
-### 5.8 Bahasa dan lokalisasi
+### 5.9 Bahasa dan lokalisasi
 
 **FR-I18N-01**
 - Delapan bahasa tersedia: EN, ID, CN, PH, TH, IT, RU, FR.
@@ -186,7 +206,7 @@ Hak administratif harus diperiksa melalui mekanisme autentikasi/otorisasi aplika
 - Menambahkan key baru berarti melengkapi seluruh bahasa yang didukung.
 - Pemilihan bahasa harus konsisten pada tampilan utama dan komponen dinamis.
 
-### 5.9 PWA, tema, dan antarmuka
+### 5.10 PWA, tema, dan antarmuka
 
 **FR-PWA-01**
 - Aplikasi menyediakan manifest, ikon, dan Service Worker.
@@ -258,8 +278,18 @@ Edge Functions utama:
 - `redeem-giftcode`
 - `send-announcement`
 - `send-push-notification`
+- `discord-interactions` — Discord slash-command endpoint; memverifikasi signature Ed25519 dan meneruskan command ke `redeem-giftcode`.
 
-### 7.4 Hosting dan deployment
+### 7.4 Codebase Memory MCP dan pipeline pemeliharaan
+
+- Dokumentasi semantik berada di `docs/CODEBASE_MEMORY_MCP.md` dan `docs/codebase-memory/` (index, feature maps, decisions, roadmap, acceptance, operations, dan known issues).
+- `tools/codebase-memory-mcp/` menyediakan server MCP lokal berbasis stdio yang read-only, scripts generator/check, dan automated tests. Server lokal ini tidak otomatis terhubung ke ChatGPT atau di-host sebagai remote MCP.
+- `repository-map.json` menyimpan inventaris source dan digest; `ast-dependency-graph.json` menyimpan hasil analisis statis definisi/call/import dan integrasi yang dapat ditemukan. Generated files tidak boleh diedit manual.
+- `.github/workflows/codebase-memory-mcp.yml` menjalankan dependency audit report (non-blocking), typecheck, tests, project contracts, generator inventory dan AST, pemeriksaan deterministik, validasi map, serta refresh generated artifacts pada push. Pull request memeriksa agar generated artifacts ikut diperbarui.
+- `.github/workflows/codebase-memory-review.yml` menjalankan pemeriksaan perubahan statis; hasilnya bukan pengganti review manusia atau runtime test.
+- Analisis statis tidak membuktikan runtime behavior, database/RLS live state, deployed secrets, atau konfigurasi Supabase. Source aktif tetap menjadi acuan utama.
+
+### 7.5 Hosting dan deployment
 
 - Static hosting melalui GitHub Pages.
 - Custom domain `3475.web.id`.
@@ -292,10 +322,15 @@ reservation/
 ├── sw.js
 ├── site.webmanifest
 ├── CNAME
+├── PRD.MD
 ├── Readme.MD
 ├── Readme_EN.MD
-├── PRD.MD
-├── .github/workflows/static.yml
+├── config/
+├── fonts/
+├── images/
+├── live/
+│   └── index.html
+├── scripts/
 ├── js/
 │   ├── app-core.js
 │   ├── app-auth.js
@@ -308,20 +343,52 @@ reservation/
 │   ├── app-extras.js
 │   ├── app-svs-enemies.js
 │   └── app-svs-record.js
-├── images/
-├── fonts/
-├── live/
-│   └── index.html
-├── supabase/functions/
-│   ├── index.ts
-│   ├── redeem-giftcode/index.ts
-│   ├── send-announcement/index.ts
-│   ├── send-push-notification/index.ts
-│   └── wosatlas-states/index.ts
-└── supabase_migration_*.sql
+├── supabase/
+│   └── functions/
+│       ├── index.ts
+│       ├── discord-interactions/
+│       │   └── index.ts
+│       ├── redeem-giftcode/
+│       │   └── index.ts
+│       ├── send-announcement/
+│       ├── send-push-notification/
+│       └── wosatlas-states/
+├── supabase_migration_*.sql
+├── svs_record_migration.sql
+├── .github/
+│   └── workflows/
+│       ├── static.yml
+│       ├── deploy-discord-redeem.yml
+│       ├── register-discord-commands.yml
+│       ├── codebase-memory-mcp.yml
+│       ├── codebase-memory-review.yml
+│       └── source-protection-monitor.yml
+├── docs/
+│   ├── CODEBASE_MEMORY_MCP.md
+│   ├── DISCORD_BOT_REDEEM.md
+│   ├── SOURCE_PROTECTION_MONITOR.md
+│   └── codebase-memory/
+│       ├── INDEX.md
+│       ├── ROADMAP.md
+│       ├── ACCEPTANCE.md
+│       ├── OPERATIONS.md
+│       ├── known-issues.md
+│       ├── decisions/
+│       ├── features/
+│       └── generated/
+│           ├── repository-map.json
+│           └── ast-dependency-graph.json
+└── tools/
+    └── codebase-memory-mcp/
+        ├── README.md
+        ├── package.json
+        ├── tsconfig.json
+        ├── src/
+        ├── scripts/
+        └── test/
 ```
 
-Daftar tersebut merupakan ringkasan struktur penting. Aset dan file migration lengkap tetap berada di repository.
+Daftar tersebut merangkum direktori dan file penting yang telah diverifikasi dari repository. Subfolder berisi aset, migration, dan modul pendukung tidak seluruhnya ditampilkan.
 
 ## 10. Kriteria Penerimaan
 
@@ -333,7 +400,9 @@ Daftar tersebut merupakan ringkasan struktur penting. Aset dan file migration le
 | SvS Enemies | Daftar State dapat dikelola; data cache dapat ditampilkan; error satu State tidak menghentikan State lainnya. |
 | SvS Record | Riwayat resmi dan timeline tampil; President dapat mengelola record; perubahan realtime tercermin. |
 | Recently Accepted | Maksimal 20 item terbaru ditampilkan dengan tag posisi yang sesuai. |
-| Redeem Code | Hasil permintaan ditampilkan per Player ID tanpa mengekspos secret. |
+| Redeem Code | Website dan Discord memakai backend `redeem-giftcode` yang sama; hasil ditampilkan per Player ID tanpa mengekspos secret. |
+| Discord Bot | `/redeem single` dan `/redeem alliance` berjalan; signature Ed25519 diverifikasi; batas batch, retry, dan penanganan kode invalid sesuai kontrak. |
+| Codebase Memory | Inventory dan AST graph dapat digenerate deterministik; typecheck, tests, contracts, dan validasi generated map lulus pada workflow aktual; hasil workflow harus diperiksa, bukan diasumsikan. |
 | Notification | Subscription dan pengiriman mengikuti izin perangkat serta konfigurasi server. |
 | Localization | Tidak ada teks UI baru yang tertinggal tanpa terjemahan pada delapan bahasa. |
 | PWA/UI | Aplikasi dapat dimuat melalui HTTPS, aset terbarui setelah deployment, dan layout bekerja di mobile/desktop. |
@@ -349,6 +418,9 @@ Daftar tersebut merupakan ringkasan struktur penting. Aset dan file migration le
 - Setelah mengubah file JS/CSS, periksa query version di `index.html`, `APP_BUILD`, `CACHE_VERSION`, dan daftar precache.
 - Uji bahasa, tema, animasi, mobile layout, serta role User/President sebelum rilis.
 - Pastikan file yang dihapus tidak lagi direferensikan oleh HTML, CSS, JavaScript, manifest, atau Service Worker.
+- Untuk perubahan redeem, periksa implementasi signing yang benar-benar diuji pada layanan live dan cocokkan dengan source GitHub sebelum deployment berikutnya; dokumentasi mencatat risiko ketidaksesuaian source/deployed code per 14 November 2026.
+- Uji `/redeem single` terlebih dahulu, lalu `/redeem alliance` dengan roster kecil yang dikendalikan; verifikasi respons publik, timeout retry, batas batch, dan perilaku kode invalid.
+- Setelah perubahan source yang relevan, jalankan workflow Codebase Memory dan pastikan repository map serta AST graph segar dan deterministik. Review semantic feature maps/known issues tetap memerlukan pemeriksaan manusia.
 
 ## 12. Roadmap dan Pekerjaan Lanjutan
 
@@ -358,10 +430,11 @@ Daftar berikut adalah area peningkatan, bukan klaim bahwa fitur inti belum terse
 - Meninjau performa serta batas cache berdasarkan volume data dan pola penggunaan.
 - Menjaga dokumentasi migration dan prosedur deployment tetap sinkron dengan schema produksi.
 - Melakukan audit aksesibilitas, terutama kontras warna musiman, navigasi keyboard, dan reduced motion.
+- Menyelesaikan acceptance Phase 10 Codebase Memory berdasarkan bukti workflow, kesegaran generated artifacts, dan pemeriksaan semantik; catat verifikasi eksternal (Supabase live, Discord runtime, browser mobile) sebagai owner-run bila belum tersedia.
 
 ---
 
-**Dokumen ini menggambarkan implementasi repository utama per 11 November 2026.** Perubahan fitur dan struktur berikutnya harus tercermin pada README dan PRD.
+**Dokumen ini menggambarkan ruang lingkup dan struktur repository utama per 14 November 2026.** Detail implementasi harus diverifikasi terhadap source aktif, dokumentasi fitur, dan hasil workflow aktual. Perubahan fitur dan struktur berikutnya harus tercermin pada README dan PRD.
 
 
 ## 13. Kepemilikan, Hak Cipta, dan Lisensi
