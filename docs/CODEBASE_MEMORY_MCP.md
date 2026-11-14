@@ -3,7 +3,7 @@
 **Project:** State 3475 — Whiteout Survival Management Portal  
 **Repository:** `ferdinanflash/reservation`  
 **Primary site:** https://3475.web.id  
-**Status:** Phases 1–5 implemented; Phase 6 static PR review added; Phases 7–10 tracked in the completion roadmap  
+**Status:** Phases 1–9 implemented; Phase 10 acceptance in progress; latest semantic notes updated 2026-11-14  
 **Last inspected:** 2026-11-14  
 **Default branch:** `main`
 
