@@ -193,6 +193,7 @@ Hak administratif harus diperiksa melalui mekanisme autentikasi/otorisasi aplika
 ### 5.8 What's New dan fitur pendukung
 
 - Modal What's New menampilkan catatan rilis aplikasi.
+- Catatan 14 November 2026 mencakup perbaikan request signing gift-code agar mengikuti algoritma resmi Century Games; layanan redeem server-side digunakan bersama oleh website dan Discord bot. Status runtime tetap harus dibuktikan dengan pengujian terpisah.
 - Donate modal dan Discord menyediakan akses komunitas.
 - Live clock menyesuaikan waktu lokal pengguna.
 - Recently Accepted menampilkan aktivitas reservasi terbaru.
@@ -212,6 +213,7 @@ Hak administratif harus diperiksa melalui mekanisme autentikasi/otorisasi aplika
 - Aplikasi menyediakan manifest, ikon, dan Service Worker.
 - Aset penting dapat di-cache untuk mempercepat pemuatan dan mendukung pengalaman PWA.
 - Strategi cache harus menghindari aset lama yang terus tersaji setelah deployment.
+- Marker rilis repository yang diverifikasi pada 14 November 2026: `APP_BUILD=2026-11-14-4`, Service Worker `CACHE_VERSION=2026-11-14-4`, dan referensi `lang.js?v=65`. Nilai ini harus dinaikkan/diperbarui secara konsisten sesuai aset yang berubah, bukan disalin permanen sebagai konstanta.
 
 **FR-UI-01**
 - Layout responsif untuk desktop dan perangkat mobile.
@@ -288,6 +290,8 @@ Edge Functions utama:
 - `.github/workflows/codebase-memory-mcp.yml` menjalankan dependency audit report (non-blocking), typecheck, tests, project contracts, generator inventory dan AST, pemeriksaan deterministik, validasi map, serta refresh generated artifacts pada push. Pull request memeriksa agar generated artifacts ikut diperbarui.
 - `.github/workflows/codebase-memory-review.yml` menjalankan pemeriksaan perubahan statis; hasilnya bukan pengganti review manusia atau runtime test.
 - Analisis statis tidak membuktikan runtime behavior, database/RLS live state, deployed secrets, atau konfigurasi Supabase. Source aktif tetap menjadi acuan utama.
+- Status roadmap yang tercatat pada 14 November 2026: Phase 1–9 dinyatakan implemented; Phase 10 acceptance masih in progress dan memerlukan bukti workflow final serta verifikasi eksternal yang dicatat terpisah.
+- Contract check terakhir yang didokumentasikan mencatat key terjemahan EN yang belum tersedia pada ID/PH/TH/IT (20 key masing-masing) dan CN (34 key); RU dan FR memiliki seluruh 435 key EN. Ini merupakan temuan kualitas yang harus ditinjau, bukan dianggap sudah lulus lokalisasi penuh.
 
 ### 7.5 Hosting dan deployment
 
