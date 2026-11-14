@@ -220,7 +220,7 @@ function resultLabel(kind: ReturnType<typeof resultKind>, result: any): string {
         case "bad_fid": return "❌ Player ID not found";
         case "timeout": return "⚠️ Timed out; result not confirmed";
         default: {
-            const detail = upstreamMessage(result).replace(/[\\r\\n]+/g, " ").slice(0, 100);
+            const detail = upstreamMessage(result).replace(/[\r\n]+/g, " ").slice(0, 100);
             const status = result?.__httpStatus ? ` (HTTP ${result.__httpStatus})` : "";
             return detail
                 ? `❌ Failed: Redeem service error${status} — ${detail}`
