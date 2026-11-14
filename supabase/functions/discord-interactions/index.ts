@@ -193,14 +193,9 @@ function upstreamMessage(result: any): string {
 function isUpstreamSuccess(result: any): boolean {
     const data = upstreamData(result);
     const msg = String(data.msg ?? data.message ?? "").trim().toUpperCase();
-    // Some upstream replies carry err_code=0 even for non-success outcomes.
-    // Explicit result messages must take precedence over the numeric code.
-    if (msg.startsWith("USER INFO ERROR") ||
-        ["RECEIVED", "SAME TYPE EXCHANGE", "CDK NOT FOUND", "CDK NOT FOUND.", "NOT FOUND",
-         "TIME ERROR", "TIME ERROR.", "USAGE LIMIT", "USED"].includes(msg) ||
-        msg.startsWith("TIMEOUT")) return false;
-    return result?.ok === true &&
-        (data.err_code === 0 || data.code === 0 || msg === "SUCCESS" || msg === "SUCCESS.");
+    // Fail closed: HTTP 200 / err_code 0 alone does not prove a claim succeeded.
+    // Only an explicit success message from Century Games counts as redeemed.
+    return result?.ok === true && (msg === "SUCCESS" || msg === "SUCCESS.");
 }
 
 function resultKind(result: any): "success" | "already" | "invalid" | "expired" | "limit" | "bad_fid" | "error" | "timeout" {
