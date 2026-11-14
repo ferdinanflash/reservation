@@ -22,7 +22,8 @@ function json(body: unknown, status = 200) {
 }
 
 function hexToBytes(hex: string): Uint8Array {
-    if (!/^[0-9a-f]{128}$/i.test(hex)) throw new Error("Invalid Discord public key");
+    // Discord Ed25519 public keys are 32 bytes = 64 hexadecimal characters.
+    if (!/^[0-9a-f]{64}$/i.test(hex)) throw new Error("Invalid Discord public key");
     const out = new Uint8Array(hex.length / 2);
     for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
     return out;
