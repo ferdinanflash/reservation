@@ -269,7 +269,7 @@ function splitPublicLines(lines: string[], maxLength = 1450): string[] {
     return chunks;
 }
 
-async function publishResults(interaction: any, heading: string, rows: Array<{ fid: string; nickname?: string; kind: string; result?: any }>, note = "") {
+async function publishResults(interaction: any, heading: string, rows: Array<{ fid: string; nickname?: string; kind: string; result?: any }>, note = "", code = "") {
     const success = rows.filter((row) => row.kind === "success").length;
     const already = rows.filter((row) => row.kind === "already").length;
     const failed = rows.length - success - already;
@@ -279,6 +279,7 @@ async function publishResults(interaction: any, heading: string, rows: Array<{ f
     });
     const header = [
         `🎁 **3475 REDEEM — ${heading}**`,
+        `Kode Redeem: **${code}**`,
         `Total: **${rows.length}** | Berhasil: **${success}** | Sudah diklaim: **${already}** | Gagal: **${failed}**`,
         note,
     ].filter(Boolean).join("\n");
@@ -362,7 +363,7 @@ async function processRedeem(interaction: any) {
     }
 
     const note = truncated ? `⚠️ Roster dibatasi maksimal ${MAX_ALLIANCE_FIDS} anggota untuk satu proses.` : "";
-    await publishResults(interaction, heading, results, note);
+    await publishResults(interaction, heading, results, note, code);
 }
 
 Deno.serve(async (req) => {
