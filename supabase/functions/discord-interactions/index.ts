@@ -113,7 +113,7 @@ async function callRedeemFunction(action: "redeem", fid: string, cdk: string) {
         body: JSON.stringify({ action, fid, cdk }),
     });
     const result = await response.json().catch(() => ({}));
-    return { httpOk: response.ok, result };
+    return { httpOk: response.ok, httpStatus: response.status, result };
 }
 
 async function loadPlayerNickname(fid: string): Promise<string> {
@@ -198,6 +198,7 @@ function isUpstreamSuccess(result: any): boolean {
 }
 
 function resultKind(result: any): "success" | "already" | "invalid" | "expired" | "limit" | "bad_fid" | "error" | "timeout" {
+    if (result?.__httpOk === false) return "error";
     const msg = upstreamMessage(result).toUpperCase();
     if (isUpstreamSuccess(result)) return "success";
     if (msg.startsWith("USER INFO ERROR")) return "bad_fid";
@@ -218,7 +219,13 @@ function resultLabel(kind: ReturnType<typeof resultKind>, result: any): string {
         case "limit": return "⚠️ Usage limit reached";
         case "bad_fid": return "❌ Player ID not found";
         case "timeout": return "⚠️ Timed out; result not confirmed";
-        default: return `❌ Gagal: ${(upstreamMessage(result) || "Service error").slice(0, 100)}`;
+        default: {
+            const detail = upstreamMessage(result).replace(/[\\r\\n]+/g, " ").slice(0, 100);
+            const status = result?.__httpStatus ? ` (HTTP ${result.__httpStatus})` : "";
+            return detail
+                ? `❌ Failed: Redeem service error${status} — ${detail}`
+                : `❌ Failed: Redeem service returned an unexpected response${status}. No recognized result was provided.`;
+        }
     }
 }
 
@@ -227,7 +234,11 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 async function redeemOne(fid: string, code: string) {
     for (let attempt = 0; attempt <= MAX_TIMEOUT_RETRIES; attempt++) {
         const response = await callRedeemFunction("redeem", fid, code);
-        const result = response.result;
+        const result = {
+            ...response.result,
+            __httpOk: response.httpOk,
+            __httpStatus: response.httpStatus,
+        };
         const kind = resultKind(result);
         if (kind !== "timeout") return { kind, result };
         if (attempt < MAX_TIMEOUT_RETRIES) await sleep(2000);
@@ -387,7 +398,12 @@ async function processRedeem(interaction: any) {
             }
         } catch (error) {
             console.error("Redeem failed for one FID:", error);
-            results.push({ fid: member.fid, nickname: member.nickname, kind: "error", result: { msg: "Service interruption" } });
+            results.push({
+                fid: member.fid,
+                nickname: member.nickname,
+                kind: "error",
+                result: { msg: "Could not connect to the redeem service. The request did not complete." },
+            });
         }
         // Update the same public Discord message after every player is processed.
         await publishProgress(interaction, heading, code, results, members.length);
