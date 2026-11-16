@@ -141,20 +141,25 @@ async function loadAllianceMembers(alliance: string): Promise<Member[]> {
 async function redeemOne(fid: string, code: string): Promise<Outcome["kind"]> {
   const anonKey = env("SUPABASE_ANON_KEY");
   for (let attempt = 0; attempt <= 2; attempt++) {
-    const response = await fetch(`${supabaseUrl()}/functions/v1/redeem-giftcode`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        apikey: anonKey,
-        Authorization: `Bearer ${anonKey}`,
-      },
-      body: JSON.stringify({ action: "redeem", fid, cdk: code }),
-    });
+    let response: Response;
+    try {
+      response = await fetch(`${supabaseUrl()}/functions/v1/redeem-giftcode`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: anonKey,
+          Authorization: `Bearer ${anonKey}`,
+        },
+        body: JSON.stringify({ action: "redeem", fid, cdk: code }),
+      });
+    } catch {
+      return "error";
+    }
     const result = await response.json().catch(() => ({}));
     if (!response.ok) return "error";
     const data = result?.data && typeof result.data === "object" ? result.data : {};
     const message = String(data.msg ?? data.message ?? result?.error ?? "").trim().toUpperCase().replace(/[.]+$/, "");
-    if (result?.ok === true && (message === "SUCCESS" || message === "SUCCESS")) return "success";
+    if (result?.ok === true && message === "SUCCESS") return "success";
     if (Number(data.err_code) === 40011 || message === "RECEIVED" || message === "SAME TYPE EXCHANGE") return "already";
     if (message.startsWith("CDK NOT FOUND") || message === "NOT FOUND") return "invalid";
     if (message.startsWith("TIME ERROR")) return "expired";
@@ -300,7 +305,12 @@ Deno.serve(async (req) => {
       const looksLikeCommand = /^\.redeem(?:\s|$)/i.test(content);
 
       if (command) {
-        await processCommand(command[1], command[2]);
+        try {
+          await processCommand(command[1], command[2]);
+        } catch (error) {
+          console.error("Redeem command failed:", error instanceof Error ? error.message : String(error));
+          await sendChannelMessage("❌ Proses redeem mengalami gangguan. Periksa log Supabase sebelum mengirim ulang perintah agar tidak terjadi redeem ganda.");
+        }
         await updateCursor(String(message.id));
         commandProcessed = true;
         break; // one redeem batch per cron invocation
