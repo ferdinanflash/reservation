@@ -105,6 +105,80 @@ async function getChannelCursor(channelId: string): Promise<string> {
   return "";
 }
 
+async function enqueueMessageCleanup(channelId: string, messageIds: string[], deleteAfter: string) {
+  if (!messageIds.length) return;
+  const response = await fetch(
+    `${supabaseUrl()}/rest/v1/discord_message_cleanup_queue?on_conflict=message_id`,
+    {
+      method: "POST",
+      headers: {
+        ...supabaseHeaders(),
+        Prefer: "resolution=ignore-duplicates,return=minimal",
+      },
+      body: JSON.stringify(messageIds.map((messageId) => ({
+        channel_id: channelId,
+        message_id: messageId,
+        delete_after: deleteAfter,
+      }))),
+    },
+  );
+  if (!response.ok) {
+    throw new Error(`Unable to schedule Discord message cleanup (${response.status}): ${(await response.text()).slice(0, 180)}`);
+  }
+}
+
+async function removeCleanupQueueItem(messageId: string) {
+  const response = await fetch(
+    `${supabaseUrl()}/rest/v1/discord_message_cleanup_queue?message_id=eq.${encodeURIComponent(messageId)}`,
+    { method: "DELETE", headers: supabaseHeaders() },
+  );
+  if (!response.ok) {
+    throw new Error(`Unable to remove Discord cleanup queue item (${response.status})`);
+  }
+}
+
+async function cleanupDueMessages() {
+  const now = new Date().toISOString();
+  const query = new URLSearchParams({
+    select: "channel_id,message_id",
+    delete_after: `lte.${now}`,
+    order: "delete_after.asc",
+    limit: "100",
+  });
+  const response = await fetch(
+    `${supabaseUrl()}/rest/v1/discord_message_cleanup_queue?${query}`,
+    { headers: supabaseHeaders() },
+  );
+  if (!response.ok) {
+    throw new Error(`Unable to load Discord cleanup queue (${response.status})`);
+  }
+  const due = await response.json();
+  if (!Array.isArray(due)) return;
+
+  for (const item of due) {
+    const channelId = String(item.channel_id ?? "");
+    const messageId = String(item.message_id ?? "");
+    if (!channelId || !messageId) continue;
+    try {
+      const deletion = await fetch(
+        `${DISCORD_API}/channels/${channelId}/messages/${messageId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bot ${env("DISCORD_BOT_TOKEN")}` },
+        },
+      );
+      // A message that was already deleted manually is considered complete.
+      if (deletion.status === 204 || deletion.status === 404) {
+        await removeCleanupQueueItem(messageId);
+      } else {
+        console.error(`Discord message cleanup deferred for ${messageId}: HTTP ${deletion.status}`);
+      }
+    } catch (error) {
+      console.error(`Discord message cleanup failed for ${messageId}:`, error instanceof Error ? error.message : String(error));
+    }
+  }
+}
+
 async function discordRequest(path: string, init: RequestInit = {}) {
   const response = await fetch(`${DISCORD_API}${path}`, {
     ...init,
@@ -297,7 +371,19 @@ async function processCommand(channelId: string, allianceInput: string, code: st
       return `• ${name} (${item.fid}) — ${resultLabel(item.kind)}`;
     }),
   ];
-  await sendLongResult(channelId, lines);
+  cleanupMessageIds.push(...await sendLongResult(channelId, lines));
+
+  // Keep this command's bot messages for eight hours only when at least one
+  // player was successfully redeemed. User messages are never queued.
+  if (successful > 0 && cleanupMessageIds.length) {
+    const deleteAfter = new Date(Date.now() + 8 * 60 * 60_000).toISOString();
+    try {
+      await enqueueMessageCleanup(channelId, cleanupMessageIds, deleteAfter);
+    } catch (error) {
+      // A cleanup scheduling failure must not change the redeem outcome.
+      console.error("[discord-message-poller] unable to schedule result cleanup:", error instanceof Error ? error.message : String(error));
+    }
+  }
 }
 
 async function updateCursor(channelId: string, messageId: string) {
@@ -325,6 +411,9 @@ Deno.serve(async (req) => {
       return json({ ok: true, skipped: "already_running" });
     }
     locked = true;
+
+    // Run due deletions on the same five-minute poll schedule.
+    await cleanupDueMessages();
 
     const channelIds = configuredChannelIds();
     let scanned = 0;
