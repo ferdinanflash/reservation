@@ -382,9 +382,10 @@ async function processCommand(channelId: string, allianceInput: string, code: st
   ];
   cleanupMessageIds.push(...await sendLongResult(channelId, lines));
 
-  // Keep this command's bot messages for eight hours only when at least one
-  // player was successfully redeemed. User messages are never queued.
-  if (successful > 0 && cleanupMessageIds.length) {
+  // Keep all bot messages from this redeem command for eight hours,
+  // regardless of whether the outcomes were successful, failed, expired, or invalid.
+  // User-authored messages are never queued.
+  if (cleanupMessageIds.length) {
     const deleteAfter = new Date(Date.now() + 8 * 60 * 60_000).toISOString();
     try {
       await enqueueMessageCleanup(channelId, cleanupMessageIds, deleteAfter);
