@@ -4560,6 +4560,16 @@
     Object.assign(TRANSLATIONS.ru, { install_app_btn: "Установить приложение" });
     Object.assign(TRANSLATIONS.fr, { install_app_btn: "Installer l’application" });
 
+    Object.assign(TRANSLATIONS.en, { open_app_btn: "Open in App", whatsnew_date: "Last Update: 16 Nov 2026", whatsnew_21_title: "PWA Install & Open App", whatsnew_21_desc: "The navigation menu now detects supported installed PWAs, offers Open in App from the browser, and hides the install action while running as an app." });
+    Object.assign(TRANSLATIONS.id, { open_app_btn: "Buka di Aplikasi", whatsnew_date: "Terakhir diperbarui: 16 Nov 2026", whatsnew_21_title: "Instalasi & Buka Aplikasi PWA", whatsnew_21_desc: "Menu navigasi kini mendeteksi PWA yang sudah terpasang pada browser yang mendukung, menampilkan Buka di Aplikasi dari browser, dan menyembunyikan tombol instal saat aplikasi sedang digunakan." });
+    Object.assign(TRANSLATIONS.it, { open_app_btn: "Apri nell'app", whatsnew_date: "Ultimo aggiornamento: 16 nov 2026", whatsnew_21_title: "Installazione e apertura dell'app PWA", whatsnew_21_desc: "Il menu di navigazione rileva le PWA installate nei browser supportati, offre Apri nell'app dal browser e nasconde l'installazione quando l'app è in uso." });
+    Object.assign(TRANSLATIONS.ph, { open_app_btn: "Buksan sa App", whatsnew_date: "Huling update: 16 Nob 2026", whatsnew_21_title: "Pag-install at Pagbukas ng PWA", whatsnew_21_desc: "Nakikita na ng navigation menu ang mga naka-install na PWA sa mga suportadong browser, ipinapakita ang Buksan sa App mula sa browser, at itinatago ang install button habang ginagamit ang app." });
+    Object.assign(TRANSLATIONS.cn, { open_app_btn: "在应用中打开", whatsnew_date: "最后更新：2026年11月16日", whatsnew_21_title: "PWA 安装与打开应用", whatsnew_21_desc: "导航菜单现在可在支持的浏览器中检测已安装的 PWA，在浏览器中提供“在应用中打开”，并在应用运行时隐藏安装按钮。" });
+    Object.assign(TRANSLATIONS.th, { open_app_btn: "เปิดในแอป", whatsnew_date: "อัปเดตล่าสุด: 16 พ.ย. 2026", whatsnew_21_title: "ติดตั้งและเปิดแอป PWA", whatsnew_21_desc: "เมนูนำทางตรวจจับ PWA ที่ติดตั้งแล้วในเบราว์เซอร์ที่รองรับ แสดงปุ่มเปิดในแอปจากเบราว์เซอร์ และซ่อนปุ่มติดตั้งขณะใช้งานแอป" });
+    Object.assign(TRANSLATIONS.ru, { open_app_btn: "Открыть в приложении", whatsnew_date: "Последнее обновление: 16 ноя 2026", whatsnew_21_title: "Установка и запуск PWA", whatsnew_21_desc: "Меню навигации теперь обнаруживает установленные PWA в поддерживаемых браузерах, предлагает открыть приложение из браузера и скрывает кнопку установки во время работы приложения." });
+    Object.assign(TRANSLATIONS.fr, { open_app_btn: "Ouvrir dans l’application", whatsnew_date: "Dernière mise à jour : 16 nov. 2026", whatsnew_21_title: "Installation et ouverture de l’application PWA", whatsnew_21_desc: "Le menu détecte désormais les PWA installées dans les navigateurs compatibles, propose de les ouvrir depuis le navigateur et masque le bouton d’installation lorsque l’application est en cours d’utilisation." });
+
+
     // Expose globally so script.js / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
