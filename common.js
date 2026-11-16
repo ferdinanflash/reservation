@@ -238,12 +238,21 @@ async function installWebApp() {
         return promptEvent.userChoice;
     }
 
-    // iOS Safari and some browsers do not expose beforeinstallprompt.
-    // Explain the browser-native manual route rather than pretending to launch a prompt.
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    const message = isIOS
-        ? 'To install this app on your Home Screen, tap Share in Safari, then choose “Add to Home Screen”.'
-        : 'This browser is not currently offering an install prompt. Open the browser menu and choose “Install app” or “Add to Home Screen” if available.';
+    // Chrome may expose installation in its own menu without providing
+    // beforeinstallprompt to the page. A website cannot open that browser menu
+    // or invoke its Install command directly, so give the exact native route.
+    const ua = navigator.userAgent;
+    const isIOS = /iphone|ipad|ipod/i.test(ua);
+    const isAndroid = /android/i.test(ua);
+    const isChrome = /chrome|crios/i.test(ua) && !/edg|opr|samsungbrowser/i.test(ua);
+    let message;
+    if (isIOS) {
+        message = 'To install this app on your Home Screen, tap Share in Safari, then choose “Add to Home Screen”.';
+    } else if (isAndroid && isChrome) {
+        message = 'Chrome can install this site from its own menu. Tap ⋮ (top-right), then choose “Install app” or “Install & create shortcut”. The browser controls this action, so the website cannot open that menu automatically.';
+    } else {
+        message = 'Open your browser menu and choose “Install app” or “Add to Home Screen” if available.';
+    }
     window.alert(message);
     return null;
 }
