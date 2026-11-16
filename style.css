@@ -7782,3 +7782,10 @@ body.christmas-theme .navbar .logo.fire-text::before {
         will-change: auto;
     }
 }
+
+
+/* The navigation menu items use display:flex, so explicitly honor the
+   HTML hidden state instead of letting the author display rule override it. */
+.nav-menu-item[hidden] {
+    display: none !important;
+}
