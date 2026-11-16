@@ -216,12 +216,12 @@ document.addEventListener('keydown', function (e) {
 });
 
 
-// ================= PWA INSTALL / OPEN FROM NAVIGATION MENU =================
+// ================= PWA INSTALL BUTTON =================
 const installAppButton = document.getElementById('install-app-btn');
 const PWA_APP_ID = 'https://3475.web.id/';
+const PWA_INSTALLED_KEY = '3475_pwa_install_confirmed';
 const supportsWebInstall = typeof navigator.install === 'function';
 let deferredInstallPrompt = null;
-let installedPwaDetected = false;
 
 function isRunningAsInstalledApp() {
     return !!(
@@ -235,84 +235,93 @@ function isRunningAsInstalledApp() {
     );
 }
 
-function setInstallButtonMode(mode) {
-    if (!installAppButton) return;
+function hideInstallAppButton() {
+    if (installAppButton) installAppButton.hidden = true;
+}
 
-    if (isRunningAsInstalledApp()) {
-        installAppButton.hidden = true;
+function showInstallAppButton() {
+    if (!installAppButton || isRunningAsInstalledApp()) {
+        hideInstallAppButton();
         return;
     }
 
-    const isOpenMode = mode === 'open';
-    installAppButton.dataset.mode = isOpenMode ? 'open' : 'install';
-    installAppButton.dataset.i18n = isOpenMode ? 'open_app_btn' : 'install_app_btn';
-    installAppButton.href = PWA_APP_ID;
-    installAppButton.target = '_blank';
-    installAppButton.rel = 'noopener';
-    const label = typeof window.t === 'function'
-        ? window.t(isOpenMode ? 'open_app_btn' : 'install_app_btn')
-        : (isOpenMode ? 'Open in App' : 'Install App');
+    installAppButton.dataset.mode = 'install';
+    installAppButton.href = '#';
+    installAppButton.removeAttribute('target');
+    installAppButton.removeAttribute('rel');
     const labelElement = installAppButton.querySelector('[data-i18n]');
-    if (labelElement) labelElement.textContent = label;
+    if (labelElement) {
+        labelElement.dataset.i18n = 'install_app_btn';
+        labelElement.textContent = typeof window.t === 'function'
+            ? window.t('install_app_btn')
+            : 'Install App';
+    }
     installAppButton.hidden = false;
 }
 
 async function detectInstalledPwa() {
     if (!installAppButton) return false;
 
+    // A standalone window is already the installed app: never show Install.
     if (isRunningAsInstalledApp()) {
-        installAppButton.hidden = true;
+        hideInstallAppButton();
         return true;
     }
 
+    // appinstalled is a durable signal across browser refreshes.
+    try {
+        if (localStorage.getItem(PWA_INSTALLED_KEY) === '1') {
+            hideInstallAppButton();
+            return true;
+        }
+    } catch (_) {}
+
+    // Also detect installations made before this code was deployed.
     if (typeof navigator.getInstalledRelatedApps === 'function') {
         try {
             const apps = await navigator.getInstalledRelatedApps();
-            // This manifest declares only this PWA as a related webapp.
-            // Android may omit the id, so match the platform rather than
-            // rejecting a valid result because its optional id differs.
-            installedPwaDetected = apps.some(app => app.platform === 'webapp');
+            if (apps.some(app => app.platform === 'webapp')) {
+                try { localStorage.setItem(PWA_INSTALLED_KEY, '1'); } catch (_) {}
+                hideInstallAppButton();
+                return true;
+            }
         } catch (error) {
             console.debug('Installed PWA detection is unavailable:', error);
         }
     }
 
-    if (installedPwaDetected) {
-        setInstallButtonMode('open');
-        return true;
-    }
-
-    // Do not reveal Install while the asynchronous installed-app check is
-    // pending. Only show it when the browser exposes an actual install path.
-    if (supportsWebInstall || deferredInstallPrompt) {
-        setInstallButtonMode('install');
+    if (deferredInstallPrompt || supportsWebInstall) {
+        showInstallAppButton();
     } else {
-        installAppButton.hidden = true;
+        hideInstallAppButton();
     }
     return false;
 }
 
 if (installAppButton) {
     installAppButton.hidden = true;
+    installAppButton.dataset.mode = 'install';
     installAppButton.addEventListener('click', (event) => {
-        if (installAppButton.dataset.mode !== 'install') return;
         event.preventDefault();
-        installWebApp();
+        if (installAppButton.dataset.mode === 'install') installWebApp();
     });
 }
 
 window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     deferredInstallPrompt = event;
-    if (!installedPwaDetected && !isRunningAsInstalledApp()) {
-        setInstallButtonMode('install');
+    if (!isRunningAsInstalledApp()) {
+        // Do not override a confirmed installed state.
+        let alreadyInstalled = false;
+        try { alreadyInstalled = localStorage.getItem(PWA_INSTALLED_KEY) === '1'; } catch (_) {}
+        if (!alreadyInstalled) showInstallAppButton();
     }
 });
 
 window.addEventListener('appinstalled', () => {
     deferredInstallPrompt = null;
-    installedPwaDetected = true;
-    setInstallButtonMode('open');
+    try { localStorage.setItem(PWA_INSTALLED_KEY, '1'); } catch (_) {}
+    hideInstallAppButton();
 });
 
 async function installWebApp() {
@@ -324,17 +333,18 @@ async function installWebApp() {
     try {
         if (supportsWebInstall) {
             await navigator.install();
-            // Wait for appinstalled / next load to confirm the installed state.
-            installAppButton.hidden = true;
+            // appinstalled records the confirmed state and hides the button.
+            hideInstallAppButton();
         } else if (deferredInstallPrompt) {
             const promptEvent = deferredInstallPrompt;
             deferredInstallPrompt = null;
             await promptEvent.prompt();
             const choice = await promptEvent.userChoice;
             if (choice && choice.outcome === 'accepted') {
-                setInstallButtonMode('open');
+                try { localStorage.setItem(PWA_INSTALLED_KEY, '1'); } catch (_) {}
+                hideInstallAppButton();
             } else if (!deferredInstallPrompt) {
-                installAppButton.hidden = true;
+                hideInstallAppButton();
             }
         }
     } catch (error) {
@@ -344,13 +354,6 @@ async function installWebApp() {
     } finally {
         installAppButton.removeAttribute('aria-disabled');
     }
-}
-
-function openInstalledApp() {
-    closeNavMenu();
-    // Use a real top-level link (target=_blank) so Android Chrome can apply
-    // its installed-WebAPK link-capturing behavior when enabled by the OS.
-    window.open(PWA_APP_ID, '_blank', 'noopener');
 }
 
 detectInstalledPwa();
