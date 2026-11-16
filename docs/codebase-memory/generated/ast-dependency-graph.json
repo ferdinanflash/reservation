@@ -2,10 +2,10 @@
   "schema_version": 1,
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
-  "source_files": 23,
-  "function_count": 403,
+  "source_files": 24,
+  "function_count": 416,
   "import_count": 5,
-  "call_edge_count": 1153,
+  "call_edge_count": 1173,
   "edges": [
     {
       "from": "common.js#displayNickname",
@@ -7253,6 +7253,146 @@
       "confidence": "static-name-match"
     },
     {
+      "from": "supabase/functions/discord-message-poller/index.ts#discordRequest",
+      "to": "supabase/functions/discord-message-poller/index.ts#env",
+      "kind": "call",
+      "line": 67,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#loadAllianceMembers",
+      "to": "supabase/functions/discord-message-poller/index.ts#env",
+      "kind": "call",
+      "line": 104,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#loadAllianceMembers",
+      "to": "supabase/functions/discord-message-poller/index.ts#supabaseUrl",
+      "kind": "call",
+      "line": 116,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#loadAllianceMembers",
+      "kind": "call",
+      "line": 199,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#redeemOne",
+      "kind": "call",
+      "line": 210,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
+      "line": 191,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
+      "line": 195,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
+      "line": 201,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
+      "line": 205,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendLongResult",
+      "kind": "call",
+      "line": 241,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#redeemOne",
+      "to": "supabase/functions/discord-message-poller/index.ts#env",
+      "kind": "call",
+      "line": 142,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#redeemOne",
+      "to": "supabase/functions/discord-message-poller/index.ts#supabaseUrl",
+      "kind": "call",
+      "line": 144,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "to": "supabase/functions/discord-message-poller/index.ts#discordRequest",
+      "kind": "call",
+      "line": 80,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#sendLongResult",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
+      "line": 100,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#sendLongResult",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
+      "line": 94,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#stateRequest",
+      "to": "supabase/functions/discord-message-poller/index.ts#supabaseHeaders",
+      "kind": "call",
+      "line": 51,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#stateRequest",
+      "to": "supabase/functions/discord-message-poller/index.ts#supabaseUrl",
+      "kind": "call",
+      "line": 47,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#supabaseHeaders",
+      "to": "supabase/functions/discord-message-poller/index.ts#env",
+      "kind": "call",
+      "line": 33,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#supabaseUrl",
+      "to": "supabase/functions/discord-message-poller/index.ts#env",
+      "kind": "call",
+      "line": 42,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#updateCursor",
+      "to": "supabase/functions/discord-message-poller/index.ts#stateRequest",
+      "kind": "call",
+      "line": 245,
+      "confidence": "static-name-match"
+    },
+    {
       "from": "supabase/functions/index.ts",
       "to": null,
       "kind": "import",
@@ -10529,6 +10669,97 @@
       "kind": "function"
     },
     {
+      "id": "supabase/functions/discord-message-poller/index.ts#discordRequest",
+      "name": "discordRequest",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 63,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#env",
+      "name": "env",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 26,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#json",
+      "name": "json",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 19,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#loadAllianceMembers",
+      "name": "loadAllianceMembers",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 103,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "name": "processCommand",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 188,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#redeemOne",
+      "name": "redeemOne",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 141,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#resultLabel",
+      "name": "resultLabel",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 175,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "name": "sendChannelMessage",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 79,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#sendLongResult",
+      "name": "sendLongResult",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 89,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#stateRequest",
+      "name": "stateRequest",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 45,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#supabaseHeaders",
+      "name": "supabaseHeaders",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 32,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#supabaseUrl",
+      "name": "supabaseUrl",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 41,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-message-poller/index.ts#updateCursor",
+      "name": "updateCursor",
+      "file": "supabase/functions/discord-message-poller/index.ts",
+      "line": 244,
+      "kind": "function"
+    },
+    {
       "id": "supabase/functions/index.ts#callUpstream",
       "name": "callUpstream",
       "file": "supabase/functions/index.ts",
@@ -11107,5 +11338,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "d9b7dc4099e9d584229cf52d5c3a9acf84d2fb2855b8cdfd94626e3317bdde5a"
+  "source_digest": "51deebd386769e2067cfe87151c4b5603d1d3f143bdd20ea529928a305ca34ee"
 }
