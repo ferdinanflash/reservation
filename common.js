@@ -216,62 +216,106 @@ document.addEventListener('keydown', function (e) {
 });
 
 
-// ================= PWA INSTALL FROM NAVIGATION MENU =================
-// Prefer the modern Web Install API when the browser supports it. Otherwise,
-// use beforeinstallprompt when the browser explicitly offers a native prompt.
-// Per Chrome's guidance, never show a custom install button when neither
-// mechanism is available.
+// ================= PWA INSTALL / OPEN FROM NAVIGATION MENU =================
 const installAppButton = document.getElementById('install-app-btn');
+const PWA_APP_ID = 'https://3475.web.id/';
 const supportsWebInstall = typeof Navigator !== 'undefined'
     && typeof Navigator.prototype.install === 'function';
 let deferredInstallPrompt = null;
+let installedPwaDetected = false;
 
-if (installAppButton && supportsWebInstall) {
-    installAppButton.hidden = false;
+function isRunningAsInstalledApp() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+        || (window.matchMedia && window.matchMedia('(display-mode: window-controls-overlay)').matches)
+        || navigator.standalone === true;
+}
+
+function setInstallButtonMode(mode) {
+    if (!installAppButton) return;
+
+    if (isRunningAsInstalledApp()) {
+        installAppButton.hidden = true;
+        return;
+    }
+
+    const isOpenMode = mode === 'open';
+    installAppButton.dataset.i18n = isOpenMode ? 'open_app_btn' : 'install_app_btn';
+    installAppButton.setAttribute('onclick', isOpenMode ? 'openInstalledApp()' : 'installWebApp()');
+
+    const label = typeof window.t === 'function'
+        ? window.t(isOpenMode ? 'open_app_btn' : 'install_app_btn')
+        : (isOpenMode ? 'Open in App' : 'Install App');
+    const labelElement = installAppButton.querySelector('[data-i18n]');
+    if (labelElement) labelElement.textContent = label;
+    installAppButton.hidden = isOpenMode ? false : !(supportsWebInstall || deferredInstallPrompt);
+}
+
+async function detectInstalledPwa() {
+    if (!installAppButton) return;
+
+    if (isRunningAsInstalledApp()) {
+        installAppButton.hidden = true;
+        return;
+    }
+
+    if (typeof navigator.getInstalledRelatedApps !== 'function') return;
+
+    try {
+        const apps = await navigator.getInstalledRelatedApps();
+        installedPwaDetected = apps.some(app =>
+            app.platform === 'webapp' && (!app.id || app.id === PWA_APP_ID)
+        );
+        if (installedPwaDetected) setInstallButtonMode('open');
+    } catch (error) {
+        // Detection is optional; unsupported browsers keep normal install behavior.
+        console.debug('Installed PWA detection is unavailable:', error);
+    }
+}
+
+if (installAppButton) {
+    if (isRunningAsInstalledApp()) {
+        installAppButton.hidden = true;
+    } else if (supportsWebInstall) {
+        installAppButton.hidden = false;
+    }
 }
 
 window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     deferredInstallPrompt = event;
-    if (installAppButton && !supportsWebInstall) {
-        installAppButton.hidden = false;
+    if (!installedPwaDetected && !isRunningAsInstalledApp() && installAppButton) {
+        setInstallButtonMode('install');
     }
 });
 
 window.addEventListener('appinstalled', () => {
     deferredInstallPrompt = null;
-    if (installAppButton) installAppButton.hidden = true;
+    installedPwaDetected = true;
+    setInstallButtonMode('open');
 });
 
 async function installWebApp() {
     closeNavMenu();
 
-    if (!installAppButton || installAppButton.getAttribute('aria-disabled') === 'true') {
-        return;
-    }
+    if (!installAppButton || installAppButton.getAttribute('aria-disabled') === 'true') return;
 
-    // Keep the button focusable while preventing concurrent installation attempts.
     installAppButton.setAttribute('aria-disabled', 'true');
-
     try {
         if (supportsWebInstall) {
-            // Must be called directly from this click flow to preserve user activation.
             await navigator.install();
             installAppButton.hidden = true;
         } else if (deferredInstallPrompt) {
-            // beforeinstallprompt is single-use: clear it before awaiting the choice.
             const promptEvent = deferredInstallPrompt;
             deferredInstallPrompt = null;
             await promptEvent.prompt();
-            await promptEvent.userChoice;
-
-            // The event is only reusable if the browser fires a fresh one.
-            if (!deferredInstallPrompt) {
+            const choice = await promptEvent.userChoice;
+            if (choice && choice.outcome === 'accepted') {
+                setInstallButtonMode('open');
+            } else if (!deferredInstallPrompt) {
                 installAppButton.hidden = true;
             }
         }
     } catch (error) {
-        // User cancellation is expected. Keep the button available for another try.
         if (!error || error.name !== 'AbortError') {
             console.error('PWA installation could not start:', error);
         }
@@ -279,3 +323,12 @@ async function installWebApp() {
         installAppButton.removeAttribute('aria-disabled');
     }
 }
+
+function openInstalledApp() {
+    closeNavMenu();
+    // Same-origin navigation can be captured by the installed PWA where
+    // the browser/OS supports PWA link capturing; the web cannot force this.
+    window.location.href = PWA_APP_ID;
+}
+
+detectInstalledPwa();
