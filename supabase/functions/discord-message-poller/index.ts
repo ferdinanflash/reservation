@@ -352,8 +352,8 @@ Deno.serve(async (req) => {
         }
 
         const content = String(message.content ?? "").trim();
-        const command = content.match(/^\.redeem\\s+([A-Za-z0-9_-]{2,12})\\s+([A-Za-z0-9_-]{1,40})$/i);
-        const looksLikeCommand = /^\.redeem(?:\\s|$)/i.test(content);
+        const command = content.match(/^\.redeem\s+([A-Za-z0-9_-]{2,12})\s+([A-Za-z0-9_-]{1,40})$/i);
+        const looksLikeCommand = /^\.redeem(?:\s|$)/i.test(content);
 
         if (command) {
           try {
