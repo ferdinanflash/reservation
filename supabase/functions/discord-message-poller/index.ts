@@ -204,12 +204,16 @@ async function redeemOne(fid: string, code: string): Promise<Outcome["kind"]> {
     if (!response.ok) return "error";
     let data = result?.data && typeof result.data === "object" ? result.data : {};
     // Some upstream responses wrap the actual result one level deeper.
-    if (data.data && typeof data.data === "object") data = data.data;
+    // Upstream payloads may contain a `data` array (often empty).
+    // Only unwrap an object payload; never mistake that array for the result envelope.
+    if (data.data && typeof data.data === "object" && !Array.isArray(data.data)) data = data.data;
     const message = String(data.msg ?? data.message ?? result?.error ?? "").trim().toUpperCase().replace(/[.]+$/, "");
+    const errCode = Number(data.err_code);
     if (result?.ok === true && message === "SUCCESS") return "success";
-    if (Number(data.err_code) === 40011 || message === "RECEIVED" || message === "SAME TYPE EXCHANGE") return "already";
+    if (errCode === 40011 || message === "RECEIVED" || message === "SAME TYPE EXCHANGE") return "already";
     if (message.startsWith("CDK NOT FOUND") || message === "NOT FOUND") return "invalid";
-    if (message.startsWith("TIME ERROR")) return "expired";
+    // Century Games identifies expired/not-yet-valid codes with err_code 40007.
+    if (errCode === 40007 || message.startsWith("TIME ERROR")) return "expired";
     if (message === "USAGE LIMIT" || message === "USED") return "limit";
     if (message.startsWith("TIMEOUT")) {
       if (attempt < 2) {
@@ -233,6 +237,7 @@ function resultLabel(kind: string) {
     case "limit": return "⚠️ Usage limit reached";
     case "bad_fid": return "❌ Player ID not found";
     case "timeout": return "⚠️ Timed out; result not confirmed";
+    case "skipped": return "⏭️ Skipped because the batch was stopped";
     default: return "❌ Failed";
   }
 }
@@ -268,8 +273,7 @@ async function processCommand(channelId: string, allianceInput: string, code: st
         results.push({
           fid: item.fid,
           nickname: item.nickname,
-          kind: "error",
-          detail: "Skipped because the code may be invalid/expired or the redeem response could not be safely classified.",
+          kind: "skipped",
         });
       }
       break;
@@ -279,15 +283,18 @@ async function processCommand(channelId: string, allianceInput: string, code: st
 
   const successful = results.filter((item) => item.kind === "success").length;
   const already = results.filter((item) => item.kind === "already").length;
-  const failed = results.length - successful - already;
+  const expired = results.filter((item) => item.kind === "expired").length;
+  const invalid = results.filter((item) => item.kind === "invalid").length;
+  const skipped = results.filter((item) => item.kind === "skipped").length;
+  const failed = results.filter((item) => !["success", "already", "expired", "invalid", "skipped"].includes(item.kind)).length;
   const lines = [
     `🎁 **3475 REDEEM RESULTS — ${alliance}**`,
     `Gift Code: **${code}**`,
-    `Total: **${results.length}** | Successful: **${successful}** | Already Claimed: **${already}** | Failed: **${failed}**`,
+    `Total: **${results.length}** | Successful: **${successful}** | Already Claimed: **${already}** | Expired: **${expired}** | Invalid: **${invalid}** | Skipped: **${skipped}** | Failed: **${failed}**`,
     ...(members.length >= MAX_MEMBERS ? ["⚠️ Roster dibatasi maksimal 100 player per proses."] : []),
     ...results.map((item) => {
       const name = item.nickname ? `**${item.nickname.replace(/[\r\n]/g, " ").slice(0, 50)}**` : `FID ${item.fid}`;
-      return `• ${name} (${item.fid}) — ${item.detail ?? resultLabel(item.kind)}`;
+      return `• ${name} (${item.fid}) — ${resultLabel(item.kind)}`;
     }),
   ];
   await sendLongResult(channelId, lines);
