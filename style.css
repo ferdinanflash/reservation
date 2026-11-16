@@ -7789,3 +7789,18 @@ body.christmas-theme .navbar .logo.fire-text::before {
 .nav-menu-item[hidden] {
     display: none !important;
 }
+
+
+/* ==================== CHRISTMAS PAGE BACKGROUND ====================
+   The supplied festive stone / red-star artwork is shown only while the
+   Christmas seasonal theme is active. A dark wash keeps page text readable. */
+body.christmas-theme {
+    background-color: #21151a;
+    background-image:
+        linear-gradient(rgba(10, 8, 12, .58), rgba(10, 8, 12, .68)),
+        url("https://thumbs.dreamstime.com/b/christmas-background-decorations-red-stars-gray-stone-158781345.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
