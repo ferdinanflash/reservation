@@ -214,3 +214,36 @@ document.addEventListener('click', function (e) {
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeNavMenu();
 });
+
+
+// ================= PWA INSTALL FROM NAVIGATION MENU =================
+// Chromium fires this event when the site is eligible for native installation.
+// Keep the event so the menu button can invoke the browser's real install UI.
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+});
+window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+});
+
+async function installWebApp() {
+    closeNavMenu();
+    if (deferredInstallPrompt) {
+        const promptEvent = deferredInstallPrompt;
+        deferredInstallPrompt = null;
+        await promptEvent.prompt();
+        // The browser owns the confirmation UI; no custom success message is shown.
+        return promptEvent.userChoice;
+    }
+
+    // iOS Safari and some browsers do not expose beforeinstallprompt.
+    // Explain the browser-native manual route rather than pretending to launch a prompt.
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const message = isIOS
+        ? 'To install this app on your Home Screen, tap Share in Safari, then choose “Add to Home Screen”.'
+        : 'This browser is not currently offering an install prompt. Open the browser menu and choose “Install app” or “Add to Home Screen” if available.';
+    window.alert(message);
+    return null;
+}
