@@ -50,5 +50,5 @@ Gift-code signing material must be server-only and configured through Supabase s
 - Accepts `.redeem <ALLIANCE> <CODE>`; alliance is normalized to uppercase and validated against ARX, IDN, ZXC, VNX, CAT.
 - Uses `public.discord_message_poll_state` (migration `supabase/migrations/20261116000000_discord_message_poll_state.sql`) for the last-seen message cursor and an execution lock.
 - Requires Supabase Edge Function secrets `DISCORD_BOT_TOKEN` and `DISCORD_POLL_SECRET`, Discord Message Content Intent, and channel permissions View Channel / Read Message History / Send Messages.
-- Supabase Cron + pg_net + Vault invoke the poller every minute. First run seeds the cursor at the newest message and intentionally ignores prior channel history.
+- Supabase Cron + pg_net + Vault invoke the poller every five minutes. First run seeds the cursor at the newest message and intentionally ignores prior channel history. Deploy independently with `.github/workflows/deploy-discord-message-poller.yml`; the existing slash-command deployment workflow is not changed.
 - The poller reuses the existing `redeem-giftcode` Edge Function and does not modify the slash-command handler.
