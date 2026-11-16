@@ -7277,49 +7277,49 @@
       "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
       "to": "supabase/functions/discord-message-poller/index.ts#loadAllianceMembers",
       "kind": "call",
-      "line": 199,
+      "line": 204,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
       "to": "supabase/functions/discord-message-poller/index.ts#redeemOne",
       "kind": "call",
+      "line": 215,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
+      "line": 196,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
+      "line": 200,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
+      "line": 206,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
+      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
+      "kind": "call",
       "line": 210,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
-      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
-      "kind": "call",
-      "line": 191,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
-      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
-      "kind": "call",
-      "line": 195,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
-      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
-      "kind": "call",
-      "line": 201,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
-      "to": "supabase/functions/discord-message-poller/index.ts#sendChannelMessage",
-      "kind": "call",
-      "line": 205,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
       "to": "supabase/functions/discord-message-poller/index.ts#sendLongResult",
       "kind": "call",
-      "line": 241,
+      "line": 246,
       "confidence": "static-name-match"
     },
     {
@@ -7333,7 +7333,7 @@
       "from": "supabase/functions/discord-message-poller/index.ts#redeemOne",
       "to": "supabase/functions/discord-message-poller/index.ts#supabaseUrl",
       "kind": "call",
-      "line": 144,
+      "line": 146,
       "confidence": "static-name-match"
     },
     {
@@ -7389,7 +7389,7 @@
       "from": "supabase/functions/discord-message-poller/index.ts#updateCursor",
       "to": "supabase/functions/discord-message-poller/index.ts#stateRequest",
       "kind": "call",
-      "line": 245,
+      "line": 250,
       "confidence": "static-name-match"
     },
     {
@@ -10700,7 +10700,7 @@
       "id": "supabase/functions/discord-message-poller/index.ts#processCommand",
       "name": "processCommand",
       "file": "supabase/functions/discord-message-poller/index.ts",
-      "line": 188,
+      "line": 193,
       "kind": "function"
     },
     {
@@ -10714,7 +10714,7 @@
       "id": "supabase/functions/discord-message-poller/index.ts#resultLabel",
       "name": "resultLabel",
       "file": "supabase/functions/discord-message-poller/index.ts",
-      "line": 175,
+      "line": 180,
       "kind": "function"
     },
     {
@@ -10756,7 +10756,7 @@
       "id": "supabase/functions/discord-message-poller/index.ts#updateCursor",
       "name": "updateCursor",
       "file": "supabase/functions/discord-message-poller/index.ts",
-      "line": 244,
+      "line": 249,
       "kind": "function"
     },
     {
@@ -11338,5 +11338,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "51deebd386769e2067cfe87151c4b5603d1d3f143bdd20ea529928a305ca34ee"
+  "source_digest": "7d5351248fed887162480b876bac0b056be50ca723a3789f3c9df9e1d7e5b4ba"
 }
