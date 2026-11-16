@@ -7792,13 +7792,13 @@ body.christmas-theme .navbar .logo.fire-text::before {
 
 
 /* ==================== CHRISTMAS PAGE BACKGROUND ====================
-   The supplied festive stone / red-star artwork is shown only while the
+   The supplied Christmas tinsel artwork is shown only while the
    Christmas seasonal theme is active. A dark wash keeps page text readable. */
 body.christmas-theme {
     background-color: #21151a;
     background-image:
         linear-gradient(rgba(10, 8, 12, .58), rgba(10, 8, 12, .68)),
-        url("https://thumbs.dreamstime.com/b/christmas-background-decorations-red-stars-gray-stone-158781345.jpg");
+        url("https://img.magnific.com/free-vector/gradient-christmas-tinsel-background_52683-76117.jpg?semt=ais_hybrid&w=740&q=80");
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
