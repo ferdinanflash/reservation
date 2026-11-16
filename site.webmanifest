@@ -27,5 +27,12 @@
     "games",
     "utilities",
     "productivity"
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "/site.webmanifest",
+      "id": "https://3475.web.id/"
+    }
   ]
 }
