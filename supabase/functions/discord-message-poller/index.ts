@@ -3,12 +3,12 @@
  * Copyright (c) 2026 Ferdinan | https://3475.web.id
  * Proprietary source code. All rights reserved.
  *
- * Polls one dedicated Discord text channel through the Discord REST API.
+ * Polls configured Discord text channels through the Discord REST API.
  * Invoked by Supabase Cron; no persistent Gateway worker is required.
  */
 
 const DISCORD_API = "https://discord.com/api/v10";
-const CHANNEL_ID = "1570961739846262876";
+const DEFAULT_CHANNEL_ID = "1570961739846262876";
 const ALLIANCES = new Set(["ARX", "IDN", "ZXC", "VNX", "CAT"]);
 const MAX_MEMBERS = 100;
 const BATCH_DELAY_MS = 1200;
@@ -60,6 +60,51 @@ async function stateRequest(method: string, query: string, body?: unknown) {
   return response.json();
 }
 
+async function channelStateRequest(method: string, query: string, body?: unknown) {
+  const response = await fetch(
+    `${supabaseUrl()}/rest/v1/discord_message_poll_channels?${query}`,
+    {
+      method,
+      headers: {
+        ...supabaseHeaders(),
+        Prefer: "return=representation",
+      },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    },
+  );
+  if (!response.ok) {
+    throw new Error(`Channel poll state database error (${response.status}): ${(await response.text()).slice(0, 180)}`);
+  }
+  return response.json();
+}
+
+function configuredChannelIds(): string[] {
+  const configured = Deno.env.get("DISCORD_CHANNEL_IDS")?.trim();
+  const ids = (configured ? configured.split(",") : [DEFAULT_CHANNEL_ID])
+    .map((id) => id.trim())
+    .filter(Boolean);
+  const unique = [...new Set(ids)];
+  if (!unique.length || unique.some((id) => !/^\d{17,20}$/.test(id))) {
+    throw new Error("DISCORD_CHANNEL_IDS must be a comma-separated list of valid Discord channel IDs");
+  }
+  return unique;
+}
+
+async function getChannelCursor(channelId: string): Promise<string> {
+  const rows = await channelStateRequest(
+    "GET",
+    `select=last_message_id&channel_id=eq.${channelId}`,
+  );
+  if (Array.isArray(rows) && rows.length) {
+    return String(rows[0]?.last_message_id ?? "");
+  }
+  await channelStateRequest("POST", "", {
+    channel_id: channelId,
+    last_message_id: null,
+  });
+  return "";
+}
+
 async function discordRequest(path: string, init: RequestInit = {}) {
   const response = await fetch(`${DISCORD_API}${path}`, {
     ...init,
@@ -76,8 +121,8 @@ async function discordRequest(path: string, init: RequestInit = {}) {
   return response.status === 204 ? null : response.json();
 }
 
-async function sendChannelMessage(content: string) {
-  await discordRequest(`/channels/${CHANNEL_ID}/messages`, {
+async function sendChannelMessage(channelId: string, content: string) {
+  await discordRequest(`/channels/${channelId}/messages`, {
     method: "POST",
     body: JSON.stringify({
       content: content.slice(0, 1950),
@@ -86,18 +131,18 @@ async function sendChannelMessage(content: string) {
   });
 }
 
-async function sendLongResult(lines: string[]) {
+async function sendLongResult(channelId: string, lines: string[]) {
   let chunk = "";
   for (const line of lines) {
     const candidate = chunk ? `${chunk}\n${line}` : line;
     if (candidate.length > 1850 && chunk) {
-      await sendChannelMessage(chunk);
+      await sendChannelMessage(channelId, chunk);
       chunk = line.slice(0, 1850);
     } else {
       chunk = candidate;
     }
   }
-  if (chunk) await sendChannelMessage(chunk);
+  if (chunk) await sendChannelMessage(channelId, chunk);
 }
 
 async function loadAllianceMembers(alliance: string): Promise<Member[]> {
@@ -190,24 +235,24 @@ function resultLabel(kind: string) {
   }
 }
 
-async function processCommand(allianceInput: string, code: string) {
+async function processCommand(channelId: string, allianceInput: string, code: string) {
   const alliance = allianceInput.trim().toUpperCase();
   if (!ALLIANCES.has(alliance)) {
-    await sendChannelMessage("❌ Alliance tidak valid. Gunakan ARX, IDN, ZXC, VNX, atau CAT.");
+    await sendChannelMessage(channelId, "❌ Alliance tidak valid. Gunakan ARX, IDN, ZXC, VNX, atau CAT.");
     return;
   }
   if (!/^[A-Za-z0-9_-]{1,40}$/.test(code)) {
-    await sendChannelMessage("❌ Format gift code tidak valid (maksimal 40 karakter).");
+    await sendChannelMessage(channelId, "❌ Format gift code tidak valid (maksimal 40 karakter).");
     return;
   }
 
   const members = await loadAllianceMembers(alliance);
   if (!members.length) {
-    await sendChannelMessage(`❌ Tidak ditemukan Player ID untuk alliance **${alliance}**.`);
+    await sendChannelMessage(channelId, `❌ Tidak ditemukan Player ID untuk alliance **${alliance}**.`);
     return;
   }
 
-  await sendChannelMessage(`🎁 **3475 REDEEM — ALLIANCE ${alliance}**\nGift Code: **${code}**\nMemproses ${members.length} player...`);
+  await sendChannelMessage(channelId, `🎁 **3475 REDEEM — ALLIANCE ${alliance}**\nGift Code: **${code}**\nMemproses ${members.length} player...`);
   const results: Outcome[] = [];
 
   for (let i = 0; i < members.length; i++) {
@@ -243,18 +288,18 @@ async function processCommand(allianceInput: string, code: string) {
       return `• ${name} (${item.fid}) — ${item.detail ?? resultLabel(item.kind)}`;
     }),
   ];
-  await sendLongResult(lines);
+  await sendLongResult(channelId, lines);
 }
 
-async function updateCursor(messageId: string) {
-  await stateRequest("PATCH", "id=eq.1", {
+async function updateCursor(channelId: string, messageId: string) {
+  await channelStateRequest("PATCH", `channel_id=eq.${channelId}`, {
     last_message_id: messageId,
     updated_at: new Date().toISOString(),
   });
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "GET") return json({ ok: true, service: "3475-discord-message-poller", channel_id: CHANNEL_ID });
+  if (req.method === "GET") return json({ ok: true, service: "3475-discord-message-poller", channel_ids: configuredChannelIds() });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
   const expected = env("DISCORD_POLL_SECRET");
@@ -272,59 +317,72 @@ Deno.serve(async (req) => {
     }
     locked = true;
 
-    const stateRows = await stateRequest("GET", "select=last_message_id&id=eq.1");
-    const lastMessageId = String(stateRows?.[0]?.last_message_id ?? "");
-
-    // On first run, establish a baseline and deliberately ignore old channel history.
-    if (!lastMessageId) {
-      const latest = await discordRequest(`/channels/${CHANNEL_ID}/messages?limit=1`) as any[];
-      if (latest?.[0]?.id) await updateCursor(String(latest[0].id));
-      return json({ ok: true, initialized: true, ignored_history: true });
-    }
-
-    const messages = await discordRequest(
-      `/channels/${CHANNEL_ID}/messages?after=${encodeURIComponent(lastMessageId)}&limit=100`,
-    ) as any[];
-    const ordered = (Array.isArray(messages) ? messages : []).sort((a, b) => {
-      const left = BigInt(String(a.id));
-      const right = BigInt(String(b.id));
-      return left < right ? -1 : left > right ? 1 : 0;
-    });
-
+    const channelIds = configuredChannelIds();
     let scanned = 0;
     let commandProcessed = false;
-    for (const message of ordered) {
-      scanned++;
-      if (message.author?.bot || message.webhook_id) {
-        await updateCursor(String(message.id));
+    const initializedChannels: string[] = [];
+
+    for (const channelId of channelIds) {
+      const lastMessageId = await getChannelCursor(channelId);
+
+      // Each newly configured channel gets its own baseline; older history is ignored.
+      if (!lastMessageId) {
+        const latest = await discordRequest(`/channels/${channelId}/messages?limit=1`) as any[];
+        if (latest?.[0]?.id) await updateCursor(channelId, String(latest[0].id));
+        initializedChannels.push(channelId);
         continue;
       }
 
-      const content = String(message.content ?? "").trim();
-      const command = content.match(/^\.redeem\s+([A-Za-z0-9_-]{2,12})\s+([A-Za-z0-9_-]{1,40})$/i);
-      const looksLikeCommand = /^\.redeem(?:\s|$)/i.test(content);
+      const messages = await discordRequest(
+        `/channels/${channelId}/messages?after=${encodeURIComponent(lastMessageId)}&limit=100`,
+      ) as any[];
+      const ordered = (Array.isArray(messages) ? messages : []).sort((a, b) => {
+        const left = BigInt(String(a.id));
+        const right = BigInt(String(b.id));
+        return left < right ? -1 : left > right ? 1 : 0;
+      });
 
-      if (command) {
-        try {
-          await processCommand(command[1], command[2]);
-        } catch (error) {
-          console.error("Redeem command failed:", error instanceof Error ? error.message : String(error));
-          await sendChannelMessage("❌ Proses redeem mengalami gangguan. Periksa log Supabase sebelum mengirim ulang perintah agar tidak terjadi redeem ganda.");
+      for (const message of ordered) {
+        scanned++;
+        if (message.author?.bot || message.webhook_id) {
+          await updateCursor(channelId, String(message.id));
+          continue;
         }
-        await updateCursor(String(message.id));
-        commandProcessed = true;
-        break; // one redeem batch per cron invocation
+
+        const content = String(message.content ?? "").trim();
+        const command = content.match(/^\\.redeem\\s+([A-Za-z0-9_-]{2,12})\\s+([A-Za-z0-9_-]{1,40})$/i);
+        const looksLikeCommand = /^\\.redeem(?:\\s|$)/i.test(content);
+
+        if (command) {
+          try {
+            await processCommand(channelId, command[1], command[2]);
+          } catch (error) {
+            console.error(`Redeem command failed in channel ${channelId}:`, error instanceof Error ? error.message : String(error));
+            await sendChannelMessage(channelId, "❌ Proses redeem mengalami gangguan. Periksa log Supabase sebelum mengirim ulang perintah agar tidak terjadi redeem ganda.");
+          }
+          await updateCursor(channelId, String(message.id));
+          commandProcessed = true;
+          break;
+        }
+        if (looksLikeCommand) {
+          await sendChannelMessage(channelId, "❌ Format salah. Gunakan: `.redeem ARX ABC123`");
+          await updateCursor(channelId, String(message.id));
+          commandProcessed = true;
+          break;
+        }
+        await updateCursor(channelId, String(message.id));
       }
-      if (looksLikeCommand) {
-        await sendChannelMessage("❌ Format salah. Gunakan: `.redeem ARX ABC123`");
-        await updateCursor(String(message.id));
-        commandProcessed = true;
-        break;
-      }
-      await updateCursor(String(message.id));
+      // Process at most one alliance batch per Cron invocation.
+      if (commandProcessed) break;
     }
 
-    return json({ ok: true, scanned, command_processed: commandProcessed });
+    return json({
+      ok: true,
+      channels_checked: channelIds.length,
+      initialized_channels: initializedChannels,
+      scanned,
+      command_processed: commandProcessed,
+    });
   } catch (error) {
     console.error("[discord-message-poller]", error instanceof Error ? error.message : String(error));
     return json({ ok: false, error: "poll_failed", detail: error instanceof Error ? error.message : String(error) }, 500);
