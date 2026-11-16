@@ -104,9 +104,9 @@ Try `/redeem single` first with a player and code you control. Then test `/redee
 Never share bot tokens, Supabase service-role keys, or the new signing secret.
 
 
-## 7. Read `.redeem` messages from one dedicated channel (Supabase Cron)
+## 7. Read `.redeem` messages from multiple Discord channels (Supabase Cron)
 
-The optional text-command listener polls only Discord channel `1570961739846262876` using the Discord REST API. It does not open a persistent Gateway connection and does not replace the existing slash commands.
+The optional text-command listener polls one or more configured Discord text channels through the Discord REST API. It does not open a persistent Gateway connection and does not replace the existing slash commands.
 
 Supported format:
 
@@ -115,72 +115,45 @@ Supported format:
 .redeem IDN XYZ789
 ```
 
-Alliance names are normalized to uppercase. Supported alliances are ARX, IDN, ZXC, VNX, and CAT. The poller handles one redeem batch per invocation, ignores bot/webhook messages, stores a message cursor, and caps each alliance run at 100 FIDs.
+Alliance names are normalized to uppercase. Supported alliances are ARX, IDN, ZXC, VNX, and CAT. The poller handles at most one redeem batch per Cron invocation, ignores bot/webhook messages, stores an independent message cursor for each channel, and caps each alliance run at 100 FIDs.
 
 ### Discord setup
 
 1. In Discord Developer Portal, open the application → **Bot** → **Privileged Gateway Intents**.
 2. Enable **Message Content Intent** and save. Discord also applies this intent to message content returned by the HTTP API.
-3. Ensure the bot has **View Channel**, **Read Message History**, and **Send Messages** permissions in the dedicated channel.
-4. Keep the channel ID fixed to the configured channel. The poller does not read other channels.
+3. For every channel you configure, ensure the bot has **View Channel**, **Read Message History**, and **Send Messages** permissions.
+4. Copy each channel ID (Developer Mode → right-click channel → Copy Channel ID).
 
 ### Supabase secrets
 
 Add these Edge Function secrets in Supabase → Project Settings → Edge Functions → Secrets:
 
 - `DISCORD_BOT_TOKEN`: the bot token from Discord Developer Portal. Keep it secret.
-- `DISCORD_POLL_SECRET`: a new random secret used only to authenticate the scheduled poll request.
+- `DISCORD_POLL_SECRET`: a random secret used only to authenticate the scheduled poll request.
+- `DISCORD_CHANNEL_IDS`: comma-separated channel IDs, for example `1570961739846262876,123456789012345678`. Include the existing channel ID if it should continue being monitored. If this setting is omitted, the poller falls back to the original channel `1570961739846262876`.
 
 The project already supplies `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` to Edge Functions. Never put the bot token or service-role key in GitHub source, SQL committed to the repository, or browser code.
 
 ### Deploy
 
-Apply the migration:
+Apply both migrations, in order:
 
-```text
-supabase/migrations/20261116000000_discord_message_poll_state.sql
-```
+- `supabase/migrations/20261116000000_discord_message_poll_state.sql`
+- `supabase/migrations/20261116010000_discord_message_poll_channels.sql`
 
-Then run **GitHub → Actions → Deploy 3475 Discord Message Poller → Run workflow**. This separate workflow deploys only the new `discord-message-poller` endpoint with JWT verification disabled; the endpoint validates its own `DISCORD_POLL_SECRET`. It deliberately does not redeploy the existing redeem backend or slash-command endpoint.
+The second migration preserves the current channel cursor, so adding multi-channel support does not reset its message history.
+
+Then run **GitHub → Actions → Deploy 3475 Discord Message Poller → Run workflow**. This separate workflow deploys only the `discord-message-poller` endpoint with JWT verification disabled; the endpoint validates its own `DISCORD_POLL_SECRET`. It deliberately does not redeploy the existing redeem backend or slash-command endpoint.
 
 ### Schedule every five minutes
 
-Enable the `pg_cron`, `pg_net`, and `vault` extensions in the Supabase Dashboard if they are not already enabled. In the SQL Editor, store the project URL and the exact same poll secret used above in Vault (replace the placeholder values locally; never commit them):
+The existing Cron job remains unchanged. It calls the poller every five minutes. Store the project URL and the exact same poll secret in Supabase Vault as described above. There is no need to create another Cron job when adding channels.
 
-```sql
-select vault.create_secret('https://pwqkpeykjyujhnreleax.supabase.co', 'discord_poller_project_url');
-select vault.create_secret('REPLACE_WITH_THE_SAME_DISCORD_POLL_SECRET', 'discord_poller_secret');
-
-select cron.schedule(
-  '3475-discord-message-poller',
-  '*/5 * * * *',
-  $$
-  select net.http_post(
-    url := (select decrypted_secret from vault.decrypted_secrets where name = 'discord_poller_project_url')
-      || '/functions/v1/discord-message-poller',
-    headers := jsonb_build_object(
-      'Content-Type', 'application/json',
-      'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'discord_poller_secret')
-    ),
-    body := '{}'::jsonb,
-    timeout_milliseconds := 180000
-  );
-  $$
-);
-```
-
-If either Vault secret name already exists, update that secret in the Vault UI instead of creating a duplicate. To inspect the job, run:
-
-```sql
-select jobid, jobname, schedule, active from cron.job
-where jobname = '3475-discord-message-poller';
-```
-
-On its first run, the poller records the newest message as its starting point and deliberately ignores older channel history. New messages are checked on the next five-minute poll, so command response latency can be up to about five minutes. A redeem batch can take longer than one polling interval; a database lock prevents overlapping poll runs.
+Each newly added channel gets its own baseline on its first poll; older messages in that channel are deliberately ignored. New messages are checked on the next five-minute poll, so command response latency can be up to about five minutes. The poller processes at most one alliance batch per Cron invocation to avoid overlapping long-running batches across channels.
 
 ### Test
 
-After the first scheduled run initializes the cursor, send a test command in the dedicated channel:
+After a new channel's first poll initializes its cursor, send a new command in that channel:
 
 ```text
 .redeem ARX ABC123

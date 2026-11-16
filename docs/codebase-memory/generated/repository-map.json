@@ -193,9 +193,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 96,
+    "file_count": 97,
     "digest_algorithm": "sha256",
-    "content_digest": "a7d0aa0aa579a26320c34ddb17dca2e0c3c3745441019b165e63b8050d0b5b0d",
+    "content_digest": "e3b38cb61fb5ca4e1531591dee1cdd1b79dc8f494ac6528898da572ea36f22a1",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -255,7 +255,7 @@
       },
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
-        "sha256": "2a0af3561634d35e0bc69e38716a73a3a0a02d2c45195e0f069e47f386ffda45"
+        "sha256": "d6d6a94850d974eec5f8b879acccf146b74ffb9f326ad984dc8ff70d6392130c"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
@@ -291,7 +291,7 @@
       },
       {
         "path": "docs/codebase-memory/features/redeem-and-extras.md",
-        "sha256": "595e7e798dda1c057cd17775adda02f7dfb3e9e40226ff3428f30b6c649c4342"
+        "sha256": "9fdee8546c9235affeb85edd9f42b393be96dcd68dc22cd8d5fe2c2e9d6c21b1"
       },
       {
         "path": "docs/codebase-memory/features/reservation.md",
@@ -419,7 +419,7 @@
       },
       {
         "path": "supabase/functions/discord-message-poller/index.ts",
-        "sha256": "6221ffa0e72bbab1704987d43436d9f6dae91b04f4ede4a9ffff35ad3adfe9aa"
+        "sha256": "d4f5c9fc827edacc514fcce21a01499d50736eb19cd493f88950f9356d5ac64b"
       },
       {
         "path": "supabase/functions/index.ts",
@@ -444,6 +444,10 @@
       {
         "path": "supabase/migrations/20261116000000_discord_message_poll_state.sql",
         "sha256": "da67b1fe7fd9210d22365c585d5dcf851cd32d76b7e03adf7f65eaa6ca9744dd"
+      },
+      {
+        "path": "supabase/migrations/20261116010000_discord_message_poll_channels.sql",
+        "sha256": "f19968df0487e0b653906fadf4fd66786108adb037da2a31165f098d90b57a18"
       },
       {
         "path": "supabase_migration_additional_time_slots.sql",

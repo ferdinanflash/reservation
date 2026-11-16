@@ -46,9 +46,9 @@ Gift-code signing material must be server-only and configured through Supabase s
 
 ## Discord text-channel polling (new)
 
-- `supabase/functions/discord-message-poller/index.ts` polls only dedicated channel `1570961739846262876` through Discord REST API; it does not require a persistent Gateway worker.
+- `supabase/functions/discord-message-poller/index.ts` polls the comma-separated `DISCORD_CHANNEL_IDS` Edge Function secret through Discord REST API; when unset it falls back to `1570961739846262876`. It does not require a persistent Gateway worker.
 - Accepts `.redeem <ALLIANCE> <CODE>`; alliance is normalized to uppercase and validated against ARX, IDN, ZXC, VNX, CAT.
-- Uses `public.discord_message_poll_state` (migration `supabase/migrations/20261116000000_discord_message_poll_state.sql`) for the last-seen message cursor and an execution lock.
-- Requires Supabase Edge Function secrets `DISCORD_BOT_TOKEN` and `DISCORD_POLL_SECRET`, Discord Message Content Intent, and channel permissions View Channel / Read Message History / Send Messages.
+- Uses `public.discord_message_poll_state` (migration `supabase/migrations/20261116000000_discord_message_poll_state.sql`) for the global execution lock, and `public.discord_message_poll_channels` (migration `supabase/migrations/20261116010000_discord_message_poll_channels.sql`) for independent per-channel cursors.
+- Requires Supabase Edge Function secrets `DISCORD_BOT_TOKEN`, `DISCORD_POLL_SECRET`, and optionally comma-separated `DISCORD_CHANNEL_IDS`; every configured channel needs View Channel / Read Message History / Send Messages and Message Content Intent enabled.
 - Supabase Cron + pg_net + Vault invoke the poller every five minutes. First run seeds the cursor at the newest message and intentionally ignores prior channel history. Deploy independently with `.github/workflows/deploy-discord-message-poller.yml`; the existing slash-command deployment workflow is not changed.
-- The poller reuses the existing `redeem-giftcode` Edge Function and does not modify the slash-command handler.
+- The poller reuses the existing `redeem-giftcode` Edge Function and does not modify the slash-command handler. It reads nested upstream response payloads and stops the batch on invalid/expired/timeout or unclassified errors to avoid continuing a possibly invalid code.
