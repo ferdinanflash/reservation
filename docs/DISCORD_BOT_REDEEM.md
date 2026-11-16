@@ -136,7 +136,7 @@ The project already supplies `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_
 
 ### Deploy
 
-Apply both migrations, in order:
+Apply the migrations in order:
 
 - `supabase/migrations/20261116000000_discord_message_poll_state.sql`
 - `supabase/migrations/20261116010000_discord_message_poll_channels.sql`
