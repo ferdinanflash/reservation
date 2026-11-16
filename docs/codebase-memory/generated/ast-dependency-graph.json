@@ -5,34 +5,55 @@
   "source_files": 24,
   "function_count": 427,
   "import_count": 5,
-  "call_edge_count": 1194,
+  "call_edge_count": 1199,
   "edges": [
     {
       "from": "common.js#<top-level>",
       "to": "common.js#detectInstalledPwa",
       "kind": "call",
-      "line": 356,
+      "line": 359,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#detectInstalledPwa",
+      "to": "common.js#hideInstallAppButton",
+      "kind": "call",
+      "line": 267,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#detectInstalledPwa",
+      "to": "common.js#hideInstallAppButton",
+      "kind": "call",
+      "line": 274,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#detectInstalledPwa",
+      "to": "common.js#hideInstallAppButton",
+      "kind": "call",
+      "line": 285,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#detectInstalledPwa",
+      "to": "common.js#hideInstallAppButton",
+      "kind": "call",
+      "line": 296,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#detectInstalledPwa",
       "to": "common.js#isRunningAsInstalledApp",
       "kind": "call",
-      "line": 263,
+      "line": 266,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#detectInstalledPwa",
-      "to": "common.js#setInstallButtonMode",
+      "to": "common.js#showInstallAppButton",
       "kind": "call",
-      "line": 281,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "common.js#detectInstalledPwa",
-      "to": "common.js#setInstallButtonMode",
-      "kind": "call",
-      "line": 288,
+      "line": 294,
       "confidence": "static-name-match"
     },
     {
@@ -46,14 +67,28 @@
       "from": "common.js#installWebApp",
       "to": "common.js#closeNavMenu",
       "kind": "call",
-      "line": 319,
+      "line": 328,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#installWebApp",
-      "to": "common.js#setInstallButtonMode",
+      "to": "common.js#hideInstallAppButton",
       "kind": "call",
-      "line": 335,
+      "line": 337,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#installWebApp",
+      "to": "common.js#hideInstallAppButton",
+      "kind": "call",
+      "line": 345,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#installWebApp",
+      "to": "common.js#hideInstallAppButton",
+      "kind": "call",
+      "line": 347,
       "confidence": "static-name-match"
     },
     {
@@ -85,17 +120,17 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "common.js#openInstalledApp",
-      "to": "common.js#closeNavMenu",
+      "from": "common.js#showInstallAppButton",
+      "to": "common.js#hideInstallAppButton",
       "kind": "call",
-      "line": 350,
+      "line": 244,
       "confidence": "static-name-match"
     },
     {
-      "from": "common.js#setInstallButtonMode",
+      "from": "common.js#showInstallAppButton",
       "to": "common.js#isRunningAsInstalledApp",
       "kind": "call",
-      "line": 241,
+      "line": 243,
       "confidence": "static-name-match"
     },
     {
@@ -8432,7 +8467,7 @@
       "id": "common.js#detectInstalledPwa",
       "name": "detectInstalledPwa",
       "file": "common.js",
-      "line": 260,
+      "line": 262,
       "kind": "function"
     },
     {
@@ -8457,10 +8492,17 @@
       "kind": "function"
     },
     {
+      "id": "common.js#hideInstallAppButton",
+      "name": "hideInstallAppButton",
+      "file": "common.js",
+      "line": 238,
+      "kind": "function"
+    },
+    {
       "id": "common.js#installWebApp",
       "name": "installWebApp",
       "file": "common.js",
-      "line": 318,
+      "line": 327,
       "kind": "function"
     },
     {
@@ -8485,13 +8527,6 @@
       "kind": "function"
     },
     {
-      "id": "common.js#openInstalledApp",
-      "name": "openInstalledApp",
-      "file": "common.js",
-      "line": 349,
-      "kind": "function"
-    },
-    {
       "id": "common.js#sanitizeCsvField",
       "name": "sanitizeCsvField",
       "file": "common.js",
@@ -8499,10 +8534,10 @@
       "kind": "function"
     },
     {
-      "id": "common.js#setInstallButtonMode",
-      "name": "setInstallButtonMode",
+      "id": "common.js#showInstallAppButton",
+      "name": "showInstallAppButton",
       "file": "common.js",
-      "line": 238,
+      "line": 242,
       "kind": "function"
     },
     {
@@ -11562,5 +11597,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "323ca970451c6383d001ac90dfbbeb202023162b802dbb48e498b2ee623b2dfc"
+  "source_digest": "21931d4077d02a054bb6221d860887784c7e569d18ae9fc017fb3803d629ea69"
 }
