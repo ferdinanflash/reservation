@@ -3,10 +3,38 @@
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
   "source_files": 24,
-  "function_count": 423,
+  "function_count": 427,
   "import_count": 5,
-  "call_edge_count": 1187,
+  "call_edge_count": 1194,
   "edges": [
+    {
+      "from": "common.js#<top-level>",
+      "to": "common.js#detectInstalledPwa",
+      "kind": "call",
+      "line": 334,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#<top-level>",
+      "to": "common.js#isRunningAsInstalledApp",
+      "kind": "call",
+      "line": 276,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#detectInstalledPwa",
+      "to": "common.js#isRunningAsInstalledApp",
+      "kind": "call",
+      "line": 256,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#detectInstalledPwa",
+      "to": "common.js#setInstallButtonMode",
+      "kind": "call",
+      "line": 268,
+      "confidence": "static-name-match"
+    },
     {
       "from": "common.js#displayNickname",
       "to": "common.js#capZalgo",
@@ -18,7 +46,14 @@
       "from": "common.js#installWebApp",
       "to": "common.js#closeNavMenu",
       "kind": "call",
-      "line": 247,
+      "line": 298,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#installWebApp",
+      "to": "common.js#setInstallButtonMode",
+      "kind": "call",
+      "line": 313,
       "confidence": "static-name-match"
     },
     {
@@ -47,6 +82,20 @@
       "to": "common.js#escapeHtml",
       "kind": "call",
       "line": 133,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#openInstalledApp",
+      "to": "common.js#closeNavMenu",
+      "kind": "call",
+      "line": 328,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#setInstallButtonMode",
+      "to": "common.js#isRunningAsInstalledApp",
+      "kind": "call",
+      "line": 236,
       "confidence": "static-name-match"
     },
     {
@@ -8380,6 +8429,13 @@
       "kind": "function"
     },
     {
+      "id": "common.js#detectInstalledPwa",
+      "name": "detectInstalledPwa",
+      "file": "common.js",
+      "line": 253,
+      "kind": "function"
+    },
+    {
       "id": "common.js#displayNickname",
       "name": "displayNickname",
       "file": "common.js",
@@ -8404,7 +8460,7 @@
       "id": "common.js#installWebApp",
       "name": "installWebApp",
       "file": "common.js",
-      "line": 246,
+      "line": 297,
       "kind": "function"
     },
     {
@@ -8415,6 +8471,13 @@
       "kind": "function"
     },
     {
+      "id": "common.js#isRunningAsInstalledApp",
+      "name": "isRunningAsInstalledApp",
+      "file": "common.js",
+      "line": 227,
+      "kind": "function"
+    },
+    {
       "id": "common.js#nicknameHtml",
       "name": "nicknameHtml",
       "file": "common.js",
@@ -8422,10 +8485,24 @@
       "kind": "function"
     },
     {
+      "id": "common.js#openInstalledApp",
+      "name": "openInstalledApp",
+      "file": "common.js",
+      "line": 327,
+      "kind": "function"
+    },
+    {
       "id": "common.js#sanitizeCsvField",
       "name": "sanitizeCsvField",
       "file": "common.js",
       "line": 156,
+      "kind": "function"
+    },
+    {
+      "id": "common.js#setInstallButtonMode",
+      "name": "setInstallButtonMode",
+      "file": "common.js",
+      "line": 233,
       "kind": "function"
     },
     {
@@ -11485,5 +11562,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "b0bbd057112e3bd8499ef5bac8e403e82776f98f575362d276ae655bfc7141d3"
+  "source_digest": "725603b3f88108f8bcb1154c4b32d1a4550c7945abde818681deb556d8f54ee5"
 }
