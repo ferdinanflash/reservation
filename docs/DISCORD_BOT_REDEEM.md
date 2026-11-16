@@ -141,7 +141,7 @@ Apply the migration:
 supabase/migrations/20261116000000_discord_message_poll_state.sql
 ```
 
-Then run the **Deploy 3475 Discord Redeem Functions** GitHub Actions workflow. It deploys the new `discord-message-poller` endpoint with JWT verification disabled; the endpoint validates its own `DISCORD_POLL_SECRET`.
+Then run **GitHub → Actions → Deploy 3475 Discord Message Poller → Run workflow**. This separate workflow deploys only the new `discord-message-poller` endpoint with JWT verification disabled; the endpoint validates its own `DISCORD_POLL_SECRET`. It deliberately does not redeploy the existing redeem backend or slash-command endpoint.
 
 ### Schedule every five minutes
 

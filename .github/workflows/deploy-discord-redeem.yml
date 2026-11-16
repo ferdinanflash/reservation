@@ -36,5 +36,3 @@ jobs:
       - name: Deploy Discord interactions endpoint
         run: supabase functions deploy discord-interactions --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt --yes
 
-      - name: Deploy Discord message poller
-        run: supabase functions deploy discord-message-poller --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt --yes
