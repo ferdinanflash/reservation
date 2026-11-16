@@ -193,9 +193,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 95,
+    "file_count": 96,
     "digest_algorithm": "sha256",
-    "content_digest": "c177adea2fe6a637c8d8118588caa2f6dcb21772b684b1b463f0f65795495024",
+    "content_digest": "a7d0aa0aa579a26320c34ddb17dca2e0c3c3745441019b165e63b8050d0b5b0d",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -206,8 +206,12 @@
         "sha256": "b4189ae4ade06404b032b33bdd622815c2440e9eb411a8792eb924a68f71af42"
       },
       {
+        "path": ".github/workflows/deploy-discord-message-poller.yml",
+        "sha256": "c3fed990f008ac231ed0e4d7e0154de3ed1492ddf524cb3f97827cb9db2362d5"
+      },
+      {
         "path": ".github/workflows/deploy-discord-redeem.yml",
-        "sha256": "ea13446ff57cc6f828ee7d133e3ffd89ac64226d3a75fa96f3d3fd3b1f594dbe"
+        "sha256": "9e2d362194e61e69e07c58435c414619f626e0979afbbe3eee0eaf4ec1b112c8"
       },
       {
         "path": ".github/workflows/register-discord-commands.yml",
@@ -251,7 +255,7 @@
       },
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
-        "sha256": "86aad0b5842de4b1f1249318fab849b099f695c75298c41064b70de95c9a2336"
+        "sha256": "2a0af3561634d35e0bc69e38716a73a3a0a02d2c45195e0f069e47f386ffda45"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
@@ -287,7 +291,7 @@
       },
       {
         "path": "docs/codebase-memory/features/redeem-and-extras.md",
-        "sha256": "8b5eac4ef60311b12072e4bff6e133ab7d8c071b84cd524d4046b50c4355a758"
+        "sha256": "595e7e798dda1c057cd17775adda02f7dfb3e9e40226ff3428f30b6c649c4342"
       },
       {
         "path": "docs/codebase-memory/features/reservation.md",
