@@ -193,9 +193,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 97,
+    "file_count": 98,
     "digest_algorithm": "sha256",
-    "content_digest": "d79d489829a69ba77da2ed076a0b18e72dacae673f790b057ae978d330321518",
+    "content_digest": "f87d1008dff2c4ba79fabc62c40f5bbba765354320202a5e07c51278d473cc36",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -419,7 +419,7 @@
       },
       {
         "path": "supabase/functions/discord-message-poller/index.ts",
-        "sha256": "3fb563bc3e6fb56bd89298a9da50cd23a0690c293ee035d033e78b7f8164a2d1"
+        "sha256": "6df0e3540c23d1ed64470ffffcfe30bb9b8b791f5f6b808f9f80849856f77429"
       },
       {
         "path": "supabase/functions/index.ts",
@@ -448,6 +448,10 @@
       {
         "path": "supabase/migrations/20261116010000_discord_message_poll_channels.sql",
         "sha256": "f19968df0487e0b653906fadf4fd66786108adb037da2a31165f098d90b57a18"
+      },
+      {
+        "path": "supabase/migrations/20261116020000_discord_message_cleanup_queue.sql",
+        "sha256": "452245bbea8c44e1756fb78c73def90621246f92e22dd24d31973f70fad3136c"
       },
       {
         "path": "supabase_migration_additional_time_slots.sql",
