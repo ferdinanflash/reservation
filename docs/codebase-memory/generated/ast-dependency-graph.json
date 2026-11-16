@@ -3,57 +3,57 @@
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
   "source_files": 24,
-  "function_count": 427,
+  "function_count": 429,
   "import_count": 5,
-  "call_edge_count": 1199,
+  "call_edge_count": 1201,
   "edges": [
     {
       "from": "common.js#<top-level>",
       "to": "common.js#detectInstalledPwa",
       "kind": "call",
-      "line": 359,
+      "line": 366,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#detectInstalledPwa",
       "to": "common.js#hideInstallAppButton",
       "kind": "call",
-      "line": 267,
+      "line": 270,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#detectInstalledPwa",
       "to": "common.js#hideInstallAppButton",
       "kind": "call",
-      "line": 274,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "common.js#detectInstalledPwa",
-      "to": "common.js#hideInstallAppButton",
-      "kind": "call",
-      "line": 285,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "common.js#detectInstalledPwa",
-      "to": "common.js#hideInstallAppButton",
-      "kind": "call",
-      "line": 296,
+      "line": 299,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#detectInstalledPwa",
       "to": "common.js#isRunningAsInstalledApp",
       "kind": "call",
-      "line": 266,
+      "line": 269,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#detectInstalledPwa",
       "to": "common.js#showInstallAppButton",
       "kind": "call",
-      "line": 294,
+      "line": 297,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#detectInstalledPwa",
+      "to": "common.js#showOpenAppButton",
+      "kind": "call",
+      "line": 277,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#detectInstalledPwa",
+      "to": "common.js#showOpenAppButton",
+      "kind": "call",
+      "line": 288,
       "confidence": "static-name-match"
     },
     {
@@ -67,28 +67,28 @@
       "from": "common.js#installWebApp",
       "to": "common.js#closeNavMenu",
       "kind": "call",
-      "line": 328,
+      "line": 335,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#installWebApp",
       "to": "common.js#hideInstallAppButton",
       "kind": "call",
-      "line": 337,
+      "line": 354,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#installWebApp",
-      "to": "common.js#hideInstallAppButton",
+      "to": "common.js#showOpenAppButton",
       "kind": "call",
-      "line": 345,
+      "line": 344,
       "confidence": "static-name-match"
     },
     {
       "from": "common.js#installWebApp",
-      "to": "common.js#hideInstallAppButton",
+      "to": "common.js#showOpenAppButton",
       "kind": "call",
-      "line": 347,
+      "line": 352,
       "confidence": "static-name-match"
     },
     {
@@ -120,17 +120,31 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "common.js#showInstallAppButton",
+      "from": "common.js#setInstallAppButton",
       "to": "common.js#hideInstallAppButton",
       "kind": "call",
       "line": 244,
       "confidence": "static-name-match"
     },
     {
-      "from": "common.js#showInstallAppButton",
+      "from": "common.js#setInstallAppButton",
       "to": "common.js#isRunningAsInstalledApp",
       "kind": "call",
       "line": 243,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#showInstallAppButton",
+      "to": "common.js#setInstallAppButton",
+      "kind": "call",
+      "line": 262,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#showOpenAppButton",
+      "to": "common.js#setInstallAppButton",
+      "kind": "call",
+      "line": 263,
       "confidence": "static-name-match"
     },
     {
@@ -8467,7 +8481,7 @@
       "id": "common.js#detectInstalledPwa",
       "name": "detectInstalledPwa",
       "file": "common.js",
-      "line": 262,
+      "line": 265,
       "kind": "function"
     },
     {
@@ -8502,7 +8516,7 @@
       "id": "common.js#installWebApp",
       "name": "installWebApp",
       "file": "common.js",
-      "line": 327,
+      "line": 334,
       "kind": "function"
     },
     {
@@ -8534,10 +8548,24 @@
       "kind": "function"
     },
     {
+      "id": "common.js#setInstallAppButton",
+      "name": "setInstallAppButton",
+      "file": "common.js",
+      "line": 242,
+      "kind": "function"
+    },
+    {
       "id": "common.js#showInstallAppButton",
       "name": "showInstallAppButton",
       "file": "common.js",
-      "line": 242,
+      "line": 262,
+      "kind": "function"
+    },
+    {
+      "id": "common.js#showOpenAppButton",
+      "name": "showOpenAppButton",
+      "file": "common.js",
+      "line": 263,
       "kind": "function"
     },
     {
@@ -11597,5 +11625,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "21931d4077d02a054bb6221d860887784c7e569d18ae9fc017fb3803d629ea69"
+  "source_digest": "c0b0867e8e0c3cdff3a411454755964c4e4c7b618cffbfed8570d76310986b0a"
 }
