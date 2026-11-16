@@ -239,25 +239,28 @@ function hideInstallAppButton() {
     if (installAppButton) installAppButton.hidden = true;
 }
 
-function showInstallAppButton() {
+function setInstallAppButton(mode) {
     if (!installAppButton || isRunningAsInstalledApp()) {
         hideInstallAppButton();
         return;
     }
-
-    installAppButton.dataset.mode = 'install';
-    installAppButton.href = '#';
+    const isOpenMode = mode === 'open';
+    installAppButton.dataset.mode = isOpenMode ? 'open' : 'install';
+    // A normal same-tab link lets Android/Chrome attempt app-link capture.
+    installAppButton.href = isOpenMode ? PWA_APP_ID : '#';
     installAppButton.removeAttribute('target');
     installAppButton.removeAttribute('rel');
     const labelElement = installAppButton.querySelector('[data-i18n]');
+    const key = isOpenMode ? 'open_app_btn' : 'install_app_btn';
     if (labelElement) {
-        labelElement.dataset.i18n = 'install_app_btn';
-        labelElement.textContent = typeof window.t === 'function'
-            ? window.t('install_app_btn')
-            : 'Install App';
+        labelElement.dataset.i18n = key;
+        labelElement.textContent = typeof window.t === 'function' ? window.t(key) : (isOpenMode ? 'Open in App' : 'Install App');
     }
     installAppButton.hidden = false;
 }
+
+function showInstallAppButton() { setInstallAppButton('install'); }
+function showOpenAppButton() { setInstallAppButton('open'); }
 
 async function detectInstalledPwa() {
     if (!installAppButton) return false;
@@ -271,7 +274,7 @@ async function detectInstalledPwa() {
     // appinstalled is a durable signal across browser refreshes.
     try {
         if (localStorage.getItem(PWA_INSTALLED_KEY) === '1') {
-            hideInstallAppButton();
+            showOpenAppButton();
             return true;
         }
     } catch (_) {}
@@ -282,7 +285,7 @@ async function detectInstalledPwa() {
             const apps = await navigator.getInstalledRelatedApps();
             if (apps.some(app => app.platform === 'webapp')) {
                 try { localStorage.setItem(PWA_INSTALLED_KEY, '1'); } catch (_) {}
-                hideInstallAppButton();
+                showOpenAppButton();
                 return true;
             }
         } catch (error) {
@@ -302,8 +305,12 @@ if (installAppButton) {
     installAppButton.hidden = true;
     installAppButton.dataset.mode = 'install';
     installAppButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        if (installAppButton.dataset.mode === 'install') installWebApp();
+        if (installAppButton.dataset.mode === 'install') {
+            event.preventDefault();
+            installWebApp();
+            return;
+        }
+        if (typeof closeNavMenu === 'function') closeNavMenu();
     });
 }
 
@@ -321,7 +328,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
 window.addEventListener('appinstalled', () => {
     deferredInstallPrompt = null;
     try { localStorage.setItem(PWA_INSTALLED_KEY, '1'); } catch (_) {}
-    hideInstallAppButton();
+    showOpenAppButton();
 });
 
 async function installWebApp() {
@@ -333,8 +340,8 @@ async function installWebApp() {
     try {
         if (supportsWebInstall) {
             await navigator.install();
-            // appinstalled records the confirmed state and hides the button.
-            hideInstallAppButton();
+            try { localStorage.setItem(PWA_INSTALLED_KEY, '1'); } catch (_) {}
+            showOpenAppButton();
         } else if (deferredInstallPrompt) {
             const promptEvent = deferredInstallPrompt;
             deferredInstallPrompt = null;
@@ -342,7 +349,7 @@ async function installWebApp() {
             const choice = await promptEvent.userChoice;
             if (choice && choice.outcome === 'accepted') {
                 try { localStorage.setItem(PWA_INSTALLED_KEY, '1'); } catch (_) {}
-                hideInstallAppButton();
+                showOpenAppButton();
             } else if (!deferredInstallPrompt) {
                 hideInstallAppButton();
             }
