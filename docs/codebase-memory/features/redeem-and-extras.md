@@ -42,3 +42,13 @@ Gift-code signing material must be server-only and configured through Supabase s
 - [ ] If `troops_power` deletion logic changes, confirm upstream invalid-player signal and exact row filter.
 - [ ] If Recently Accepted fields change, inspect reservation schema and icon mapping in `js/app-core.js`.
 - [ ] Check translations, modal layout and responsive behavior.
+
+
+## Discord text-channel polling (new)
+
+- `supabase/functions/discord-message-poller/index.ts` polls only dedicated channel `1570961739846262876` through Discord REST API; it does not require a persistent Gateway worker.
+- Accepts `.redeem <ALLIANCE> <CODE>`; alliance is normalized to uppercase and validated against ARX, IDN, ZXC, VNX, CAT.
+- Uses `public.discord_message_poll_state` (migration `supabase/migrations/20261116000000_discord_message_poll_state.sql`) for the last-seen message cursor and an execution lock.
+- Requires Supabase Edge Function secrets `DISCORD_BOT_TOKEN` and `DISCORD_POLL_SECRET`, Discord Message Content Intent, and channel permissions View Channel / Read Message History / Send Messages.
+- Supabase Cron + pg_net + Vault invoke the poller every minute. First run seeds the cursor at the newest message and intentionally ignores prior channel history.
+- The poller reuses the existing `redeem-giftcode` Edge Function and does not modify the slash-command handler.
