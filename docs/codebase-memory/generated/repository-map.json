@@ -195,7 +195,7 @@
     "generator_version": 1,
     "file_count": 98,
     "digest_algorithm": "sha256",
-    "content_digest": "db49a96aa0eca22d829edfd49a475fc9aa0986661d99a19048c74855caf3974b",
+    "content_digest": "fb008d4e1aa005943918ccda4a9e5121de8922b7536ed8587b55846634c04c0f",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -335,7 +335,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "40914990bf9372c3df0b22dc63d481b876612eead6490e815dca3ce327d50c3f"
+        "sha256": "18f75ad4944663cd164848798bd2042c2ea3addc0180bcd501133fbd5134676c"
       },
       {
         "path": "js/app-applications.js",
@@ -383,7 +383,7 @@
       },
       {
         "path": "lang.js",
-        "sha256": "8953003829f24d7015b1ae2fff99667fd494f60cd5ded9f58806fc1d3970c405"
+        "sha256": "1717023677c96a00027d558a30f3c652cae6790258c52e48c76604bd4387927c"
       },
       {
         "path": "live/index.html",
@@ -523,7 +523,7 @@
       },
       {
         "path": "sw.js",
-        "sha256": "e030bc2d0b2e7e2235f9feec431e93c655e17bd06cb92c43e8f96a83deb537ab"
+        "sha256": "ef75375c16171fe45a3c1344881f8988e82f171a31f8ba730a28981742c3e532"
       },
       {
         "path": "tools/codebase-memory-mcp/README.md",
