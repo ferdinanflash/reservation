@@ -195,28 +195,35 @@ async function discordRequest(path: string, init: RequestInit = {}) {
   return response.status === 204 ? null : response.json();
 }
 
-async function sendChannelMessage(channelId: string, content: string) {
-  await discordRequest(`/channels/${channelId}/messages`, {
+async function sendChannelMessage(channelId: string, content: string): Promise<string> {
+  const message = await discordRequest(`/channels/${channelId}/messages`, {
     method: "POST",
     body: JSON.stringify({
       content: content.slice(0, 1950),
       allowed_mentions: { parse: [] },
     }),
-  });
+  }) as any;
+  return String(message?.id ?? "");
 }
 
-async function sendLongResult(channelId: string, lines: string[]) {
+async function sendLongResult(channelId: string, lines: string[]): Promise<string[]> {
+  const messageIds: string[] = [];
   let chunk = "";
   for (const line of lines) {
     const candidate = chunk ? `${chunk}\n${line}` : line;
     if (candidate.length > 1850 && chunk) {
-      await sendChannelMessage(channelId, chunk);
+      const id = await sendChannelMessage(channelId, chunk);
+      if (id) messageIds.push(id);
       chunk = line.slice(0, 1850);
     } else {
       chunk = candidate;
     }
   }
-  if (chunk) await sendChannelMessage(channelId, chunk);
+  if (chunk) {
+    const id = await sendChannelMessage(channelId, chunk);
+    if (id) messageIds.push(id);
+  }
+  return messageIds;
 }
 
 async function loadAllianceMembers(alliance: string): Promise<Member[]> {
@@ -333,7 +340,9 @@ async function processCommand(channelId: string, allianceInput: string, code: st
     return;
   }
 
-  await sendChannelMessage(channelId, `🎁 **3475 REDEEM — ALLIANCE ${alliance}**\nGift Code: **${code}**\nMemproses ${members.length} player...`);
+  const cleanupMessageIds: string[] = [];
+  const progressMessageId = await sendChannelMessage(channelId, `🎁 **3475 REDEEM — ALLIANCE ${alliance}**\nGift Code: **${code}**\nMemproses ${members.length} player...`);
+  if (progressMessageId) cleanupMessageIds.push(progressMessageId);
   const results: Outcome[] = [];
 
   for (let i = 0; i < members.length; i++) {
