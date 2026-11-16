@@ -115,7 +115,7 @@ Supported format:
 .redeem IDN XYZ789
 ```
 
-Alliance names are normalized to uppercase. Supported alliances are ARX, IDN, ZXC, VNX, and CAT. The poller handles at most one redeem batch per Cron invocation, ignores bot/webhook messages, stores an independent message cursor for each channel, and caps each alliance run at 100 FIDs.
+Alliance names are normalized to uppercase. Supported alliances are ARX, IDN, ZXC, VNX, and CAT. The poller handles at most one redeem batch per Cron invocation, ignores bot/webhook messages, stores an independent message cursor for each channel, and caps each alliance run at 100 FIDs. When a text-channel alliance run has at least one successful redemption, the poller queues only the bot-authored progress and result messages from that run for deletion eight hours after the batch finishes. User messages and messages from runs with no successful redemptions are not queued. Due deletions are processed by the same five-minute poller schedule.
 
 ### Discord setup
 
@@ -140,6 +140,7 @@ Apply both migrations, in order:
 
 - `supabase/migrations/20261116000000_discord_message_poll_state.sql`
 - `supabase/migrations/20261116010000_discord_message_poll_channels.sql`
+- `supabase/migrations/20261116020000_discord_message_cleanup_queue.sql`
 
 The second migration preserves the current channel cursor, so adding multi-channel support does not reset its message history.
 
