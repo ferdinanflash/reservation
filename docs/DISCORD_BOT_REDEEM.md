@@ -102,3 +102,96 @@ If `DISCORD_GUILD_ID` is omitted, commands are registered globally and may take 
 Try `/redeem single` first with a player and code you control. Then test `/redeem alliance` with a small alliance/code you control. Every result is public in the channel.
 
 Never share bot tokens, Supabase service-role keys, or the new signing secret.
+
+
+## 7. Read `.redeem` messages from one dedicated channel (Supabase Cron)
+
+The optional text-command listener polls only Discord channel `1570961739846262876` using the Discord REST API. It does not open a persistent Gateway connection and does not replace the existing slash commands.
+
+Supported format:
+
+```text
+.redeem ARX ABC123
+.redeem IDN XYZ789
+```
+
+Alliance names are normalized to uppercase. Supported alliances are ARX, IDN, ZXC, VNX, and CAT. The poller handles one redeem batch per invocation, ignores bot/webhook messages, stores a message cursor, and caps each alliance run at 100 FIDs.
+
+### Discord setup
+
+1. In Discord Developer Portal, open the application → **Bot** → **Privileged Gateway Intents**.
+2. Enable **Message Content Intent** and save. Discord also applies this intent to message content returned by the HTTP API.
+3. Ensure the bot has **View Channel**, **Read Message History**, and **Send Messages** permissions in the dedicated channel.
+4. Keep the channel ID fixed to the configured channel. The poller does not read other channels.
+
+### Supabase secrets
+
+Add these Edge Function secrets in Supabase → Project Settings → Edge Functions → Secrets:
+
+- `DISCORD_BOT_TOKEN`: the bot token from Discord Developer Portal. Keep it secret.
+- `DISCORD_POLL_SECRET`: a new random secret used only to authenticate the scheduled poll request.
+
+The project already supplies `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` to Edge Functions. Never put the bot token or service-role key in GitHub source, SQL committed to the repository, or browser code.
+
+### Deploy
+
+Apply the migration:
+
+```text
+supabase/migrations/20261116000000_discord_message_poll_state.sql
+```
+
+Then run the **Deploy 3475 Discord Redeem Functions** GitHub Actions workflow. It deploys the new `discord-message-poller` endpoint with JWT verification disabled; the endpoint validates its own `DISCORD_POLL_SECRET`.
+
+### Schedule every minute
+
+Enable the `pg_cron`, `pg_net`, and `vault` extensions in the Supabase Dashboard if they are not already enabled. In the SQL Editor, store the project URL and the exact same poll secret used above in Vault (replace the placeholder values locally; never commit them):
+
+```sql
+select vault.create_secret('https://pwqkpeykjyujhnreleax.supabase.co', 'discord_poller_project_url');
+select vault.create_secret('REPLACE_WITH_THE_SAME_DISCORD_POLL_SECRET', 'discord_poller_secret');
+
+select cron.schedule(
+  '3475-discord-message-poller',
+  '* * * * *',
+  $$
+  select net.http_post(
+    url := (select decrypted_secret from vault.decrypted_secrets where name = 'discord_poller_project_url')
+      || '/functions/v1/discord-message-poller',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'discord_poller_secret')
+    ),
+    body := '{}'::jsonb,
+    timeout_milliseconds := 10000
+  );
+  $$
+);
+```
+
+If either Vault secret name already exists, update that secret in the Vault UI instead of creating a duplicate. To inspect the job, run:
+
+```sql
+select jobid, jobname, schedule, active from cron.job
+where jobname = '3475-discord-message-poller';
+```
+
+On its first run, the poller records the newest message as its starting point and deliberately ignores older channel history. New messages are checked on the next one-minute poll. A redeem batch can take longer than one polling interval; a database lock prevents overlapping poll runs.
+
+### Test
+
+After the first scheduled run initializes the cursor, send a test command in the dedicated channel:
+
+```text
+.redeem ARX ABC123
+```
+
+Use a valid test gift code and be aware that the command redeems for the entire alliance roster. Do not test with a code unless you intend to redeem it for those players.
+
+To disable polling, run:
+
+```sql
+select cron.unschedule('3475-discord-message-poller');
+```
+
+The existing `/redeem single` and `/redeem alliance` slash commands remain available independently.
