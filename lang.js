@@ -4549,6 +4549,17 @@
     Object.assign(TRANSLATIONS.ru, { whatsnew_date: "Последнее обновление: 16 ноя 2026", whatsnew_20_title: "Автоудаление сообщений о погашении в Discord", whatsnew_20_desc: "Сообщения бота из операций погашения в текстовых каналах автоматически удаляются через 8 часов независимо от результата: успех, ошибка, истёкший срок, недействительный код или пропуск." });
     Object.assign(TRANSLATIONS.fr, { whatsnew_date: "Dernière mise à jour : 16 nov. 2026", whatsnew_20_title: "Suppression automatique des messages de récompense Discord", whatsnew_20_desc: "Les messages du bot issus des opérations de récompense dans les salons textuels sont désormais supprimés automatiquement après 8 heures, quel que soit le résultat : réussite, échec, expiration, code invalide ou opération ignorée." });
 
+
+    // PWA install action in the main navigation menu.
+    Object.assign(TRANSLATIONS.en, { install_app_btn: "Install App" });
+    Object.assign(TRANSLATIONS.id, { install_app_btn: "Instal Aplikasi" });
+    Object.assign(TRANSLATIONS.it, { install_app_btn: "Installa app" });
+    Object.assign(TRANSLATIONS.ph, { install_app_btn: "I-install ang App" });
+    Object.assign(TRANSLATIONS.cn, { install_app_btn: "安装应用" });
+    Object.assign(TRANSLATIONS.th, { install_app_btn: "ติดตั้งแอป" });
+    Object.assign(TRANSLATIONS.ru, { install_app_btn: "Установить приложение" });
+    Object.assign(TRANSLATIONS.fr, { install_app_btn: "Installer l’application" });
+
     // Expose globally so script.js / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
