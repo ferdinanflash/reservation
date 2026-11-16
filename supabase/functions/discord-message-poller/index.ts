@@ -202,7 +202,9 @@ async function redeemOne(fid: string, code: string): Promise<Outcome["kind"]> {
     }
     const result = await response.json().catch(() => ({}));
     if (!response.ok) return "error";
-    const data = result?.data && typeof result.data === "object" ? result.data : {};
+    let data = result?.data && typeof result.data === "object" ? result.data : {};
+    // Some upstream responses wrap the actual result one level deeper.
+    if (data.data && typeof data.data === "object") data = data.data;
     const message = String(data.msg ?? data.message ?? result?.error ?? "").trim().toUpperCase().replace(/[.]+$/, "");
     if (result?.ok === true && message === "SUCCESS") return "success";
     if (Number(data.err_code) === 40011 || message === "RECEIVED" || message === "SAME TYPE EXCHANGE") return "already";
@@ -260,14 +262,14 @@ async function processCommand(channelId: string, allianceInput: string, code: st
     const kind = await redeemOne(member.fid, code);
     results.push({ fid: member.fid, nickname: member.nickname, kind });
 
-    if (kind === "invalid" || kind === "expired" || kind === "timeout") {
+    if (kind === "invalid" || kind === "expired" || kind === "timeout" || kind === "error") {
       const skipped = members.slice(i + 1);
       for (const item of skipped) {
         results.push({
           fid: item.fid,
           nickname: item.nickname,
           kind: "error",
-          detail: "Skipped because the code is invalid, expired, or timed out.",
+          detail: "Skipped because the code may be invalid/expired or the redeem response could not be safely classified.",
         });
       }
       break;
@@ -350,8 +352,8 @@ Deno.serve(async (req) => {
         }
 
         const content = String(message.content ?? "").trim();
-        const command = content.match(/^\\.redeem\\s+([A-Za-z0-9_-]{2,12})\\s+([A-Za-z0-9_-]{1,40})$/i);
-        const looksLikeCommand = /^\\.redeem(?:\\s|$)/i.test(content);
+        const command = content.match(/^\.redeem\\s+([A-Za-z0-9_-]{2,12})\\s+([A-Za-z0-9_-]{1,40})$/i);
+        const looksLikeCommand = /^\.redeem(?:\\s|$)/i.test(content);
 
         if (command) {
           try {
