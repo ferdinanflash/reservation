@@ -217,42 +217,65 @@ document.addEventListener('keydown', function (e) {
 
 
 // ================= PWA INSTALL FROM NAVIGATION MENU =================
-// Chromium fires this event when the site is eligible for native installation.
-// Keep the event so the menu button can invoke the browser's real install UI.
+// Prefer the modern Web Install API when the browser supports it. Otherwise,
+// use beforeinstallprompt when the browser explicitly offers a native prompt.
+// Per Chrome's guidance, never show a custom install button when neither
+// mechanism is available.
+const installAppButton = document.getElementById('install-app-btn');
+const supportsWebInstall = typeof Navigator !== 'undefined'
+    && typeof Navigator.prototype.install === 'function';
 let deferredInstallPrompt = null;
+
+if (installAppButton && supportsWebInstall) {
+    installAppButton.hidden = false;
+}
+
 window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     deferredInstallPrompt = event;
+    if (installAppButton && !supportsWebInstall) {
+        installAppButton.hidden = false;
+    }
 });
+
 window.addEventListener('appinstalled', () => {
     deferredInstallPrompt = null;
+    if (installAppButton) installAppButton.hidden = true;
 });
 
 async function installWebApp() {
     closeNavMenu();
-    if (deferredInstallPrompt) {
-        const promptEvent = deferredInstallPrompt;
-        deferredInstallPrompt = null;
-        await promptEvent.prompt();
-        // The browser owns the confirmation UI; no custom success message is shown.
-        return promptEvent.userChoice;
+
+    if (!installAppButton || installAppButton.getAttribute('aria-disabled') === 'true') {
+        return;
     }
 
-    // Chrome may expose installation in its own menu without providing
-    // beforeinstallprompt to the page. A website cannot open that browser menu
-    // or invoke its Install command directly, so give the exact native route.
-    const ua = navigator.userAgent;
-    const isIOS = /iphone|ipad|ipod/i.test(ua);
-    const isAndroid = /android/i.test(ua);
-    const isChrome = /chrome|crios/i.test(ua) && !/edg|opr|samsungbrowser/i.test(ua);
-    let message;
-    if (isIOS) {
-        message = 'To install this app on your Home Screen, tap Share in Safari, then choose “Add to Home Screen”.';
-    } else if (isAndroid && isChrome) {
-        message = 'Chrome can install this site from its own menu. Tap ⋮ (top-right), then choose “Install app” or “Install & create shortcut”. The browser controls this action, so the website cannot open that menu automatically.';
-    } else {
-        message = 'Open your browser menu and choose “Install app” or “Add to Home Screen” if available.';
+    // Keep the button focusable while preventing concurrent installation attempts.
+    installAppButton.setAttribute('aria-disabled', 'true');
+
+    try {
+        if (supportsWebInstall) {
+            // Must be called directly from this click flow to preserve user activation.
+            await navigator.install();
+            installAppButton.hidden = true;
+        } else if (deferredInstallPrompt) {
+            // beforeinstallprompt is single-use: clear it before awaiting the choice.
+            const promptEvent = deferredInstallPrompt;
+            deferredInstallPrompt = null;
+            await promptEvent.prompt();
+            await promptEvent.userChoice;
+
+            // The event is only reusable if the browser fires a fresh one.
+            if (!deferredInstallPrompt) {
+                installAppButton.hidden = true;
+            }
+        }
+    } catch (error) {
+        // User cancellation is expected. Keep the button available for another try.
+        if (!error || error.name !== 'AbortError') {
+            console.error('PWA installation could not start:', error);
+        }
+    } finally {
+        installAppButton.removeAttribute('aria-disabled');
     }
-    window.alert(message);
-    return null;
 }
