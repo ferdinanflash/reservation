@@ -143,7 +143,7 @@ supabase/migrations/20261116000000_discord_message_poll_state.sql
 
 Then run the **Deploy 3475 Discord Redeem Functions** GitHub Actions workflow. It deploys the new `discord-message-poller` endpoint with JWT verification disabled; the endpoint validates its own `DISCORD_POLL_SECRET`.
 
-### Schedule every minute
+### Schedule every five minutes
 
 Enable the `pg_cron`, `pg_net`, and `vault` extensions in the Supabase Dashboard if they are not already enabled. In the SQL Editor, store the project URL and the exact same poll secret used above in Vault (replace the placeholder values locally; never commit them):
 
@@ -153,7 +153,7 @@ select vault.create_secret('REPLACE_WITH_THE_SAME_DISCORD_POLL_SECRET', 'discord
 
 select cron.schedule(
   '3475-discord-message-poller',
-  '* * * * *',
+  '*/5 * * * *',
   $$
   select net.http_post(
     url := (select decrypted_secret from vault.decrypted_secrets where name = 'discord_poller_project_url')
@@ -176,7 +176,7 @@ select jobid, jobname, schedule, active from cron.job
 where jobname = '3475-discord-message-poller';
 ```
 
-On its first run, the poller records the newest message as its starting point and deliberately ignores older channel history. New messages are checked on the next one-minute poll. A redeem batch can take longer than one polling interval; a database lock prevents overlapping poll runs.
+On its first run, the poller records the newest message as its starting point and deliberately ignores older channel history. New messages are checked on the next five-minute poll, so command response latency can be up to about five minutes. A redeem batch can take longer than one polling interval; a database lock prevents overlapping poll runs.
 
 ### Test
 
