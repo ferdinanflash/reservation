@@ -7347,7 +7347,7 @@
       "from": "supabase/functions/discord-message-poller/index.ts#processCommand",
       "to": "supabase/functions/discord-message-poller/index.ts#enqueueMessageCleanup",
       "kind": "call",
-      "line": 390,
+      "line": 391,
       "confidence": "static-name-match"
     },
     {
@@ -7480,7 +7480,7 @@
       "from": "supabase/functions/discord-message-poller/index.ts#updateCursor",
       "to": "supabase/functions/discord-message-poller/index.ts#channelStateRequest",
       "kind": "call",
-      "line": 399,
+      "line": 400,
       "confidence": "static-name-match"
     },
     {
@@ -10889,7 +10889,7 @@
       "id": "supabase/functions/discord-message-poller/index.ts#updateCursor",
       "name": "updateCursor",
       "file": "supabase/functions/discord-message-poller/index.ts",
-      "line": 398,
+      "line": 399,
       "kind": "function"
     },
     {
@@ -11471,5 +11471,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "857ddfeabc178f5ce1f4885cf5b45483bd449631ca94f08a4c5845fe79923e9b"
+  "source_digest": "f61ea6691b9ba27a55d978d1ae3e5691b073fae6ec1de78472b77a7d13a8dbdd"
 }
