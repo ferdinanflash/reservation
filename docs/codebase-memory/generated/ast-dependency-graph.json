@@ -3,15 +3,22 @@
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
   "source_files": 24,
-  "function_count": 422,
+  "function_count": 423,
   "import_count": 5,
-  "call_edge_count": 1186,
+  "call_edge_count": 1187,
   "edges": [
     {
       "from": "common.js#displayNickname",
       "to": "common.js#capZalgo",
       "kind": "call",
       "line": 105,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "common.js#installWebApp",
+      "to": "common.js#closeNavMenu",
+      "kind": "call",
+      "line": 232,
       "confidence": "static-name-match"
     },
     {
@@ -8394,6 +8401,13 @@
       "kind": "function"
     },
     {
+      "id": "common.js#installWebApp",
+      "name": "installWebApp",
+      "file": "common.js",
+      "line": 231,
+      "kind": "function"
+    },
+    {
       "id": "common.js#isPresidentUsername",
       "name": "isPresidentUsername",
       "file": "common.js",
@@ -11471,5 +11485,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "f61ea6691b9ba27a55d978d1ae3e5691b073fae6ec1de78472b77a7d13a8dbdd"
+  "source_digest": "6918f3ca503e76afcad322cb62e6d5c3e57d153cd5fc4e00f0ead104f183a2ae"
 }
