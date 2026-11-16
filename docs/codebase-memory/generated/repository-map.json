@@ -195,7 +195,7 @@
     "generator_version": 1,
     "file_count": 95,
     "digest_algorithm": "sha256",
-    "content_digest": "f2a7b2dd8e23ca71cd6175a05f46ec1d17be26750b183b6510753b581446fb7f",
+    "content_digest": "131009196903f2cceccb76d69e7415b8426f32894993d433b88f1fbfed5ab81a",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -207,7 +207,7 @@
       },
       {
         "path": ".github/workflows/deploy-discord-redeem.yml",
-        "sha256": "fa60390f1028842d3b57861d8bf2c9637f30118edba34fe50eb80c2a5024747d"
+        "sha256": "ea13446ff57cc6f828ee7d133e3ffd89ac64226d3a75fa96f3d3fd3b1f594dbe"
       },
       {
         "path": ".github/workflows/register-discord-commands.yml",
@@ -251,7 +251,7 @@
       },
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
-        "sha256": "f71c17c8501d3f44d87510089eec6a885b93bfd04ed99734d785504a8d8a304c"
+        "sha256": "b92872181f0a371ffdc869f35e7c49eec41c34621483579a5d7bc06becb7cc21"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
