@@ -18,7 +18,7 @@
       "from": "common.js#installWebApp",
       "to": "common.js#closeNavMenu",
       "kind": "call",
-      "line": 232,
+      "line": 247,
       "confidence": "static-name-match"
     },
     {
@@ -8404,7 +8404,7 @@
       "id": "common.js#installWebApp",
       "name": "installWebApp",
       "file": "common.js",
-      "line": 231,
+      "line": 246,
       "kind": "function"
     },
     {
@@ -11485,5 +11485,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "6918f3ca503e76afcad322cb62e6d5c3e57d153cd5fc4e00f0ead104f183a2ae"
+  "source_digest": "b0bbd057112e3bd8499ef5bac8e403e82776f98f575362d276ae655bfc7141d3"
 }
