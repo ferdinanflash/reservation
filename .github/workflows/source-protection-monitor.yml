@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Check out source repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -31,7 +31,7 @@ jobs:
         run: python scripts/source_protection_monitor.py
       - name: Upload scan report
         if: always() && hashFiles('source-protection-report.md') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 3475-source-protection-report-${{ github.run_number }}
           path: source-protection-report.md
