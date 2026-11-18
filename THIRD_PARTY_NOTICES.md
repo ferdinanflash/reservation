@@ -13,7 +13,7 @@ This file records third-party software, libraries, fonts, and external assets id
 
 | Component | Version / Reference | Location | License | Notes |
 |---|---|---|---|---|
-| `@supabase/supabase-js` | `2.119.0` (exact version pinned) | `index.html`, `live/index.html` | MIT | Loaded via jsDelivr CDN with an exact version pin. |
+| `@supabase/supabase-js` | `2.119.0` (exact version pinned) | `index.html`, `live/index.html`, `supabase/functions/index.ts` | MIT | Loaded via jsDelivr CDN and imported by the Edge Function with an exact version pin. |
 | `md5` | `2.3.0` | `supabase/functions/redeem-giftcode/index.ts` | BSD-3-Clause | Imported via `npm:md5@2.3.0`. |
 | `web-push` | `3.6.7` | `supabase/functions/send-announcement/index.ts`, `supabase/functions/send-push-notification/index.ts` | MPL-2.0 | Imported via `npm:web-push@3.6.7` (unmodified library usage). |
 | `@modelcontextprotocol/sdk` | `1.32.2` | `tools/codebase-memory-mcp/package.json` | MIT | Local development MCP tooling. |
