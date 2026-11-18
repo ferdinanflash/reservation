@@ -42,7 +42,7 @@
 //   without redeploying this function.
 
 import md5 from "npm:md5@2.3.0";
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.119.0";
 
 const GIFT_CODE_SIGN_SECRET = Deno.env.get("GIFT_CODE_SIGN_SECRET") || "";
 const KINGDOM_ID = "3475"; // same alliance/State id as REDEEM_STATE_ID in app-extras.js
