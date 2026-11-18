@@ -193,17 +193,17 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 98,
+    "file_count": 99,
     "digest_algorithm": "sha256",
-    "content_digest": "7466cde5307562e28e06160c90509b1840fe87fa2c5ea47a8e39e88b31aa61eb",
+    "content_digest": "9fff65d772e3770024a82994d06e290dafbd76880d65a2884a2b750120c3f6de",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
-        "sha256": "4e14902bad44d17bba5da19fbcabbcaec73217dc4c464c3d066f6464ee5e7ccd"
+        "sha256": "ca2ed11f1f6bb6ff445af91eee71b150534d14cb6026f1fcdaea05fa7bb393c2"
       },
       {
         "path": ".github/workflows/codebase-memory-review.yml",
-        "sha256": "b4189ae4ade06404b032b33bdd622815c2440e9eb411a8792eb924a68f71af42"
+        "sha256": "fe382a27f73caf8ec5f1554dbfa34e4a65865015f7d2c747eb416ff3c70249f6"
       },
       {
         "path": ".github/workflows/deploy-discord-message-poller.yml",
@@ -240,6 +240,10 @@
       {
         "path": "Readme_EN.MD",
         "sha256": "c35662d1889a37b27057ecab73b21a742c70a8ae5df61da146337ad95830d5eb"
+      },
+      {
+        "path": "THIRD_PARTY_NOTICES.md",
+        "sha256": "c71681fb70e5a3acbdf2f783c97f3134822d11f3ddc0767ba028f65acb2dc206"
       },
       {
         "path": "common.js",
@@ -335,7 +339,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "e833c561112faca86d3e80eb7403d95ed436f5c9fa5af61090807881cabb9cd7"
+        "sha256": "a5ee6d0994cb15f0258d391d64f6c32fc923b9f69a67c412f5512b18b73abc87"
       },
       {
         "path": "js/app-applications.js",
@@ -387,7 +391,7 @@
       },
       {
         "path": "live/index.html",
-        "sha256": "64744c66f5597b84d2d8341fb511c8135ac8931eb01507dd3b4b5f39da6bd7f2"
+        "sha256": "77bd6d7957e6ca7a84fb351d89f383dfd4322eb546bd8318698e81920252d085"
       },
       {
         "path": "opening-animation.js",
@@ -423,7 +427,7 @@
       },
       {
         "path": "supabase/functions/index.ts",
-        "sha256": "6f463379fe2bc04fa2b76473520f0b866a2550db5cdc9c3c41f51eea30f5f47f"
+        "sha256": "30e0a2bd06cc39069ad2808cc4f6fcba04b5166339627022bde6434df6db3d12"
       },
       {
         "path": "supabase/functions/redeem-giftcode/index.ts",
@@ -531,7 +535,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/package.json",
-        "sha256": "d5d5f0102ec50a51079150e27e140232374994d77c4e46d2a311a0a980527967"
+        "sha256": "61eed24bab0d4cccc3c918a37c4d105fd16d210720f3fb03d8a4d86f2f736214"
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/build-ast-graph.mjs",

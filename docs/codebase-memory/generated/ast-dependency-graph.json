@@ -7592,7 +7592,7 @@
       "from": "supabase/functions/index.ts",
       "to": null,
       "kind": "import",
-      "specifier": "npm:@supabase/supabase-js@2",
+      "specifier": "npm:@supabase/supabase-js@2.119.0",
       "line": 45,
       "confidence": "unresolved"
     },
@@ -11625,5 +11625,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "c0b0867e8e0c3cdff3a411454755964c4e4c7b618cffbfed8570d76310986b0a"
+  "source_digest": "87e37fca56dde535a6daa45d66f76857599f0930bd759f3e1c00f95023acdc75"
 }
