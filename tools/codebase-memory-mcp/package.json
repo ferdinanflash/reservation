@@ -5,7 +5,7 @@
   "description": "Read-only local MCP server for navigating the State 3475 codebase",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": "^22 || ^24"
   },
   "scripts": {
     "start": "tsx src/server.ts",
