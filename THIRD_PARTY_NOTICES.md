@@ -1,72 +1,73 @@
 # Third-Party Notices
 
-This file records third-party software and assets identified during a source-tree review of the State 3475 / Reservation repository.
+This file records third-party software, libraries, fonts, and external assets identified in the **State 3475 — Whiteout Survival Management Portal** (`ferdinanflash/reservation`).
 
-**Audit date:** 2026-11-18  
-**Repository:** https://github.com/ferdinanflash/reservation  
-**Project license:** See [LICENSE](./LICENSE) and [LICENSE_ID.md](./LICENSE_ID.md). The project's proprietary license applies only to original project materials; third-party materials remain under their respective licenses.
+**Last updated:** 2026-11-18  
+**Project license:** See [LICENSE](./LICENSE) and [LICENSE_ID.md](./LICENSE_ID.md). The project's proprietary license applies exclusively to original materials created by the Owner; all third-party components remain subject to their respective licenses.
 
-> This is a best-effort inventory based on the files and dependency manifests present in this repository. It is not a legal opinion or a complete software bill of materials (SBOM). The repository does not currently include lockfiles for all runtimes, and some remotely served assets use floating versions. Transitive dependency versions and licenses therefore require a separate resolved-dependency scan before this list can be treated as exhaustive.
-
-## 1. Third-party software
-
-| Component | Version / reference | Where used | License | Notes |
-|---|---|---|---|---|
-| Supabase JavaScript client (`@supabase/supabase-js`) | CDN URL `@2` (major range; exact version is not pinned) | `index.html`, `live/index.html` | MIT | Served from jsDelivr. The CDN URL can resolve to a newer v2 release over time. |
-| `md5` | `2.3.0` | `supabase/functions/redeem-giftcode/index.ts` | BSD-3-Clause | Imported using `npm:md5@2.3.0`. |
-| `web-push` | `3.6.7` | `supabase/functions/send-announcement/index.ts`, `supabase/functions/send-push-notification/index.ts` | MPL-2.0 | Imported using `npm:web-push@3.6.7`. This is a file-level copyleft license, not MIT or GPL. Review the MPL terms if modifying or redistributing covered source files. |
-| Model Context Protocol TypeScript SDK (`@modelcontextprotocol/sdk`) | `1.12.1` | `tools/codebase-memory-mcp/package.json` | MIT | Development/local codebase-memory MCP tool. |
-| `zod` | `3.25.28` | `tools/codebase-memory-mcp/package.json` | MIT | Runtime dependency of the local MCP tool. |
-| `@types/node` | `22.15.30` | `tools/codebase-memory-mcp/package.json` | MIT | Development dependency; TypeScript definitions. |
-| `tsx` | `4.19.4` | `tools/codebase-memory-mcp/package.json` | MIT | Development dependency / TypeScript execution. |
-| `typescript` | `5.8.3` | `tools/codebase-memory-mcp/package.json` | Apache-2.0 | Development dependency / compiler. |
-
-The package metadata for the above components identifies the listed SPDX licenses. Where practical, include the original package license text when distributing a bundled copy of the relevant package; this repository currently consumes most of these packages through package/CDN or runtime dependency resolution rather than vendoring their source.
-
-### Important MPL-2.0 notice: web-push
-
-The two Edge Functions listed above import `web-push@3.6.7`, whose package metadata declares **MPL-2.0**. MPL-2.0 is not GPL and does not automatically relicense the whole Reservation project. Its obligations can apply to modifications of MPL-covered files when those files are distributed. Keep the upstream copyright and license notices with any redistributed copy of the library, and review the MPL-2.0 text before distributing modified library files.
-
-Upstream license: https://github.com/web-push-libs/web-push/blob/master/LICENSE
-
-## 2. Font assets
-
-| Asset | Where used | Identified license | Notes |
-|---|---|---|---|
-| `fonts/creepster-halloween.woff2` (Creepster font family) | `style.css` | SIL Open Font License 1.1 (OFL-1.1), based on the identified Google Fonts family | The repository contains the font binary but no accompanying OFL text or font provenance record. Confirm that this exact binary was obtained from the official Creepster release, then add the matching OFL license text and attribution/Reserved Font Name information if applicable. |
-
-Font family information: https://fonts.google.com/specimen/Creepster  
-OFL text: https://openfontlicense.org/
-
-## 3. Inline graphics, icons, and images
-
-- The language flags in `style.css` are embedded as inline SVG data URIs. No external icon package was identified for these flags in the inspected stylesheet.
-- The Discord mark in `index.html` is embedded as inline SVG path data. It is a third-party brand/logo asset; follow Discord's brand guidelines and do not imply endorsement.
-- `icon-src.svg`, `images/check.svg`, and the repository's banner/background/image files are present as local assets. Their original authorship and source licenses could not be established from the inspected source tree. Do not assume they are covered by the project's proprietary license; record the source and license for each asset or replace it with an original/appropriately licensed asset.
-- System fonts such as Segoe UI, Tahoma, Georgia, Times New Roman, and Courier New are referenced as local operating-system font stacks; no font files for those families were found in the repository during this review.
-
-## 4. Services and APIs (not bundled libraries)
-
-The source references services and APIs including Supabase, Discord, Whiteout Survival gift-code endpoints, and WoS Atlas. These are service/API integrations, not evidence that their server-side software is bundled into this repository. Their API terms, trademarks, game content, and service terms are separate from the open-source software licenses listed above.
-
-## 5. GPL / copyleft findings
-
-- No direct GPL-licensed dependency or GPL import was identified in the inspected source files and the checked-in dependency manifest.
-- The identified copyleft dependency is `web-push@3.6.7` under **MPL-2.0**.
-- This finding does **not** prove that no GPL code exists anywhere in the full dependency closure: the repository has no lockfile for the MCP npm dependencies or the Deno/npm imports, and the Supabase CDN dependency is not pinned to an exact patch version.
-- No dependency was identified as AGPL or LGPL in the reviewed direct dependency declarations.
-
-## 6. Audit limitations and follow-up
-
-To complete a release-grade audit:
-
-1. Generate and commit resolved lockfiles for the Node/MCP tool and Deno/Supabase Edge Functions (where supported).
-2. Run a license scanner against the fully resolved dependency trees, including all transitive dependencies, and review any `UNKNOWN`, dual-licensed, or copyleft results.
-3. Pin the Supabase JS CDN dependency to an exact version and scan that resolved package tree.
-4. Verify the provenance of every local font, SVG, icon, and image; add the applicable license/attribution files or replace assets without clear rights.
-5. Add the full OFL-1.1 text for the exact Creepster font binary if its official provenance is confirmed.
-6. Re-run this inventory whenever dependencies or third-party assets change.
+> This is a best-effort inventory based on a source-tree review. It is not a legal opinion or a complete software bill of materials (SBOM). The repository does not include lockfiles for all runtimes, and some remotely served assets use floating versions. Transitive dependency versions and licenses therefore require a separate resolved-dependency scan before this list can be treated as exhaustive.
 
 ---
 
-This notice is informational. It does not grant additional rights to the Reservation project's original proprietary source code and does not replace the license terms supplied by each third-party author.
+## 1. Third-Party Software & Libraries
+
+| Component | Version / Reference | Location | License | Notes |
+|---|---|---|---|---|
+| `@supabase/supabase-js` | `@2` (CDN major tag; unpinned patch version) | `index.html`, `live/index.html` | MIT | Loaded via jsDelivr CDN. Exact resolved version may vary over time unless pinned. |
+| `md5` | `2.3.0` | `supabase/functions/redeem-giftcode/index.ts` | BSD-3-Clause | Imported via `npm:md5@2.3.0`. |
+| `web-push` | `3.6.7` | `supabase/functions/send-announcement/index.ts`, `supabase/functions/send-push-notification/index.ts` | MPL-2.0 | Imported via `npm:web-push@3.6.7` (unmodified library usage). |
+| `@modelcontextprotocol/sdk` | `1.12.1` | `tools/codebase-memory-mcp/package.json` | MIT | Local development MCP tooling. |
+| `zod` | `3.25.28` | `tools/codebase-memory-mcp/package.json` | MIT | Local development MCP tooling. |
+| `@types/node` | `22.15.30` | `tools/codebase-memory-mcp/package.json` | MIT | Development TypeScript definitions. |
+| `tsx` | `4.19.4` | `tools/codebase-memory-mcp/package.json` | MIT | Development TypeScript runner. |
+| `typescript` | `5.8.3` | `tools/codebase-memory-mcp/package.json` | Apache-2.0 | Development TypeScript compiler. |
+
+The listed licenses are based on the package metadata for the identified direct dependencies. This table does not represent a complete inventory of transitive dependencies.
+
+### Notice Regarding `web-push` (MPL-2.0)
+
+This project uses `web-push@3.6.7`, licensed under the **Mozilla Public License 2.0 (MPL-2.0)**. The library is used as an unmodified dependency. MPL-2.0 obligations apply to MPL-covered files and may include source-code availability and notice requirements when distributing covered software. Use of this library does not, by itself, place unrelated proprietary application source code under MPL-2.0.
+
+Full license text: [Mozilla Public License 2.0](https://www.mozilla.org/en-US/MPL/2.0/)
+
+### Scope of Dependency Review (GPL / Copyleft)
+
+No direct GPL-licensed dependencies were identified in the inspected source files and package manifests. However, this is not a guarantee that no GPL-licensed code exists in the complete transitive dependency tree or externally loaded resources, such as unpinned CDN scripts. No direct AGPL- or LGPL-licensed dependency was identified in the reviewed declarations either.
+
+---
+
+## 2. Fonts
+
+| Asset | Location | License | Copyright & Attribution |
+|---|---|---|---|
+| `fonts/creepster-halloween.woff2` | `style.css` | SIL Open Font License 1.1 (OFL-1.1) | Copyright (c) 2011, Font Diner, Inc, with Reserved Font Names "Creepster". See the repository copy of the [Creepster OFL license](./fonts/Creepster-OFL.txt). |
+
+The repository already contains the accompanying OFL text at [fonts/Creepster-OFL.txt](./fonts/Creepster-OFL.txt). Its copyright notice is reproduced as present in that license file; it identifies **Font Diner, Inc** and the Reserved Font Name **"Creepster"**. The exact binary's provenance should still be retained/verified against the original font source.
+
+System fallback font stacks (such as Segoe UI, Tahoma, Georgia, Times New Roman, and Courier New) rely on the end user's operating system and are not bundled in this repository.
+
+---
+
+## 3. Graphics, Brand Marks & External Services
+
+- **Project Graphics & Assets:** Original UI graphics and SVG assets created specifically for this project are owned by the Owner and covered by the project's proprietary license. Third-party images, icons, and other visual assets remain subject to their respective licenses. Asset provenance and licensing should be verified individually.
+- **Third-Party Trademarks & Brand Assets:**
+  - The Discord logo mark (`index.html`) is the property of Discord Inc. and is used for community integration purposes in accordance with [Discord Brand Guidelines](https://discord.com/branding). Its use does not imply endorsement.
+  - Any game-related terms, icons, or visual references associated with *Whiteout Survival* remain subject to the applicable rights and trademarks of Century Games.
+- **External APIs & Services:** Integrations with Supabase, Discord, Whiteout Survival endpoints, and WoS Atlas are governed by each respective provider's terms and policies. These integrations do not mean the providers' server-side software is bundled in this repository.
+
+---
+
+## 4. Audit Limitations & Follow-up
+
+For a more complete release-grade audit:
+
+1. Generate and commit resolved lockfiles for the Node/MCP tool and Deno/Supabase Edge Functions, where supported.
+2. Run a license scanner against fully resolved dependency trees, including transitive dependencies, and review any `UNKNOWN`, dual-licensed, or copyleft results.
+3. Consider pinning the Supabase JS CDN dependency to an exact version after confirming the version currently in use.
+4. Verify the provenance of every local font, SVG, icon, and image; add applicable license/attribution files or replace assets without clear rights.
+5. Re-run this inventory whenever dependencies or third-party assets change.
+
+---
+
+This notice is provided for informational and compliance purposes. It does not grant any additional rights to the proprietary source code of this repository and does not replace the license terms supplied by each third-party author.
