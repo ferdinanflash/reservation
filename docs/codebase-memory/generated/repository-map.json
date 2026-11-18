@@ -193,37 +193,37 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 98,
+    "file_count": 99,
     "digest_algorithm": "sha256",
-    "content_digest": "7466cde5307562e28e06160c90509b1840fe87fa2c5ea47a8e39e88b31aa61eb",
+    "content_digest": "3dc711b656af5b4b82feb68ec8c8bf98c7f1ef783c91e101e6b80b91d3f9cac7",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
-        "sha256": "4e14902bad44d17bba5da19fbcabbcaec73217dc4c464c3d066f6464ee5e7ccd"
+        "sha256": "7b085f91dd0949482100ce40d2a7e0669d152bc641238b70345862f9ae93a87b"
       },
       {
         "path": ".github/workflows/codebase-memory-review.yml",
-        "sha256": "b4189ae4ade06404b032b33bdd622815c2440e9eb411a8792eb924a68f71af42"
+        "sha256": "01db08d0eff5cb9563e81ec97f8d16bd2a556ffaaf89e4705f56789f9628cac0"
       },
       {
         "path": ".github/workflows/deploy-discord-message-poller.yml",
-        "sha256": "c3fed990f008ac231ed0e4d7e0154de3ed1492ddf524cb3f97827cb9db2362d5"
+        "sha256": "4d43f3145e478f606dc15fda08503c2adaa426f3875934c9f3bc2e26c9f7149a"
       },
       {
         "path": ".github/workflows/deploy-discord-redeem.yml",
-        "sha256": "9e2d362194e61e69e07c58435c414619f626e0979afbbe3eee0eaf4ec1b112c8"
+        "sha256": "35f615b3e30d1a4983e5333748dc9959483178cf8f4d56d115124cb7b0a91812"
       },
       {
         "path": ".github/workflows/register-discord-commands.yml",
-        "sha256": "387fd8e78d955f7768de4553f6669fbff2bf8f93cc43a172ff1d6ff29d5213cb"
+        "sha256": "91e123c292d57d6c14e83c5bb7b1d225a22b0393294af4cc526257a6df819009"
       },
       {
         "path": ".github/workflows/source-protection-monitor.yml",
-        "sha256": "e26b42add425978b808cb81df8bc23a40de5dea7d8328ff9fd0eb74e0f12f4b6"
+        "sha256": "60813698249865e78bf85743e92d9700dab4ffb7a601b40524dea608b0604074"
       },
       {
         "path": ".github/workflows/static.yml",
-        "sha256": "fa14bef2f4b34cc31ec33da90e8ad82db20007e4b921b9c3fdf33ac1911d8b52"
+        "sha256": "a10e1946e640d215e2c0d2c5c3d75b10e01f5f8d93bb1c69ba35656fa6832634"
       },
       {
         "path": "LICENSE_ID.md",
@@ -240,6 +240,10 @@
       {
         "path": "Readme_EN.MD",
         "sha256": "c35662d1889a37b27057ecab73b21a742c70a8ae5df61da146337ad95830d5eb"
+      },
+      {
+        "path": "THIRD_PARTY_NOTICES.md",
+        "sha256": "de22702b9766a3c91a0ad5d05f253efec27c1d3b574e2def46fa6d0c59d81652"
       },
       {
         "path": "common.js",
@@ -335,7 +339,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "e833c561112faca86d3e80eb7403d95ed436f5c9fa5af61090807881cabb9cd7"
+        "sha256": "a5ee6d0994cb15f0258d391d64f6c32fc923b9f69a67c412f5512b18b73abc87"
       },
       {
         "path": "js/app-applications.js",
@@ -387,7 +391,7 @@
       },
       {
         "path": "live/index.html",
-        "sha256": "64744c66f5597b84d2d8341fb511c8135ac8931eb01507dd3b4b5f39da6bd7f2"
+        "sha256": "77bd6d7957e6ca7a84fb351d89f383dfd4322eb546bd8318698e81920252d085"
       },
       {
         "path": "opening-animation.js",
@@ -423,7 +427,7 @@
       },
       {
         "path": "supabase/functions/index.ts",
-        "sha256": "6f463379fe2bc04fa2b76473520f0b866a2550db5cdc9c3c41f51eea30f5f47f"
+        "sha256": "30e0a2bd06cc39069ad2808cc4f6fcba04b5166339627022bde6434df6db3d12"
       },
       {
         "path": "supabase/functions/redeem-giftcode/index.ts",
@@ -531,7 +535,7 @@
       },
       {
         "path": "tools/codebase-memory-mcp/package.json",
-        "sha256": "d5d5f0102ec50a51079150e27e140232374994d77c4e46d2a311a0a980527967"
+        "sha256": "a7ba93e4c26987dc867c8fbdb4a0921f85f37024b6abac10336e4726bad57ad6"
       },
       {
         "path": "tools/codebase-memory-mcp/scripts/build-ast-graph.mjs",

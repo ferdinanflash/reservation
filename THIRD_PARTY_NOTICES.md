@@ -13,16 +13,25 @@ This file records third-party software, libraries, fonts, and external assets id
 
 | Component | Version / Reference | Location | License | Notes |
 |---|---|---|---|---|
-| `@supabase/supabase-js` | `@2` (CDN major tag; unpinned patch version) | `index.html`, `live/index.html` | MIT | Loaded via jsDelivr CDN. Exact resolved version may vary over time unless pinned. |
+| `@supabase/supabase-js` | `2.119.0` (exact version pinned) | `index.html`, `live/index.html`, `supabase/functions/index.ts` | MIT | Loaded via jsDelivr CDN and imported by the Edge Function with an exact version pin. |
 | `md5` | `2.3.0` | `supabase/functions/redeem-giftcode/index.ts` | BSD-3-Clause | Imported via `npm:md5@2.3.0`. |
 | `web-push` | `3.6.7` | `supabase/functions/send-announcement/index.ts`, `supabase/functions/send-push-notification/index.ts` | MPL-2.0 | Imported via `npm:web-push@3.6.7` (unmodified library usage). |
-| `@modelcontextprotocol/sdk` | `1.12.1` | `tools/codebase-memory-mcp/package.json` | MIT | Local development MCP tooling. |
-| `zod` | `3.25.28` | `tools/codebase-memory-mcp/package.json` | MIT | Local development MCP tooling. |
-| `@types/node` | `22.15.30` | `tools/codebase-memory-mcp/package.json` | MIT | Development TypeScript definitions. |
-| `tsx` | `4.19.4` | `tools/codebase-memory-mcp/package.json` | MIT | Development TypeScript runner. |
-| `typescript` | `5.8.3` | `tools/codebase-memory-mcp/package.json` | Apache-2.0 | Development TypeScript compiler. |
+| `@modelcontextprotocol/sdk` | `1.32.2` | `tools/codebase-memory-mcp/package.json` | MIT | Local development MCP tooling. |
+| `zod` | `3.25.76` | `tools/codebase-memory-mcp/package.json` | MIT | Local development MCP tooling. |
+| `@types/node` | `24.19.2` | `tools/codebase-memory-mcp/package.json` | MIT | Development TypeScript definitions. |
+| `tsx` | `4.23.15` | `tools/codebase-memory-mcp/package.json` | MIT | Development TypeScript runner. |
+| `typescript` | `5.9.3` | `tools/codebase-memory-mcp/package.json` | Apache-2.0 | Development TypeScript compiler. |
 
 The listed licenses are based on the package metadata for the identified direct dependencies. This table does not represent a complete inventory of transitive dependencies.
+
+### Dependency Upgrade Notes (2026-11-18)
+
+- `@supabase/supabase-js` is pinned to `2.119.0` in the browser and Edge Function imports. Supabase dropped Node.js 20 support starting in `2.110.0`; the MCP CI workflows now use Node.js 24.
+- `@modelcontextprotocol/sdk` is updated within the v1 maintenance line to `1.32.2`; migration to the separate v2 packages is deferred.
+- `zod` is updated to `3.25.76` and remains on v3 to preserve compatibility with the MCP SDK v1 line.
+- The MCP toolchain is updated to `@types/node@24.19.2`, `tsx@4.23.15`, and `typescript@5.9.3`.
+- `web-push` remains at `3.6.7` for now. Version `4.0.0` is a major release and needs dedicated Supabase Edge Runtime testing before adoption. `md5@2.3.0` has no newer release identified in this review.
+- No application features or UI behavior were intentionally changed as part of this dependency update.
 
 ### Notice Regarding `web-push` (MPL-2.0)
 
