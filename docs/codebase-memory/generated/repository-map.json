@@ -195,27 +195,27 @@
     "generator_version": 1,
     "file_count": 99,
     "digest_algorithm": "sha256",
-    "content_digest": "0d9b619d696c17f0e3a906f417a4551bd0e3f5f72b5d2451c9ee43621d6f0251",
+    "content_digest": "89e24429bd38ae24991ce6ea8cec7345d067f29f226192d33c504a6d1d341d80",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
-        "sha256": "ca2ed11f1f6bb6ff445af91eee71b150534d14cb6026f1fcdaea05fa7bb393c2"
+        "sha256": "7b085f91dd0949482100ce40d2a7e0669d152bc641238b70345862f9ae93a87b"
       },
       {
         "path": ".github/workflows/codebase-memory-review.yml",
-        "sha256": "fe382a27f73caf8ec5f1554dbfa34e4a65865015f7d2c747eb416ff3c70249f6"
+        "sha256": "01db08d0eff5cb9563e81ec97f8d16bd2a556ffaaf89e4705f56789f9628cac0"
       },
       {
         "path": ".github/workflows/deploy-discord-message-poller.yml",
-        "sha256": "c3fed990f008ac231ed0e4d7e0154de3ed1492ddf524cb3f97827cb9db2362d5"
+        "sha256": "4d43f3145e478f606dc15fda08503c2adaa426f3875934c9f3bc2e26c9f7149a"
       },
       {
         "path": ".github/workflows/deploy-discord-redeem.yml",
-        "sha256": "9e2d362194e61e69e07c58435c414619f626e0979afbbe3eee0eaf4ec1b112c8"
+        "sha256": "35f615b3e30d1a4983e5333748dc9959483178cf8f4d56d115124cb7b0a91812"
       },
       {
         "path": ".github/workflows/register-discord-commands.yml",
-        "sha256": "387fd8e78d955f7768de4553f6669fbff2bf8f93cc43a172ff1d6ff29d5213cb"
+        "sha256": "91e123c292d57d6c14e83c5bb7b1d225a22b0393294af4cc526257a6df819009"
       },
       {
         "path": ".github/workflows/source-protection-monitor.yml",
