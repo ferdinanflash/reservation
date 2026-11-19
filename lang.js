@@ -4820,6 +4820,55 @@
             link_transfer_portal: "Portail de transfert"
     });
 
+    // Year-end 2026 What's New release copy and localized update date.
+    Object.assign(TRANSLATIONS.en, {
+        whatsnew_22_title: "New UI: End of the Year 2026",
+        whatsnew_22_desc: "State of 3475 gets a refreshed year-end look, with an updated dashboard presentation, refined navigation, and polished reservation actions for the 2026 season.",
+        whatsnew_date: "Last Update: 20 Nov 2026"
+    });
+
+    Object.assign(TRANSLATIONS.id, {
+        whatsnew_22_title: "Tampilan Baru: Akhir Tahun 2026",
+        whatsnew_22_desc: "State of 3475 hadir dengan tampilan akhir tahun yang diperbarui, mencakup penyegaran dashboard, navigasi yang lebih rapi, dan tombol reservasi dengan desain baru untuk musim 2026.",
+        whatsnew_date: "Terakhir diperbarui: 20 Nov 2026"
+    });
+
+    Object.assign(TRANSLATIONS.it, {
+        whatsnew_22_title: "Nuova UI: Fine Anno 2026",
+        whatsnew_22_desc: "State of 3475 si rinnova per la fine dell'anno, con una dashboard aggiornata, una navigazione più curata e pulsanti di prenotazione ridisegnati per la stagione 2026.",
+        whatsnew_date: "Ultimo aggiornamento: 20 nov 2026"
+    });
+
+    Object.assign(TRANSLATIONS.ph, {
+        whatsnew_22_title: "Bagong UI: Pagtatapos ng Taon 2026",
+        whatsnew_22_desc: "May bagong year-end na hitsura ang State of 3475, na may pinahusay na dashboard, mas maayos na navigation, at bagong disenyo ng mga reservation button para sa 2026 season.",
+        whatsnew_date: "Huling update: 20 Nob 2026"
+    });
+
+    Object.assign(TRANSLATIONS.cn, {
+        whatsnew_22_title: "全新界面：2026 年岁末主题",
+        whatsnew_22_desc: "State of 3475 焕新呈现年末界面，带来更新后的仪表板、更精致的导航，以及为 2026 年季节活动重新设计的预约按钮。",
+        whatsnew_date: "最后更新：2026年11月20日"
+    });
+
+    Object.assign(TRANSLATIONS.th, {
+        whatsnew_22_title: "UI ใหม่: ส่งท้ายปี 2026",
+        whatsnew_22_desc: "State of 3475 ปรับโฉมต้อนรับช่วงสิ้นปี พร้อมแดชบอร์ดที่ปรับปรุงใหม่ เมนูนำทางที่เรียบร้อยขึ้น และปุ่มจองเวลาที่ออกแบบใหม่สำหรับฤดูกาล 2026",
+        whatsnew_date: "อัปเดตล่าสุด: 20 พ.ย. 2026"
+    });
+
+    Object.assign(TRANSLATIONS.ru, {
+        whatsnew_22_title: "Новый интерфейс: конец 2026 года",
+        whatsnew_22_desc: "State of 3475 получил обновлённый праздничный облик: улучшенную панель управления, более удобную навигацию и обновлённый дизайн кнопок бронирования к сезону 2026 года.",
+        whatsnew_date: "Последнее обновление: 20 ноя 2026"
+    });
+
+    Object.assign(TRANSLATIONS.fr, {
+        whatsnew_22_title: "Nouvelle interface : fin d’année 2026",
+        whatsnew_22_desc: "State of 3475 adopte une nouvelle présentation de fin d’année, avec un tableau de bord actualisé, une navigation améliorée et des boutons de réservation repensés pour la saison 2026.",
+        whatsnew_date: "Dernière mise à jour : 20 nov. 2026"
+    });
+
     // Expose globally so app modules / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
