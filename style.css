@@ -8970,3 +8970,98 @@ body.christmas-theme {
 @media (max-width: 560px) {
     #main-menu-links > .menu-card .menu-card-icon svg { flex-basis: 20px; }
 }
+
+
+/* ================= SEMANTIC RESERVATION ACTION BUTTONS =================
+   Shared dimensions and accessible icon alignment across desktop/mobile.
+   The destructive Remove action is intentionally outlined, unlike Reject. */
+.action-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 6px 10px !important;
+    border: 1px solid transparent !important;
+    border-radius: 9px !important;
+    color: #fff !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.18);
+    transition: background 0.18s ease, border-color 0.18s ease,
+        box-shadow 0.18s ease, transform 0.18s ease, filter 0.18s ease;
+    animation: none !important;
+}
+.action-button:hover:not(:disabled) {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.22);
+}
+.action-button:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+.action-button:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+    filter: grayscale(0.2);
+    box-shadow: none;
+    transform: none;
+}
+.action-button-icon {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.reservation-apply-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+    border-color: rgba(147, 197, 253, 0.65) !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.28);
+}
+.admin-action-btn.action-button { min-height: 34px; flex: 1 1 90px; }
+.admin-accept-btn.action-button {
+    background: linear-gradient(135deg, #22c55e 0%, #15803d 100%) !important;
+    border-color: rgba(134, 239, 172, 0.55) !important;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.22);
+}
+.admin-reject-btn.action-button {
+    background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%) !important;
+    border-color: rgba(253, 164, 175, 0.58) !important;
+    box-shadow: 0 2px 8px rgba(225, 29, 72, 0.2);
+    animation: none !important;
+}
+.action-move-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #c2410c 100%) !important;
+    border-color: rgba(253, 186, 116, 0.65) !important;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.22);
+}
+.waiting-move-btn.action-button { margin-left: 0; }
+.schedule-remove-btn.action-button {
+    background: rgba(220, 38, 38, 0.08) !important;
+    color: #f87171 !important;
+    border-color: rgba(248, 113, 113, 0.62) !important;
+    box-shadow: none;
+    padding: 5px 9px !important;
+    font-size: 0.72rem !important;
+}
+.schedule-remove-btn.action-button:hover:not(:disabled) {
+    background: rgba(220, 38, 38, 0.2) !important;
+    border-color: #f87171 !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1);
+}
+@media (max-width: 700px) {
+    #waiting-modal .admin-action-btn.action-button { width: 100%; }
+    #waiting-modal .waiting-move-btn.action-button { width: auto; }
+}
+@media (max-width: 480px) {
+    .action-button { min-height: 36px; gap: 5px; padding: 7px 9px !important; }
+    .action-button-icon { width: 13px; height: 13px; flex-basis: 13px; }
+}
