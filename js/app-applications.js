@@ -393,6 +393,7 @@ function openWaitingModal(timeStr) {
 
         const detailsRow = document.createElement('tr');
         detailsRow.id = `details-${app.id}`;
+        detailsRow.className = 'waiting-details-row';
         detailsRow.style.display = 'none'; 
         detailsRow.innerHTML = `
             <td colspan="${isAdmin ? 4 : 2}" style="padding: 0; border: none;">
@@ -471,7 +472,9 @@ async function moveWaitingListApp(id, newTimeSlot, originTime) {
 function toggleDetails(id) {
     const detailsRow = document.getElementById(`details-${id}`);
     if (detailsRow) {
-        detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+        detailsRow.style.display = detailsRow.style.display === 'none'
+            ? (window.matchMedia && window.matchMedia('(max-width: 700px)').matches ? 'block' : 'table-row')
+            : 'none';
     }
 }
 
