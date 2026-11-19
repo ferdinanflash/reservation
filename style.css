@@ -8608,3 +8608,48 @@ body.christmas-theme {
         overflow: visible;
     }
 }
+
+
+/* WAITING LIST — keep applicant details inside the same mobile card row.
+   A nested grid cell avoids table-row/flex-item layout conflicts. */
+@media (max-width: 700px) {
+    #waiting-modal tbody tr:has(> td.waiting-details-content) {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, .8fr);
+        width: 100%;
+        align-items: center;
+    }
+    #waiting-modal.waiting-admin-view tbody tr:has(> td.waiting-details-content) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+    }
+    #waiting-modal tbody td.waiting-details-content {
+        display: none;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100% !important;
+        max-width: none;
+        min-width: 0;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+    #waiting-modal tbody td.waiting-details-content[style*="display: block"] {
+        display: block !important;
+    }
+    #waiting-modal .waiting-details-card {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 5px 0 0;
+        padding: 10px;
+        border: 1px solid rgba(110, 150, 195, .24);
+        border-radius: 11px;
+        background: rgba(12, 22, 36, .98);
+        text-align: left;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+}
+
+/* Keep the mobile Home navigation accessible above the Waiting List modal. */
+@media (max-width: 768px) {
+    .mobile-bottom-nav { z-index: 2100 !important; }
+}
