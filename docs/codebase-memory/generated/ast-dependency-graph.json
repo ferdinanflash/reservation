@@ -3847,168 +3847,147 @@
       "from": "js/app-schedule.js#loadApplications",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 136,
+      "line": 139,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#loadApplications",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 166,
+      "line": 169,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#loadApplications",
       "to": "js/app-schedule.js#renderLoadingState",
       "kind": "call",
-      "line": 146,
+      "line": 149,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#loadApplications",
       "to": "js/app-schedule.js#renderTimeSlots",
       "kind": "call",
-      "line": 174,
+      "line": 177,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#loadApplications",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 166,
+      "line": 169,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderLoadingState",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 182,
+      "line": 185,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "common.js#capZalgo",
       "kind": "call",
-      "line": 246,
+      "line": 249,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "common.js#escapeHtml",
       "kind": "call",
-      "line": 246,
+      "line": 249,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "common.js#escapeHtml",
       "kind": "call",
-      "line": 247,
+      "line": 250,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "common.js#escapeHtml",
       "kind": "call",
-      "line": 247,
+      "line": 250,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "common.js#nicknameHtml",
       "kind": "call",
-      "line": 246,
+      "line": 249,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "js/app-core.js#actionLabelClass",
       "kind": "call",
-      "line": 229,
+      "line": 232,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "js/app-core.js#actionLabelClass",
       "kind": "call",
-      "line": 251,
+      "line": 254,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "js/app-core.js#furnaceIconHtml",
       "kind": "call",
-      "line": 246,
+      "line": 249,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 211,
+      "line": 214,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 229,
+      "line": 232,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 229,
+      "line": 232,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 239,
+      "line": 242,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 244,
+      "line": 247,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 245,
+      "line": 248,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 246,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-schedule.js#renderTimeSlots",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 251,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-schedule.js#renderTimeSlots",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 251,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-schedule.js#renderTimeSlots",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 252,
+      "line": 249,
       "confidence": "static-name-match"
     },
     {
@@ -4022,35 +4001,56 @@
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 258,
+      "line": 254,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-schedule.js#renderTimeSlots",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 255,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-schedule.js#renderTimeSlots",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 257,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-schedule.js#renderTimeSlots",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 261,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#requestApplicationsReload",
       "to": "js/app-schedule.js#isSchedulePageOpen",
       "kind": "call",
-      "line": 127,
+      "line": 130,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#showSchedule",
       "to": "js/app-core.js#checkReservationStatus",
       "kind": "call",
-      "line": 37,
+      "line": 40,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#showSchedule",
       "to": "js/app-schedule.js#detectAndSetTimezone",
       "kind": "call",
-      "line": 35,
+      "line": 38,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#showSchedule",
       "to": "lang.js#translatePositionName",
       "kind": "call",
-      "line": 34,
+      "line": 37,
       "confidence": "static-name-match"
     },
     {
@@ -9888,42 +9888,42 @@
       "id": "js/app-schedule.js#detectAndSetTimezone",
       "name": "detectAndSetTimezone",
       "file": "js/app-schedule.js",
-      "line": 42,
+      "line": 45,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#isSchedulePageOpen",
       "name": "isSchedulePageOpen",
       "file": "js/app-schedule.js",
-      "line": 121,
+      "line": 124,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#loadApplications",
       "name": "loadApplications",
       "file": "js/app-schedule.js",
-      "line": 135,
+      "line": 138,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#renderLoadingState",
       "name": "renderLoadingState",
       "file": "js/app-schedule.js",
-      "line": 179,
+      "line": 182,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#renderTimeSlots",
       "name": "renderTimeSlots",
       "file": "js/app-schedule.js",
-      "line": 185,
+      "line": 188,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#requestApplicationsReload",
       "name": "requestApplicationsReload",
       "file": "js/app-schedule.js",
-      "line": 126,
+      "line": 129,
       "kind": "function"
     },
     {
@@ -9944,14 +9944,14 @@
       "id": "js/app-schedule.js#showPositions",
       "name": "showPositions",
       "file": "js/app-schedule.js",
-      "line": 102,
+      "line": 105,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#showSchedule",
       "name": "showSchedule",
       "file": "js/app-schedule.js",
-      "line": 28,
+      "line": 31,
       "kind": "function"
     },
     {
@@ -11574,7 +11574,7 @@
       "kind": "supabase-table",
       "value": "reservation_slots",
       "function": "js/app-schedule.js#loadApplications",
-      "line": 152
+      "line": 155
     },
     {
       "kind": "supabase-table",
@@ -11632,5 +11632,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "6a37fde497bbd1f8b3486edf36575dc204e033cf3463401d2336611e183ae89e"
+  "source_digest": "575abe2f9288634695cf848371d492d6dcd286bae6b7a4bb45837c9860df2391"
 }
