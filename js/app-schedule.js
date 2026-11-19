@@ -243,9 +243,9 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:var(--t-muted, #8a8d98);">${t("local_prefix", { time: localTimeStr })}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">${t("status_accepted")}</span>${leftoverBadge}</td>
-                <td class="schedule-col-nick">${typeof nicknameHtml === 'function' ? nicknameHtml(acceptedApp.nickname) : escapeHtml(capZalgo(acceptedApp.nickname))}</td>
-                <td><span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
-                <td>${furnaceIconHtml(acceptedApp.furnace_level)}</td>
+                <td class="schedule-col-nick"><span class="accepted-player-name">${typeof nicknameHtml === 'function' ? nicknameHtml(acceptedApp.nickname) : escapeHtml(capZalgo(acceptedApp.nickname))}</span><span class="accepted-furnace-inline" aria-label="${t("stat_furnace_lvl")}">${furnaceIconHtml(acceptedApp.furnace_level)}</span></td>
+                <td class="schedule-col-id"><span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
+                <td class="schedule-col-furnace" aria-hidden="true"></td>
             `;
         } else {
             let actionBtn = `<button class="btn-apply${actionLabelClass(t("btn_apply_action"))}" onclick="applySlot('${utcTimeStr}')">${t("btn_apply_action")}</button>`;
