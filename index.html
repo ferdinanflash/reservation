@@ -172,7 +172,7 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=145">
+		<link rel="stylesheet" href="style.css?v=146">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0" defer=""></script>
 		<script src="common.js?v=16" defer=""></script>
@@ -181,7 +181,7 @@
 					<script src="js/app-auth.js?v=55" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
 					<script src="js/app-schedule.js?v=53" defer=""></script>
-					<script src="js/app-applications.js?v=54" defer=""></script>
+					<script src="js/app-applications.js?v=55" defer=""></script>
 					<script src="js/app-waiting.js?v=51" defer=""></script>
 					<script src="js/app-bulk.js?v=3" defer=""></script>
 					<script src="js/app-extras.js?v=63" defer=""></script>
@@ -568,7 +568,7 @@
 			</section>
 		</main>
 		<nav class="mobile-bottom-nav" aria-label="Primary navigation">
-			<button type="button" class="mobile-nav-item is-active" onclick="showMainMenu(); document.querySelectorAll('.mobile-nav-item').forEach(function(x){x.classList.remove('is-active')}); this.classList.add('is-active')" aria-label="Home">
+			<button type="button" class="mobile-nav-item is-active" onclick="closeModal(); showMainMenu(); document.querySelectorAll('.mobile-nav-item').forEach(function(x){x.classList.remove('is-active')}); this.classList.add('is-active')" aria-label="Home">
 				<span class="mobile-nav-icon" aria-hidden="true">⌂</span><span data-i18n="main_menu_title">Home</span>
 			</button>
 			<button type="button" class="mobile-nav-item" onclick="showMinisterReservationMenu(); document.querySelectorAll('.mobile-nav-item').forEach(function(x){x.classList.remove('is-active')}); this.classList.add('is-active')" aria-label="Minister Reservation">
