@@ -391,22 +391,21 @@ function openWaitingModal(timeStr) {
         `;
         modalTbody.appendChild(mainRow);
 
-        const detailsRow = document.createElement('tr');
-        detailsRow.id = `details-${app.id}`;
-        detailsRow.className = 'waiting-details-row';
-        detailsRow.style.display = 'none'; 
-        detailsRow.innerHTML = `
-            <td colspan="${isAdmin ? 4 : 2}" style="padding: 0; border: none;">
-                <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
-                    ${buildStatDetailsHtml(app, true)}
-                    <div class="waiting-time-log">
-                        <div class="application-time-log-title">${t("time_log_title")}</div>
-                        <div class="application-time-log-list">${buildApplicationTimeLogHtml(app)}</div>
-                    </div>
+        const detailsCell = document.createElement('td');
+        detailsCell.id = `details-${app.id}`;
+        detailsCell.className = 'waiting-details-content';
+        detailsCell.colSpan = isAdmin ? 4 : 2;
+        detailsCell.style.display = 'none';
+        detailsCell.innerHTML = `
+            <div class="waiting-details-card">
+                ${buildStatDetailsHtml(app, true)}
+                <div class="waiting-time-log">
+                    <div class="application-time-log-title">${t("time_log_title")}</div>
+                    <div class="application-time-log-list">${buildApplicationTimeLogHtml(app)}</div>
                 </div>
-            </td>
+            </div>
         `;
-        modalTbody.appendChild(detailsRow);
+        mainRow.appendChild(detailsCell);
     });
     
     modal.classList.toggle('waiting-admin-view', !!isAdmin);
@@ -470,11 +469,9 @@ async function moveWaitingListApp(id, newTimeSlot, originTime) {
 }
 
 function toggleDetails(id) {
-    const detailsRow = document.getElementById(`details-${id}`);
-    if (detailsRow) {
-        detailsRow.style.display = detailsRow.style.display === 'none'
-            ? (window.matchMedia && window.matchMedia('(max-width: 700px)').matches ? 'block' : 'table-row')
-            : 'none';
+    const detailsCell = document.getElementById(`details-${id}`);
+    if (detailsCell) {
+        detailsCell.style.display = detailsCell.style.display === 'none' ? 'block' : 'none';
     }
 }
 
