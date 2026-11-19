@@ -41,3 +41,11 @@ Do not infer the final live CHECK constraint from a single historical migration.
 - Added localized title/description and date strings across all eight dictionaries: EN, ID, IT, PH, CN, TH, RU and FR.
 - Updated the visible Last Update date, `APP_BUILD`, the `lang.js` cache query and the service-worker cache version to invalidate stale frontend assets. Confirm exact live values from current `index.html` and `sw.js` before another cache-related edit.
 - These GitHub changes were committed and source-verified in the 2026-11-14 work session; public deployment/live browser visibility was not independently verified in this memory update.
+
+
+## Localization and reservation action refresh — 2026-11-20
+
+- The recent seasonal-dashboard What's New copy, SvS Record labels, main-menu destination labels, and Apply / Accept / Reject / Move / Remove actions were reviewed across EN, ID, IT, PH, CN, TH, RU and FR.
+- The latest missing SvS Record and seasonal-dashboard strings now have explicit localized values in every supported language; RU and FR inherit English for legacy strings that have not yet been translated.
+- Action labels use the existing translation keys so dynamically rendered buttons follow the selected language.
+- Cache versions updated in `index.html` and `sw.js`: confirm their current values before future changes.
