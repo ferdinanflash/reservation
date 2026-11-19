@@ -8527,3 +8527,84 @@ body.christmas-theme {
         padding: 9px;
     }
 }
+
+
+/* ================= STATE OF 3475 — MOBILE REGRESSION FIXES =================
+   Keep expanded Waiting List details visible inside the mobile flex stack.
+*/
+@media (max-width: 700px) {
+    #waiting-modal tbody tr.waiting-details-row {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0;
+        border: 0;
+        background: transparent;
+    }
+    #waiting-modal tbody tr.waiting-details-row > td {
+        display: block;
+        width: 100% !important;
+        max-width: none;
+        padding: 0 !important;
+        overflow: visible;
+    }
+}
+
+/* Accepted schedule: keep Remove in the action area and place the Furnace
+   badge immediately beside the nickname. Player ID remains visible below. */
+@media (max-width: 600px) {
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) {
+        grid-template-rows: 27px 25px 15px;
+        min-height: 77px;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td.schedule-col-nick {
+        grid-column: 1 / 3;
+        grid-row: 2;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+        max-width: none;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) .accepted-player-name {
+        display: block;
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) .accepted-furnace-inline {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: flex-end;
+        max-width: 42px;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) .accepted-furnace-inline .furnace-badge {
+        display: inline-block;
+        max-width: 36px;
+        max-height: 23px;
+        vertical-align: middle;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td.schedule-col-id {
+        display: block !important;
+        grid-column: 1 / 3;
+        grid-row: 3;
+        min-width: 0;
+        max-width: 100%;
+        font-size: .65rem;
+        color: var(--t-link, #75baff);
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td.schedule-col-furnace {
+        display: none !important;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(1) {
+        grid-column: 3;
+        grid-row: 1;
+        align-self: center;
+        overflow: visible;
+    }
+}
