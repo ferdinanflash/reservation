@@ -7956,3 +7956,175 @@ body.christmas-theme {
 @media (prefers-reduced-motion: reduce) {
     .mobile-nav-item { transition:none !important; }
 }
+
+
+/* ================= STATE OF 3475 — MOBILE SCHEDULE CARDS =================
+   Desktop keeps the six-column schedule table. On phones each time slot
+   becomes a compact, readable card without changing any reservation logic. */
+@media (max-width: 600px) {
+    #schedule-page .section-title {
+        margin: 16px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.35;
+    }
+    #schedule-page .timezone-selector {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 7px;
+        margin: 10px 2px 14px;
+        padding: 10px 12px;
+        border: 1px solid rgba(120, 170, 220, .2);
+        border-radius: 13px;
+        background: rgba(12, 27, 48, .72);
+    }
+    #schedule-page .timezone-selector select {
+        flex: 1 1 150px;
+        min-width: 0;
+    }
+    #schedule-page .table-container {
+        overflow: visible;
+        margin: 0;
+        padding: 0 1px;
+    }
+    #schedule-page .table-container > table {
+        display: block;
+        width: 100%;
+        border: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: auto;
+        background: transparent;
+    }
+    #schedule-page .table-container > table thead {
+        display: none;
+    }
+    #schedule-page .table-container > table tbody {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 9px;
+        width: 100%;
+    }
+    #schedule-page .table-container > table tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 7px 12px;
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid rgba(116, 165, 220, .23);
+        border-radius: 15px;
+        background:
+            radial-gradient(ellipse at 100% 0%, rgba(56, 125, 196, .12), transparent 58%),
+            linear-gradient(145deg, rgba(19, 35, 57, .96), rgba(10, 20, 36, .98));
+        box-shadow: 0 5px 15px rgba(0, 0, 0, .2), inset 0 1px rgba(255,255,255,.035);
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) {
+        border-color: rgba(34, 197, 94, .38);
+        background:
+            radial-gradient(ellipse at 100% 0%, rgba(34, 197, 94, .12), transparent 58%),
+            linear-gradient(145deg, rgba(17, 43, 43, .97), rgba(10, 27, 35, .98));
+    }
+    #schedule-page .table-container > table tbody td {
+        display: block;
+        min-width: 0;
+        width: auto !important;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--t-primary, #e7edf7);
+        font-size: .78rem;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+        text-align: left;
+        vertical-align: top;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        min-height: 30px;
+        order: 6;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) .btn-apply {
+        min-height: 34px;
+        padding: 7px 15px;
+        border-radius: 10px;
+        font-size: .76rem;
+        white-space: nowrap;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(2) {
+        grid-column: 1 / -1;
+        padding: 0 0 8px;
+        border-bottom: 1px solid rgba(145, 177, 215, .16);
+        font-size: .9rem;
+        font-weight: 800;
+        letter-spacing: .01em;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(2) strong {
+        color: #f4d28a;
+        font-size: 1.02rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(2) small {
+        display: inline-block;
+        margin-left: 5px;
+        font-size: .72rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(3)::before,
+    #schedule-page .table-container > table tbody td:nth-child(4)::before,
+    #schedule-page .table-container > table tbody td:nth-child(5)::before,
+    #schedule-page .table-container > table tbody td:nth-child(6)::before {
+        display: block;
+        margin-bottom: 3px;
+        color: var(--t-muted, #91a4bd);
+        font-size: .61rem;
+        font-weight: 800;
+        letter-spacing: .075em;
+        text-transform: uppercase;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(3)::before { content: "STATUS"; }
+    #schedule-page .table-container > table tbody td:nth-child(4)::before { content: "PLAYER"; }
+    #schedule-page .table-container > table tbody td:nth-child(5)::before { content: "PLAYER ID"; }
+    #schedule-page .table-container > table tbody td:nth-child(6)::before { content: "FURNACE"; }
+    #schedule-page .table-container > table tbody td:nth-child(3) {
+        grid-column: 1 / -1;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(4) {
+        grid-column: 1 / -1;
+        font-size: .86rem;
+        font-weight: 750;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(5),
+    #schedule-page .table-container > table tbody td:nth-child(6) {
+        align-self: end;
+        padding-top: 3px;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(5) {
+        color: var(--t-link, #75baff);
+        font-size: .75rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(6) {
+        text-align: right;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(6) .furnace-badge {
+        max-width: 52px;
+        height: auto;
+        vertical-align: middle;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) > div {
+        max-width: 100%;
+    }
+    #schedule-page .table-container > table tbody tr.loading-row {
+        display: block;
+        padding: 20px 12px;
+        text-align: center;
+    }
+    #schedule-page .table-container > table tbody tr.loading-row td {
+        display: block;
+        text-align: center;
+    }
+}
+@media (max-width: 380px) {
+    #schedule-page .table-container > table tbody tr { padding: 10px; gap: 7px 9px; }
+    #schedule-page .table-container > table tbody td { font-size: .74rem; }
+}
