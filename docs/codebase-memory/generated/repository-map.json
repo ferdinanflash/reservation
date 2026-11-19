@@ -195,7 +195,7 @@
     "generator_version": 1,
     "file_count": 99,
     "digest_algorithm": "sha256",
-    "content_digest": "19e204404ed6082beb6c5ab21dcc8b9e0fd2282f6deb2172c1811b9a1d7c55ac",
+    "content_digest": "60344c6e7d9ec89c3f400aa7f0179f6bfe8e53d0922c78027e0daa920e87381b",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -339,11 +339,11 @@
       },
       {
         "path": "index.html",
-        "sha256": "2947e25fbc1c4957db2273a61dd0c6fec32ee2cf5f72d00bd7d94fb107294964"
+        "sha256": "069e2e075577fd8551b3bdd994b8b2c7f2bd7a81e93c1ed454dbdc890921b2ee"
       },
       {
         "path": "js/app-applications.js",
-        "sha256": "318c4efe2bc0e9e7f488511bc5d27b82ed15844e23cf5358635bd9821ace4617"
+        "sha256": "20b56811a303da5a5a3f6bd66db6da258c6ac4c07612e15b009f3103d7c45177"
       },
       {
         "path": "js/app-auth.js",
@@ -415,7 +415,7 @@
       },
       {
         "path": "style.css",
-        "sha256": "d5cc0082229de1f5890e8091dffce6703f61fcd2b8d7090bb9b27c357db9650d"
+        "sha256": "708a85698b4342e676fb79a88d74ebf50a7b64c2619228e9e167835a61ddd231"
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
@@ -527,7 +527,7 @@
       },
       {
         "path": "sw.js",
-        "sha256": "35902e65ce8a891f7a9e0ac3dd299bacc2ff4340e27a6fb2e4aad2dbe189fe73"
+        "sha256": "890513f072bafb1d72fe525ac3f2e626d305ddf272eadfee366a15fe9b4c02bf"
       },
       {
         "path": "tools/codebase-memory-mcp/README.md",
