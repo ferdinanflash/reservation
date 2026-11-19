@@ -22,7 +22,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-20-2';
+			var APP_BUILD = '2026-11-20-3';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -172,7 +172,7 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=147">
+		<link rel="stylesheet" href="style.css?v=148">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0" defer=""></script>
 		<script src="common.js?v=16" defer=""></script>
@@ -863,7 +863,7 @@
 			<div class="modal-content custom-form-modal">
 				<button type="button" class="close-modal" onclick="closeApplyModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
 				<h2 data-i18n="apply_modal_title" class="apply-title">Apply for Time Slot</h2>
-				<pclass="apply-description">
+				<p class="apply-description">
 					<span data-i18n="apply_position_label">Position:</span> <span id="form-position-title" class="form-position-title">-</span><br>
 						<span data-i18n="apply_time_label">Time:</span> <span id="form-time-title" class="form-time-title">-</span>
 					</p>
