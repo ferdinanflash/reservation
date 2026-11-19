@@ -3,9 +3,9 @@
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
   "source_files": 24,
-  "function_count": 429,
+  "function_count": 430,
   "import_count": 5,
-  "call_edge_count": 1202,
+  "call_edge_count": 1204,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -2314,175 +2314,175 @@
       "from": "js/app-core.js#applyAuthSession",
       "to": "common.js#isPresidentUsername",
       "kind": "call",
-      "line": 190,
+      "line": 202,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#applyAuthSession",
       "to": "common.js#staffEmailToUsername",
       "kind": "call",
-      "line": 189,
+      "line": 201,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#applyAuthSession",
       "to": "js/app-core.js#resetAdminUI",
       "kind": "call",
-      "line": 195,
+      "line": 207,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#applyAuthSession",
       "to": "js/app-core.js#updateAdminUI",
       "kind": "call",
-      "line": 193,
+      "line": 205,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#applyAuthSession",
       "to": "js/app-schedule.js#requestApplicationsReload",
       "kind": "call",
-      "line": 201,
+      "line": 213,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#buildFurnacePicker",
       "to": "js/app-core.js#furnaceIconHtml",
       "kind": "call",
-      "line": 81,
+      "line": 93,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#checkReservationStatus",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 300,
+      "line": 312,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#checkReservationStatus",
       "to": "js/app-core.js#updateReservationButtonUI",
       "kind": "call",
-      "line": 314,
+      "line": 326,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#handleToggleReservation",
       "to": "js/app-core.js#showCustomConfirm",
       "kind": "call",
-      "line": 340,
+      "line": 352,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#handleToggleReservation",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 337,
+      "line": 349,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#handleToggleReservation",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 337,
+      "line": 349,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#handleToggleReservation",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 340,
+      "line": 352,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#handleToggleReservation",
       "to": "lang.js#translatePositionName",
       "kind": "call",
-      "line": 342,
+      "line": 354,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#onBackdrop",
       "to": "js/app-core.js#onCancel",
       "kind": "call",
-      "line": 429,
+      "line": 441,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#onCancel",
       "to": "js/app-core.js#finish",
       "kind": "call",
-      "line": 427,
+      "line": 439,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#onKeyDown",
       "to": "js/app-core.js#onCancel",
       "kind": "call",
-      "line": 434,
+      "line": 446,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#onOk",
       "to": "js/app-core.js#finish",
       "kind": "call",
-      "line": 426,
+      "line": 438,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#resetAdminUI",
       "to": "js/app-bulk.js#closeBulkModal",
       "kind": "call",
-      "line": 288,
+      "line": 300,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#resetAdminUI",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 282,
+      "line": 294,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#setButtonBusy",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 486,
+      "line": 498,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#subscribeToRealtimeUpdates",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 220,
+      "line": 232,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#updateAdminUI",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 268,
+      "line": 280,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#updateAdminUI",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 268,
+      "line": 280,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#updateReservationButtonUI",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 325,
+      "line": 337,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-core.js#updateReservationButtonUI",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 328,
+      "line": 340,
       "confidence": "static-name-match"
     },
     {
@@ -3918,6 +3918,20 @@
       "to": "common.js#nicknameHtml",
       "kind": "call",
       "line": 252,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-schedule.js#renderTimeSlots",
+      "to": "js/app-core.js#actionIconHtml",
+      "kind": "call",
+      "line": 235,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-schedule.js#renderTimeSlots",
+      "to": "js/app-core.js#actionIconHtml",
+      "kind": "call",
+      "line": 256,
       "confidence": "static-name-match"
     },
     {
@@ -9164,171 +9178,178 @@
       "kind": "function"
     },
     {
+      "id": "js/app-core.js#actionIconHtml",
+      "name": "actionIconHtml",
+      "file": "js/app-core.js",
+      "line": 22,
+      "kind": "function"
+    },
+    {
       "id": "js/app-core.js#actionLabelClass",
       "name": "actionLabelClass",
       "file": "js/app-core.js",
-      "line": 104,
+      "line": 116,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#applyAuthSession",
       "name": "applyAuthSession",
       "file": "js/app-core.js",
-      "line": 186,
+      "line": 198,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#buildFurnacePicker",
       "name": "buildFurnacePicker",
       "file": "js/app-core.js",
-      "line": 68,
+      "line": 80,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#checkReservationStatus",
       "name": "checkReservationStatus",
       "file": "js/app-core.js",
-      "line": 299,
+      "line": 311,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#finish",
       "name": "finish",
       "file": "js/app-core.js",
-      "line": 416,
+      "line": 428,
       "kind": "function-expression"
     },
     {
       "id": "js/app-core.js#furnaceBadgeFallback",
       "name": "furnaceBadgeFallback",
       "file": "js/app-core.js",
-      "line": 57,
+      "line": 69,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#furnaceIconHtml",
       "name": "furnaceIconHtml",
       "file": "js/app-core.js",
-      "line": 51,
+      "line": 63,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#getPositionConfig",
       "name": "getPositionConfig",
       "file": "js/app-core.js",
-      "line": 139,
+      "line": 151,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#handleToggleReservation",
       "name": "handleToggleReservation",
       "file": "js/app-core.js",
-      "line": 333,
+      "line": 345,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#onBackdrop",
       "name": "onBackdrop",
       "file": "js/app-core.js",
-      "line": 428,
+      "line": 440,
       "kind": "function-expression"
     },
     {
       "id": "js/app-core.js#onCancel",
       "name": "onCancel",
       "file": "js/app-core.js",
-      "line": 427,
+      "line": 439,
       "kind": "function-expression"
     },
     {
       "id": "js/app-core.js#onKeyDown",
       "name": "onKeyDown",
       "file": "js/app-core.js",
-      "line": 431,
+      "line": 443,
       "kind": "function-expression"
     },
     {
       "id": "js/app-core.js#onOk",
       "name": "onOk",
       "file": "js/app-core.js",
-      "line": 426,
+      "line": 438,
       "kind": "function-expression"
     },
     {
       "id": "js/app-core.js#requestRecentAcceptsReload",
       "name": "requestRecentAcceptsReload",
       "file": "js/app-core.js",
-      "line": 208,
+      "line": 220,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#resetAdminUI",
       "name": "resetAdminUI",
       "file": "js/app-core.js",
-      "line": 276,
+      "line": 288,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#setButtonBusy",
       "name": "setButtonBusy",
       "file": "js/app-core.js",
-      "line": 481,
+      "line": 493,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#setFurnaceLevel",
       "name": "setFurnaceLevel",
       "file": "js/app-core.js",
-      "line": 87,
+      "line": 99,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#showCustomConfirm",
       "name": "showCustomConfirm",
       "file": "js/app-core.js",
-      "line": 454,
+      "line": 466,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#showReasonModal",
       "name": "showReasonModal",
       "file": "js/app-core.js",
-      "line": 396,
+      "line": 408,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#showToast",
       "name": "showToast",
       "file": "js/app-core.js",
-      "line": 370,
+      "line": 382,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#statIconHtml",
       "name": "statIconHtml",
       "file": "js/app-core.js",
-      "line": 38,
+      "line": 50,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#subscribeToRealtimeUpdates",
       "name": "subscribeToRealtimeUpdates",
       "file": "js/app-core.js",
-      "line": 219,
+      "line": 231,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#updateAdminUI",
       "name": "updateAdminUI",
       "file": "js/app-core.js",
-      "line": 262,
+      "line": 274,
       "kind": "function"
     },
     {
       "id": "js/app-core.js#updateReservationButtonUI",
       "name": "updateReservationButtonUI",
       "file": "js/app-core.js",
-      "line": 320,
+      "line": 332,
       "kind": "function"
     },
     {
@@ -11610,7 +11631,7 @@
       "kind": "supabase-table",
       "value": "system_settings",
       "function": "js/app-core.js#checkReservationStatus",
-      "line": 303
+      "line": 315
     },
     {
       "kind": "supabase-table",
@@ -11632,5 +11653,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "2dc327585b420ee5d8007cc9fc838c5223bd31a711c71dc01219d463724426c4"
+  "source_digest": "75f8f71d280deda9347b174f8b3997c6e26dfedf382f78859e51a6bd89b920f8"
 }
