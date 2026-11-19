@@ -8649,9 +8649,21 @@ body.christmas-theme {
     }
 }
 
-/* Keep the mobile Home navigation accessible above the Waiting List modal. */
+/* Modals must sit above the persistent mobile navigation. The navigation
+   remains available when no modal is open, but cannot cover modal actions. */
 @media (max-width: 768px) {
-    .mobile-bottom-nav { z-index: 2100 !important; }
+    .mobile-bottom-nav { z-index: 900 !important; }
+    .modal { z-index: 3000 !important; }
+    #apply-modal .modal-content.custom-form-modal {
+        max-height: calc(88dvh - env(safe-area-inset-bottom, 0px));
+        padding-bottom: max(22px, env(safe-area-inset-bottom, 0px));
+    }
+    #apply-modal .form-actions {
+        position: sticky;
+        bottom: 0;
+        margin-bottom: 0;
+        padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    }
 }
 
 
