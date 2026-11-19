@@ -9065,3 +9065,35 @@ body.christmas-theme {
     .action-button { min-height: 36px; gap: 5px; padding: 7px 9px !important; }
     .action-button-icon { width: 13px; height: 13px; flex-basis: 13px; }
 }
+
+/* Keep the Apply action readable inside the narrow schedule action column. */
+#schedule-page .table-container > table tbody td:nth-child(1) .reservation-apply-btn.action-button {
+    display: inline-flex !important;
+    width: 100%;
+    min-height: 36px !important;
+    padding: 6px 8px !important;
+    border-radius: 9px !important;
+    font-size: 0.74rem !important;
+}
+@media (max-width: 768px) {
+    #schedule-page .table-container > table tbody td:nth-child(1) .reservation-apply-btn.action-button {
+        min-height: 36px !important;
+        padding: 5px 3px !important;
+        gap: 3px;
+        font-size: clamp(0.58rem, 2.7vw, 0.7rem) !important;
+    }
+}
+@media (max-width: 480px) {
+    #schedule-page .table-container > table tbody td:nth-child(1) .reservation-apply-btn.action-button {
+        min-height: 36px !important;
+        padding: 4px 2px !important;
+        gap: 2px;
+        font-size: 0.58rem !important;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) .reservation-apply-btn .action-button-icon {
+        width: 12px;
+        height: 12px;
+        flex-basis: 12px;
+    }
+}
+
