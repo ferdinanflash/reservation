@@ -364,8 +364,8 @@ function openWaitingModal(timeStr) {
         const mainRow = document.createElement('tr');
         let adminButtons = isAdmin ? `
             <div class="admin-action-buttons" role="group" aria-label="${t("application_actions")}">
-                <button type="button" class="btn-apply btn-compact admin-action-btn admin-accept-btn" onclick="acceptApp(${app.id})">${t("btn_accept")}</button>
-                <button type="button" class="btn-apply btn-danger btn-compact admin-action-btn admin-reject-btn" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
+                <button type="button" class="btn-apply btn-compact admin-action-btn admin-accept-btn action-button" onclick="acceptApp(${app.id})">${actionIconHtml("accept")}<span>${t("btn_accept")}</span></button>
+                <button type="button" class="btn-apply btn-danger btn-compact admin-action-btn admin-reject-btn action-button" onclick="removeApp(${app.id})">${actionIconHtml("reject")}<span>${t("btn_drop")}</span></button>
             </div>
         ` : '';
 
@@ -378,7 +378,7 @@ function openWaitingModal(timeStr) {
             : `<option value="">${t("no_free_slots")}</option>`;
         const moveControls = isAdmin ? `
             <select id="${moveSelectId}" class="admin-control-select waiting-move-select" ${availableWaitingSlots.length === 0 ? 'disabled' : ''}>${moveOptions}</select>
-            <button type="button" class="btn-apply btn-compact waiting-move-btn" ${availableWaitingSlots.length === 0 ? 'disabled' : ''} onclick="moveWaitingListApp(${app.id}, document.getElementById('${moveSelectId}').value, '${timeStr}')">${t("btn_move")}</button>
+            <button type="button" class="btn-apply btn-compact waiting-move-btn action-move-btn action-button" ${availableWaitingSlots.length === 0 ? 'disabled' : ''} onclick="moveWaitingListApp(${app.id}, document.getElementById('${moveSelectId}').value, '${timeStr}')">${actionIconHtml("move")}<span>${t("btn_move")}</span></button>
         ` : '-';
 
         mainRow.innerHTML = `
