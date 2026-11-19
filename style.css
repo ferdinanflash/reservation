@@ -6782,7 +6782,7 @@ html[lang="fr"] #confirm-message { overflow-wrap: anywhere; }
     transition: opacity .25s ease;
 }
 /* arrow for the 4 external links (opens another site) */
-#main-menu-links > a.list-item-small > span::after {
+#main-menu-links > a.list-item-small > .menu-card-label::after {
     content: "\2197";
     display: inline-block;
     width: 0;
@@ -8952,4 +8952,21 @@ body.christmas-theme {
         width: 20px;
         height: 20px;
     }
+}
+
+
+/* Keep external-link SVG artwork optically centered; hover arrows belong to labels only. */
+#main-menu-links > .menu-card .menu-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+#main-menu-links > .menu-card .menu-card-icon svg {
+    display: block;
+    flex: 0 0 23px;
+    margin: auto;
+}
+@media (max-width: 560px) {
+    #main-menu-links > .menu-card .menu-card-icon svg { flex-basis: 20px; }
 }
