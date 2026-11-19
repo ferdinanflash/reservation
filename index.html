@@ -22,7 +22,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-20-14';
+			var APP_BUILD = '2026-11-20-15';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -729,6 +729,13 @@
 				<h2 id="whatsnew-modal-title" class="apply-title" data-i18n="whatsnew_title">What's New?</h2>
 				<p class="whatsnew-date" data-i18n="whatsnew_date">Last Update: 16 Nov 2026</p>
 				<ul class="whatsnew-list">
+					<li class="whatsnew-item">
+						<span class="whatsnew-icon" aria-hidden="true">🎆</span>
+						<div class="whatsnew-body">
+							<div class="whatsnew-item-title"><span class="whatsnew-badge whatsnew-badge-new" data-i18n="whatsnew_badge_new">New</span><span data-i18n="whatsnew_22_title"></span></div>
+							<p class="whatsnew-item-desc" data-i18n="whatsnew_22_desc"></p>
+						</div>
+					</li>
 					<li class="whatsnew-item">
 						<span class="whatsnew-icon" aria-hidden="true">🧹</span>
 						<div class="whatsnew-body">
