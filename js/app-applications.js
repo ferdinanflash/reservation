@@ -345,6 +345,8 @@ function openWaitingModal(timeStr) {
     
     currentWaitingModalTime = timeStr;
     document.getElementById('modal-title').innerText = t("waiting_list_title", { time: timeStr });
+    const waitingHint = document.getElementById('waiting-list-hint');
+    if (waitingHint) waitingHint.textContent = 'Click Nickname for Details & ID for copy';
     const modalTbody = document.getElementById('modal-table-body');
     modalTbody.innerHTML = "";
 
@@ -381,10 +383,11 @@ function openWaitingModal(timeStr) {
 
         mainRow.innerHTML = `
             <td class="waiting-col-nick" style="padding: 5px 10px; text-align: left; font-weight: 500;">
-                <span class="icon-tap-target" style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${typeof nicknameHtml === 'function' ? nicknameHtml(app.nickname) : escapeHtml(capZalgo(app.nickname))}
+                <button type="button" class="waiting-nickname-trigger" onclick="toggleDetails(${app.id})" aria-label="Show details for ${escapeHtml(app.nickname)}">${typeof nicknameHtml === 'function' ? nicknameHtml(app.nickname) : escapeHtml(capZalgo(app.nickname))}</button>
             </td>
             <td class="waiting-col-id" style="padding: 5px 10px; text-align: left;">
-                <span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
+                <span class="waiting-id-label">ID</span>
+                <span class="waiting-id-value" role="button" tabindex="0" onclick="copyToClipboard('${escapeHtml(app.game_id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copyToClipboard('${escapeHtml(app.game_id)}')}">${escapeHtml(app.game_id)}</span>
             </td>
             ${isAdmin ? `<td class="waiting-col-move" style="padding: 5px 10px; text-align: left;">${moveControls}</td>` : ''}
             ${isAdmin ? `<td class="waiting-col-actions" style="padding: 5px 10px; text-align: left;">${adminButtons}</td>` : ''}
