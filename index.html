@@ -22,7 +22,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-20-6';
+			var APP_BUILD = '2026-11-20-7';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -443,10 +443,8 @@
 						<button type="button" class="list-item list-item-small menu-card menu-card-primary" onclick="showMinisterReservationMenu()"><span class="menu-card-icon" aria-hidden="true">👑</span><span class="menu-card-label" data-i18n="link_minister_reservation">Minister Reservation</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
 						<button type="button" class="list-item list-item-small menu-card" id="svs-enemies-menu-btn" onclick="showSvSEnemiesMenu()"><span class="menu-card-icon" aria-hidden="true">⚔️</span><span class="menu-card-label" id="svs-enemies-menu-label" data-i18n="link_svs_enemies">SvS Enemies</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
 						<button type="button" class="list-item list-item-small menu-card" onclick="showSvSRecordMenu()"><span class="menu-card-icon" aria-hidden="true">📜</span><span class="menu-card-label" data-i18n="link_svs_record">SvS Record</span><span class="menu-card-arrow" aria-hidden="true">↗</span></button>
-						<a class="list-item list-item-small menu-card" href="https://tal.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">🏆</span><span class="menu-card-label" data-i18n="link_tal">Battle Events</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
 						<a class="list-item list-item-small menu-card" href="https://transfer.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">🛡️</span><span class="menu-card-label" data-i18n="link_transfer_portal">Transfer Portal</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
 						<a class="list-item list-item-small menu-card event-records-menu-link" href="https://events.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">📊</span><span class="menu-card-label" data-i18n="link_leaderboard">Events Record</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
-						<a class="list-item list-item-small menu-card" href="https://calc.3475.web.id" target="_blank" rel="noopener noreferrer"><span class="menu-card-icon" aria-hidden="true">🧰</span><span class="menu-card-label" data-i18n="link_wos_tool">WoS Tool</span><span class="menu-card-arrow" aria-hidden="true">↗</span></a>
 					</div>
 					
 				</div>
@@ -571,8 +569,8 @@
 			<button type="button" class="mobile-nav-item is-active" onclick="closeModal(); showMainMenu(); document.querySelectorAll('.mobile-nav-item').forEach(function(x){x.classList.remove('is-active')}); this.classList.add('is-active')" aria-label="Home">
 				<span class="mobile-nav-icon" aria-hidden="true">⌂</span><span data-i18n="main_menu_title">Home</span>
 			</button>
-			<button type="button" class="mobile-nav-item" onclick="showMinisterReservationMenu(); document.querySelectorAll('.mobile-nav-item').forEach(function(x){x.classList.remove('is-active')}); this.classList.add('is-active')" aria-label="Minister Reservation">
-				<span class="mobile-nav-icon" aria-hidden="true">▦</span><span data-i18n="link_minister_reservation">Reservation</span>
+			<button type="button" class="mobile-nav-item" onclick="closeModal(); openRedeemModal(); document.querySelectorAll('.mobile-nav-item').forEach(function(x){x.classList.remove('is-active')}); this.classList.add('is-active')" aria-label="Redeem Code">
+				<span class="mobile-nav-icon" aria-hidden="true">🎁</span><span data-i18n="redeem_code_btn">Redeem Code</span>
 			</button>
 			<a class="mobile-nav-item" href="https://tal.3475.web.id" target="_blank" rel="noopener noreferrer" aria-label="Battle Events">
 				<span class="mobile-nav-icon" aria-hidden="true">🏆</span><span data-i18n="link_tal">Events</span>
