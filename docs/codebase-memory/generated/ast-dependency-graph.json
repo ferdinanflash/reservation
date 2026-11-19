@@ -3847,49 +3847,56 @@
       "from": "js/app-schedule.js#loadApplications",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 139,
+      "line": 138,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#loadApplications",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 169,
+      "line": 168,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#loadApplications",
       "to": "js/app-schedule.js#renderLoadingState",
       "kind": "call",
-      "line": 149,
+      "line": 148,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#loadApplications",
       "to": "js/app-schedule.js#renderTimeSlots",
       "kind": "call",
-      "line": 177,
+      "line": 176,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#loadApplications",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 169,
+      "line": 168,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderLoadingState",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 185,
+      "line": 184,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "common.js#capZalgo",
       "kind": "call",
-      "line": 249,
+      "line": 248,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-schedule.js#renderTimeSlots",
+      "to": "common.js#escapeHtml",
+      "kind": "call",
+      "line": 248,
       "confidence": "static-name-match"
     },
     {
@@ -3903,70 +3910,70 @@
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "common.js#escapeHtml",
       "kind": "call",
-      "line": 250,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-schedule.js#renderTimeSlots",
-      "to": "common.js#escapeHtml",
-      "kind": "call",
-      "line": 250,
+      "line": 249,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "common.js#nicknameHtml",
       "kind": "call",
-      "line": 249,
+      "line": 248,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "js/app-core.js#actionLabelClass",
       "kind": "call",
-      "line": 232,
+      "line": 231,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "js/app-core.js#actionLabelClass",
       "kind": "call",
-      "line": 254,
+      "line": 253,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "js/app-core.js#furnaceIconHtml",
       "kind": "call",
-      "line": 249,
+      "line": 248,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 214,
+      "line": 213,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 232,
+      "line": 231,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 232,
+      "line": 231,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 242,
+      "line": 241,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-schedule.js#renderTimeSlots",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 246,
       "confidence": "static-name-match"
     },
     {
@@ -3987,7 +3994,14 @@
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 249,
+      "line": 253,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-schedule.js#renderTimeSlots",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 253,
       "confidence": "static-name-match"
     },
     {
@@ -4001,56 +4015,42 @@
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 254,
+      "line": 256,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 255,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-schedule.js#renderTimeSlots",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 257,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-schedule.js#renderTimeSlots",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 261,
+      "line": 260,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#requestApplicationsReload",
       "to": "js/app-schedule.js#isSchedulePageOpen",
       "kind": "call",
-      "line": 130,
+      "line": 129,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#showSchedule",
       "to": "js/app-core.js#checkReservationStatus",
       "kind": "call",
-      "line": 40,
+      "line": 39,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#showSchedule",
       "to": "js/app-schedule.js#detectAndSetTimezone",
       "kind": "call",
-      "line": 38,
+      "line": 37,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-schedule.js#showSchedule",
       "to": "lang.js#translatePositionName",
       "kind": "call",
-      "line": 37,
+      "line": 36,
       "confidence": "static-name-match"
     },
     {
@@ -9888,42 +9888,42 @@
       "id": "js/app-schedule.js#detectAndSetTimezone",
       "name": "detectAndSetTimezone",
       "file": "js/app-schedule.js",
-      "line": 45,
+      "line": 44,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#isSchedulePageOpen",
       "name": "isSchedulePageOpen",
       "file": "js/app-schedule.js",
-      "line": 124,
+      "line": 123,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#loadApplications",
       "name": "loadApplications",
       "file": "js/app-schedule.js",
-      "line": 138,
+      "line": 137,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#renderLoadingState",
       "name": "renderLoadingState",
       "file": "js/app-schedule.js",
-      "line": 182,
+      "line": 181,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#renderTimeSlots",
       "name": "renderTimeSlots",
       "file": "js/app-schedule.js",
-      "line": 188,
+      "line": 187,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#requestApplicationsReload",
       "name": "requestApplicationsReload",
       "file": "js/app-schedule.js",
-      "line": 129,
+      "line": 128,
       "kind": "function"
     },
     {
@@ -9944,14 +9944,14 @@
       "id": "js/app-schedule.js#showPositions",
       "name": "showPositions",
       "file": "js/app-schedule.js",
-      "line": 105,
+      "line": 104,
       "kind": "function"
     },
     {
       "id": "js/app-schedule.js#showSchedule",
       "name": "showSchedule",
       "file": "js/app-schedule.js",
-      "line": 31,
+      "line": 30,
       "kind": "function"
     },
     {
@@ -11574,7 +11574,7 @@
       "kind": "supabase-table",
       "value": "reservation_slots",
       "function": "js/app-schedule.js#loadApplications",
-      "line": 155
+      "line": 154
     },
     {
       "kind": "supabase-table",
@@ -11632,5 +11632,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "575abe2f9288634695cf848371d492d6dcd286bae6b7a4bb45837c9860df2391"
+  "source_digest": "f58bd0c5a59d0ddd1b379cf3d7c1e44336267a77afa475b69590301aa947dc81"
 }
