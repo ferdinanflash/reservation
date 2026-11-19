@@ -195,7 +195,7 @@
     "generator_version": 1,
     "file_count": 99,
     "digest_algorithm": "sha256",
-    "content_digest": "3dc711b656af5b4b82feb68ec8c8bf98c7f1ef783c91e101e6b80b91d3f9cac7",
+    "content_digest": "c9d562cc25e49ab25a80f15e148795a5cf7aff587981b533b98e154d9dfef89c",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -299,7 +299,7 @@
       },
       {
         "path": "docs/codebase-memory/features/reservation.md",
-        "sha256": "a401c305fd15142f8a741870cf05202de5627bcbcd98d8a536deefc3eec23872"
+        "sha256": "54ae4bab2512418c8ed78eb3bd897fe5f6577e4d3306d8c0a65b62c3abb84317"
       },
       {
         "path": "docs/codebase-memory/features/shared-core-auth.md",
@@ -315,7 +315,7 @@
       },
       {
         "path": "docs/codebase-memory/features/themes-translations-pwa.md",
-        "sha256": "b1df6932bd68154f0a49185c43392f698e9a6fcd49436e86bd4e8bad924eb128"
+        "sha256": "d38eb828bc0d43ddb280970908f7e1299e08d0432f8d86abaa89f4f04baa1825"
       },
       {
         "path": "docs/codebase-memory/known-issues.md",
@@ -339,11 +339,11 @@
       },
       {
         "path": "index.html",
-        "sha256": "a5ee6d0994cb15f0258d391d64f6c32fc923b9f69a67c412f5512b18b73abc87"
+        "sha256": "8fd38ebef157208fb36ec7f08a48cb0acf47d4476c9599a45b97362f15f99a37"
       },
       {
         "path": "js/app-applications.js",
-        "sha256": "e3b930ad0bccf16665dc159f1e673a84b95892a4d6c81f72fd7669907bee95b7"
+        "sha256": "8f2b1b380af03f3c07d584a2836bd71aa03959fed23bf8f6e5031edf0d105fdc"
       },
       {
         "path": "js/app-auth.js",
@@ -355,11 +355,11 @@
       },
       {
         "path": "js/app-core.js",
-        "sha256": "3df4ed78b0e2083463fd61a0ef991fe452db478e96f97fe169584eb7000f5362"
+        "sha256": "57f38601440b7dca659a23ce53a257d1b6cfbf6dbfb8390fed9f5b4dbb496f32"
       },
       {
         "path": "js/app-extras.js",
-        "sha256": "874a5c87b318739fe787e1eba323a33053505107dd02fc3cd5dc58350b4e7ccd"
+        "sha256": "69ef2f612bff4e1e3759059f6874aca111b9b5b7ff77a4b41f7eb79b7d8911f7"
       },
       {
         "path": "js/app-notes.js",
@@ -371,7 +371,7 @@
       },
       {
         "path": "js/app-schedule.js",
-        "sha256": "93c11794c627a605ba702f016b65a5e097724bbcf5267fee57f6ba16596314da"
+        "sha256": "9126339697ce027f6ee42fa18fb85d60120367f040e49b7e1ce654071eeed04d"
       },
       {
         "path": "js/app-svs-enemies.js",
@@ -383,11 +383,11 @@
       },
       {
         "path": "js/app-waiting.js",
-        "sha256": "916f77ea808f80af10b2d4e1dade344c766022ccc68b1daf9ee9b6e4ce6e7289"
+        "sha256": "9f78b45b38a887f4a39498e1de96963828fe84c153f92f2628a896a9389a9aad"
       },
       {
         "path": "lang.js",
-        "sha256": "c10297d1c6f782ea71af91a20c1982c67a9451b56732a8e2b053d02ad7c6e509"
+        "sha256": "9bbd2c8a84e3254118084c14fc5721f14257047e538104b6396ed05b6559e270"
       },
       {
         "path": "live/index.html",
@@ -415,7 +415,7 @@
       },
       {
         "path": "style.css",
-        "sha256": "e7a736eced0b3ba47bf6f34ac1025f14952b5e07246d0d2d30971b92b1732798"
+        "sha256": "be61d493f215f6f72bf5f3a422fbb4b72452ad36c004dcb67401653ca89f3467"
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
@@ -527,7 +527,7 @@
       },
       {
         "path": "sw.js",
-        "sha256": "4da4847cc7207dc794e61af94da9686b31f3bc847d4c2f108dd666fb29344598"
+        "sha256": "93bca4abdfaacdcef55eb809ff91c933682e6e880811a2079652bb7697067259"
       },
       {
         "path": "tools/codebase-memory-mcp/README.md",

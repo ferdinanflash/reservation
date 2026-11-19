@@ -18,6 +18,18 @@
 // script.js. Make sure this page's HTML loads common.js BEFORE this file.
 
 
+// ================= RESERVATION ACTION BUTTON ICONS =================
+function actionIconHtml(action) {
+    const icons = {
+        apply: '<path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7Z"/>',
+        accept: '<path d="m5 12 4 4L19 6"/>',
+        reject: '<path d="m18 6-12 12"/><path d="m6 6 12 12"/>',
+        move: '<path d="M7 7h10l-3-3"/><path d="m17 7-3 3"/><path d="M17 17H7l3 3"/><path d="m7 17 3-3"/>',
+        remove: '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/>'
+    };
+    return `<svg class="action-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${icons[action] || ''}</svg>`;
+}
+
 // ================= STAT ICONS (image assets) =================
 // Maps each resource / speedup field to its artwork in images/. Used by the
 // application form, the detail modal, the compact stat rows and the

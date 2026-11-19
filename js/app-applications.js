@@ -345,6 +345,8 @@ function openWaitingModal(timeStr) {
     
     currentWaitingModalTime = timeStr;
     document.getElementById('modal-title').innerText = t("waiting_list_title", { time: timeStr });
+    const waitingHint = document.getElementById('waiting-list-hint');
+    if (waitingHint) waitingHint.textContent = 'Click Nickname for Details & ID for copy';
     const modalTbody = document.getElementById('modal-table-body');
     modalTbody.innerHTML = "";
 
@@ -362,8 +364,8 @@ function openWaitingModal(timeStr) {
         const mainRow = document.createElement('tr');
         let adminButtons = isAdmin ? `
             <div class="admin-action-buttons" role="group" aria-label="${t("application_actions")}">
-                <button type="button" class="btn-apply btn-compact admin-action-btn admin-accept-btn" onclick="acceptApp(${app.id})">${t("btn_accept")}</button>
-                <button type="button" class="btn-apply btn-danger btn-compact admin-action-btn admin-reject-btn" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
+                <button type="button" class="btn-apply btn-compact admin-action-btn admin-accept-btn action-button" onclick="acceptApp(${app.id})">${actionIconHtml("accept")}<span>${t("btn_accept")}</span></button>
+                <button type="button" class="btn-apply btn-danger btn-compact admin-action-btn admin-reject-btn action-button" onclick="removeApp(${app.id})">${actionIconHtml("reject")}<span>${t("btn_drop")}</span></button>
             </div>
         ` : '';
 
@@ -376,36 +378,37 @@ function openWaitingModal(timeStr) {
             : `<option value="">${t("no_free_slots")}</option>`;
         const moveControls = isAdmin ? `
             <select id="${moveSelectId}" class="admin-control-select waiting-move-select" ${availableWaitingSlots.length === 0 ? 'disabled' : ''}>${moveOptions}</select>
-            <button type="button" class="btn-apply btn-compact waiting-move-btn" ${availableWaitingSlots.length === 0 ? 'disabled' : ''} onclick="moveWaitingListApp(${app.id}, document.getElementById('${moveSelectId}').value, '${timeStr}')">${t("btn_move")}</button>
+            <button type="button" class="btn-apply btn-compact waiting-move-btn action-move-btn action-button" ${availableWaitingSlots.length === 0 ? 'disabled' : ''} onclick="moveWaitingListApp(${app.id}, document.getElementById('${moveSelectId}').value, '${timeStr}')">${actionIconHtml("move")}<span>${t("btn_move")}</span></button>
         ` : '-';
 
         mainRow.innerHTML = `
             <td class="waiting-col-nick" style="padding: 5px 10px; text-align: left; font-weight: 500;">
-                <span class="icon-tap-target" style="cursor:pointer; margin-right: 6px;" onclick="toggleDetails(${app.id})">🔍</span>${typeof nicknameHtml === 'function' ? nicknameHtml(app.nickname) : escapeHtml(capZalgo(app.nickname))}
+                <button type="button" class="waiting-nickname-trigger" onclick="toggleDetails(${app.id})" aria-label="Show details for ${escapeHtml(app.nickname)}">${typeof nicknameHtml === 'function' ? nicknameHtml(app.nickname) : escapeHtml(capZalgo(app.nickname))}</button>
             </td>
             <td class="waiting-col-id" style="padding: 5px 10px; text-align: left;">
-                <span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(app.game_id)}')">${escapeHtml(app.game_id)}</span>
+                <span class="waiting-id-label">ID</span>
+                <span class="waiting-id-value" role="button" tabindex="0" onclick="copyToClipboard('${escapeHtml(app.game_id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copyToClipboard('${escapeHtml(app.game_id)}')}">${escapeHtml(app.game_id)}</span>
             </td>
             ${isAdmin ? `<td class="waiting-col-move" style="padding: 5px 10px; text-align: left;">${moveControls}</td>` : ''}
             ${isAdmin ? `<td class="waiting-col-actions" style="padding: 5px 10px; text-align: left;">${adminButtons}</td>` : ''}
         `;
         modalTbody.appendChild(mainRow);
 
-        const detailsRow = document.createElement('tr');
-        detailsRow.id = `details-${app.id}`;
-        detailsRow.style.display = 'none'; 
-        detailsRow.innerHTML = `
-            <td colspan="${isAdmin ? 4 : 2}" style="padding: 0; border: none;">
-                <div style="background: #151821; padding: 8px; margin: 2px 5px; border-radius: 4px; font-size: 0.8rem; text-align: left; border: 1px solid #334155;">
-                    ${buildStatDetailsHtml(app, true)}
-                    <div class="waiting-time-log">
-                        <div class="application-time-log-title">${t("time_log_title")}</div>
-                        <div class="application-time-log-list">${buildApplicationTimeLogHtml(app)}</div>
-                    </div>
+        const detailsCell = document.createElement('td');
+        detailsCell.id = `details-${app.id}`;
+        detailsCell.className = 'waiting-details-content';
+        detailsCell.colSpan = isAdmin ? 4 : 2;
+        detailsCell.style.display = 'none';
+        detailsCell.innerHTML = `
+            <div class="waiting-details-card">
+                ${buildStatDetailsHtml(app, true)}
+                <div class="waiting-time-log">
+                    <div class="application-time-log-title">${t("time_log_title")}</div>
+                    <div class="application-time-log-list">${buildApplicationTimeLogHtml(app)}</div>
                 </div>
-            </td>
+            </div>
         `;
-        modalTbody.appendChild(detailsRow);
+        mainRow.appendChild(detailsCell);
     });
     
     modal.classList.toggle('waiting-admin-view', !!isAdmin);
@@ -469,9 +472,9 @@ async function moveWaitingListApp(id, newTimeSlot, originTime) {
 }
 
 function toggleDetails(id) {
-    const detailsRow = document.getElementById(`details-${id}`);
-    if (detailsRow) {
-        detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+    const detailsCell = document.getElementById(`details-${id}`);
+    if (detailsCell) {
+        detailsCell.style.display = detailsCell.style.display === 'none' ? 'block' : 'none';
     }
 }
 

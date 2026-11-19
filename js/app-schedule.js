@@ -18,11 +18,17 @@ function showMinisterReservationMenu() {
 }
 
 function showMainMenu() {
-    document.getElementById('minister-reservation-view').classList.add('hidden');
-    const enemies = document.getElementById('svs-enemies-view');
-    if (enemies) enemies.classList.add('hidden');
-    document.getElementById('svs-record-view')?.classList.add('hidden');
-    document.getElementById('main-menu-view').classList.remove('hidden');
+    // Schedule navigation hides the whole positions-page parent. Restore that
+    // parent first, then show Home and hide every sibling subview.
+    const positionsPage = document.getElementById('positions-page');
+    positionsPage?.classList.remove('hidden');
+
+    ['minister-reservation-view', 'schedule-page',
+     'svs-enemies-view', 'svs-record-view'].forEach(id => {
+        document.getElementById(id)?.classList.add('hidden');
+    });
+
+    document.getElementById('main-menu-view')?.classList.remove('hidden');
 }
 
 function showSchedule(positionName) {
@@ -226,7 +232,7 @@ function renderTimeSlots() {
             let actionBtn = isAdmin
                 ? `<div style="display:inline-flex; flex-wrap:nowrap; align-items:center; justify-content:center; gap:6px;">
                      <span style="flex-shrink:0;">${detailBtn}</span>
-                     <button class="btn-apply btn-danger btn-compact${actionLabelClass(t("btn_remove"))}" style="padding: 4px 8px; font-size: 0.75rem; flex-shrink:0; white-space:nowrap;" onclick="removeApp(${acceptedApp.id})">${t("btn_remove")}</button>
+                     <button type="button" class="btn-apply btn-compact schedule-remove-btn action-button${actionLabelClass(t("btn_remove"))}" onclick="removeApp(${acceptedApp.id})">${actionIconHtml("remove")}<span>${t("btn_remove")}</span></button>
                    </div>`
                 : detailBtn;
 
@@ -243,12 +249,11 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:var(--t-muted, #8a8d98);">${t("local_prefix", { time: localTimeStr })}</small></td>
                 <td><span style="color:#22c55e; font-weight:bold;">${t("status_accepted")}</span>${leftoverBadge}</td>
-                <td class="schedule-col-nick">${typeof nicknameHtml === 'function' ? nicknameHtml(acceptedApp.nickname) : escapeHtml(capZalgo(acceptedApp.nickname))}</td>
-                <td><span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
-                <td>${furnaceIconHtml(acceptedApp.furnace_level)}</td>
+                <td class="schedule-col-nick"><span class="accepted-player-name">${typeof nicknameHtml === 'function' ? nicknameHtml(acceptedApp.nickname) : escapeHtml(capZalgo(acceptedApp.nickname))}</span><span class="accepted-furnace-inline" aria-label="${t("stat_furnace_lvl")}">${furnaceIconHtml(acceptedApp.furnace_level)}</span></td>
+                <td class="schedule-col-id"><span style="cursor:pointer; color:var(--t-link, #3b82f6); text-decoration:underline;" onclick="copyToClipboard('${escapeHtml(acceptedApp.game_id)}')">${escapeHtml(acceptedApp.game_id)}</span></td>
             `;
         } else {
-            let actionBtn = `<button class="btn-apply${actionLabelClass(t("btn_apply_action"))}" onclick="applySlot('${utcTimeStr}')">${t("btn_apply_action")}</button>`;
+            let actionBtn = `<button type="button" class="btn-apply action-button reservation-apply-btn${actionLabelClass(t("btn_apply_action"))}" onclick="applySlot('${utcTimeStr}')">${actionIconHtml("apply")}<span>${t("btn_apply_action")}</span></button>`;
             let statusText = `<span class="no-apps">${t("status_no_applications")}</span>`;
             if (countWaiting > 0) {
                 statusText = `<span style="color:var(--t-amber, #f59e0b); font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openWaitingModal('${utcTimeStr}')">${t("status_waiting_count", { count: countWaiting })}</span>`;
@@ -257,7 +262,6 @@ function renderTimeSlots() {
                 <td>${actionBtn}</td>
                 <td><strong>${utcTimeStr} UTC</strong><br><small style="color:var(--t-muted, #8a8d98);">${t("local_prefix", { time: localTimeStr })}</small></td>
                 <td>${statusText}</td>
-                <td>-</td>
                 <td>-</td>
                 <td>-</td>
             `;

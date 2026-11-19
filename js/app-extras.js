@@ -612,8 +612,8 @@ function openRedeemModal() {
     modal.classList.remove('hidden');
     document.body.classList.add('redeem-modal-open');
 
-    const fidInput = document.getElementById('redeem-fid-input');
-    if (fidInput) fidInput.focus();
+    // Do not autofocus form fields: on mobile this would open the on-screen keyboard
+    // immediately when the Redeem Code modal is opened. Users can tap a field when ready.
 }
 
 function closeRedeemModal() {

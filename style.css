@@ -133,7 +133,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
-    padding: 20px 0;
+    padding: 0 0 20px;
 }
 
 /* ==================== SEASONAL TEXT COLORS ====================
@@ -6782,7 +6782,7 @@ html[lang="fr"] #confirm-message { overflow-wrap: anywhere; }
     transition: opacity .25s ease;
 }
 /* arrow for the 4 external links (opens another site) */
-#main-menu-links > a.list-item-small > span::after {
+#main-menu-links > a.list-item-small > .menu-card-label::after {
     content: "\2197";
     display: inline-block;
     width: 0;
@@ -7804,3 +7804,1296 @@ body.christmas-theme {
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
+
+
+/* ================= MOBILE APP SHELL — STATE OF 3475 =================
+   Responsive bottom navigation and touch-first dashboard refinements.
+   Existing reservation, language, theme, Supabase and PWA behavior is unchanged. */
+.mobile-bottom-nav { display:none; }
+
+@media (max-width: 768px) {
+    body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+    .navbar {
+        position: relative;
+        z-index: 80;
+        gap: 8px;
+        padding: 10px 14px;
+        min-height: 58px;
+        background: linear-gradient(180deg, rgba(7, 22, 45, .98), rgba(8, 25, 49, .94));
+        border-bottom-color: rgba(106, 174, 255, .22);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+    .navbar .logo.fire-text {
+        max-width: 58%;
+        font-size: clamp(.98rem, 4vw, 1.2rem);
+        white-space: nowrap;
+        letter-spacing: .015em;
+    }
+    .navbar-actions { gap: 6px; }
+    .lang-trigger { padding: 7px 9px; }
+    .nav-menu-trigger { min-height: 36px; padding: 7px 10px; }
+    .container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto 18px;
+        padding: 0 12px;
+    }
+    .banner-container { margin: 0 -12px 14px; overflow:hidden; }
+    .fire-banner {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        transform: none;
+        border-radius: 0 0 16px 16px;
+        aspect-ratio: 1408 / 700;
+        min-height: 150px;
+        max-height: 250px;
+    }
+    .dashboard-welcome {
+        min-height: 96px;
+        margin: 0 0 17px;
+        padding: 15px 16px;
+        border-radius: 16px;
+        gap: 10px;
+    }
+    .dashboard-welcome h2 { font-size: clamp(1.35rem, 6vw, 1.9rem); }
+    .dashboard-welcome p { font-size: .78rem; }
+    .dashboard-emblem { flex-basis: 58px; width:58px; height:58px; font-size:.78rem; }
+    .dashboard-section-heading { margin-bottom: 10px; }
+    .external-link-container.dashboard-menu-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+    #main-menu-links > .menu-card {
+        min-height: 72px;
+        padding: 10px 11px;
+        gap: 9px;
+        border-radius: 13px;
+    }
+    #main-menu-links > .menu-card-primary {
+        grid-column: 1 / -1;
+        min-height: 78px;
+    }
+    #main-menu-links > .menu-card .menu-card-icon {
+        flex-basis: 36px;
+        width: 36px;
+        height: 36px;
+        font-size: 1.12rem;
+    }
+    #main-menu-links > .menu-card .menu-card-label { font-size: .79rem; }
+    .dashboard-whatsnew { margin-top: 13px; }
+    .mobile-bottom-nav {
+        position: fixed;
+        z-index: 900;
+        left: 10px;
+        right: 10px;
+        bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 3px;
+        padding: 7px 6px;
+        border: 1px solid rgba(116, 180, 255, .32);
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(13, 38, 72, .96), rgba(5, 17, 38, .98));
+        box-shadow: 0 10px 32px rgba(0, 0, 0, .42), inset 0 1px rgba(255,255,255,.08), 0 0 20px rgba(37, 137, 255, .12);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+    .mobile-nav-item {
+        display:flex;
+        min-width:0;
+        min-height:49px;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:3px;
+        padding:4px 2px;
+        border:1px solid transparent;
+        border-radius:12px;
+        color:#a9c6e9;
+        background:transparent;
+        text-decoration:none;
+        font:inherit;
+        font-size:.62rem;
+        font-weight:750;
+        line-height:1.1;
+        text-align:center;
+        cursor:pointer;
+        -webkit-tap-highlight-color:transparent;
+        transition:color .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .mobile-nav-icon {
+        display:grid;
+        place-items:center;
+        min-height:23px;
+        font-size:1.22rem;
+        font-weight:900;
+        line-height:1;
+    }
+    .mobile-nav-item.is-active {
+        color:#ffe3a0;
+        border-color:rgba(255, 204, 105, .52);
+        background:linear-gradient(180deg, rgba(245, 174, 55, .2), rgba(245, 174, 55, .06));
+        box-shadow:inset 0 0 12px rgba(255, 195, 75, .08), 0 0 12px rgba(255, 190, 70, .12);
+    }
+    .mobile-nav-item.is-active .mobile-nav-icon { filter:drop-shadow(0 0 5px rgba(255, 203, 105, .7)); }
+    .site-footer { padding-bottom: 18px; }
+    .modal { z-index: 1100; }
+    .modal-content { max-height: calc(100dvh - 28px - env(safe-area-inset-bottom, 0px)); overflow-y:auto; }
+    .table-container { max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    button, a { touch-action:manipulation; }
+}
+@media (max-width: 380px) {
+    .navbar { padding-left:10px; padding-right:10px; }
+    .navbar .logo.fire-text { font-size:.92rem; }
+    .container { padding-left:10px; padding-right:10px; }
+    .mobile-bottom-nav { left:6px; right:6px; padding-left:4px; padding-right:4px; }
+    .mobile-nav-item { font-size:.58rem; }
+    .mobile-nav-icon { font-size:1.12rem; }
+    .dashboard-emblem { display:grid; flex-basis:50px; width:50px; height:50px; font-size:.7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mobile-nav-item { transition:none !important; }
+}
+
+
+/* ================= STATE OF 3475 — MOBILE SCHEDULE CARDS =================
+   Desktop keeps the six-column schedule table. On phones each time slot
+   becomes a compact, readable card without changing any reservation logic. */
+@media (max-width: 600px) {
+    #schedule-page .section-title {
+        margin: 16px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.35;
+    }
+    #schedule-page .timezone-selector {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 7px;
+        margin: 10px 2px 14px;
+        padding: 10px 12px;
+        border: 1px solid rgba(120, 170, 220, .2);
+        border-radius: 13px;
+        background: rgba(12, 27, 48, .72);
+    }
+    #schedule-page .timezone-selector select {
+        flex: 1 1 150px;
+        min-width: 0;
+    }
+    #schedule-page .table-container {
+        overflow: visible;
+        margin: 0;
+        padding: 0 1px;
+    }
+    #schedule-page .table-container > table {
+        display: block;
+        width: 100%;
+        border: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: auto;
+        background: transparent;
+    }
+    #schedule-page .table-container > table thead {
+        display: none;
+    }
+    #schedule-page .table-container > table tbody {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 9px;
+        width: 100%;
+    }
+    #schedule-page .table-container > table tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 7px 12px;
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid rgba(116, 165, 220, .23);
+        border-radius: 15px;
+        background:
+            radial-gradient(ellipse at 100% 0%, rgba(56, 125, 196, .12), transparent 58%),
+            linear-gradient(145deg, rgba(19, 35, 57, .96), rgba(10, 20, 36, .98));
+        box-shadow: 0 5px 15px rgba(0, 0, 0, .2), inset 0 1px rgba(255,255,255,.035);
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) {
+        border-color: rgba(34, 197, 94, .38);
+        background:
+            radial-gradient(ellipse at 100% 0%, rgba(34, 197, 94, .12), transparent 58%),
+            linear-gradient(145deg, rgba(17, 43, 43, .97), rgba(10, 27, 35, .98));
+    }
+    #schedule-page .table-container > table tbody td {
+        display: block;
+        min-width: 0;
+        width: auto !important;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--t-primary, #e7edf7);
+        font-size: .78rem;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+        text-align: left;
+        vertical-align: top;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        min-height: 30px;
+        order: 6;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) .btn-apply {
+        min-height: 34px;
+        padding: 7px 15px;
+        border-radius: 10px;
+        font-size: .76rem;
+        white-space: nowrap;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(2) {
+        grid-column: 1 / -1;
+        padding: 0 0 8px;
+        border-bottom: 1px solid rgba(145, 177, 215, .16);
+        font-size: .9rem;
+        font-weight: 800;
+        letter-spacing: .01em;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(2) strong {
+        color: #f4d28a;
+        font-size: 1.02rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(2) small {
+        display: inline-block;
+        margin-left: 5px;
+        font-size: .72rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(3)::before,
+    #schedule-page .table-container > table tbody td:nth-child(4)::before,
+    #schedule-page .table-container > table tbody td:nth-child(5)::before,
+    #schedule-page .table-container > table tbody td:nth-child(6)::before {
+        display: block;
+        margin-bottom: 3px;
+        color: var(--t-muted, #91a4bd);
+        font-size: .61rem;
+        font-weight: 800;
+        letter-spacing: .075em;
+        text-transform: uppercase;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(3)::before { content: "STATUS"; }
+    #schedule-page .table-container > table tbody td:nth-child(4)::before { content: "PLAYER"; }
+    #schedule-page .table-container > table tbody td:nth-child(5)::before { content: "PLAYER ID"; }
+    #schedule-page .table-container > table tbody td:nth-child(6)::before { content: "FURNACE"; }
+    #schedule-page .table-container > table tbody td:nth-child(3) {
+        grid-column: 1 / -1;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(4) {
+        grid-column: 1 / -1;
+        font-size: .86rem;
+        font-weight: 750;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(5),
+    #schedule-page .table-container > table tbody td:nth-child(6) {
+        align-self: end;
+        padding-top: 3px;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(5) {
+        color: var(--t-link, #75baff);
+        font-size: .75rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(6) {
+        text-align: right;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(6) .furnace-badge {
+        max-width: 52px;
+        height: auto;
+        vertical-align: middle;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) > div {
+        max-width: 100%;
+    }
+    #schedule-page .table-container > table tbody tr.loading-row {
+        display: block;
+        padding: 20px 12px;
+        text-align: center;
+    }
+    #schedule-page .table-container > table tbody tr.loading-row td {
+        display: block;
+        text-align: center;
+    }
+}
+@media (max-width: 380px) {
+    #schedule-page .table-container > table tbody tr { padding: 10px; gap: 7px 9px; }
+    #schedule-page .table-container > table tbody td { font-size: .74rem; }
+}
+
+
+/* ================= STATE OF 3475 — COMPACT MOBILE SCHEDULE =================
+   Replace tall schedule cards with dense two-line rows to reduce page length. */
+@media (max-width: 600px) {
+    #schedule-page .table-container > table tbody {
+        gap: 5px;
+    }
+    #schedule-page .table-container > table tbody tr {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) auto;
+        grid-template-rows: 27px 25px;
+        align-items: center;
+        column-gap: 9px;
+        row-gap: 2px;
+        min-height: 62px;
+        padding: 7px 9px;
+        border-radius: 10px;
+        background: linear-gradient(100deg, rgba(17, 34, 55, .94), rgba(10, 22, 39, .96));
+        box-shadow: none;
+    }
+    #schedule-page .table-container > table tbody td {
+        display: block;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        font-size: .72rem;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(2) {
+        grid-column: 1 / 3;
+        grid-row: 1;
+        padding: 0;
+        border: 0;
+        font-size: .8rem;
+        font-weight: 800;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(2) strong {
+        font-size: .88rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(2) small {
+        margin-left: 4px;
+        font-size: .65rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) {
+        grid-column: 3;
+        grid-row: 1;
+        display: flex;
+        justify-content: flex-end;
+        min-height: 0;
+        order: initial;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) .btn-apply {
+        min-height: 27px;
+        padding: 4px 9px;
+        border-radius: 7px;
+        font-size: .67rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(3) {
+        grid-column: 1;
+        grid-row: 2;
+        font-size: .66rem;
+        font-weight: 800;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(3)::before {
+        content: none;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(4) {
+        grid-column: 2;
+        grid-row: 2;
+        font-size: .7rem;
+        font-weight: 700;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(4)::before,
+    #schedule-page .table-container > table tbody td:nth-child(5)::before,
+    #schedule-page .table-container > table tbody td:nth-child(6)::before {
+        content: none;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(5) {
+        display: none;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(6) {
+        grid-column: 3;
+        grid-row: 2;
+        padding: 0;
+        text-align: right;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(6) .furnace-badge {
+        max-width: 38px;
+        max-height: 24px;
+    }
+    #schedule-page .table-container > table tbody tr.loading-row {
+        display: block;
+        min-height: 0;
+        padding: 16px 10px;
+    }
+}
+@media (max-width: 380px) {
+    #schedule-page .table-container > table tbody tr {
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, .9fr) auto;
+        column-gap: 6px;
+        padding: 6px 7px;
+    }
+}
+
+/* Keep every schedule field visible in the compact two-line layout. */
+@media (max-width: 600px) {
+    #schedule-page .table-container > table tbody td:nth-child(2) {
+        grid-column: 1;
+        grid-row: 1;
+        padding-right: 0;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(3) {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: start;
+        max-width: 100%;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(4) {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(5) {
+        display: block;
+        grid-column: 2;
+        grid-row: 2;
+        color: var(--t-link, #75baff);
+        font-size: .65rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(6) {
+        grid-column: 3;
+        grid-row: 2;
+    }
+}
+
+
+/* Accepted schedule rows: prioritize the nickname and keep President actions
+   in a dedicated cell so they never collide with the Furnace badge. */
+@media (max-width: 600px) {
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, .8fr) auto;
+        grid-template-rows: 28px 27px;
+        column-gap: 7px;
+        row-gap: 2px;
+        min-height: 64px;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(1) {
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: end;
+        width: max-content;
+        max-width: 100%;
+        overflow: visible;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(1) > div {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px !important;
+        max-width: 100%;
+        white-space: nowrap;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(1) .btn-apply {
+        min-height: 25px;
+        padding: 3px 6px !important;
+        font-size: .62rem !important;
+        line-height: 1;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(2) {
+        grid-column: 1;
+        grid-row: 1;
+        min-width: 0;
+        font-size: .78rem;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(3) {
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+        font-size: .64rem;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(4) {
+        grid-column: 1 / 3;
+        grid-row: 2;
+        min-width: 0;
+        font-size: .74rem;
+        font-weight: 750;
+        color: var(--t-primary, #e7edf7);
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(5) {
+        display: none !important;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(6) {
+        grid-column: 3;
+        grid-row: 2;
+        justify-self: end;
+        width: auto;
+        min-width: 0;
+        padding: 0;
+        overflow: visible;
+        text-align: right;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(6) .furnace-badge {
+        display: inline-block;
+        width: auto;
+        max-width: 36px;
+        max-height: 23px;
+        vertical-align: middle;
+    }
+}
+@media (max-width: 380px) {
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, .72fr) auto;
+        column-gap: 5px;
+        padding-left: 7px;
+        padding-right: 7px;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(1) .btn-apply {
+        padding: 3px 5px !important;
+        font-size: .58rem !important;
+    }
+}
+
+
+/* ================= WAITING LIST MODAL — MOBILE CARD REDESIGN =================
+   User view: simple compact applicant rows.
+   President view: same visual language with dedicated move/action area.
+   Desktop table layout remains unchanged. */
+@media (max-width: 700px) {
+    #waiting-modal .modal-content {
+        width: min(94vw, 520px);
+        max-width: 520px;
+        max-height: min(82dvh, 720px);
+        padding: 16px;
+        border: 1px solid rgba(148, 163, 184, .2);
+        border-radius: 18px;
+        background: linear-gradient(160deg, #172337 0%, #101827 65%, #0d1725 100%);
+        box-shadow: 0 22px 70px rgba(0,0,0,.48);
+    }
+    #waiting-modal h2 {
+        margin: 0 38px 12px 0;
+        font-size: 1.08rem;
+        font-weight: 800;
+        letter-spacing: .01em;
+    }
+    #waiting-modal .modal-table-container {
+        margin-top: 0;
+        max-height: 66dvh;
+        border: 0;
+        border-radius: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    #waiting-modal table {
+        display: block;
+        width: 100% !important;
+        border: 0;
+        border-collapse: separate;
+        border-spacing: 0 7px;
+        table-layout: fixed !important;
+    }
+    #waiting-modal thead { display: none; }
+    #waiting-modal tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        width: 100%;
+    }
+    #waiting-modal tbody tr:not(:has(td[colspan])) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, .8fr);
+        grid-template-rows: auto auto;
+        align-items: center;
+        gap: 7px 10px;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 11px;
+        border: 1px solid rgba(148, 163, 184, .17);
+        border-radius: 12px;
+        background: rgba(30, 45, 66, .72);
+    }
+    #waiting-modal tbody td {
+        display: block;
+        width: auto !important;
+        max-width: none;
+        min-width: 0;
+        padding: 0 !important;
+        border: 0;
+        background: transparent;
+        font-size: .76rem !important;
+        line-height: 1.3;
+        overflow: hidden;
+    }
+    #waiting-modal tbody td.waiting-col-nick {
+        grid-column: 1;
+        grid-row: 1;
+        font-weight: 750 !important;
+        color: #f1f5f9;
+    }
+    #waiting-modal tbody td.waiting-col-id {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: right !important;
+        font-size: .69rem !important;
+        color: #a9bad0;
+    }
+    #waiting-modal tbody td.waiting-col-id span {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    #waiting-modal.waiting-admin-view tbody tr:not(:has(td[colspan])) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+        grid-template-rows: auto auto;
+        gap: 9px 10px;
+    }
+    #waiting-modal.waiting-admin-view tbody td.waiting-col-move {
+        grid-column: 1;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    #waiting-modal.waiting-admin-view .waiting-move-select {
+        width: 100% !important;
+        min-width: 0;
+        max-width: 100%;
+        min-height: 34px;
+        box-sizing: border-box;
+        padding: 6px 24px 6px 8px;
+        border-radius: 8px;
+        font-size: .7rem !important;
+    }
+    #waiting-modal.waiting-admin-view .waiting-move-btn {
+        width: 100%;
+        min-height: 32px;
+        margin: 0;
+        padding: 6px 8px;
+        border-radius: 8px;
+        font-size: .7rem !important;
+    }
+    #waiting-modal.waiting-admin-view tbody td.waiting-col-actions {
+        grid-column: 2;
+        grid-row: 2;
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+    }
+    #waiting-modal.waiting-admin-view .admin-action-buttons {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 5px;
+    }
+    #waiting-modal.waiting-admin-view .admin-action-btn {
+        width: 100%;
+        min-width: 0;
+        min-height: 32px;
+        margin: 0;
+        padding: 6px 8px !important;
+        border-radius: 8px;
+        font-size: .7rem !important;
+    }
+    #waiting-modal tbody tr:has(td[colspan]) {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+    }
+    #waiting-modal tbody tr:has(td[colspan]) > td {
+        display: block;
+        width: 100% !important;
+        max-width: none;
+        padding: 0 !important;
+        overflow: visible;
+    }
+    #waiting-modal tbody tr:has(td[colspan]) > td > div {
+        margin: 0 0 6px !important;
+        padding: 10px !important;
+        border-radius: 10px !important;
+        background: rgba(12, 22, 36, .96) !important;
+    }
+}
+@media (max-width: 380px) {
+    #waiting-modal .modal-content {
+        width: calc(100% - 14px);
+        padding: 12px;
+    }
+    #waiting-modal.waiting-admin-view tbody tr:not(:has(td[colspan])) {
+        gap: 7px;
+        padding: 9px;
+    }
+}
+
+
+/* ================= STATE OF 3475 — MOBILE REGRESSION FIXES =================
+   Keep expanded Waiting List details visible inside the mobile flex stack.
+*/
+@media (max-width: 700px) {
+    #waiting-modal tbody tr.waiting-details-row {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0;
+        border: 0;
+        background: transparent;
+    }
+    #waiting-modal tbody tr.waiting-details-row > td {
+        display: block;
+        width: 100% !important;
+        max-width: none;
+        padding: 0 !important;
+        overflow: visible;
+    }
+}
+
+/* Accepted schedule: keep Remove in the action area and place the Furnace
+   badge immediately beside the nickname. Player ID remains visible below. */
+@media (max-width: 600px) {
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) {
+        grid-template-rows: 27px 25px 15px;
+        min-height: 77px;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td.schedule-col-nick {
+        grid-column: 1 / 3;
+        grid-row: 2;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+        max-width: none;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) .accepted-player-name {
+        display: block;
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) .accepted-furnace-inline {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: flex-end;
+        max-width: 42px;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) .accepted-furnace-inline .furnace-badge {
+        display: inline-block;
+        max-width: 36px;
+        max-height: 23px;
+        vertical-align: middle;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td.schedule-col-id {
+        display: block !important;
+        grid-column: 1 / 3;
+        grid-row: 3;
+        min-width: 0;
+        max-width: 100%;
+        font-size: .65rem;
+        color: var(--t-link, #75baff);
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td.schedule-col-furnace {
+        display: none !important;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td:nth-child(1) {
+        grid-column: 3;
+        grid-row: 1;
+        align-self: center;
+        overflow: visible;
+    }
+}
+
+
+/* WAITING LIST — keep applicant details inside the same mobile card row.
+   A nested grid cell avoids table-row/flex-item layout conflicts. */
+@media (max-width: 700px) {
+    #waiting-modal tbody tr:has(> td.waiting-details-content) {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, .8fr);
+        width: 100%;
+        align-items: center;
+    }
+    #waiting-modal.waiting-admin-view tbody tr:has(> td.waiting-details-content) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+    }
+    #waiting-modal tbody td.waiting-details-content {
+        display: none;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100% !important;
+        max-width: none;
+        min-width: 0;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+    #waiting-modal tbody td.waiting-details-content[style*="display: block"] {
+        display: block !important;
+    }
+    #waiting-modal .waiting-details-card {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 5px 0 0;
+        padding: 10px;
+        border: 1px solid rgba(110, 150, 195, .24);
+        border-radius: 11px;
+        background: rgba(12, 22, 36, .98);
+        text-align: left;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+}
+
+/* Modals must sit above the persistent mobile navigation. The navigation
+   remains available when no modal is open, but cannot cover modal actions. */
+@media (max-width: 768px) {
+    .mobile-bottom-nav { z-index: 900 !important; }
+    .modal { z-index: 3000 !important; }
+    #apply-modal .modal-content.custom-form-modal {
+        max-height: calc(88dvh - env(safe-area-inset-bottom, 0px));
+        padding-bottom: max(22px, env(safe-area-inset-bottom, 0px));
+    }
+    #apply-modal .form-actions {
+        position: sticky;
+        bottom: 0;
+        margin-bottom: 0;
+        padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    }
+}
+
+
+/* Waiting List interaction labels and compact applicant details */
+#waiting-modal .waiting-nickname-trigger {
+    display: inline;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 750;
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-color: rgba(125, 180, 255, .55);
+    text-underline-offset: 3px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+#waiting-modal .waiting-nickname-trigger:focus-visible,
+#waiting-modal .waiting-id-value:focus-visible {
+    outline: 2px solid var(--t-link, #75baff);
+    outline-offset: 3px;
+    border-radius: 3px;
+}
+#waiting-modal .waiting-col-id {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+#waiting-modal .waiting-id-label {
+    display: block;
+    color: var(--t-muted, #8a8d98);
+    font-size: .62rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: .08em;
+}
+#waiting-modal .waiting-id-value {
+    display: inline-block;
+    max-width: 100%;
+    color: var(--t-link, #75baff);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+#waiting-modal #waiting-list-hint {
+    margin: -5px 34px 12px 0;
+    color: var(--t-muted, #9aa9bb);
+    font-size: .76rem;
+    line-height: 1.35;
+}
+#waiting-modal .waiting-details-card .stat-compact-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+}
+#waiting-modal .waiting-details-card .stat-compact-row > strong {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    min-width: 0;
+    line-height: 1;
+}
+#waiting-modal .waiting-details-card .furnace-badge {
+    display: inline-block !important;
+    width: 26px !important;
+    height: 26px !important;
+    max-width: 26px !important;
+    max-height: 26px !important;
+    margin: 0 !important;
+    object-fit: contain;
+    vertical-align: middle;
+    flex: 0 0 26px;
+}
+#waiting-modal .waiting-details-card .furnace-badge-fallback {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 26px !important;
+    height: 26px !important;
+    padding: 0;
+    line-height: 1;
+}
+@media (max-width: 700px) {
+    #waiting-modal tbody td.waiting-col-id {
+        align-items: flex-end;
+        justify-content: center;
+    }
+    #waiting-modal #waiting-list-hint {
+        font-size: .7rem;
+    }
+}
+
+
+/* APPLY FORM — keep action buttons reachable on short and mobile screens.
+   The form body remains scrollable; the action row stays pinned at the bottom. */
+#apply-modal .modal-content.custom-form-modal {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: min(95vw, 460px);
+    max-height: min(90dvh, 900px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: max(18px, env(safe-area-inset-bottom, 0px));
+}
+#apply-modal .apply-description {
+    display: block;
+    flex: 0 0 auto;
+}
+#apply-modal .form-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: flex !important;
+    flex: 0 0 auto;
+    gap: 10px;
+    width: 100%;
+    margin: 12px 0 0;
+    padding: 12px 0 max(2px, env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(180deg, rgba(21, 24, 33, .88), #151821 30%);
+}
+#apply-modal .form-actions button {
+    display: inline-flex !important;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 44px;
+    margin: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+@media (max-width: 600px) {
+    #apply-modal .modal-content.custom-form-modal {
+        width: min(94vw, 460px);
+        max-height: calc(92dvh - env(safe-area-inset-bottom, 0px));
+        padding: 18px 16px max(16px, env(safe-area-inset-bottom, 0px));
+        border-radius: 16px;
+    }
+    #apply-modal .form-actions {
+        gap: 8px;
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+    #apply-modal .form-actions button {
+        min-height: 46px;
+        padding: 10px 8px !important;
+        font-size: .86rem;
+    }
+}
+
+/* Accepted slot: keep the Furnace badge tight beside the player's nickname. */
+@media (max-width: 600px) {
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) td.schedule-col-nick {
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 4px;
+        min-width: 0;
+        overflow: visible;
+        white-space: nowrap;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) .accepted-player-name {
+        display: inline-block;
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: calc(100% - 27px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 1.2;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) .accepted-furnace-inline {
+        display: inline-flex;
+        flex: 0 0 23px;
+        align-items: center;
+        justify-content: center;
+        width: 23px;
+        max-width: 23px;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+    }
+    #schedule-page .table-container > table tbody tr:has(td:nth-child(3) span[style*="22c55e"]) .accepted-furnace-inline .furnace-badge {
+        display: block;
+        width: 23px !important;
+        height: 23px !important;
+        max-width: 23px !important;
+        max-height: 23px !important;
+        margin: 0 !important;
+        object-fit: contain;
+    }
+}
+
+
+/* Compact, consistently sized action buttons on the schedule toolbar. */
+.schedule-actions-row > #export-csv-btn,
+.schedule-actions-row > #toggle-reservation-btn,
+.schedule-actions-row > #bulk-action-btn,
+.schedule-actions-row > #how-to-use-btn {
+    box-sizing: border-box;
+    min-height: 36px;
+    height: 36px;
+    padding: 0 12px !important;
+    margin: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem !important;
+    line-height: 1.1;
+    white-space: nowrap;
+    border-radius: 9px;
+}
+@media (max-width: 768px) {
+    .schedule-actions-row {
+        gap: 7px;
+        align-items: center;
+    }
+    .schedule-actions-row > #export-csv-btn,
+    .schedule-actions-row > #toggle-reservation-btn,
+    .schedule-actions-row > #bulk-action-btn,
+    .schedule-actions-row > #how-to-use-btn {
+        min-height: 34px;
+        height: 34px;
+        padding: 0 10px !important;
+        font-size: 0.73rem !important;
+        flex: 0 0 auto;
+    }
+}
+
+
+/* Center the Minister Reservation crown and title as one group. */
+#main-menu-links > .menu-card-primary {
+    position: relative;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+}
+#main-menu-links > .menu-card-primary .menu-card-icon {
+    flex: 0 0 auto;
+    width: auto;
+    height: auto;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-size: 1.55rem;
+}
+#main-menu-links > .menu-card-primary .menu-card-label {
+    flex: 0 0 auto;
+    min-width: 0;
+    text-align: center;
+}
+#main-menu-links > .menu-card-primary .menu-card-arrow {
+    position: absolute;
+    right: 18px;
+}
+@media (max-width: 560px) {
+    #main-menu-links > .menu-card-primary { justify-content: center; gap: 8px; }
+    #main-menu-links > .menu-card-primary .menu-card-arrow { display: none; }
+}
+
+
+/* Main menu feature icons: crisp, consistent SVG line artwork. */
+#main-menu-links > .menu-card .menu-card-icon svg {
+    display: block;
+    width: 23px;
+    height: 23px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+@media (max-width: 560px) {
+    #main-menu-links > .menu-card .menu-card-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+
+/* Keep external-link SVG artwork optically centered; hover arrows belong to labels only. */
+#main-menu-links > .menu-card .menu-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+#main-menu-links > .menu-card .menu-card-icon svg {
+    display: block;
+    flex: 0 0 23px;
+    margin: auto;
+}
+@media (max-width: 560px) {
+    #main-menu-links > .menu-card .menu-card-icon svg { flex-basis: 20px; }
+}
+
+
+/* ================= SEMANTIC RESERVATION ACTION BUTTONS =================
+   Shared dimensions and accessible icon alignment across desktop/mobile.
+   The destructive Remove action is intentionally outlined, unlike Reject. */
+.action-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 6px 10px !important;
+    border: 1px solid transparent !important;
+    border-radius: 9px !important;
+    color: #fff !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.18);
+    transition: background 0.18s ease, border-color 0.18s ease,
+        box-shadow 0.18s ease, transform 0.18s ease, filter 0.18s ease;
+    animation: none !important;
+}
+.action-button:hover:not(:disabled) {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.22);
+}
+.action-button:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+.action-button:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+    filter: grayscale(0.2);
+    box-shadow: none;
+    transform: none;
+}
+.action-button-icon {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.reservation-apply-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+    border-color: rgba(147, 197, 253, 0.65) !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.28);
+}
+.admin-action-btn.action-button { min-height: 34px; flex: 1 1 90px; }
+.admin-accept-btn.action-button {
+    background: linear-gradient(135deg, #22c55e 0%, #15803d 100%) !important;
+    border-color: rgba(134, 239, 172, 0.55) !important;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.22);
+}
+.admin-reject-btn.action-button {
+    background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%) !important;
+    border-color: rgba(253, 164, 175, 0.58) !important;
+    box-shadow: 0 2px 8px rgba(225, 29, 72, 0.2);
+    animation: none !important;
+}
+.action-move-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #c2410c 100%) !important;
+    border-color: rgba(253, 186, 116, 0.65) !important;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.22);
+}
+.waiting-move-btn.action-button { margin-left: 0; }
+.schedule-remove-btn.action-button {
+    background: rgba(220, 38, 38, 0.08) !important;
+    color: #f87171 !important;
+    border-color: rgba(248, 113, 113, 0.62) !important;
+    box-shadow: none;
+    padding: 5px 9px !important;
+    font-size: 0.72rem !important;
+}
+.schedule-remove-btn.action-button:hover:not(:disabled) {
+    background: rgba(220, 38, 38, 0.2) !important;
+    border-color: #f87171 !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1);
+}
+@media (max-width: 700px) {
+    #waiting-modal .admin-action-btn.action-button { width: 100%; }
+    #waiting-modal .waiting-move-btn.action-button { width: auto; }
+}
+@media (max-width: 480px) {
+    .action-button { min-height: 36px; gap: 5px; padding: 7px 9px !important; }
+    .action-button-icon { width: 13px; height: 13px; flex-basis: 13px; }
+}
+
+/* Keep the Apply action readable inside the narrow schedule action column. */
+#schedule-page .table-container > table tbody td:nth-child(1) .reservation-apply-btn.action-button {
+    display: inline-flex !important;
+    width: 100%;
+    min-height: 36px !important;
+    padding: 6px 8px !important;
+    border-radius: 9px !important;
+    font-size: 0.74rem !important;
+}
+@media (max-width: 768px) {
+    #schedule-page .table-container > table tbody td:nth-child(1) .reservation-apply-btn.action-button {
+        min-height: 36px !important;
+        padding: 5px 3px !important;
+        gap: 3px;
+        font-size: clamp(0.58rem, 2.7vw, 0.7rem) !important;
+    }
+}
+@media (max-width: 480px) {
+    #schedule-page .table-container > table tbody td:nth-child(1) .reservation-apply-btn.action-button {
+        min-height: 36px !important;
+        padding: 4px 2px !important;
+        gap: 2px;
+        font-size: 0.58rem !important;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(1) .reservation-apply-btn .action-button-icon {
+        width: 12px;
+        height: 12px;
+        flex-basis: 12px;
+    }
+}
+
