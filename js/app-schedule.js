@@ -18,12 +18,16 @@ function showMinisterReservationMenu() {
 }
 
 function showMainMenu() {
-    // Keep the parent positions-page section visible: it also contains
-    // main-menu-view. Hide only the individual subviews before showing Home.
+    // Schedule navigation hides the whole positions-page parent. Restore that
+    // parent first, then show Home and hide every sibling subview.
+    const positionsPage = document.getElementById('positions-page');
+    positionsPage?.classList.remove('hidden');
+
     ['minister-reservation-view', 'schedule-page',
      'svs-enemies-view', 'svs-record-view'].forEach(id => {
         document.getElementById(id)?.classList.add('hidden');
     });
+
     document.getElementById('main-menu-view')?.classList.remove('hidden');
 }
 
