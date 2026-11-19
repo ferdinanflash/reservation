@@ -195,7 +195,7 @@
     "generator_version": 1,
     "file_count": 99,
     "digest_algorithm": "sha256",
-    "content_digest": "0fc84efc54832f8478955188bef4c7f5a48ebfdc238d166afe89b532c678fd3a",
+    "content_digest": "c9d562cc25e49ab25a80f15e148795a5cf7aff587981b533b98e154d9dfef89c",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -299,7 +299,7 @@
       },
       {
         "path": "docs/codebase-memory/features/reservation.md",
-        "sha256": "a401c305fd15142f8a741870cf05202de5627bcbcd98d8a536deefc3eec23872"
+        "sha256": "54ae4bab2512418c8ed78eb3bd897fe5f6577e4d3306d8c0a65b62c3abb84317"
       },
       {
         "path": "docs/codebase-memory/features/shared-core-auth.md",
@@ -315,7 +315,7 @@
       },
       {
         "path": "docs/codebase-memory/features/themes-translations-pwa.md",
-        "sha256": "b1df6932bd68154f0a49185c43392f698e9a6fcd49436e86bd4e8bad924eb128"
+        "sha256": "d38eb828bc0d43ddb280970908f7e1299e08d0432f8d86abaa89f4f04baa1825"
       },
       {
         "path": "docs/codebase-memory/known-issues.md",
