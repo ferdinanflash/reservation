@@ -8867,3 +8867,39 @@ body.christmas-theme {
         object-fit: contain;
     }
 }
+
+
+/* Compact, consistently sized action buttons on the schedule toolbar. */
+.schedule-actions-row > #export-csv-btn,
+.schedule-actions-row > #toggle-reservation-btn,
+.schedule-actions-row > #bulk-action-btn,
+.schedule-actions-row > #how-to-use-btn {
+    box-sizing: border-box;
+    min-height: 36px;
+    height: 36px;
+    padding: 0 12px !important;
+    margin: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem !important;
+    line-height: 1.1;
+    white-space: nowrap;
+    border-radius: 9px;
+}
+@media (max-width: 768px) {
+    .schedule-actions-row {
+        gap: 7px;
+        align-items: center;
+    }
+    .schedule-actions-row > #export-csv-btn,
+    .schedule-actions-row > #toggle-reservation-btn,
+    .schedule-actions-row > #bulk-action-btn,
+    .schedule-actions-row > #how-to-use-btn {
+        min-height: 34px;
+        height: 34px;
+        padding: 0 10px !important;
+        font-size: 0.73rem !important;
+        flex: 0 0 auto;
+    }
+}
