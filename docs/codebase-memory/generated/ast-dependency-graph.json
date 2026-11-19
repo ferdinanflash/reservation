@@ -5,7 +5,7 @@
   "source_files": 24,
   "function_count": 429,
   "import_count": 5,
-  "call_edge_count": 1201,
+  "call_edge_count": 1202,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -452,28 +452,21 @@
       "from": "js/app-applications.js#acceptApp",
       "to": "js/app-core.js#showCustomConfirm",
       "kind": "call",
-      "line": 717,
+      "line": 720,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#acceptApp",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 717,
+      "line": 720,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#addAdditionalTimeSlotRow",
       "to": "js/app-waiting.js#getAllUtcSlots",
       "kind": "call",
-      "line": 584,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#addAdditionalTimeSlotRow",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 590,
+      "line": 587,
       "confidence": "static-name-match"
     },
     {
@@ -487,14 +480,21 @@
       "from": "js/app-applications.js#addAdditionalTimeSlotRow",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 593,
+      "line": 596,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#addAdditionalTimeSlotRow",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 596,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#addAnotherTimeSlot",
       "to": "js/app-applications.js#addAdditionalTimeSlotRow",
       "kind": "call",
-      "line": 572,
+      "line": 575,
       "confidence": "static-name-match"
     },
     {
@@ -515,35 +515,35 @@
       "from": "js/app-applications.js#applySlot",
       "to": "js/app-core.js#getPositionConfig",
       "kind": "call",
-      "line": 523,
+      "line": 526,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#applySlot",
       "to": "js/app-core.js#setFurnaceLevel",
       "kind": "call",
-      "line": 495,
+      "line": 498,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#applySlot",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 485,
+      "line": 488,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#applySlot",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 485,
+      "line": 488,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#applySlot",
       "to": "lang.js#translatePositionName",
       "kind": "call",
-      "line": 490,
+      "line": 493,
       "confidence": "static-name-match"
     },
     {
@@ -1061,82 +1061,117 @@
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 433,
+      "line": 434,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-applications.js#getApplicationTimeLog",
       "kind": "call",
-      "line": 445,
+      "line": 446,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-applications.js#openWaitingModal",
       "kind": "call",
-      "line": 462,
+      "line": 463,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 437,
+      "line": 438,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 442,
+      "line": 443,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 467,
+      "line": 468,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-core.js#showReasonModal",
       "kind": "call",
-      "line": 439,
+      "line": 440,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 419,
+      "line": 420,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 429,
+      "line": 430,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 460,
+      "line": 461,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 465,
+      "line": 466,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "js/app-schedule.js#loadApplications",
+      "kind": "call",
+      "line": 462,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#moveWaitingListApp",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 420,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#moveWaitingListApp",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 430,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#moveWaitingListApp",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 438,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#moveWaitingListApp",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 440,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#moveWaitingListApp",
+      "to": "lang.js#t",
       "kind": "call",
       "line": 461,
       "confidence": "static-name-match"
@@ -1145,42 +1180,7 @@
       "from": "js/app-applications.js#moveWaitingListApp",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 419,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#moveWaitingListApp",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 429,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#moveWaitingListApp",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 437,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#moveWaitingListApp",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 439,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#moveWaitingListApp",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 460,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#moveWaitingListApp",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 465,
+      "line": 466,
       "confidence": "static-name-match"
     },
     {
@@ -1390,63 +1390,42 @@
       "from": "js/app-applications.js#submitApplication",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 639,
+      "line": 642,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-applications.js#closeApplyModal",
       "kind": "call",
-      "line": 701,
+      "line": 704,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-applications.js#collectAdditionalTimeSlots",
       "kind": "call",
-      "line": 658,
+      "line": 661,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 672,
+      "line": 675,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 707,
+      "line": 710,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 635,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#submitApplication",
-      "to": "js/app-core.js#showToast",
-      "kind": "call",
-      "line": 653,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#submitApplication",
-      "to": "js/app-core.js#showToast",
-      "kind": "call",
-      "line": 654,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#submitApplication",
-      "to": "js/app-core.js#showToast",
-      "kind": "call",
-      "line": 655,
+      "line": 638,
       "confidence": "static-name-match"
     },
     {
@@ -1460,63 +1439,63 @@
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 700,
+      "line": 657,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 705,
+      "line": 658,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#submitApplication",
+      "to": "js/app-core.js#showToast",
+      "kind": "call",
+      "line": 659,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#submitApplication",
+      "to": "js/app-core.js#showToast",
+      "kind": "call",
+      "line": 703,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#submitApplication",
+      "to": "js/app-core.js#showToast",
+      "kind": "call",
+      "line": 708,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-notifications.js#requestGuestNotificationPermission",
       "kind": "call",
-      "line": 665,
+      "line": 668,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-notifications.js#setupGuestNotificationsAfterSubmission",
       "kind": "call",
-      "line": 694,
+      "line": 697,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "js/app-schedule.js#loadApplications",
       "kind": "call",
-      "line": 702,
+      "line": 705,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 635,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#submitApplication",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 653,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#submitApplication",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 654,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-applications.js#submitApplication",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 655,
+      "line": 638,
       "confidence": "static-name-match"
     },
     {
@@ -1530,21 +1509,42 @@
       "from": "js/app-applications.js#submitApplication",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 700,
+      "line": 657,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#submitApplication",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 705,
+      "line": 658,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#submitApplication",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 659,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#submitApplication",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 703,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-applications.js#submitApplication",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 708,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-applications.js#toggleAdditionalTimeSlots",
       "to": "js/app-applications.js#addAdditionalTimeSlotRow",
       "kind": "call",
-      "line": 560,
+      "line": 563,
       "confidence": "static-name-match"
     },
     {
@@ -3938,7 +3938,7 @@
       "from": "js/app-schedule.js#renderTimeSlots",
       "to": "js/app-core.js#furnaceIconHtml",
       "kind": "call",
-      "line": 248,
+      "line": 246,
       "confidence": "static-name-match"
     },
     {
@@ -3981,6 +3981,13 @@
       "to": "lang.js#t",
       "kind": "call",
       "line": 245,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-schedule.js#renderTimeSlots",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 246,
       "confidence": "static-name-match"
     },
     {
@@ -8754,21 +8761,21 @@
       "id": "js/app-applications.js#acceptApp",
       "name": "acceptApp",
       "file": "js/app-applications.js",
-      "line": 711,
+      "line": 714,
       "kind": "function"
     },
     {
       "id": "js/app-applications.js#addAdditionalTimeSlotRow",
       "name": "addAdditionalTimeSlotRow",
       "file": "js/app-applications.js",
-      "line": 576,
+      "line": 579,
       "kind": "function"
     },
     {
       "id": "js/app-applications.js#addAnotherTimeSlot",
       "name": "addAnotherTimeSlot",
       "file": "js/app-applications.js",
-      "line": 571,
+      "line": 574,
       "kind": "function"
     },
     {
@@ -8782,7 +8789,7 @@
       "id": "js/app-applications.js#applySlot",
       "name": "applySlot",
       "file": "js/app-applications.js",
-      "line": 483,
+      "line": 486,
       "kind": "function"
     },
     {
@@ -8824,7 +8831,7 @@
       "id": "js/app-applications.js#closeApplyModal",
       "name": "closeApplyModal",
       "file": "js/app-applications.js",
-      "line": 542,
+      "line": 545,
       "kind": "function"
     },
     {
@@ -8838,14 +8845,14 @@
       "id": "js/app-applications.js#closeModal",
       "name": "closeModal",
       "file": "js/app-applications.js",
-      "line": 478,
+      "line": 481,
       "kind": "function"
     },
     {
       "id": "js/app-applications.js#collectAdditionalTimeSlots",
       "name": "collectAdditionalTimeSlots",
       "file": "js/app-applications.js",
-      "line": 615,
+      "line": 618,
       "kind": "function"
     },
     {
@@ -8859,7 +8866,7 @@
       "id": "js/app-applications.js#getAdditionalTimeSlots",
       "name": "getAdditionalTimeSlots",
       "file": "js/app-applications.js",
-      "line": 624,
+      "line": 627,
       "kind": "function"
     },
     {
@@ -8873,7 +8880,7 @@
       "id": "js/app-applications.js#moveWaitingListApp",
       "name": "moveWaitingListApp",
       "file": "js/app-applications.js",
-      "line": 416,
+      "line": 417,
       "kind": "function"
     },
     {
@@ -8894,7 +8901,7 @@
       "id": "js/app-applications.js#removeAdditionalTimeSlot",
       "name": "removeAdditionalTimeSlot",
       "file": "js/app-applications.js",
-      "line": 602,
+      "line": 605,
       "kind": "function"
     },
     {
@@ -8915,21 +8922,21 @@
       "id": "js/app-applications.js#submitApplication",
       "name": "submitApplication",
       "file": "js/app-applications.js",
-      "line": 633,
+      "line": 636,
       "kind": "function"
     },
     {
       "id": "js/app-applications.js#toggleAdditionalTimeSlots",
       "name": "toggleAdditionalTimeSlots",
       "file": "js/app-applications.js",
-      "line": 552,
+      "line": 555,
       "kind": "function"
     },
     {
       "id": "js/app-applications.js#toggleDetails",
       "name": "toggleDetails",
       "file": "js/app-applications.js",
-      "line": 471,
+      "line": 472,
       "kind": "function"
     },
     {
@@ -11525,7 +11532,7 @@
       "kind": "supabase-table",
       "value": "reservation_slots",
       "function": "js/app-applications.js#moveWaitingListApp",
-      "line": 454
+      "line": 455
     },
     {
       "kind": "supabase-table",
@@ -11537,7 +11544,7 @@
       "kind": "supabase-table",
       "value": "reservation_slots",
       "function": "js/app-applications.js#submitApplication",
-      "line": 675
+      "line": 678
     },
     {
       "kind": "supabase-table",
@@ -11625,5 +11632,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "87e37fca56dde535a6daa45d66f76857599f0930bd759f3e1c00f95023acdc75"
+  "source_digest": "78c31d403dfd503124a741892cc46b26e51babb35385a31c34c216600b834f09"
 }
