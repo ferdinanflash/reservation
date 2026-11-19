@@ -18,10 +18,9 @@ function showMinisterReservationMenu() {
 }
 
 function showMainMenu() {
-    // The schedule is a sibling of the reservation-position view, so hiding
-    // only minister-reservation-view leaves the time-slot table on screen.
-    // Always reset every in-app section before returning to the dashboard.
-    ['minister-reservation-view', 'positions-page', 'schedule-page',
+    // Keep the parent positions-page section visible: it also contains
+    // main-menu-view. Hide only the individual subviews before showing Home.
+    ['minister-reservation-view', 'schedule-page',
      'svs-enemies-view', 'svs-record-view'].forEach(id => {
         document.getElementById(id)?.classList.add('hidden');
     });
