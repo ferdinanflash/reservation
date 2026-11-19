@@ -8903,3 +8903,34 @@ body.christmas-theme {
         flex: 0 0 auto;
     }
 }
+
+
+/* Center the Minister Reservation crown and title as one group. */
+#main-menu-links > .menu-card-primary {
+    position: relative;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+}
+#main-menu-links > .menu-card-primary .menu-card-icon {
+    flex: 0 0 auto;
+    width: auto;
+    height: auto;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-size: 1.55rem;
+}
+#main-menu-links > .menu-card-primary .menu-card-label {
+    flex: 0 0 auto;
+    min-width: 0;
+    text-align: center;
+}
+#main-menu-links > .menu-card-primary .menu-card-arrow {
+    position: absolute;
+    right: 18px;
+}
+@media (max-width: 560px) {
+    #main-menu-links > .menu-card-primary { justify-content: center; gap: 8px; }
+    #main-menu-links > .menu-card-primary .menu-card-arrow { display: none; }
+}
