@@ -8653,3 +8653,103 @@ body.christmas-theme {
 @media (max-width: 768px) {
     .mobile-bottom-nav { z-index: 2100 !important; }
 }
+
+
+/* Waiting List interaction labels and compact applicant details */
+#waiting-modal .waiting-nickname-trigger {
+    display: inline;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 750;
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-color: rgba(125, 180, 255, .55);
+    text-underline-offset: 3px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+#waiting-modal .waiting-nickname-trigger:focus-visible,
+#waiting-modal .waiting-id-value:focus-visible {
+    outline: 2px solid var(--t-link, #75baff);
+    outline-offset: 3px;
+    border-radius: 3px;
+}
+#waiting-modal .waiting-col-id {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+#waiting-modal .waiting-id-label {
+    display: block;
+    color: var(--t-muted, #8a8d98);
+    font-size: .62rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: .08em;
+}
+#waiting-modal .waiting-id-value {
+    display: inline-block;
+    max-width: 100%;
+    color: var(--t-link, #75baff);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+#waiting-modal #waiting-list-hint {
+    margin: -5px 34px 12px 0;
+    color: var(--t-muted, #9aa9bb);
+    font-size: .76rem;
+    line-height: 1.35;
+}
+#waiting-modal .waiting-details-card .stat-compact-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+}
+#waiting-modal .waiting-details-card .stat-compact-row > strong {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    min-width: 0;
+    line-height: 1;
+}
+#waiting-modal .waiting-details-card .furnace-badge {
+    display: inline-block !important;
+    width: 26px !important;
+    height: 26px !important;
+    max-width: 26px !important;
+    max-height: 26px !important;
+    margin: 0 !important;
+    object-fit: contain;
+    vertical-align: middle;
+    flex: 0 0 26px;
+}
+#waiting-modal .waiting-details-card .furnace-badge-fallback {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 26px !important;
+    height: 26px !important;
+    padding: 0;
+    line-height: 1;
+}
+@media (max-width: 700px) {
+    #waiting-modal tbody td.waiting-col-id {
+        align-items: flex-end;
+        justify-content: center;
+    }
+    #waiting-modal #waiting-list-hint {
+        font-size: .7rem;
+    }
+}
