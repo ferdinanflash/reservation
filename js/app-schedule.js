@@ -18,11 +18,14 @@ function showMinisterReservationMenu() {
 }
 
 function showMainMenu() {
-    document.getElementById('minister-reservation-view').classList.add('hidden');
-    const enemies = document.getElementById('svs-enemies-view');
-    if (enemies) enemies.classList.add('hidden');
-    document.getElementById('svs-record-view')?.classList.add('hidden');
-    document.getElementById('main-menu-view').classList.remove('hidden');
+    // The schedule is a sibling of the reservation-position view, so hiding
+    // only minister-reservation-view leaves the time-slot table on screen.
+    // Always reset every in-app section before returning to the dashboard.
+    ['minister-reservation-view', 'positions-page', 'schedule-page',
+     'svs-enemies-view', 'svs-record-view'].forEach(id => {
+        document.getElementById(id)?.classList.add('hidden');
+    });
+    document.getElementById('main-menu-view')?.classList.remove('hidden');
 }
 
 function showSchedule(positionName) {
