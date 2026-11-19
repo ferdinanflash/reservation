@@ -91,8 +91,8 @@ function renderReassignRows(originTime) {
                 <select id="${selectId}" style="max-width: 140px;" ${availableSlots.length === 0 ? 'disabled' : ''}>${options}</select>
             </td>
             <td style="padding: 5px 10px; text-align: left; white-space: nowrap;">
-                <button class="btn-apply btn-compact" style="font-size:0.7rem;" ${availableSlots.length === 0 ? 'disabled' : ''} onclick="moveAppToSlot(${app.id}, document.getElementById('${selectId}').value, '${originTime}')">${t("btn_move")}</button>
-                <button type="button" class="btn-apply btn-danger btn-compact admin-action-btn admin-reject-btn" onclick="removeApp(${app.id})">${t("btn_drop")}</button>
+                <button type="button" class="btn-apply btn-compact action-move-btn action-button" ${availableSlots.length === 0 ? 'disabled' : ''} onclick="moveAppToSlot(${app.id}, document.getElementById('${selectId}').value, '${originTime}')">${actionIconHtml("move")}<span>${t("btn_move")}</span></button>
+                <button type="button" class="btn-apply btn-danger btn-compact admin-action-btn admin-reject-btn action-button" onclick="removeApp(${app.id})">${actionIconHtml("reject")}<span>${t("btn_drop")}</span></button>
             </td>
         `;
         tbody.appendChild(row);
