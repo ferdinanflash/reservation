@@ -8236,3 +8236,33 @@ body.christmas-theme {
         padding: 6px 7px;
     }
 }
+
+/* Keep every schedule field visible in the compact two-line layout. */
+@media (max-width: 600px) {
+    #schedule-page .table-container > table tbody td:nth-child(2) {
+        grid-column: 1;
+        grid-row: 1;
+        padding-right: 0;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(3) {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: start;
+        max-width: 100%;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(4) {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(5) {
+        display: block;
+        grid-column: 2;
+        grid-row: 2;
+        color: var(--t-link, #75baff);
+        font-size: .65rem;
+    }
+    #schedule-page .table-container > table tbody td:nth-child(6) {
+        grid-column: 3;
+        grid-row: 2;
+    }
+}
