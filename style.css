@@ -8934,3 +8934,22 @@ body.christmas-theme {
     #main-menu-links > .menu-card-primary { justify-content: center; gap: 8px; }
     #main-menu-links > .menu-card-primary .menu-card-arrow { display: none; }
 }
+
+
+/* Main menu feature icons: crisp, consistent SVG line artwork. */
+#main-menu-links > .menu-card .menu-card-icon svg {
+    display: block;
+    width: 23px;
+    height: 23px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+@media (max-width: 560px) {
+    #main-menu-links > .menu-card .menu-card-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+}
