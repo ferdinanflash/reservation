@@ -1,67 +1,94 @@
 # Discord multi-server announcements
 
-This adds a shared 3475 Discord bot announcement backend. One bot installation can serve multiple Discord guilds; each guild has an independent destination channel and independent @everyone permission.
+The Reservation Portal supports one shared Discord bot serving multiple Discord servers (guilds). Every server has its own announcement channel, enable/disable setting, @everyone permission, and announcement history.
 
-## Current implementation scope
+## Portal features
 
-- `discord_guild_settings` stores one configuration per Discord server (guild).
-- `discord_announcement_log` records successful and failed send attempts.
-- `discord-announcement` sends an embed to the configured channel for exactly one selected guild.
-- The endpoint requires a real Supabase Auth session (the portal's President login flow), uses the service role only server-side, and never exposes the bot token.
-- @everyone is opt-in twice: the server configuration must allow it and the President must explicitly request it for that message. Without both, Discord receives `allowed_mentions.parse=[]`.
+The President Panel contains two Discord actions:
 
-The configuration tables intentionally have no browser-facing RLS policies. Do not make them publicly readable or writable.
+- **Discord Servers** — add, edit, disable, remove, and review announcement history for each configured server.
+- **Discord Announcement** — choose one configured server, compose a message, and optionally mention @everyone when that server explicitly permits it.
 
-## Apply and deploy
+The setup UI currently uses manually copied Discord Server IDs and Channel IDs. This avoids requiring an OAuth client secret or asking Presidents to authorize their personal Discord accounts. A future OAuth-based server picker can replace the manual ID fields without changing the bot's per-guild storage model.
 
-1. Apply `supabase_migration_discord_multi_server_announcements.sql` in the Supabase SQL Editor.
-2. Add the existing shared bot token as an Edge Function secret (never commit or paste it):
+## Security model
 
-   ```sh
-   supabase secrets set DISCORD_BOT_TOKEN="YOUR_EXISTING_BOT_TOKEN"
-   ```
+- Only Supabase Auth users whose email is one of the portal's configured President accounts (president, demon, or phoenix at the internal staff email domain) can manage servers or send Discord announcements. This is checked inside both Edge Functions; the browser's isAdmin flag is not trusted.
+- Guild settings and announcement logs have RLS enabled and no browser-facing policies. Only trusted Edge Functions use the service-role key.
+- The browser never receives the Discord bot token.
+- A server's destination channel is read from server-side configuration; the announcement request cannot supply an arbitrary channel.
+- Saving a server verifies that the bot can access the selected channel and that the channel belongs to the submitted guild.
+- @everyone requires two independent approvals: allow_everyone = true for that guild, and the President explicitly checks the @everyone option for that message. Otherwise Discord receives allowed_mentions.parse = [].
+- The log stores the server, channel, message, mention flag, sender, result, and Discord message ID (when successful).
 
-3. Deploy only the new function:
+## Apply database migration
 
-   ```sh
-   supabase functions deploy discord-announcement
-   ```
+Run supabase_migration_discord_multi_server_announcements.sql once in the Supabase SQL Editor. It creates:
 
-4. Invite the existing Discord application/bot to each target server. Grant only the permissions needed in the announcement channel: View Channel, Send Messages, and Embed Links. Grant Mention @everyone only where that server's administrators explicitly approve it.
-5. Configure each server's guild ID and announcement channel ID. The initial foundation supports controlled server-side configuration; do not insert bot tokens or OAuth secrets into the database. The self-service OAuth/server-picker UI and secure configuration-management endpoint are a follow-up implementation step.
+- public.discord_guild_settings
+- public.discord_announcement_log
 
-Example server-side SQL configuration (run only by the project owner after verifying the IDs):
+Do not add public or authenticated RLS policies to these tables.
 
-```sql
-insert into public.discord_guild_settings
-    (guild_id, guild_name, announcement_channel_id, announcements_enabled, allow_everyone)
-values
-    ('123456789012345678', 'Example Server', '234567890123456789', true, false)
-on conflict (guild_id) do update set
-    guild_name = excluded.guild_name,
-    announcement_channel_id = excluded.announcement_channel_id,
-    announcements_enabled = excluded.announcements_enabled,
-    allow_everyone = excluded.allow_everyone,
-    updated_at = now();
-```
+## Configure secrets and deploy
 
-## Request contract
+Use the same existing bot token already used by the redeem bot. Do not commit it or paste it into the website:
 
-POST to `/functions/v1/discord-announcement` with the signed-in President's Supabase access token:
+    supabase secrets set DISCORD_BOT_TOKEN="YOUR_EXISTING_BOT_TOKEN"
+    supabase functions deploy discord-guild-settings
+    supabase functions deploy discord-announcement
 
-```json
-{
-  "guild_id": "123456789012345678",
-  "title": "State Announcement",
-  "message": "The announcement text",
-  "mention_everyone": false
-}
-```
+Supabase injects SUPABASE_URL, SUPABASE_ANON_KEY, and SUPABASE_SERVICE_ROLE_KEY for Edge Functions. No OAuth client secret is required for this manual-ID setup.
 
-A request cannot choose an arbitrary channel: the destination always comes from the selected guild's server-side configuration. A request with `mention_everyone: true` is rejected unless that guild has `allow_everyone = true`.
+## Add a Discord server
 
-## Discord permission and rate-limit behavior
+1. Invite the existing bot application to the target server if it is not already there.
+2. In Discord, enable **User Settings → Advanced → Developer Mode**.
+3. Copy the server ID (right-click the server icon/name → Copy Server ID).
+4. Copy the announcement channel ID (right-click the channel → Copy Channel ID).
+5. Sign in to the Reservation Portal as President and open **President Panel → Discord Servers**.
+6. Enter the server name, server ID, and announcement channel ID. Enable announcements as needed.
+7. Enable @everyone only if the server's administrators have explicitly approved it, and the bot has the **Mention @everyone, @here, and All Roles** permission in that channel.
+8. Save. The API verifies the bot can access the channel and that it belongs to the supplied server.
 
-Discord must grant the bot Send Messages and Embed Links in the configured channel. To actually notify everyone, the bot additionally needs Mention @everyone, @here, and All Roles. Discord's API remains the authority on effective channel permissions. A failed send is recorded with a coarse Discord error code; the bot token and raw authorization headers are never logged.
+The bot needs **View Channel**, **Send Messages**, and **Embed Links** in each destination channel. It needs the additional mention permission only when @everyone is enabled.
 
-The existing `discord-interactions` redeem endpoint and commands are unchanged. The existing Web Push `send-announcement` feature is also unchanged.
+## Send an announcement
+
+1. Open **President Panel → Discord Announcement**.
+2. Choose one enabled server.
+3. Enter an optional title and a message (up to 1,800 characters).
+4. Optionally select @everyone if it is enabled for that server.
+5. Send. The bot posts an embed to that server's configured channel.
+
+The Discord message endpoint uses Discord's own permission checks and rate limits. Failed attempts are recorded with a coarse error code. The **History** action in Discord Servers displays the latest 30 attempts for that server.
+
+## API request contracts
+
+The browser calls /functions/v1/discord-guild-settings using the President's Supabase access token:
+
+    { "action": "list" }
+
+    {
+      "action": "save",
+      "guild_id": "123456789012345678",
+      "guild_name": "Example Server",
+      "channel_id": "234567890123456789",
+      "announcements_enabled": true,
+      "allow_everyone": false
+    }
+
+Other supported management actions are delete and history, each requiring a guild_id.
+
+The browser sends announcements to /functions/v1/discord-announcement:
+
+    {
+      "guild_id": "123456789012345678",
+      "title": "State Announcement",
+      "message": "The announcement text",
+      "mention_everyone": false
+    }
+
+## Existing bot features
+
+The existing discord-interactions redeem endpoint and /redeem commands are unchanged. The existing Web Push send-announcement feature is also unchanged; Discord announcements are an additional, separate destination.
