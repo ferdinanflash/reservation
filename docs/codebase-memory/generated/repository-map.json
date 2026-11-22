@@ -200,7 +200,7 @@
     "generator_version": 1,
     "file_count": 104,
     "digest_algorithm": "sha256",
-    "content_digest": "8cdb3ae314d92c4de9b0c494273ad3eaff554a3c516aa901465147dfcb6ef5ef",
+    "content_digest": "658f0780d40f5e719ac4f82bfe1053cc296d4a4f83a4577771f5f0d4c9d8384b",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -268,7 +268,7 @@
       },
       {
         "path": "docs/DISCORD_MULTI_SERVER_ANNOUNCEMENTS.md",
-        "sha256": "21b1fe93699e8aec490f671099d402f6203c42ff7dddd685d4e3995746ad74cb"
+        "sha256": "4694386f6d0b42a7990d69669a8eaabf88a1675b7918c40f00aca62faae6ff22"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
