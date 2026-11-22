@@ -4,7 +4,7 @@
  * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
  */
 // ================= SEND PUSH NOTIFICATION (Edge Function) =================
-// Triggered by a Supabase Database Webhook on UPDATE of public.reservation_slots.
+// Triggered by a Supabase Database Webhook on INSERT and UPDATE of public.reservation_slots.
 // This is the piece that lets a notification reach the guest's device even
 // when the app/browser is fully closed: the browser's own push service
 // (e.g. FCM for Chrome/Edge, Mozilla's for Firefox, Apple's for Safari)
@@ -23,7 +23,7 @@
 // automatically for every Edge Function — no need to set them.)
 //
 // Then, in the Supabase Dashboard: Database -> Webhooks -> Create a new
-// webhook -> table "reservation_slots" -> event "Update" -> type "Supabase
+// webhook -> table "reservation_slots" -> events "Insert" and "Update" -> type "Supabase
 // Edge Function" -> function "send-push-notification" -> add HTTP header
 // "x-webhook-secret: <the same random string>". That header is what stops
 // randoms on the internet from hitting this endpoint and spamming pushes,
@@ -254,7 +254,6 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
 
     const settingsQuery = new URLSearchParams({
         select: "guild_id,guild_name",
-        announcements_enabled: "eq.true",
         order: "created_at.asc",
     });
     const settingsResponse = await fetch(SUPABASE_URL + "/rest/v1/discord_guild_settings?" + settingsQuery, {
@@ -270,7 +269,7 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
 
     const guilds = await settingsResponse.json();
     if (!Array.isArray(guilds) || !guilds.length) {
-        return { sent: 0, reason: "no_enabled_discord_guilds" };
+        return { sent: 0, reason: "no_configured_discord_guilds" };
     }
 
     let sent = 0;
@@ -365,12 +364,14 @@ Deno.serve(async (req: Request) => {
     }
 
     // Supabase Database Webhook payload shape:
-    // { type: "UPDATE", table, schema, record, old_record }
-    if (payload?.type !== "UPDATE" || !payload?.record) {
-        return new Response("Ignored (not an UPDATE)", { status: 200 });
+    // { type: "INSERT" | "UPDATE", table, schema, record, old_record }
+    const eventType = String(payload?.type ?? "").toUpperCase();
+    if (!["INSERT", "UPDATE"].includes(eventType) || !payload?.record) {
+        return new Response("Ignored (not an INSERT or UPDATE)", { status: 200 });
     }
 
     const record = payload.record;
+    const isInsert = eventType === "INSERT";
     const oldRecord = payload.old_record ?? {};
     const newStatus = normalizeStatus(record.status);
     const oldStatus = normalizeStatus(oldRecord.status);
@@ -386,7 +387,7 @@ Deno.serve(async (req: Request) => {
 
     // Notify on final status changes OR a slot move while still Waiting.
     // This intentionally does not notify unrelated field edits.
-    const shouldNotify =
+    const shouldNotify = isInsert ||
         (statusChanged && FINAL_STATUSES.includes(newStatus)) ||
         waitingTimeMoved;
 
@@ -395,16 +396,33 @@ Deno.serve(async (req: Request) => {
     }
 
     const applicationId = String(record.id);
-    const notification = buildNotification(record, oldRecord);
+    const notification = isInsert
+        ? {
+            title: `🆕 ${displayPlayerName(record)} — New Reservation Request`,
+            body: `A new reservation request has been submitted.\nRequested slot: ${newTime || "Not specified"} UTC.\nStatus: ${statusText(record.status)}.`
+        }
+        : buildNotification(record, oldRecord);
 
-    // Discord routing is independent of Get Notification. Every qualifying
-    // reservation update is checked against troops_power; only confirmed IDN
-    // players are sent to the configured guilds' exact "IDN" channels.
+    // Discord routing is independent of Get Notification. New reservations
+    // and qualifying updates are routed by the verified alliance to its
+    // same-named channel in every configured Discord guild.
     const discordDelivery = await sendAllianceDiscordNotification(record, notification)
         .catch((error) => {
             console.error("Discord reservation notification unexpectedly failed:", error);
             return { sent: 0, reason: "unexpected_error" };
         });
+
+    // New reservation submissions are Discord announcements. Get Notification
+    // remains reserved for browser push on subsequent status/slot updates.
+    if (isInsert) {
+        return new Response(JSON.stringify({
+            sent: 0,
+            removed_stale: 0,
+            push_reason: "new_reservation_discord_only",
+            discord_sent: discordDelivery.sent,
+            discord_reason: discordDelivery.reason
+        }), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
 
     // Get Notification controls browser push only. No subscription must never
     // prevent the independent Discord notification above.
