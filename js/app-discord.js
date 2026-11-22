@@ -40,7 +40,7 @@
     async function loadGuilds() {
         const list = $("discord-guild-list");
         if (!list) return;
-        list.innerHTML = '<p class="redeem-hint">${t("discord_loading_servers")}</p>';
+        list.innerHTML = `<p class="redeem-hint">${t("discord_loading_servers")}</p>`;
         try {
             const { data, error } = await api("list");
             if (error) throw error;
@@ -49,7 +49,7 @@
             renderGuildSelect();
         } catch (error) {
             console.error("Unable to load Discord guild settings:", error);
-            list.innerHTML = '<p class="redeem-hint">${t("discord_load_failed")}</p>';
+            list.innerHTML = `<p class="redeem-hint">${t("discord_load_failed")}</p>`;
         }
     }
 
@@ -105,7 +105,7 @@
         const select = $("discord-announcement-guild");
         if (!select) return;
         const previous = select.value;
-        select.innerHTML = '<option value="">${t("discord_select_server")}</option>' + guilds
+        select.innerHTML = `<option value="">${t("discord_select_server")}</option>` + guilds
             .filter((g) => g.announcements_enabled)
             .map((g) => `<option value="${escapeHtml(g.guild_id)}">${escapeHtml(g.guild_name)}</option>`).join("");
         if (guilds.some((g) => g.guild_id === previous && g.announcements_enabled)) select.value = previous;
@@ -123,7 +123,7 @@
         const target = $("discord-history");
         if (!target) return;
         target.classList.remove("hidden");
-        target.innerHTML = '<p class="redeem-hint">${t("discord_loading_history")}</p>';
+        target.innerHTML = `<p class="redeem-hint">${t("discord_loading_history")}</p>`;
         try {
             const { data, error } = await api("history", { guild_id: guildId });
             if (error) throw error;
@@ -133,10 +133,10 @@
                     <strong>${escapeHtml(row.title)}</strong>
                     <p>${escapeHtml(row.message)}</p>
                     <small>${new Date(row.created_at).toLocaleString()} · ${escapeHtml(row.status)} · ${row.mentioned_everyone ? "@everyone" : "no mention"}${row.error_code ? " · " + escapeHtml(row.error_code) : ""}</small>
-                </article>`).join("") : '<p class="redeem-hint">${t("discord_no_history")}</p>';
+                </article>`).join("") : `<p class="redeem-hint">${t("discord_no_history")}</p>`;
         } catch (error) {
             console.error(error);
-            target.innerHTML = '<p class="redeem-hint">${t("discord_history_failed")}</p>';
+            target.innerHTML = `<p class="redeem-hint">${t("discord_history_failed")}</p>`;
         }
     }
 
