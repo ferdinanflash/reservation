@@ -5058,6 +5058,20 @@
     };
     Object.keys(discordPlaceholderTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], discordPlaceholderTranslations[language]));
 
+
+    // Shared President Panel navigation and missing Clear label.
+    const presidentPanelUiTranslations = {
+        en: { btn_clear: "Clear", btn_back_president_panel: "‹ Back to President Panel" },
+        id: { btn_clear: "Bersihkan", btn_back_president_panel: "‹ Kembali ke President Panel" },
+        cn: { btn_clear: "清除", btn_back_president_panel: "‹ 返回总统面板" },
+        ph: { btn_clear: "I-clear", btn_back_president_panel: "‹ Bumalik sa President Panel" },
+        th: { btn_clear: "ล้าง", btn_back_president_panel: "‹ กลับไปยังแผงประธาน" },
+        it: { btn_clear: "Cancella", btn_back_president_panel: "‹ Torna al Pannello del Presidente" },
+        ru: { btn_clear: "Очистить", btn_back_president_panel: "‹ Назад в панель президента" },
+        fr: { btn_clear: "Effacer", btn_back_president_panel: "‹ Retour au panneau du président" }
+    };
+    Object.keys(presidentPanelUiTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], presidentPanelUiTranslations[language]));
+
     // Expose globally so app modules / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
