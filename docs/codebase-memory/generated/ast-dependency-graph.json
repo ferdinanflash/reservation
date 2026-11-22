@@ -2,8 +2,8 @@
   "schema_version": 1,
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
-  "source_files": 24,
-  "function_count": 430,
+  "source_files": 25,
+  "function_count": 433,
   "import_count": 5,
   "call_edge_count": 1204,
   "edges": [
@@ -10788,6 +10788,27 @@
       "kind": "function"
     },
     {
+      "id": "supabase/functions/discord-announcement/index.ts#authenticatedUserId",
+      "name": "authenticatedUserId",
+      "file": "supabase/functions/discord-announcement/index.ts",
+      "line": 32,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-announcement/index.ts#json",
+      "name": "json",
+      "file": "supabase/functions/discord-announcement/index.ts",
+      "line": 25,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-announcement/index.ts#serviceRest",
+      "name": "serviceRest",
+      "file": "supabase/functions/discord-announcement/index.ts",
+      "line": 46,
+      "kind": "function"
+    },
+    {
       "id": "supabase/functions/discord-interactions/index.ts#callRedeemFunction",
       "name": "callRedeemFunction",
       "file": "supabase/functions/discord-interactions/index.ts",
@@ -11653,5 +11674,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "75f8f71d280deda9347b174f8b3997c6e26dfedf382f78859e51a6bd89b920f8"
+  "source_digest": "55328e335521560aca0134cf39c96668eddde7b44c15e2452f2c6b99d376fc4b"
 }
