@@ -15,6 +15,7 @@ const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const DISCORD_BOT_TOKEN = Deno.env.get("DISCORD_BOT_TOKEN") ?? "";
 const DISCORD_API = "https://discord.com/api/v10";
+const ADMIN_EMAILS = new Set(["president", "demon", "phoenix"].map((name) => name + "@3475-staff.internal"));
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
@@ -37,7 +38,8 @@ async function authenticatedUserId(authHeader: string | null): Promise<string | 
         });
         if (!response.ok) return null;
         const user = await response.json();
-        return typeof user?.id === "string" ? user.id : null;
+        const email = String(user?.email ?? "").trim().toLowerCase();
+        return typeof user?.id === "string" && ADMIN_EMAILS.has(email) ? user.id : null;
     } catch {
         return null;
     }
@@ -65,7 +67,7 @@ Deno.serve(async (req: Request) => {
     if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
     const userId = await authenticatedUserId(req.headers.get("Authorization"));
-    if (!userId) return json({ error: "President login required" }, 401);
+    if (!userId) return json({ error: "President login required" }, 403);
 
     if (!SUPABASE_SERVICE_ROLE_KEY || !DISCORD_BOT_TOKEN) {
         return json({ error: "Discord announcement service is not configured" }, 503);
