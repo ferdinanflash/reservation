@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     const code = error instanceof Error ? error.message : "unknown_error";
     console.error("Discord guild settings request failed:", code);
-    if (code.startsWith("discord_404")) return reply({ error: "bot_cannot_access_channel" }, 400);
+    if (code.startsWith("discord_404") || code.startsWith("discord_403")) return reply({ error: "bot_cannot_access_channel" }, 400);
     if (code.startsWith("discord_")) return reply({ error: "discord_validation_failed" }, 400);
     return reply({ error: "request_failed" }, 500);
   }
