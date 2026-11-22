@@ -1,4 +1,4 @@
-name: Deploy 3475 Discord Announcement Functions
+name: Deploy 3475
 
 on:
   workflow_dispatch:
