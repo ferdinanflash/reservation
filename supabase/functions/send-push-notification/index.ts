@@ -274,7 +274,7 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
         ? configuredGuilds.filter((guild: any) =>
             String(guild?.guild_name ?? "").trim().toUpperCase() === alliance &&
             guild?.announcements_enabled !== false &&
-            /^\\d{17,20}$/.test(String(guild?.announcement_channel_id ?? "").trim())
+            /^\d{17,20}$/.test(String(guild?.announcement_channel_id ?? "").trim())
         )
         : [];
 
