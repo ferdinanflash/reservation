@@ -200,7 +200,7 @@
     "generator_version": 1,
     "file_count": 105,
     "digest_algorithm": "sha256",
-    "content_digest": "ea40b2cf42855c69ad8f720fb5db62750bd8d35b69bcd43c540c9ce6f6c64495",
+    "content_digest": "3de810f0324e919f60c741540121dc57b551dc4a8f48eafedd90de3a814ef6eb",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -464,7 +464,7 @@
       },
       {
         "path": "supabase/functions/send-push-notification/index.ts",
-        "sha256": "3d74642d01def55a23099d7b7f24182ece78047f5bb53b8af91a2bc8b69a4d03"
+        "sha256": "0b2071d5facd435dfbca242f98724ee0d8bebded03ea10cf36f5a410494b032b"
       },
       {
         "path": "supabase/functions/wosatlas-states/index.ts",
