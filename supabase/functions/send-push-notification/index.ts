@@ -412,6 +412,20 @@ Deno.serve(async (req: Request) => {
             return { sent: 0, reason: "unexpected_error" };
         });
 
+    // Log the routing result so HTTP 200 requests can be diagnosed.
+    const discordResult = discordDelivery as {
+        sent: number;
+        reason: string;
+        alliance?: string;
+    };
+    console.log("Reservation Discord delivery result", {
+        eventType,
+        applicationId,
+        discordSent: discordResult.sent,
+        discordReason: discordResult.reason,
+        alliance: discordResult.alliance ?? null,
+    });
+
     // New reservation submissions are Discord announcements. Get Notification
     // remains reserved for browser push on subsequent status/slot updates.
     if (isInsert) {
