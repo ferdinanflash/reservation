@@ -412,6 +412,22 @@ Deno.serve(async (req: Request) => {
             return { sent: 0, reason: "unexpected_error" };
         });
 
+    // Emit one structured outcome for every qualifying reservation event.
+    // The HTTP request log alone only shows status 200 and does not reveal
+    // whether the Discord route found a player, alliance, or channel.
+    const discordResult = discordDelivery as {
+        sent: number;
+        reason: string;
+        alliance?: string;
+    };
+    console.log("Reservation Discord delivery result", {
+        eventType,
+        applicationId,
+        discordSent: discordResult.sent,
+        discordReason: discordResult.reason,
+        alliance: discordResult.alliance ?? null,
+    });
+
     // New reservation submissions are Discord announcements. Get Notification
     // remains reserved for browser push on subsequent status/slot updates.
     if (isInsert) {
