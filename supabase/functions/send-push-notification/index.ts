@@ -252,8 +252,10 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
         return { sent: 0, reason: "missing_or_invalid_alliance" };
     }
 
+    // Route by configured Discord SERVER name (guild_name), then use its
+    // saved announcement_channel_id. The alliance name is not a channel name.
     const settingsQuery = new URLSearchParams({
-        select: "guild_id,guild_name",
+        select: "guild_id,guild_name,announcement_channel_id,announcements_enabled",
         order: "created_at.asc",
     });
     const settingsResponse = await fetch(SUPABASE_URL + "/rest/v1/discord_guild_settings?" + settingsQuery, {
@@ -264,63 +266,50 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
     });
     if (!settingsResponse.ok) {
         console.error("Discord reservation notification: failed to load configured guilds:", settingsResponse.status);
-        return { sent: 0, reason: "guild_settings_failed" };
+        return { sent: 0, reason: "guild_settings_failed", alliance };
     }
 
-    const guilds = await settingsResponse.json();
-    if (!Array.isArray(guilds) || !guilds.length) {
-        return { sent: 0, reason: "no_configured_discord_guilds" };
+    const configuredGuilds = await settingsResponse.json();
+    const matchingGuilds = Array.isArray(configuredGuilds)
+        ? configuredGuilds.filter((guild: any) =>
+            String(guild?.guild_name ?? "").trim().toUpperCase() === alliance &&
+            guild?.announcements_enabled !== false &&
+            /^\\d{17,20}$/.test(String(guild?.announcement_channel_id ?? "").trim())
+        )
+        : [];
+
+    if (!matchingGuilds.length) {
+        console.info("Discord reservation notification skipped: no enabled server configured for alliance.", {
+            alliance,
+        });
+        return { sent: 0, reason: "no_matching_configured_server", alliance };
     }
 
     let sent = 0;
-    for (const guild of guilds) {
+    let attempted = 0;
+    for (const guild of matchingGuilds) {
+        const channelId = String(guild.announcement_channel_id).trim();
+        const playerName = String(player.nickname ?? record.nickname ?? "Player").trim() || "Player";
+        const timeSlot = String(record.time_slot ?? "").trim();
+        const status = String(record.status ?? "Updated").trim();
+        const embed = {
+            title: notification.title,
+            description: notification.body,
+            color: 0x5865F2,
+            fields: [
+                { name: "Player", value: playerName.slice(0, 256), inline: true },
+                { name: "Player ID", value: gameId, inline: true },
+                { name: "Alliance", value: alliance, inline: true },
+                ...(timeSlot ? [{ name: "Reservation Slot", value: timeSlot + " UTC", inline: true }] : []),
+                { name: "Status", value: status.slice(0, 256), inline: true },
+            ],
+            footer: { text: "State of 3475 • Reservation Portal" },
+            timestamp: new Date().toISOString(),
+        };
+
+        attempted++;
         try {
-            const channelsResponse = await fetch(DISCORD_API + "/guilds/" + guild.guild_id + "/channels", {
-                headers: { Authorization: "Bot " + DISCORD_BOT_TOKEN },
-            });
-            if (!channelsResponse.ok) {
-                console.warn("Discord reservation notification: cannot list channels for configured guild.", {
-                    guild_id: guild.guild_id,
-                    status: channelsResponse.status,
-                });
-                continue;
-            }
-
-            const channels = await channelsResponse.json();
-            // Discord channel names are lowercase-normalized by Discord.
-            // Match the verified Supabase alliance to a same-named text channel.
-            const allianceChannel = Array.isArray(channels)
-                ? channels.find((channel: any) =>
-                    String(channel?.name ?? "").toLowerCase() === alliance.toLowerCase() &&
-                    [0, 5].includes(Number(channel?.type))
-                )
-                : null;
-            if (!allianceChannel) {
-                console.info("Discord reservation notification skipped: no matching alliance channel in guild.", {
-                    guild_id: guild.guild_id,
-                    alliance,
-                });
-                continue;
-            }
-
-            const playerName = String(player.nickname ?? record.nickname ?? "Player").trim() || "Player";
-            const timeSlot = String(record.time_slot ?? "").trim();
-            const status = String(record.status ?? "Updated").trim();
-            const embed = {
-                title: notification.title,
-                description: notification.body,
-                color: 0x5865F2,
-                fields: [
-                    { name: "Player", value: playerName.slice(0, 256), inline: true },
-                    { name: "Player ID", value: gameId, inline: true },
-                    { name: "Alliance", value: alliance, inline: true },
-                    ...(timeSlot ? [{ name: "Reservation Slot", value: timeSlot + " UTC", inline: true }] : []),
-                    { name: "Status", value: status.slice(0, 256), inline: true },
-                ],
-                footer: { text: "State of 3475 • Reservation Portal" },
-                timestamp: new Date().toISOString(),
-            };
-            const sendResponse = await fetch(DISCORD_API + "/channels/" + allianceChannel.id + "/messages", {
+            const sendResponse = await fetch(DISCORD_API + "/channels/" + channelId + "/messages", {
                 method: "POST",
                 headers: {
                     Authorization: "Bot " + DISCORD_BOT_TOKEN,
@@ -330,16 +319,26 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
             });
             if (!sendResponse.ok) {
                 const detail = await sendResponse.text().catch(() => "");
-                console.error("Discord alliance reservation notification failed:", sendResponse.status, detail.slice(0, 300));
+                console.error("Discord alliance reservation notification failed:", {
+                    guild_id: guild.guild_id,
+                    guild_name: guild.guild_name,
+                    channel_id: channelId,
+                    status: sendResponse.status,
+                    detail: detail.slice(0, 300),
+                });
                 continue;
             }
             sent++;
         } catch (error) {
-            console.error("Discord alliance reservation notification failed for guild:", guild.guild_id, error);
+            console.error("Discord alliance reservation notification failed for configured server:", guild.guild_id, error);
         }
     }
 
-    return { sent, reason: sent ? "sent" : "no_matching_alliance_channel", alliance };
+    return {
+        sent,
+        reason: sent ? "sent" : (attempted ? "discord_send_failed" : "no_matching_configured_server"),
+        alliance,
+    };
 }
 
 Deno.serve(async (req: Request) => {
