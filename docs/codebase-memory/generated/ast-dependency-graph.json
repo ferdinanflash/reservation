@@ -2,8 +2,8 @@
   "schema_version": 1,
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
-  "source_files": 25,
-  "function_count": 433,
+  "source_files": 26,
+  "function_count": 437,
   "import_count": 5,
   "call_edge_count": 1204,
   "edges": [
@@ -10791,21 +10791,49 @@
       "id": "supabase/functions/discord-announcement/index.ts#authenticatedUserId",
       "name": "authenticatedUserId",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 32,
+      "line": 33,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement/index.ts#json",
       "name": "json",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 25,
+      "line": 26,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement/index.ts#serviceRest",
       "name": "serviceRest",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 46,
+      "line": 48,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-guild-settings/index.ts#db",
+      "name": "db",
+      "file": "supabase/functions/discord-guild-settings/index.ts",
+      "line": 34,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-guild-settings/index.ts#discord",
+      "name": "discord",
+      "file": "supabase/functions/discord-guild-settings/index.ts",
+      "line": 45,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-guild-settings/index.ts#presidentId",
+      "name": "presidentId",
+      "file": "supabase/functions/discord-guild-settings/index.ts",
+      "line": 24,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-guild-settings/index.ts#reply",
+      "name": "reply",
+      "file": "supabase/functions/discord-guild-settings/index.ts",
+      "line": 21,
       "kind": "function"
     },
     {
@@ -11674,5 +11702,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "55328e335521560aca0134cf39c96668eddde7b44c15e2452f2c6b99d376fc4b"
+  "source_digest": "b5bfd9fe8209b5e2d9169b2bcf25c83ca8fe0f14e9c82b12607de60843b69289"
 }

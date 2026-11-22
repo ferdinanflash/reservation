@@ -64,6 +64,7 @@
   ],
   "edge_functions": [
     "supabase/functions/discord-announcement/index.ts",
+    "supabase/functions/discord-guild-settings/index.ts",
     "supabase/functions/discord-interactions/index.ts",
     "supabase/functions/discord-message-poller/index.ts",
     "supabase/functions/index.ts",
@@ -195,9 +196,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 102,
+    "file_count": 103,
     "digest_algorithm": "sha256",
-    "content_digest": "ae2451e9997a99884216835843e320136fcbe52edd5c5997089043440e8b8676",
+    "content_digest": "57bc7e58d9e80df2d160c720da0f3c3e70fb74a2b88b1ea61b5f87646e4ad17d",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -425,7 +426,11 @@
       },
       {
         "path": "supabase/functions/discord-announcement/index.ts",
-        "sha256": "74779f0a7e2d02c3a2894e1e2b0ff844719e586f268f94fb279aece7b0c4a25a"
+        "sha256": "ee5d62e62ee803fb7b4d6bf6da67bb88b8408ed7376899712ade88e984457074"
+      },
+      {
+        "path": "supabase/functions/discord-guild-settings/index.ts",
+        "sha256": "f96e9de224c014e6bcbe46ea8a51211f70bcd76cdab3e50a8634d622f7c6a824"
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
