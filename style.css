@@ -9097,3 +9097,96 @@ body.christmas-theme {
     }
 }
 
+
+
+/* ==================== DISCORD MULTI-SERVER ANNOUNCEMENTS ==================== */
+.discord-modal-content {
+    width: min(620px, calc(100vw - 28px));
+    max-width: 620px;
+    max-height: min(88vh, 860px);
+    overflow-y: auto;
+}
+.discord-guild-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 12px 0 18px;
+}
+.discord-guild-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px;
+    border: 1px solid var(--border-color, rgba(148, 163, 184, .25));
+    border-radius: 12px;
+    background: rgba(148, 163, 184, .06);
+}
+.discord-guild-card-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-wrap: anywhere;
+}
+.discord-guild-card-main strong { color: var(--t-primary, #f1f5f9); }
+.discord-guild-card-main small,
+.discord-guild-status { color: var(--t-muted, #94a3b8); font-size: .76rem; }
+.discord-guild-status.is-enabled { color: #22c55e; }
+.discord-guild-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+}
+.discord-guild-card-actions button {
+    margin: 0;
+    padding: 6px 9px;
+    min-height: 32px;
+    font-size: .75rem;
+}
+.discord-form-divider {
+    height: 1px;
+    background: var(--border-color, rgba(148, 163, 184, .25));
+    margin: 18px 0;
+}
+.discord-form-title { margin: 0 0 14px; font-size: 1rem; }
+.discord-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+    color: var(--t-primary, #e2e8f0);
+    font-size: .9rem;
+    line-height: 1.4;
+}
+.discord-toggle-row input {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    accent-color: #5865f2;
+}
+.discord-everyone-toggle { color: #fbbf24; }
+.discord-history {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color, rgba(148, 163, 184, .25));
+}
+.discord-history-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color, rgba(148, 163, 184, .18));
+}
+.discord-history-item strong { display: block; margin-bottom: 4px; }
+.discord-history-item p {
+    margin: 0 0 5px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: .88rem;
+}
+.discord-history-item small { color: var(--t-muted, #94a3b8); font-size: .72rem; }
+@media (max-width: 560px) {
+    .discord-modal-content { width: calc(100vw - 20px); padding: 20px 16px; }
+    .discord-guild-card { flex-direction: column; }
+    .discord-guild-card-actions { justify-content: flex-start; width: 100%; }
+    .discord-guild-card-actions button { flex: 1 1 auto; }
+}
