@@ -38,6 +38,8 @@ const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") ?? "mailto:admin@example.com
 const WEBHOOK_SECRET = Deno.env.get("WEBHOOK_SECRET") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+const DISCORD_BOT_TOKEN = Deno.env.get("DISCORD_BOT_TOKEN") ?? "";
+const DISCORD_API = "https://discord.com/api/v10";
 
 // IMPORTANT: web-push must be initialized with the VAPID identity before
 // sendNotification() is called. Without this, every push send can fail even
@@ -205,6 +207,134 @@ async function deleteStaleSubscriptions(ids: string[]) {
     }).catch((error) => console.error("Failed to delete stale subscriptions:", error));
 }
 
+
+// Get Notification is the guest's explicit opt-in. A push_subscriptions row
+// exists only after that guest enabled notifications for this application.
+// Alliance membership is looked up server-side by the reservation's Player ID.
+async function sendIdnAllianceDiscordNotification(record: any, notification: { title: string; body: string }) {
+    if (!DISCORD_BOT_TOKEN) {
+        console.warn("Discord reservation notification skipped: DISCORD_BOT_TOKEN is not configured.");
+        return { sent: 0, reason: "discord_not_configured" };
+    }
+
+    const gameId = String(record?.game_id ?? "").trim();
+    if (!/^\d{4,20}$/.test(gameId)) {
+        console.info("Discord reservation notification skipped: missing or invalid Player ID.");
+        return { sent: 0, reason: "missing_player_id" };
+    }
+
+    const playerQuery = new URLSearchParams({
+        select: "game_id,nickname,alliance",
+        game_id: "eq." + gameId,
+        limit: "1",
+    });
+    const playerResponse = await fetch(SUPABASE_URL + "/rest/v1/troops_power?" + playerQuery, {
+        headers: {
+            apikey: SUPABASE_SERVICE_ROLE_KEY,
+            Authorization: "Bearer " + SUPABASE_SERVICE_ROLE_KEY,
+        },
+    });
+    if (!playerResponse.ok) {
+        console.error("Discord notification: failed to verify Player ID in troops_power:", playerResponse.status);
+        return { sent: 0, reason: "player_lookup_failed" };
+    }
+
+    const players = await playerResponse.json();
+    const player = Array.isArray(players) ? players[0] : null;
+    if (!player || String(player.game_id ?? "").trim() !== gameId) {
+        console.info("Discord reservation notification skipped: Player ID not found in troops_power.");
+        return { sent: 0, reason: "player_not_found" };
+    }
+
+    const alliance = String(player.alliance ?? "").trim().toUpperCase();
+    if (alliance !== "IDN") {
+        console.info("Discord reservation notification skipped: alliance is not IDN.", { gameId, alliance: alliance || "empty" });
+        return { sent: 0, reason: "not_idn" };
+    }
+
+    const settingsQuery = new URLSearchParams({
+        select: "guild_id,guild_name",
+        announcements_enabled: "eq.true",
+        order: "created_at.asc",
+    });
+    const settingsResponse = await fetch(SUPABASE_URL + "/rest/v1/discord_guild_settings?" + settingsQuery, {
+        headers: {
+            apikey: SUPABASE_SERVICE_ROLE_KEY,
+            Authorization: "Bearer " + SUPABASE_SERVICE_ROLE_KEY,
+        },
+    });
+    if (!settingsResponse.ok) {
+        console.error("Discord reservation notification: failed to load configured guilds:", settingsResponse.status);
+        return { sent: 0, reason: "guild_settings_failed" };
+    }
+
+    const guilds = await settingsResponse.json();
+    if (!Array.isArray(guilds) || !guilds.length) {
+        return { sent: 0, reason: "no_enabled_discord_guilds" };
+    }
+
+    let sent = 0;
+    for (const guild of guilds) {
+        try {
+            const channelsResponse = await fetch(DISCORD_API + "/guilds/" + guild.guild_id + "/channels", {
+                headers: { Authorization: "Bot " + DISCORD_BOT_TOKEN },
+            });
+            if (!channelsResponse.ok) {
+                console.warn("Discord reservation notification: cannot list channels for configured guild.", {
+                    guild_id: guild.guild_id,
+                    status: channelsResponse.status,
+                });
+                continue;
+            }
+
+            const channels = await channelsResponse.json();
+            const idnChannel = Array.isArray(channels)
+                ? channels.find((channel: any) => channel?.name === "IDN" && [0, 5].includes(Number(channel?.type)))
+                : null;
+            if (!idnChannel) {
+                console.info("Discord reservation notification skipped: no exact IDN text channel in guild.", guild.guild_id);
+                continue;
+            }
+
+            const playerName = String(player.nickname ?? record.nickname ?? "Player").trim() || "Player";
+            const timeSlot = String(record.time_slot ?? "").trim();
+            const status = String(record.status ?? "Updated").trim();
+            const embed = {
+                title: notification.title,
+                description: notification.body,
+                color: 0x5865F2,
+                fields: [
+                    { name: "Player", value: playerName.slice(0, 256), inline: true },
+                    { name: "Player ID", value: gameId, inline: true },
+                    { name: "Alliance", value: "IDN", inline: true },
+                    ...(timeSlot ? [{ name: "Reservation Slot", value: timeSlot + " UTC", inline: true }] : []),
+                    { name: "Status", value: status.slice(0, 256), inline: true },
+                ],
+                footer: { text: "State of 3475 • Reservation Portal" },
+                timestamp: new Date().toISOString(),
+            };
+            const sendResponse = await fetch(DISCORD_API + "/channels/" + idnChannel.id + "/messages", {
+                method: "POST",
+                headers: {
+                    Authorization: "Bot " + DISCORD_BOT_TOKEN,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ embeds: [embed], allowed_mentions: { parse: [] } }),
+            });
+            if (!sendResponse.ok) {
+                const detail = await sendResponse.text().catch(() => "");
+                console.error("Discord IDN reservation notification failed:", sendResponse.status, detail.slice(0, 300));
+                continue;
+            }
+            sent++;
+        } catch (error) {
+            console.error("Discord IDN reservation notification failed for guild:", guild.guild_id, error);
+        }
+    }
+
+    return { sent, reason: sent ? "sent" : "no_matching_idn_channel" };
+}
+
 Deno.serve(async (req: Request) => {
     if (req.method !== "POST") {
         return new Response("Method Not Allowed", { status: 405 });
@@ -260,10 +390,19 @@ Deno.serve(async (req: Request) => {
     const subscriptions = await fetchSubscriptions(applicationId);
 
     if (!subscriptions.length) {
-        return new Response("No subscriptions for this application", { status: 200 });
+        return new Response("No Get Notification opt-in for this application", { status: 200 });
     }
 
     const notification = buildNotification(record, oldRecord);
+
+    // Discord is an additional delivery target for opted-in applicants only.
+    // Only a Player ID confirmed in troops_power with alliance IDN is routed
+    // to the exact "IDN" channel. Missing data never blocks browser push.
+    const discordDelivery = await sendIdnAllianceDiscordNotification(record, notification)
+        .catch((error) => {
+            console.error("Discord reservation notification unexpectedly failed:", error);
+            return { sent: 0, reason: "unexpected_error" };
+        });
     const notificationPayload = JSON.stringify({
         title: notification.title,
         body: notification.body,
@@ -296,6 +435,8 @@ Deno.serve(async (req: Request) => {
 
     return new Response(JSON.stringify({
         sent: subscriptions.length - staleIds.length,
-        removed_stale: staleIds.length
+        removed_stale: staleIds.length,
+        discord_sent: discordDelivery.sent,
+        discord_reason: discordDelivery.reason
     }), { status: 200, headers: { "Content-Type": "application/json" } });
 });
