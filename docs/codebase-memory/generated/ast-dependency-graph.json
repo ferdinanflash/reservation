@@ -5,7 +5,7 @@
   "source_files": 27,
   "function_count": 449,
   "import_count": 5,
-  "call_edge_count": 1270,
+  "call_edge_count": 1276,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -2528,6 +2528,20 @@
       "confidence": "static-name-match"
     },
     {
+      "from": "js/app-discord.js#loadGuilds",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 43,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#loadGuilds",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 52,
+      "confidence": "static-name-match"
+    },
+    {
       "from": "js/app-discord.js#loadHistory",
       "to": "js/app-discord.js#$",
       "kind": "call",
@@ -2539,6 +2553,27 @@
       "to": "js/app-discord.js#api",
       "kind": "call",
       "line": 128,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#loadHistory",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 126,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#loadHistory",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 136,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#loadHistory",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 139,
       "confidence": "static-name-match"
     },
     {
@@ -2637,6 +2672,13 @@
       "to": "js/app-discord.js#$",
       "kind": "call",
       "line": 114,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#renderGuildSelect",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 108,
       "confidence": "static-name-match"
     },
     {
@@ -12260,5 +12302,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "3ba3f0a48509b2880769f70b3cf2b2dd02f0f1bee91cc3d2932f5f41673a8e48"
+  "source_digest": "d387c7a0b405d3cc593f891dbab1a66395cfe199e297480dd48fb298c3a11972"
 }
