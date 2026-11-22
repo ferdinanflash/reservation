@@ -5072,6 +5072,20 @@
     };
     Object.keys(presidentPanelUiTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], presidentPanelUiTranslations[language]));
 
+
+    // Whats New — Discord reservation notification routing and message retention.
+    const whatsNew23Translations = {
+        en: { whatsnew_date: "Last Update: 22 Nov 2026", whatsnew_23_title: "Discord Reservation Notifications", whatsnew_23_desc: "Reservation alerts now route to the configured Discord server matching the player's alliance and its saved announcement channel. Reservation messages stay in Discord and are not auto-deleted after 8 hours; the 8-hour cleanup remains limited to Redeem results." },
+        id: { whatsnew_date: "Terakhir diperbarui: 22 Nov 2026", whatsnew_23_title: "Notifikasi Reservasi Discord", whatsnew_23_desc: "Notifikasi reservasi kini dikirim ke server Discord yang sesuai dengan aliansi pemain, menggunakan announcement channel yang tersimpan. Pesan reservasi tetap tersimpan dan tidak dihapus otomatis setelah 8 jam; penghapusan 8 jam tetap hanya berlaku untuk hasil Redeem." },
+        it: { whatsnew_date: "Ultimo aggiornamento: 22 nov 2026", whatsnew_23_title: "Notifiche di prenotazione Discord", whatsnew_23_desc: "Le notifiche di prenotazione vengono ora inviate al server Discord corrispondente all’alleanza del giocatore, usando il canale annunci configurato. I messaggi di prenotazione non vengono eliminati automaticamente dopo 8 ore; la pulizia dopo 8 ore resta limitata ai risultati Redeem." },
+        ph: { whatsnew_date: "Huling update: 22 Nob 2026", whatsnew_23_title: "Mga Reservation Notification sa Discord", whatsnew_23_desc: "Ipinapadala na ngayon ang mga reservation notification sa Discord server na tumutugma sa alliance ng player, gamit ang naka-save na announcement channel. Hindi awtomatikong buburahin ang mga reservation message pagkalipas ng 8 oras; para lamang sa mga Redeem result ang 8-hour cleanup." },
+        cn: { whatsnew_date: "最后更新：2026年11月22日", whatsnew_23_title: "Discord 预约通知", whatsnew_23_desc: "预约通知现在会根据玩家所属联盟发送到对应的 Discord 服务器，并使用已保存的公告频道。预约消息不会在 8 小时后自动删除；8 小时清理功能仍仅适用于兑换结果。" },
+        th: { whatsnew_date: "อัปเดตล่าสุด: 22 พ.ย. 2026", whatsnew_23_title: "การแจ้งเตือนการจองผ่าน Discord", whatsnew_23_desc: "ขณะนี้การแจ้งเตือนการจองจะส่งไปยังเซิร์ฟเวอร์ Discord ที่ตรงกับพันธมิตรของผู้เล่น โดยใช้ช่องประกาศที่บันทึกไว้ ข้อความการจองจะไม่ถูกลบอัตโนมัติหลัง 8 ชั่วโมง ส่วนการลบหลัง 8 ชั่วโมงยังใช้เฉพาะผล Redeem เท่านั้น" },
+        ru: { whatsnew_date: "Последнее обновление: 22 ноя 2026", whatsnew_23_title: "Уведомления о бронировании в Discord", whatsnew_23_desc: "Уведомления о бронировании теперь отправляются на сервер Discord, соответствующий альянсу игрока, в сохранённый канал объявлений. Сообщения о бронировании не удаляются автоматически через 8 часов; 8-часовая очистка по-прежнему применяется только к результатам Redeem." },
+        fr: { whatsnew_date: "Dernière mise à jour : 22 nov. 2026", whatsnew_23_title: "Notifications de réservation Discord", whatsnew_23_desc: "Les notifications de réservation sont désormais envoyées sur le serveur Discord correspondant à l’alliance du joueur, dans le salon d’annonces enregistré. Les messages de réservation ne sont pas supprimés automatiquement après 8 heures ; le nettoyage après 8 heures reste réservé aux résultats Redeem." }
+    };
+    Object.keys(whatsNew23Translations).forEach((language) => Object.assign(TRANSLATIONS[language], whatsNew23Translations[language]));
+
     // Expose globally so app modules / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
