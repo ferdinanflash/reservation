@@ -344,9 +344,9 @@ Deno.serve(async (req: Request) => {
         return new Response("Forbidden", { status: 403 });
     }
 
-    if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY || !VAPID_SUBJECT) {
-        console.error("VAPID configuration is incomplete. Required: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT.");
-        return new Response("Server misconfigured: VAPID configuration is incomplete", { status: 500 });
+    const pushConfigured = Boolean(VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY && VAPID_SUBJECT);
+    if (!pushConfigured) {
+        console.warn("VAPID configuration is incomplete; Web Push will be skipped, but Discord routing can still run.");
     }
 
     let payload: any;
@@ -387,22 +387,30 @@ Deno.serve(async (req: Request) => {
     }
 
     const applicationId = String(record.id);
-    const subscriptions = await fetchSubscriptions(applicationId);
-
-    if (!subscriptions.length) {
-        return new Response("No Get Notification opt-in for this application", { status: 200 });
-    }
-
     const notification = buildNotification(record, oldRecord);
 
-    // Discord is an additional delivery target for opted-in applicants only.
-    // Only a Player ID confirmed in troops_power with alliance IDN is routed
-    // to the exact "IDN" channel. Missing data never blocks browser push.
+    // Discord routing is independent of Get Notification. Every qualifying
+    // reservation update is checked against troops_power; only confirmed IDN
+    // players are sent to the configured guilds' exact "IDN" channels.
     const discordDelivery = await sendIdnAllianceDiscordNotification(record, notification)
         .catch((error) => {
             console.error("Discord reservation notification unexpectedly failed:", error);
             return { sent: 0, reason: "unexpected_error" };
         });
+
+    // Get Notification controls browser push only. No subscription must never
+    // prevent the independent Discord notification above.
+    const subscriptions = await fetchSubscriptions(applicationId);
+    if (!subscriptions.length || !pushConfigured) {
+        return new Response(JSON.stringify({
+            sent: 0,
+            removed_stale: 0,
+            push_reason: !pushConfigured ? "vapid_not_configured" : "no_get_notification_opt_in",
+            discord_sent: discordDelivery.sent,
+            discord_reason: discordDelivery.reason
+        }), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
+
     const notificationPayload = JSON.stringify({
         title: notification.title,
         body: notification.body,
