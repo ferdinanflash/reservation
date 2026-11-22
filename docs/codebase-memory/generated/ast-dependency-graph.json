@@ -5,7 +5,7 @@
   "source_files": 27,
   "function_count": 452,
   "import_count": 5,
-  "call_edge_count": 1280,
+  "call_edge_count": 1282,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -1551,35 +1551,35 @@
       "from": "js/app-auth.js#handleAdminLogin",
       "to": "js/app-auth.js#handleStaffLogout",
       "kind": "call",
-      "line": 305,
+      "line": 318,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#handleStaffLogout",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 359,
+      "line": 372,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#handleStaffLogout",
       "to": "js/app-core.js#applyAuthSession",
       "kind": "call",
-      "line": 363,
+      "line": 376,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#handleStaffLogout",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 364,
+      "line": 377,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#handleStaffLogout",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 364,
+      "line": 377,
       "confidence": "static-name-match"
     },
     {
@@ -1593,91 +1593,98 @@
       "from": "js/app-auth.js#openThemeSwitcherModal",
       "to": "js/app-auth.js#refreshThemeSwitcherUI",
       "kind": "call",
-      "line": 260,
+      "line": 273,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelFinishSVS",
       "to": "js/app-auth.js#closePresidentPanelModal",
       "kind": "call",
-      "line": 94,
+      "line": 100,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelFinishSVS",
       "to": "js/app-waiting.js#handleFinishSVS",
       "kind": "call",
-      "line": 95,
+      "line": 101,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenAnnouncement",
       "to": "js/app-auth.js#closePresidentPanelModal",
       "kind": "call",
-      "line": 113,
+      "line": 126,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenAnnouncement",
       "to": "js/app-auth.js#openAnnouncementModal",
       "kind": "call",
-      "line": 114,
+      "line": 127,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenEditFooter",
       "to": "js/app-auth.js#closePresidentPanelModal",
       "kind": "call",
-      "line": 84,
+      "line": 90,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenEditFooter",
       "to": "js/app-auth.js#handleEditFooter",
       "kind": "call",
-      "line": 85,
+      "line": 91,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenSvSRecords",
       "to": "js/app-auth.js#closePresidentPanelModal",
       "kind": "call",
-      "line": 103,
+      "line": 109,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenSvSRecords",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 108,
+      "line": 121,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenSvSRecords",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 108,
+      "line": 114,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-auth.js#presidentPanelOpenSvSRecords",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 121,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenThemeSwitcher",
       "to": "js/app-auth.js#closePresidentPanelModal",
       "kind": "call",
-      "line": 89,
+      "line": 95,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelOpenThemeSwitcher",
       "to": "js/app-auth.js#openThemeSwitcherModal",
       "kind": "call",
-      "line": 90,
+      "line": 96,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#presidentPanelReturnFromView",
       "to": "js/app-auth.js#openPresidentPanelModal",
       "kind": "call",
-      "line": 78,
+      "line": 84,
       "confidence": "static-name-match"
     },
     {
@@ -1685,6 +1692,13 @@
       "to": "js/app-schedule.js#showMainMenu",
       "kind": "call",
       "line": 77,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-auth.js#presidentPanelReturnFromView",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 82,
       "confidence": "static-name-match"
     },
     {
@@ -1698,315 +1712,315 @@
       "from": "js/app-auth.js#saveEditFooter",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 219,
+      "line": 232,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "js/app-auth.js#closeEditFooterModal",
       "kind": "call",
-      "line": 241,
+      "line": 254,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "js/app-auth.js#loadFooterInfo",
       "kind": "call",
-      "line": 239,
+      "line": 252,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 223,
+      "line": 236,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 247,
+      "line": 260,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 215,
+      "line": 228,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 240,
+      "line": 253,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 245,
+      "line": 258,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 215,
+      "line": 228,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 240,
+      "line": 253,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#saveEditFooter",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 245,
+      "line": 258,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#selectSeasonalTheme",
       "to": "js/app-auth.js#refreshThemeSwitcherUI",
       "kind": "call",
-      "line": 288,
+      "line": 301,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#selectSeasonalTheme",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 290,
+      "line": 303,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#selectSeasonalTheme",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 292,
+      "line": 305,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#selectSeasonalTheme",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 290,
+      "line": 303,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#selectSeasonalTheme",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 292,
+      "line": 305,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 151,
+      "line": 164,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "js/app-auth.js#closeAnnouncementModal",
       "kind": "call",
-      "line": 167,
+      "line": 180,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 155,
+      "line": 168,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 188,
+      "line": 201,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 147,
+      "line": 160,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 166,
+      "line": 179,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 169,
+      "line": 182,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 186,
+      "line": 199,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 147,
+      "line": 160,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 155,
+      "line": 168,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 166,
+      "line": 179,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 169,
+      "line": 182,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 186,
+      "line": 199,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#sendAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 186,
+      "line": 199,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 319,
+      "line": 332,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "common.js#isPresidentUsername",
       "kind": "call",
-      "line": 333,
+      "line": 346,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "common.js#usernameToStaffEmail",
       "kind": "call",
-      "line": 342,
+      "line": 355,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "js/app-auth.js#closeLoginModal",
       "kind": "call",
-      "line": 354,
+      "line": 367,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "js/app-core.js#applyAuthSession",
       "kind": "call",
-      "line": 353,
+      "line": 366,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "js/app-core.js#setButtonBusy",
+      "kind": "call",
+      "line": 352,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-auth.js#submitStaffLogin",
+      "to": "js/app-core.js#setButtonBusy",
+      "kind": "call",
+      "line": 359,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-auth.js#submitStaffLogin",
+      "to": "js/app-core.js#showToast",
       "kind": "call",
       "line": 339,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
-      "to": "js/app-core.js#setButtonBusy",
+      "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 346,
+      "line": 347,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 326,
+      "line": 362,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 334,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#submitStaffLogin",
-      "to": "js/app-core.js#showToast",
-      "kind": "call",
-      "line": 349,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-auth.js#submitStaffLogin",
-      "to": "js/app-core.js#showToast",
-      "kind": "call",
-      "line": 355,
+      "line": 368,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 326,
+      "line": 339,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 334,
+      "line": 347,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 349,
+      "line": 362,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-auth.js#submitStaffLogin",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 355,
+      "line": 368,
       "confidence": "static-name-match"
     },
     {
@@ -9489,21 +9503,21 @@
       "id": "js/app-auth.js#closeAnnouncementModal",
       "name": "closeAnnouncementModal",
       "file": "js/app-auth.js",
-      "line": 134,
+      "line": 147,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#closeEditFooterModal",
       "name": "closeEditFooterModal",
       "file": "js/app-auth.js",
-      "line": 204,
+      "line": 217,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#closeLoginModal",
       "name": "closeLoginModal",
       "file": "js/app-auth.js",
-      "line": 314,
+      "line": 327,
       "kind": "function"
     },
     {
@@ -9517,28 +9531,28 @@
       "id": "js/app-auth.js#closeThemeSwitcherModal",
       "name": "closeThemeSwitcherModal",
       "file": "js/app-auth.js",
-      "line": 268,
+      "line": 281,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#handleAdminLogin",
       "name": "handleAdminLogin",
       "file": "js/app-auth.js",
-      "line": 303,
+      "line": 316,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#handleEditFooter",
       "name": "handleEditFooter",
       "file": "js/app-auth.js",
-      "line": 194,
+      "line": 207,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#handleStaffLogout",
       "name": "handleStaffLogout",
       "file": "js/app-auth.js",
-      "line": 358,
+      "line": 371,
       "kind": "function"
     },
     {
@@ -9552,7 +9566,7 @@
       "id": "js/app-auth.js#openAnnouncementModal",
       "name": "openAnnouncementModal",
       "file": "js/app-auth.js",
-      "line": 125,
+      "line": 138,
       "kind": "function"
     },
     {
@@ -9566,42 +9580,42 @@
       "id": "js/app-auth.js#openThemeSwitcherModal",
       "name": "openThemeSwitcherModal",
       "file": "js/app-auth.js",
-      "line": 258,
+      "line": 271,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#presidentPanelFinishSVS",
       "name": "presidentPanelFinishSVS",
       "file": "js/app-auth.js",
-      "line": 93,
+      "line": 99,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#presidentPanelOpenAnnouncement",
       "name": "presidentPanelOpenAnnouncement",
       "file": "js/app-auth.js",
-      "line": 112,
+      "line": 125,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#presidentPanelOpenEditFooter",
       "name": "presidentPanelOpenEditFooter",
       "file": "js/app-auth.js",
-      "line": 83,
+      "line": 89,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#presidentPanelOpenSvSRecords",
       "name": "presidentPanelOpenSvSRecords",
       "file": "js/app-auth.js",
-      "line": 101,
+      "line": 107,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#presidentPanelOpenThemeSwitcher",
       "name": "presidentPanelOpenThemeSwitcher",
       "file": "js/app-auth.js",
-      "line": 88,
+      "line": 94,
       "kind": "function"
     },
     {
@@ -9615,7 +9629,7 @@
       "id": "js/app-auth.js#refreshThemeSwitcherUI",
       "name": "refreshThemeSwitcherUI",
       "file": "js/app-auth.js",
-      "line": 272,
+      "line": 285,
       "kind": "function"
     },
     {
@@ -9629,28 +9643,28 @@
       "id": "js/app-auth.js#saveEditFooter",
       "name": "saveEditFooter",
       "file": "js/app-auth.js",
-      "line": 208,
+      "line": 221,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#selectSeasonalTheme",
       "name": "selectSeasonalTheme",
       "file": "js/app-auth.js",
-      "line": 285,
+      "line": 298,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#sendAnnouncement",
       "name": "sendAnnouncement",
       "file": "js/app-auth.js",
-      "line": 138,
+      "line": 151,
       "kind": "function"
     },
     {
       "id": "js/app-auth.js#submitStaffLogin",
       "name": "submitStaffLogin",
       "file": "js/app-auth.js",
-      "line": 318,
+      "line": 331,
       "kind": "function"
     },
     {
@@ -12197,7 +12211,7 @@
       "kind": "edge-function",
       "value": "send-announcement",
       "function": "js/app-auth.js#sendAnnouncement",
-      "line": 158
+      "line": 171
     },
     {
       "kind": "supabase-table",
@@ -12209,7 +12223,7 @@
       "kind": "supabase-table",
       "value": "footer_settings",
       "function": "js/app-auth.js#saveEditFooter",
-      "line": 226
+      "line": 239
     },
     {
       "kind": "supabase-table",
@@ -12351,5 +12365,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "05e3ddc50d18c4b5c49417d506fde7d0945216e94f3d6a61aa3e811afece06f3"
+  "source_digest": "0c659acbc295feacd94aaae8332d549d22addbf4ce3e3843ecf545ae88308937"
 }
