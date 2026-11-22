@@ -4869,6 +4869,195 @@
         whatsnew_date: "Dernière mise à jour : 20 nov. 2026"
     });
 
+
+    // Discord multi-server administration and announcement UI.
+    const discordTranslations = {
+        en: {
+            discord_manage_servers: "🤖 Discord Servers", discord_send_announcement: "📣 Discord Announcement",
+            discord_setup_hint: "Add each Discord server separately. Copy the Server ID and announcement channel ID from Discord Developer Mode. The bot must already be in the server and able to view the channel.",
+            discord_no_servers: "No Discord servers configured yet.", discord_add_edit_server: "Add / Edit Server",
+            discord_server_name: "Server Name", discord_server_id: "Discord Server ID", discord_channel_id: "Announcement Channel ID",
+            discord_enable_announcements: "Enable announcements for this server", discord_allow_everyone: "Allow @everyone mentions (use carefully)",
+            discord_save_server: "Save Server", discord_update_server: "Update Server", discord_history: "History",
+            discord_edit: "Edit", discord_remove: "Remove", discord_confirm_remove: "Remove this Discord server configuration and its announcement history?",
+            discord_server_removed: "Discord server removed.", discord_server_saved: "Discord server settings saved.",
+            discord_required_fields: "Complete all server fields.", discord_bot_channel_error: "The bot cannot access that channel. Check its server membership and View Channel permission.",
+            discord_channel_mismatch: "That channel does not belong to the selected server or is not a supported text channel.",
+            discord_save_failed: "Unable to save Discord server settings.", discord_announcement_hint: "Send a message to one configured Discord server. The destination channel is controlled by the server settings.",
+            discord_target_server: "Target Server", discord_announcement_title: "Title (optional)", discord_announcement_message: "Message",
+            discord_mention_everyone: "Mention @everyone", discord_everyone_hint: "This option is available only when @everyone is enabled in that server's settings.",
+            discord_send: "Send to Discord", discord_sending: "Sending…", discord_announcement_required: "Select a server and enter a message.",
+            discord_announcement_sent: "Discord announcement sent.", discord_announcement_failed: "Unable to send the Discord announcement.",
+            discord_president_only: "President access is required."
+        },
+        id: {
+            discord_manage_servers: "🤖 Server Discord", discord_send_announcement: "📣 Pengumuman Discord",
+            discord_setup_hint: "Tambahkan setiap server Discord secara terpisah. Salin Server ID dan ID channel pengumuman melalui Developer Mode Discord. Bot harus sudah bergabung dan dapat melihat channel tersebut.",
+            discord_no_servers: "Belum ada server Discord yang dikonfigurasi.", discord_add_edit_server: "Tambah / Edit Server",
+            discord_server_name: "Nama Server", discord_server_id: "ID Server Discord", discord_channel_id: "ID Channel Pengumuman",
+            discord_enable_announcements: "Aktifkan pengumuman untuk server ini", discord_allow_everyone: "Izinkan mention @everyone (gunakan dengan hati-hati)",
+            discord_save_server: "Simpan Server", discord_update_server: "Perbarui Server", discord_history: "Riwayat",
+            discord_edit: "Edit", discord_remove: "Hapus", discord_confirm_remove: "Hapus konfigurasi server Discord ini beserta riwayat pengumumannya?",
+            discord_server_removed: "Server Discord dihapus.", discord_server_saved: "Pengaturan server Discord berhasil disimpan.",
+            discord_required_fields: "Lengkapi semua kolom server.", discord_bot_channel_error: "Bot tidak dapat mengakses channel tersebut. Periksa keanggotaan bot dan izin View Channel.",
+            discord_channel_mismatch: "Channel tersebut bukan milik server yang dipilih atau bukan channel teks yang didukung.",
+            discord_save_failed: "Gagal menyimpan pengaturan server Discord.", discord_announcement_hint: "Kirim pesan ke salah satu server Discord yang telah dikonfigurasi. Channel tujuan mengikuti pengaturan server.",
+            discord_target_server: "Server Tujuan", discord_announcement_title: "Judul (opsional)", discord_announcement_message: "Pesan",
+            discord_mention_everyone: "Mention @everyone", discord_everyone_hint: "Opsi ini hanya tersedia jika @everyone diizinkan pada pengaturan server tersebut.",
+            discord_send: "Kirim ke Discord", discord_sending: "Mengirim…", discord_announcement_required: "Pilih server dan masukkan pesan.",
+            discord_announcement_sent: "Pengumuman Discord berhasil dikirim.", discord_announcement_failed: "Gagal mengirim pengumuman Discord.",
+            discord_president_only: "Akses President diperlukan."
+        },
+        cn: {
+            discord_manage_servers: "🤖 Discord 服务器", discord_send_announcement: "📣 Discord 公告",
+            discord_setup_hint: "分别添加每个 Discord 服务器。请在 Discord 开发者模式中复制服务器 ID 和公告频道 ID。机器人必须已加入服务器并能查看该频道。",
+            discord_no_servers: "尚未配置 Discord 服务器。", discord_add_edit_server: "添加 / 编辑服务器",
+            discord_server_name: "服务器名称", discord_server_id: "Discord 服务器 ID", discord_channel_id: "公告频道 ID",
+            discord_enable_announcements: "启用此服务器的公告", discord_allow_everyone: "允许 @everyone 提及（请谨慎使用）",
+            discord_save_server: "保存服务器", discord_update_server: "更新服务器", discord_history: "历史记录",
+            discord_edit: "编辑", discord_remove: "移除", discord_confirm_remove: "删除此 Discord 服务器配置及其公告历史？",
+            discord_server_removed: "已移除 Discord 服务器。", discord_server_saved: "Discord 服务器设置已保存。",
+            discord_required_fields: "请填写所有服务器信息。", discord_bot_channel_error: "机器人无法访问该频道。请检查机器人是否已加入服务器以及是否具有查看频道权限。",
+            discord_channel_mismatch: "该频道不属于所选服务器，或不是受支持的文字频道。",
+            discord_save_failed: "无法保存 Discord 服务器设置。", discord_announcement_hint: "向一个已配置的 Discord 服务器发送消息。目标频道由服务器设置决定。",
+            discord_target_server: "目标服务器", discord_announcement_title: "标题（可选）", discord_announcement_message: "消息",
+            discord_mention_everyone: "提及 @everyone", discord_everyone_hint: "只有在该服务器设置中启用 @everyone 后，此选项才可用。",
+            discord_send: "发送到 Discord", discord_sending: "发送中…", discord_announcement_required: "请选择服务器并输入消息。",
+            discord_announcement_sent: "Discord 公告已发送。", discord_announcement_failed: "无法发送 Discord 公告。",
+            discord_president_only: "需要 President 权限。"
+        },
+        ph: {
+            discord_manage_servers: "🤖 Mga Discord Server", discord_send_announcement: "📣 Discord Announcement",
+            discord_setup_hint: "Idagdag ang bawat Discord server nang hiwalay. Kopyahin ang Server ID at announcement channel ID gamit ang Developer Mode. Dapat kasali na ang bot at may pahintulot na makita ang channel.",
+            discord_no_servers: "Wala pang naka-configure na Discord server.", discord_add_edit_server: "Magdagdag / Mag-edit ng Server",
+            discord_server_name: "Pangalan ng Server", discord_server_id: "Discord Server ID", discord_channel_id: "Announcement Channel ID",
+            discord_enable_announcements: "Paganahin ang announcements para sa server na ito", discord_allow_everyone: "Payagan ang @everyone mention (gamitin nang maingat)",
+            discord_save_server: "I-save ang Server", discord_update_server: "I-update ang Server", discord_history: "History",
+            discord_edit: "I-edit", discord_remove: "Alisin", discord_confirm_remove: "Alisin ang configuration at announcement history ng Discord server na ito?",
+            discord_server_removed: "Inalis ang Discord server.", discord_server_saved: "Na-save ang Discord server settings.",
+            discord_required_fields: "Punan ang lahat ng server field.", discord_bot_channel_error: "Hindi ma-access ng bot ang channel. Suriin kung kasali ito sa server at may View Channel permission.",
+            discord_channel_mismatch: "Hindi kabilang ang channel sa napiling server o hindi ito suportadong text channel.",
+            discord_save_failed: "Hindi ma-save ang Discord server settings.", discord_announcement_hint: "Magpadala ng mensahe sa isang naka-configure na Discord server. Ang destination channel ay ayon sa server settings.",
+            discord_target_server: "Target Server", discord_announcement_title: "Title (optional)", discord_announcement_message: "Mensahe",
+            discord_mention_everyone: "I-mention ang @everyone", discord_everyone_hint: "Available lang ito kapag pinayagan ang @everyone sa settings ng server.",
+            discord_send: "Ipadala sa Discord", discord_sending: "Ipinapadala…", discord_announcement_required: "Pumili ng server at maglagay ng mensahe.",
+            discord_announcement_sent: "Naipadala ang Discord announcement.", discord_announcement_failed: "Hindi naipadala ang Discord announcement.",
+            discord_president_only: "Kailangan ang President access."
+        },
+        th: {
+            discord_manage_servers: "🤖 เซิร์ฟเวอร์ Discord", discord_send_announcement: "📣 ประกาศ Discord",
+            discord_setup_hint: "เพิ่มเซิร์ฟเวอร์ Discord แยกกันแต่ละเซิร์ฟเวอร์ คัดลอก Server ID และ Channel ID จาก Developer Mode ของ Discord บอทต้องเข้าร่วมเซิร์ฟเวอร์และมีสิทธิ์ดูช่องแล้ว",
+            discord_no_servers: "ยังไม่ได้ตั้งค่าเซิร์ฟเวอร์ Discord", discord_add_edit_server: "เพิ่ม / แก้ไขเซิร์ฟเวอร์",
+            discord_server_name: "ชื่อเซิร์ฟเวอร์", discord_server_id: "Discord Server ID", discord_channel_id: "Announcement Channel ID",
+            discord_enable_announcements: "เปิดใช้ประกาศสำหรับเซิร์ฟเวอร์นี้", discord_allow_everyone: "อนุญาตการ mention @everyone (โปรดใช้อย่างระมัดระวัง)",
+            discord_save_server: "บันทึกเซิร์ฟเวอร์", discord_update_server: "อัปเดตเซิร์ฟเวอร์", discord_history: "ประวัติ",
+            discord_edit: "แก้ไข", discord_remove: "ลบ", discord_confirm_remove: "ลบการตั้งค่าเซิร์ฟเวอร์ Discord นี้และประวัติประกาศหรือไม่?",
+            discord_server_removed: "ลบเซิร์ฟเวอร์ Discord แล้ว", discord_server_saved: "บันทึกการตั้งค่าเซิร์ฟเวอร์ Discord แล้ว",
+            discord_required_fields: "กรอกข้อมูลเซิร์ฟเวอร์ให้ครบ", discord_bot_channel_error: "บอทเข้าถึงช่องนี้ไม่ได้ โปรดตรวจสอบการเข้าร่วมเซิร์ฟเวอร์และสิทธิ์ View Channel",
+            discord_channel_mismatch: "ช่องนี้ไม่ได้อยู่ในเซิร์ฟเวอร์ที่เลือกหรือไม่ใช่ช่องข้อความที่รองรับ",
+            discord_save_failed: "บันทึกการตั้งค่าเซิร์ฟเวอร์ Discord ไม่สำเร็จ", discord_announcement_hint: "ส่งข้อความไปยังเซิร์ฟเวอร์ Discord ที่ตั้งค่าไว้หนึ่งแห่ง ช่องปลายทางกำหนดจากการตั้งค่าเซิร์ฟเวอร์",
+            discord_target_server: "เซิร์ฟเวอร์เป้าหมาย", discord_announcement_title: "หัวข้อ (ไม่บังคับ)", discord_announcement_message: "ข้อความ",
+            discord_mention_everyone: "Mention @everyone", discord_everyone_hint: "ตัวเลือกนี้ใช้ได้เมื่อเปิด @everyone ในการตั้งค่าของเซิร์ฟเวอร์นั้นเท่านั้น",
+            discord_send: "ส่งไปยัง Discord", discord_sending: "กำลังส่ง…", discord_announcement_required: "เลือกเซิร์ฟเวอร์และกรอกข้อความ",
+            discord_announcement_sent: "ส่งประกาศ Discord แล้ว", discord_announcement_failed: "ส่งประกาศ Discord ไม่สำเร็จ",
+            discord_president_only: "ต้องใช้สิทธิ์ President"
+        },
+        it: {
+            discord_manage_servers: "🤖 Server Discord", discord_send_announcement: "📣 Annuncio Discord",
+            discord_setup_hint: "Aggiungi ogni server Discord separatamente. Copia l'ID del server e del canale annunci dalla Modalità sviluppatore di Discord. Il bot deve già essere nel server e poter visualizzare il canale.",
+            discord_no_servers: "Nessun server Discord configurato.", discord_add_edit_server: "Aggiungi / Modifica server",
+            discord_server_name: "Nome server", discord_server_id: "ID server Discord", discord_channel_id: "ID canale annunci",
+            discord_enable_announcements: "Abilita gli annunci per questo server", discord_allow_everyone: "Consenti menzioni @everyone (usare con cautela)",
+            discord_save_server: "Salva server", discord_update_server: "Aggiorna server", discord_history: "Cronologia",
+            discord_edit: "Modifica", discord_remove: "Rimuovi", discord_confirm_remove: "Rimuovere la configurazione di questo server Discord e la relativa cronologia?",
+            discord_server_removed: "Server Discord rimosso.", discord_server_saved: "Impostazioni del server Discord salvate.",
+            discord_required_fields: "Compila tutti i campi del server.", discord_bot_channel_error: "Il bot non può accedere al canale. Verifica che sia nel server e disponga del permesso View Channel.",
+            discord_channel_mismatch: "Il canale non appartiene al server selezionato o non è un canale di testo supportato.",
+            discord_save_failed: "Impossibile salvare le impostazioni del server Discord.", discord_announcement_hint: "Invia un messaggio a un server Discord configurato. Il canale di destinazione è definito nelle impostazioni del server.",
+            discord_target_server: "Server di destinazione", discord_announcement_title: "Titolo (facoltativo)", discord_announcement_message: "Messaggio",
+            discord_mention_everyone: "Menziona @everyone", discord_everyone_hint: "L'opzione è disponibile solo se @everyone è abilitato nelle impostazioni del server.",
+            discord_send: "Invia su Discord", discord_sending: "Invio…", discord_announcement_required: "Seleziona un server e inserisci un messaggio.",
+            discord_announcement_sent: "Annuncio Discord inviato.", discord_announcement_failed: "Impossibile inviare l'annuncio Discord.",
+            discord_president_only: "È richiesto l'accesso President."
+        },
+        ru: {
+            discord_manage_servers: "🤖 Серверы Discord", discord_send_announcement: "📣 Объявление Discord",
+            discord_setup_hint: "Добавляйте каждый сервер Discord отдельно. Скопируйте ID сервера и канала объявлений в режиме разработчика Discord. Бот уже должен состоять на сервере и иметь доступ к каналу.",
+            discord_no_servers: "Серверы Discord ещё не настроены.", discord_add_edit_server: "Добавить / изменить сервер",
+            discord_server_name: "Название сервера", discord_server_id: "ID сервера Discord", discord_channel_id: "ID канала объявлений",
+            discord_enable_announcements: "Включить объявления для этого сервера", discord_allow_everyone: "Разрешить упоминание @everyone (используйте осторожно)",
+            discord_save_server: "Сохранить сервер", discord_update_server: "Обновить сервер", discord_history: "История",
+            discord_edit: "Изменить", discord_remove: "Удалить", discord_confirm_remove: "Удалить настройки этого сервера Discord и историю объявлений?",
+            discord_server_removed: "Сервер Discord удалён.", discord_server_saved: "Настройки сервера Discord сохранены.",
+            discord_required_fields: "Заполните все поля сервера.", discord_bot_channel_error: "Бот не может получить доступ к каналу. Проверьте, что он добавлен на сервер и имеет право View Channel.",
+            discord_channel_mismatch: "Канал не принадлежит выбранному серверу или не является поддерживаемым текстовым каналом.",
+            discord_save_failed: "Не удалось сохранить настройки сервера Discord.", discord_announcement_hint: "Отправьте сообщение в один из настроенных серверов Discord. Канал назначения задаётся в настройках сервера.",
+            discord_target_server: "Целевой сервер", discord_announcement_title: "Заголовок (необязательно)", discord_announcement_message: "Сообщение",
+            discord_mention_everyone: "Упомянуть @everyone", discord_everyone_hint: "Опция доступна, только если @everyone разрешён в настройках этого сервера.",
+            discord_send: "Отправить в Discord", discord_sending: "Отправка…", discord_announcement_required: "Выберите сервер и введите сообщение.",
+            discord_announcement_sent: "Объявление Discord отправлено.", discord_announcement_failed: "Не удалось отправить объявление Discord.",
+            discord_president_only: "Требуется доступ President."
+        },
+        fr: {
+            discord_manage_servers: "🤖 Serveurs Discord", discord_send_announcement: "📣 Annonce Discord",
+            discord_setup_hint: "Ajoutez chaque serveur Discord séparément. Copiez l’ID du serveur et du salon d’annonce via le mode développeur Discord. Le bot doit déjà être présent sur le serveur et pouvoir voir le salon.",
+            discord_no_servers: "Aucun serveur Discord configuré.", discord_add_edit_server: "Ajouter / modifier un serveur",
+            discord_server_name: "Nom du serveur", discord_server_id: "ID du serveur Discord", discord_channel_id: "ID du salon d’annonce",
+            discord_enable_announcements: "Activer les annonces pour ce serveur", discord_allow_everyone: "Autoriser les mentions @everyone (à utiliser avec prudence)",
+            discord_save_server: "Enregistrer le serveur", discord_update_server: "Mettre à jour le serveur", discord_history: "Historique",
+            discord_edit: "Modifier", discord_remove: "Supprimer", discord_confirm_remove: "Supprimer la configuration de ce serveur Discord et son historique d’annonces ?",
+            discord_server_removed: "Serveur Discord supprimé.", discord_server_saved: "Paramètres du serveur Discord enregistrés.",
+            discord_required_fields: "Renseignez tous les champs du serveur.", discord_bot_channel_error: "Le bot ne peut pas accéder à ce salon. Vérifiez son appartenance au serveur et son autorisation View Channel.",
+            discord_channel_mismatch: "Ce salon n’appartient pas au serveur sélectionné ou n’est pas un salon textuel pris en charge.",
+            discord_save_failed: "Impossible d’enregistrer les paramètres du serveur Discord.", discord_announcement_hint: "Envoyez un message à l’un des serveurs Discord configurés. Le salon de destination est défini dans les paramètres du serveur.",
+            discord_target_server: "Serveur cible", discord_announcement_title: "Titre (facultatif)", discord_announcement_message: "Message",
+            discord_mention_everyone: "Mentionner @everyone", discord_everyone_hint: "Cette option est disponible uniquement si @everyone est autorisé dans les paramètres de ce serveur.",
+            discord_send: "Envoyer sur Discord", discord_sending: "Envoi…", discord_announcement_required: "Sélectionnez un serveur et saisissez un message.",
+            discord_announcement_sent: "Annonce Discord envoyée.", discord_announcement_failed: "Impossible d’envoyer l’annonce Discord.",
+            discord_president_only: "L’accès President est requis."
+        }
+    };
+    Object.keys(discordTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], discordTranslations[language]));
+
+
+    const discordStatusTranslations = {
+        en: { discord_loading_servers:"Loading Discord servers…", discord_load_failed:"Unable to load server settings. Check the Edge Function deployment.", discord_channel_prefix:"Channel", discord_enabled:"Enabled", discord_disabled:"Disabled", discord_allowed:"allowed", discord_blocked:"blocked", discord_select_server:"Select a Discord server", discord_loading_history:"Loading history…", discord_no_history:"No announcements recorded for this server.", discord_history_failed:"Unable to load announcement history." },
+        id: { discord_loading_servers:"Memuat server Discord…", discord_load_failed:"Tidak dapat memuat pengaturan server. Periksa deployment Edge Function.", discord_channel_prefix:"Channel", discord_enabled:"Aktif", discord_disabled:"Nonaktif", discord_allowed:"diizinkan", discord_blocked:"diblokir", discord_select_server:"Pilih server Discord", discord_loading_history:"Memuat riwayat…", discord_no_history:"Belum ada riwayat pengumuman untuk server ini.", discord_history_failed:"Tidak dapat memuat riwayat pengumuman." },
+        cn: { discord_loading_servers:"正在加载 Discord 服务器…", discord_load_failed:"无法加载服务器设置，请检查 Edge Function 部署。", discord_channel_prefix:"频道", discord_enabled:"已启用", discord_disabled:"已停用", discord_allowed:"允许", discord_blocked:"禁止", discord_select_server:"选择 Discord 服务器", discord_loading_history:"正在加载历史记录…", discord_no_history:"此服务器暂无公告记录。", discord_history_failed:"无法加载公告历史记录。" },
+        ph: { discord_loading_servers:"Nilo-load ang Discord servers…", discord_load_failed:"Hindi ma-load ang server settings. Suriin ang Edge Function deployment.", discord_channel_prefix:"Channel", discord_enabled:"Enabled", discord_disabled:"Disabled", discord_allowed:"pinapayagan", discord_blocked:"hindi pinapayagan", discord_select_server:"Pumili ng Discord server", discord_loading_history:"Nilo-load ang history…", discord_no_history:"Wala pang announcement history para sa server na ito.", discord_history_failed:"Hindi ma-load ang announcement history." },
+        th: { discord_loading_servers:"กำลังโหลดเซิร์ฟเวอร์ Discord…", discord_load_failed:"โหลดการตั้งค่าเซิร์ฟเวอร์ไม่ได้ โปรดตรวจสอบการ deploy Edge Function", discord_channel_prefix:"ช่อง", discord_enabled:"เปิดใช้งาน", discord_disabled:"ปิดใช้งาน", discord_allowed:"อนุญาต", discord_blocked:"ไม่อนุญาต", discord_select_server:"เลือกเซิร์ฟเวอร์ Discord", discord_loading_history:"กำลังโหลดประวัติ…", discord_no_history:"ยังไม่มีประวัติประกาศสำหรับเซิร์ฟเวอร์นี้", discord_history_failed:"โหลดประวัติประกาศไม่สำเร็จ" },
+        it: { discord_loading_servers:"Caricamento dei server Discord…", discord_load_failed:"Impossibile caricare le impostazioni. Verifica il deployment della Edge Function.", discord_channel_prefix:"Canale", discord_enabled:"Attivo", discord_disabled:"Disattivato", discord_allowed:"consentito", discord_blocked:"bloccato", discord_select_server:"Seleziona un server Discord", discord_loading_history:"Caricamento cronologia…", discord_no_history:"Nessun annuncio registrato per questo server.", discord_history_failed:"Impossibile caricare la cronologia degli annunci." },
+        ru: { discord_loading_servers:"Загрузка серверов Discord…", discord_load_failed:"Не удалось загрузить настройки сервера. Проверьте развёртывание Edge Function.", discord_channel_prefix:"Канал", discord_enabled:"Включено", discord_disabled:"Отключено", discord_allowed:"разрешено", discord_blocked:"запрещено", discord_select_server:"Выберите сервер Discord", discord_loading_history:"Загрузка истории…", discord_no_history:"Для этого сервера пока нет объявлений.", discord_history_failed:"Не удалось загрузить историю объявлений." },
+        fr: { discord_loading_servers:"Chargement des serveurs Discord…", discord_load_failed:"Impossible de charger les paramètres. Vérifiez le déploiement de l’Edge Function.", discord_channel_prefix:"Salon", discord_enabled:"Activé", discord_disabled:"Désactivé", discord_allowed:"autorisé", discord_blocked:"bloqué", discord_select_server:"Sélectionnez un serveur Discord", discord_loading_history:"Chargement de l’historique…", discord_no_history:"Aucune annonce enregistrée pour ce serveur.", discord_history_failed:"Impossible de charger l’historique des annonces." }
+    };
+    Object.keys(discordStatusTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], discordStatusTranslations[language]));
+
+
+    const discordHistoryTranslations = {
+        en: { discord_no_mention:"no mention", discord_status_sent:"sent", discord_status_failed:"failed" },
+        id: { discord_no_mention:"tanpa mention", discord_status_sent:"terkirim", discord_status_failed:"gagal" },
+        cn: { discord_no_mention:"未提及", discord_status_sent:"已发送", discord_status_failed:"发送失败" },
+        ph: { discord_no_mention:"walang mention", discord_status_sent:"naipadala", discord_status_failed:"nabigo" },
+        th: { discord_no_mention:"ไม่มีการ mention", discord_status_sent:"ส่งแล้ว", discord_status_failed:"ส่งไม่สำเร็จ" },
+        it: { discord_no_mention:"nessuna menzione", discord_status_sent:"inviato", discord_status_failed:"non riuscito" },
+        ru: { discord_no_mention:"без упоминания", discord_status_sent:"отправлено", discord_status_failed:"ошибка отправки" },
+        fr: { discord_no_mention:"sans mention", discord_status_sent:"envoyé", discord_status_failed:"échec" }
+    };
+    Object.keys(discordHistoryTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], discordHistoryTranslations[language]));
+
+
+    const discordPlaceholderTranslations = {
+        en: { discord_placeholder_server:"e.g. State 3475", discord_placeholder_title:"Announcement title", discord_placeholder_message:"Write your Discord announcement…" },
+        id: { discord_placeholder_server:"contoh: State 3475", discord_placeholder_title:"Judul pengumuman", discord_placeholder_message:"Tulis pengumuman Discord…" },
+        cn: { discord_placeholder_server:"例如：State 3475", discord_placeholder_title:"公告标题", discord_placeholder_message:"输入 Discord 公告内容…" },
+        ph: { discord_placeholder_server:"hal. State 3475", discord_placeholder_title:"Pamagat ng announcement", discord_placeholder_message:"Isulat ang iyong Discord announcement…" },
+        th: { discord_placeholder_server:"เช่น State 3475", discord_placeholder_title:"หัวข้อประกาศ", discord_placeholder_message:"เขียนประกาศ Discord ของคุณ…" },
+        it: { discord_placeholder_server:"es. State 3475", discord_placeholder_title:"Titolo dell'annuncio", discord_placeholder_message:"Scrivi il tuo annuncio Discord…" },
+        ru: { discord_placeholder_server:"например, State 3475", discord_placeholder_title:"Заголовок объявления", discord_placeholder_message:"Введите текст объявления для Discord…" },
+        fr: { discord_placeholder_server:"ex. State 3475", discord_placeholder_title:"Titre de l’annonce", discord_placeholder_message:"Rédigez votre annonce Discord…" }
+    };
+    Object.keys(discordPlaceholderTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], discordPlaceholderTranslations[language]));
+
     // Expose globally so app modules / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;

@@ -1,0 +1,112 @@
+/*
+ * 3475 SOURCE OWNERSHIP
+ * Copyright (c) 2026 Ferdinan | https://3475.web.id
+ * Proprietary source code. All rights reserved.
+ *
+ * President-only management API for multi-server Discord announcements.
+ * Deploy: supabase functions deploy discord-guild-settings
+ * Required secret: DISCORD_BOT_TOKEN
+ */
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+const BOT_TOKEN = Deno.env.get("DISCORD_BOT_TOKEN") ?? "";
+const DISCORD_API = "https://discord.com/api/v10";
+const ADMIN_EMAILS = new Set(["president", "demon", "phoenix"].map((name) => name + "@3475-staff.internal"));
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+function reply(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
+}
+async function presidentId(auth: string | null): Promise<string | null> {
+  if (!auth || !SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { Authorization: auth, apikey: SUPABASE_ANON_KEY } });
+    if (!r.ok) return null;
+    const user = await r.json();
+    const email = String(user?.email ?? "").trim().toLowerCase();
+    return ADMIN_EMAILS.has(email) && typeof user?.id === "string" ? user.id : null;
+  } catch { return null; }
+}
+async function db(path: string, init: RequestInit = {}) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...init,
+    headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json", ...(init.headers ?? {}) },
+  });
+  const raw = await r.text();
+  let data: any = null;
+  try { data = raw ? JSON.parse(raw) : null; } catch { data = raw; }
+  if (!r.ok) throw new Error(`database_${r.status}`);
+  return data;
+}
+async function discord(path: string) {
+  const r = await fetch(`${DISCORD_API}${path}`, { headers: { Authorization: `Bot ${BOT_TOKEN}` } });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(`discord_${r.status}`);
+  return data;
+}
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+  if (req.method !== "POST") return reply({ error: "method_not_allowed" }, 405);
+  const userId = await presidentId(req.headers.get("Authorization"));
+  if (!userId) return reply({ error: "president_only" }, 403);
+  if (!SERVICE_KEY || !BOT_TOKEN) return reply({ error: "service_not_configured" }, 503);
+  let input: any;
+  try { input = await req.json(); } catch { return reply({ error: "invalid_json" }, 400); }
+  const action = String(input?.action ?? "");
+  try {
+    if (action === "list") {
+      const rows = await db("discord_guild_settings?select=guild_id,guild_name,announcement_channel_id,announcements_enabled,allow_everyone,updated_at&order=created_at.desc");
+      return reply({ guilds: rows ?? [] });
+    }
+    if (action === "save") {
+      const guildId = String(input?.guild_id ?? "").trim();
+      const channelId = String(input?.channel_id ?? "").trim();
+      const guildName = String(input?.guild_name ?? "").trim().slice(0, 100);
+      if (!/^\d{17,20}$/.test(guildId) || !/^\d{17,20}$/.test(channelId) || !guildName) {
+        return reply({ error: "invalid_guild_or_channel" }, 400);
+      }
+      // Verify the bot can see the destination channel and that it belongs to this guild.
+      const channel = await discord(`/channels/${channelId}`);
+      if (String(channel?.guild_id ?? "") !== guildId || ![0, 5].includes(Number(channel?.type))) {
+        return reply({ error: "channel_mismatch_or_unsupported" }, 400);
+      }
+      await db("discord_guild_settings?on_conflict=guild_id", {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+        body: JSON.stringify({
+          guild_id: guildId,
+          guild_name: guildName,
+          announcement_channel_id: channelId,
+          announcements_enabled: input?.announcements_enabled !== false,
+          allow_everyone: input?.allow_everyone === true,
+          configured_by: userId,
+          updated_at: new Date().toISOString(),
+        }),
+      });
+      return reply({ saved: true, guild_id: guildId });
+    }
+    if (action === "delete") {
+      const guildId = String(input?.guild_id ?? "").trim();
+      if (!/^\d{17,20}$/.test(guildId)) return reply({ error: "invalid_guild_id" }, 400);
+      await db(`discord_guild_settings?guild_id=eq.${guildId}`, { method: "DELETE" });
+      return reply({ deleted: true });
+    }
+    if (action === "history") {
+      const guildId = String(input?.guild_id ?? "").trim();
+      if (!/^\d{17,20}$/.test(guildId)) return reply({ error: "invalid_guild_id" }, 400);
+      const rows = await db(`discord_announcement_log?select=id,title,message,mentioned_everyone,status,error_code,created_at,discord_message_id&guild_id=eq.${guildId}&order=created_at.desc&limit=30`);
+      return reply({ history: rows ?? [] });
+    }
+    return reply({ error: "unknown_action" }, 400);
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "unknown_error";
+    console.error("Discord guild settings request failed:", code);
+    if (code.startsWith("discord_404") || code.startsWith("discord_403")) return reply({ error: "bot_cannot_access_channel" }, 400);
+    if (code.startsWith("discord_")) return reply({ error: "discord_validation_failed" }, 400);
+    return reply({ error: "request_failed" }, 500);
+  }
+});

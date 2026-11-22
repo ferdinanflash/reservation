@@ -18,6 +18,7 @@
     "lang.js",
     "js/app-core.js",
     "js/app-auth.js",
+    "js/app-discord.js",
     "js/app-notes.js",
     "js/app-schedule.js",
     "js/app-applications.js",
@@ -54,6 +55,7 @@
     "js/app-auth.js",
     "js/app-bulk.js",
     "js/app-core.js",
+    "js/app-discord.js",
     "js/app-extras.js",
     "js/app-notes.js",
     "js/app-notifications.js",
@@ -63,6 +65,8 @@
     "js/app-waiting.js"
   ],
   "edge_functions": [
+    "supabase/functions/discord-announcement/index.ts",
+    "supabase/functions/discord-guild-settings/index.ts",
     "supabase/functions/discord-interactions/index.ts",
     "supabase/functions/discord-message-poller/index.ts",
     "supabase/functions/index.ts",
@@ -155,6 +159,7 @@
   "sql_migrations": [
     "supabase_migration_additional_time_slots.sql",
     "supabase_migration_application_time_log.sql",
+    "supabase_migration_discord_multi_server_announcements.sql",
     "supabase_migration_fire_crystal_shard.sql",
     "supabase_migration_guest_notifications.sql",
     "supabase_migration_push_subscriptions.sql",
@@ -193,9 +198,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 99,
+    "file_count": 105,
     "digest_algorithm": "sha256",
-    "content_digest": "8f4554deafd3d5a0afd53ac18c44c2212e718150e155ace799834722cfa4e5ad",
+    "content_digest": "72508645117b1761b592b57a3489b4dc0e6822f44eca6378e5346864aaeedddc",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -204,6 +209,10 @@
       {
         "path": ".github/workflows/codebase-memory-review.yml",
         "sha256": "01db08d0eff5cb9563e81ec97f8d16bd2a556ffaaf89e4705f56789f9628cac0"
+      },
+      {
+        "path": ".github/workflows/deploy-discord-announcements.yml",
+        "sha256": "bc0d7608ded51e54df5594e1eeb1068e136b5d6c3a6f34b584794b75ba874726"
       },
       {
         "path": ".github/workflows/deploy-discord-message-poller.yml",
@@ -260,6 +269,10 @@
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
         "sha256": "c56bb9fc90b9084cd219a9816fe0e18ec77e78c3ef3277ef036dca7db6cd0e9f"
+      },
+      {
+        "path": "docs/DISCORD_MULTI_SERVER_ANNOUNCEMENTS.md",
+        "sha256": "4694386f6d0b42a7990d69669a8eaabf88a1675b7918c40f00aca62faae6ff22"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
@@ -339,7 +352,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "178978dad1e4e3c45936b331e9147d5aba5d7269ac0fff3cf769eaa1eefc8944"
+        "sha256": "6aec9b09ab528ebfd245c1507a75d391424a4c043e2a016f008840438aaec2b3"
       },
       {
         "path": "js/app-applications.js",
@@ -356,6 +369,10 @@
       {
         "path": "js/app-core.js",
         "sha256": "57f38601440b7dca659a23ce53a257d1b6cfbf6dbfb8390fed9f5b4dbb496f32"
+      },
+      {
+        "path": "js/app-discord.js",
+        "sha256": "5fecab61c86b1d58c81882500041f95a6102bd63a26147cdaf106e63e8cfcb80"
       },
       {
         "path": "js/app-extras.js",
@@ -387,7 +404,7 @@
       },
       {
         "path": "lang.js",
-        "sha256": "272b2ad3e5f5eaa8660d181019607907820fb8e873bbffcc0c52bc23f9597676"
+        "sha256": "e4f13e73deb5d4d286227d3e556d0ef7c3e971887121e59be01e6e2d76f79284"
       },
       {
         "path": "live/index.html",
@@ -415,7 +432,15 @@
       },
       {
         "path": "style.css",
-        "sha256": "be61d493f215f6f72bf5f3a422fbb4b72452ad36c004dcb67401653ca89f3467"
+        "sha256": "b0cc634f438ac74dc68121ef6264d2fc27d3cf2aea5c302f2f9e8e5713eb80f1"
+      },
+      {
+        "path": "supabase/functions/discord-announcement/index.ts",
+        "sha256": "0cacb820adecaec2033c2a4acc17caab61152c717b0e5fb83ab90d49fb7a4c3f"
+      },
+      {
+        "path": "supabase/functions/discord-guild-settings/index.ts",
+        "sha256": "94389bef1845ec387f8ead9bfd11d98a2270fb3ab5d3b8b7f4888b9d7d1b1005"
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
@@ -464,6 +489,10 @@
       {
         "path": "supabase_migration_application_time_log.sql",
         "sha256": "368b1c34de9b53546d85075e801fb331cedb0b10984a8104e148a67d29a2e299"
+      },
+      {
+        "path": "supabase_migration_discord_multi_server_announcements.sql",
+        "sha256": "28f7ecefb48fb1a55b7cddf319c88db670556b08dc921284a75a7c3591a020fb"
       },
       {
         "path": "supabase_migration_fire_crystal_shard.sql",
