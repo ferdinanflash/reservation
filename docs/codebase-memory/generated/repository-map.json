@@ -198,9 +198,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 104,
+    "file_count": 105,
     "digest_algorithm": "sha256",
-    "content_digest": "8704a6b231318c436f4b88d0fd8bb23fd39fe7ea06a0dc79b376283c025024b5",
+    "content_digest": "fe81da6302d8f20940d8a4b5aff783921821e5f49bc871ca52f6b7af08068e9c",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -209,6 +209,10 @@
       {
         "path": ".github/workflows/codebase-memory-review.yml",
         "sha256": "01db08d0eff5cb9563e81ec97f8d16bd2a556ffaaf89e4705f56789f9628cac0"
+      },
+      {
+        "path": ".github/workflows/deploy-discord-announcements.yml",
+        "sha256": "bc0d7608ded51e54df5594e1eeb1068e136b5d6c3a6f34b584794b75ba874726"
       },
       {
         "path": ".github/workflows/deploy-discord-message-poller.yml",
@@ -368,7 +372,7 @@
       },
       {
         "path": "js/app-discord.js",
-        "sha256": "cb28daa0e6916f621cbed945210df3aac7f61adf41244cfcafbe7f34fc1558b2"
+        "sha256": "5fecab61c86b1d58c81882500041f95a6102bd63a26147cdaf106e63e8cfcb80"
       },
       {
         "path": "js/app-extras.js",
@@ -400,7 +404,7 @@
       },
       {
         "path": "lang.js",
-        "sha256": "c1e7e2ce5b14e3b0bc6945dcdb8b4fc6c83adff2d3fb7e67d8766dab9389cb7d"
+        "sha256": "8de8841ca33c7b63c24319ce23f29d9344125fabc7c37d1816d07c9aadc5ffd9"
       },
       {
         "path": "live/index.html",
