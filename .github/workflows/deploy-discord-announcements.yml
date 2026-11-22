@@ -35,3 +35,6 @@ jobs:
 
       - name: Deploy Discord announcement endpoint
         run: supabase functions deploy discord-announcement --project-ref "$SUPABASE_PROJECT_ID" --yes
+
+      - name: Deploy reservation push and IDN Discord notifications
+        run: supabase functions deploy send-push-notification --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt --yes
