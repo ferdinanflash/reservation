@@ -61,7 +61,7 @@ function closePresidentPanelModal() {
     document.getElementById('president-panel-modal').classList.add('hidden');
 }
 
- // Return from a President Panel submenu to the original menu without closing the panel.
+// Return from a President Panel submenu to the original menu without closing the panel.
 function returnToPresidentPanel(modalId) {
     if (!isAdmin) return;
     const modal = modalId && document.getElementById(modalId);
@@ -71,11 +71,17 @@ function returnToPresidentPanel(modalId) {
 
 // The SvS Record manager is a full-page view rather than a modal.
 function presidentPanelReturnFromView(viewId) {
-    if (!isAdmin) return;
+    const fromPresidentPanel = window.__svsRecordOpenedFromPresidentPanel === true;
     const view = viewId && document.getElementById(viewId);
     if (view) view.classList.add('hidden');
     if (typeof showMainMenu === 'function') showMainMenu();
-    openPresidentPanelModal();
+    window.__svsRecordOpenedFromPresidentPanel = false;
+    const backButton = document.querySelector('#svs-record-view .btn-back');
+    if (backButton) {
+        backButton.setAttribute('data-i18n', 'svsr_back_menu');
+        if (typeof t === 'function') backButton.textContent = t('svsr_back_menu');
+    }
+    if (fromPresidentPanel && isAdmin) openPresidentPanelModal();
 }
 
 // Each wrapper closes the panel first, then opens the existing modal for
@@ -101,6 +107,12 @@ function presidentPanelFinishSVS() {
 function presidentPanelOpenSvSRecords() {
     if (!isAdmin) return;
     closePresidentPanelModal();
+    window.__svsRecordOpenedFromPresidentPanel = true;
+    const backButton = document.querySelector('#svs-record-view .btn-back');
+    if (backButton) {
+        backButton.setAttribute('data-i18n', 'btn_back_president_panel');
+        if (typeof t === 'function') backButton.textContent = t('btn_back_president_panel');
+    }
     if (typeof window.showSvSRecordMenu === 'function') {
         window.showSvSRecordMenu();
     } else {
