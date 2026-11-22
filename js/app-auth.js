@@ -116,6 +116,7 @@ function presidentPanelOpenSvSRecords() {
     if (typeof window.showSvSRecordMenu === 'function') {
         window.showSvSRecordMenu();
     } else {
+        window.__svsRecordOpenedFromPresidentPanel = false;
         console.error('SvS Record module is not available. Check js/app-svs-record.js loading.');
         showToast(t('auth_svs_record_open_failed'), 'error');
     }
