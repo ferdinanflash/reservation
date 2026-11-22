@@ -1285,7 +1285,7 @@
 				<div class="discord-form-divider"></div>
 				<h3 class="discord-form-title" data-i18n="discord_add_edit_server">Add / Edit Server</h3>
 				<form id="discord-guild-form" onsubmit="event.preventDefault(); saveDiscordGuild();">
-					<div class="form-group"><label for="discord-guild-name" data-i18n="discord_server_name">Server Name</label><input id="discord-guild-name" maxlength="100" required placeholder="e.g. State 3475"></div>
+					<div class="form-group"><label for="discord-guild-name" data-i18n="discord_server_name">Server Name</label><input id="discord-guild-name" maxlength="100" required placeholder="e.g. State 3475" data-i18n-placeholder="discord_placeholder_server"></div>
 					<div class="form-group"><label for="discord-guild-id" data-i18n="discord_server_id">Discord Server ID</label><input id="discord-guild-id" inputmode="numeric" maxlength="20" required placeholder="123456789012345678"></div>
 					<div class="form-group"><label for="discord-channel-id" data-i18n="discord_channel_id">Announcement Channel ID</label><input id="discord-channel-id" inputmode="numeric" maxlength="20" required placeholder="123456789012345678"></div>
 					<label class="discord-toggle-row"><input id="discord-enabled" type="checkbox" checked><span data-i18n="discord_enable_announcements">Enable announcements for this server</span></label>
@@ -1306,8 +1306,8 @@
 				<h2 id="discord-composer-title" class="modal-title" data-i18n="discord_send_announcement">📣 Discord Announcement</h2>
 				<p class="theme-switcher-hint" data-i18n="discord_announcement_hint">Send a message to one configured Discord server. The destination channel is controlled by the server settings.</p>
 				<div class="form-group"><label for="discord-announcement-guild" data-i18n="discord_target_server">Target Server</label><select id="discord-announcement-guild" required><option value="">Select a Discord server</option></select></div>
-				<div class="form-group"><label for="discord-announcement-title" data-i18n="discord_announcement_title">Title (optional)</label><input id="discord-announcement-title" maxlength="100" placeholder="Announcement title"></div>
-				<div class="form-group"><label for="discord-announcement-message" data-i18n="discord_announcement_message">Message</label><textarea id="discord-announcement-message" maxlength="1800" rows="5" required placeholder="Write your Discord announcement…"></textarea></div>
+				<div class="form-group"><label for="discord-announcement-title" data-i18n="discord_announcement_title">Title (optional)</label><input id="discord-announcement-title" maxlength="100" placeholder="Announcement title" data-i18n-placeholder="discord_placeholder_title"></div>
+				<div class="form-group"><label for="discord-announcement-message" data-i18n="discord_announcement_message">Message</label><textarea id="discord-announcement-message" maxlength="1800" rows="5" required placeholder="Write your Discord announcement…" data-i18n-placeholder="discord_placeholder_message"></textarea></div>
 				<label class="discord-toggle-row discord-everyone-toggle"><input id="discord-mention-everyone" type="checkbox"><span data-i18n="discord_mention_everyone">Mention @everyone</span></label>
 				<p class="redeem-hint" data-i18n="discord_everyone_hint">This option is available only when @everyone is enabled in that server's settings.</p>
 				<div class="form-actions">
