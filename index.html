@@ -179,6 +179,7 @@
 		<script src="lang.js?v=70" defer=""></script>
 					<script src="js/app-core.js?v=57" defer=""></script>
 					<script src="js/app-auth.js?v=55" defer=""></script>
+					<script src="js/app-discord.js?v=1" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
 					<script src="js/app-schedule.js?v=58" defer=""></script>
 					<script src="js/app-applications.js?v=57" defer=""></script>
@@ -1016,6 +1017,14 @@
 						<span class="president-panel-option-label"><span data-i18n="btn_announcement">📢 Announcement</span></span>
 						<span class="arrow">&#8250;</span>
 					</button>
+					<button type="button" id="president-panel-discord-settings-btn" class="list-item president-panel-option-btn" onclick="openDiscordSettingsModal()">
+						<span class="president-panel-option-label">🤖 <span data-i18n="discord_manage_servers">Discord Servers</span></span>
+						<span class="arrow">&#8250;</span>
+					</button>
+					<button type="button" id="president-panel-discord-send-btn" class="list-item president-panel-option-btn" onclick="openDiscordComposerModal()">
+						<span class="president-panel-option-label">📣 <span data-i18n="discord_send_announcement">Discord Announcement</span></span>
+						<span class="arrow">&#8250;</span>
+					</button>
 					<button type="button" id="president-panel-svs-record-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenSvSRecords()"><span class="president-panel-option-label">🏆 <span>Manage SvS Records</span></span><span class="arrow">&#8250;</span></button>
 					<button type="button" id="president-panel-svs-enemies-btn" class="list-item president-panel-option-btn" onclick="presidentPanelOpenSvSEnemies()">
 						<span class="president-panel-option-label"><span class="president-panel-option-icon">⚔️</span> <span data-i18n="btn_svs_enemies_settings">SvS Enemies Settings</span></span>
@@ -1262,6 +1271,48 @@
 				<div class="form-actions">
 					<button class="btn-back modal-action-btn" onclick="closeAnnouncementModal()" data-i18n="btn_cancel">Cancel</button>
 					<button id="announcement-send-btn" class="btn-apply modal-action-btn" onclick="sendAnnouncement()" data-i18n="btn_send_announcement">Send Announcement</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Discord multi-server management (President-only) -->
+		<div id="discord-settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="discord-settings-title">
+			<div class="modal-content custom-form-modal discord-modal-content">
+				<button type="button" class="close-modal" onclick="closeDiscordSettingsModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 id="discord-settings-title" class="modal-title" data-i18n="discord_manage_servers">🤖 Discord Servers</h2>
+				<p class="theme-switcher-hint" data-i18n="discord_setup_hint">Add each Discord server separately. Copy the Server ID and announcement channel ID from Discord Developer Mode. The bot must already be in the server and able to view the channel.</p>
+				<div id="discord-guild-list" class="discord-guild-list"></div>
+				<div class="discord-form-divider"></div>
+				<h3 class="discord-form-title" data-i18n="discord_add_edit_server">Add / Edit Server</h3>
+				<form id="discord-guild-form" onsubmit="event.preventDefault(); saveDiscordGuild();">
+					<div class="form-group"><label for="discord-guild-name" data-i18n="discord_server_name">Server Name</label><input id="discord-guild-name" maxlength="100" required placeholder="e.g. State 3475"></div>
+					<div class="form-group"><label for="discord-guild-id" data-i18n="discord_server_id">Discord Server ID</label><input id="discord-guild-id" inputmode="numeric" maxlength="20" required placeholder="123456789012345678"></div>
+					<div class="form-group"><label for="discord-channel-id" data-i18n="discord_channel_id">Announcement Channel ID</label><input id="discord-channel-id" inputmode="numeric" maxlength="20" required placeholder="123456789012345678"></div>
+					<label class="discord-toggle-row"><input id="discord-enabled" type="checkbox" checked><span data-i18n="discord_enable_announcements">Enable announcements for this server</span></label>
+					<label class="discord-toggle-row discord-everyone-toggle"><input id="discord-allow-everyone" type="checkbox"><span data-i18n="discord_allow_everyone">Allow @everyone mentions (use carefully)</span></label>
+					<div class="form-actions">
+						<button type="button" class="btn-back modal-action-btn" onclick="resetDiscordGuildForm()" data-i18n="btn_clear">Clear</button>
+						<button id="discord-save-btn" type="submit" class="btn-apply modal-action-btn" data-i18n="discord_save_server">Save Server</button>
+					</div>
+				</form>
+				<div id="discord-history" class="discord-history hidden"></div>
+				<div class="form-actions"><button class="btn-back modal-action-btn" onclick="closeDiscordSettingsModal()" data-i18n="btn_close">Close</button></div>
+			</div>
+		</div>
+
+		<div id="discord-composer-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="discord-composer-title">
+			<div class="modal-content custom-form-modal discord-modal-content">
+				<button type="button" class="close-modal" onclick="closeDiscordComposerModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
+				<h2 id="discord-composer-title" class="modal-title" data-i18n="discord_send_announcement">📣 Discord Announcement</h2>
+				<p class="theme-switcher-hint" data-i18n="discord_announcement_hint">Send a message to one configured Discord server. The destination channel is controlled by the server settings.</p>
+				<div class="form-group"><label for="discord-announcement-guild" data-i18n="discord_target_server">Target Server</label><select id="discord-announcement-guild" required><option value="">Select a Discord server</option></select></div>
+				<div class="form-group"><label for="discord-announcement-title" data-i18n="discord_announcement_title">Title (optional)</label><input id="discord-announcement-title" maxlength="100" placeholder="Announcement title"></div>
+				<div class="form-group"><label for="discord-announcement-message" data-i18n="discord_announcement_message">Message</label><textarea id="discord-announcement-message" maxlength="1800" rows="5" required placeholder="Write your Discord announcement…"></textarea></div>
+				<label class="discord-toggle-row discord-everyone-toggle"><input id="discord-mention-everyone" type="checkbox"><span data-i18n="discord_mention_everyone">Mention @everyone</span></label>
+				<p class="redeem-hint" data-i18n="discord_everyone_hint">This option is available only when @everyone is enabled in that server's settings.</p>
+				<div class="form-actions">
+					<button class="btn-back modal-action-btn" onclick="closeDiscordComposerModal()" data-i18n="btn_cancel">Cancel</button>
+					<button id="discord-announcement-send-btn" class="btn-apply modal-action-btn" onclick="sendDiscordAnnouncement()" data-i18n="discord_send">Send to Discord</button>
 				</div>
 			</div>
 		</div>
