@@ -104,6 +104,9 @@ Deno.serve(async (req: Request) => {
 
     const channelId = String(config.announcement_channel_id);
     const payload = {
+        // Discord only reliably generates notifications for mentions in message content.
+        // Keep the actual announcement in the embed, and place @everyone in content.
+        content: wantsEveryone ? "@everyone" : undefined,
         embeds: [{
             title: title || "📢 Announcement",
             description: message,
