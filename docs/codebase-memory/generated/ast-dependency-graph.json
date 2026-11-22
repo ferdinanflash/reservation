@@ -11922,8 +11922,8 @@
       "kind": "function"
     },
     {
-      "id": "supabase/functions/send-push-notification/index.ts#sendIdnAllianceDiscordNotification",
-      "name": "sendIdnAllianceDiscordNotification",
+      "id": "supabase/functions/send-push-notification/index.ts#sendAllianceDiscordNotification",
+      "name": "sendAllianceDiscordNotification",
       "file": "supabase/functions/send-push-notification/index.ts",
       "line": 214,
       "kind": "function"
@@ -12316,5 +12316,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "c61226f03a245f9dbfaf13308aee4cf7fdadeaecdbedd49b4033f4128b43b965"
+  "source_digest": "c1b7b891d26e94ab2389b56e81b0d1bbcb6642dc078df61391d263e1ac7b2b3a"
 }

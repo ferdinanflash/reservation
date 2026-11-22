@@ -200,7 +200,7 @@
     "generator_version": 1,
     "file_count": 105,
     "digest_algorithm": "sha256",
-    "content_digest": "ce99ae5f8efebd829a5b8e73b747bb2dc8f7c9ae60fc2ef6e41372262c5cca2a",
+    "content_digest": "2eeec9bfa4c2bb5578a9a9f809d73d7b60d420f0660dec2220d868bf509815dc",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -304,7 +304,7 @@
       },
       {
         "path": "docs/codebase-memory/features/notifications.md",
-        "sha256": "ce5801991771e4c00c2c5fc62fdf92b2e821ef6acdd3e8b752a480f987594ed5"
+        "sha256": "a5bcfa82d5fae59bafbdd9d700fd4eb70752729ab6805ab5fe7b1d3a3b683029"
       },
       {
         "path": "docs/codebase-memory/features/redeem-and-extras.md",
@@ -464,7 +464,7 @@
       },
       {
         "path": "supabase/functions/send-push-notification/index.ts",
-        "sha256": "808ab5481a0bce68fe29158bce4cb2d32097e67c1ff724346d78f644f2f9c7b7"
+        "sha256": "ef3c9db0ba29c3a06bbefd703b6562aa1e4e5e6aca93e6aeb140a7938ab96d19"
       },
       {
         "path": "supabase/functions/wosatlas-states/index.ts",
