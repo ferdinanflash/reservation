@@ -5045,6 +5045,19 @@
     };
     Object.keys(discordHistoryTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], discordHistoryTranslations[language]));
 
+
+    const discordPlaceholderTranslations = {
+        en: { discord_placeholder_server:"e.g. State 3475", discord_placeholder_title:"Announcement title", discord_placeholder_message:"Write your Discord announcement…" },
+        id: { discord_placeholder_server:"contoh: State 3475", discord_placeholder_title:"Judul pengumuman", discord_placeholder_message:"Tulis pengumuman Discord…" },
+        cn: { discord_placeholder_server:"例如：State 3475", discord_placeholder_title:"公告标题", discord_placeholder_message:"输入 Discord 公告内容…" },
+        ph: { discord_placeholder_server:"hal. State 3475", discord_placeholder_title:"Pamagat ng announcement", discord_placeholder_message:"Isulat ang iyong Discord announcement…" },
+        th: { discord_placeholder_server:"เช่น State 3475", discord_placeholder_title:"หัวข้อประกาศ", discord_placeholder_message:"เขียนประกาศ Discord ของคุณ…" },
+        it: { discord_placeholder_server:"es. State 3475", discord_placeholder_title:"Titolo dell'annuncio", discord_placeholder_message:"Scrivi il tuo annuncio Discord…" },
+        ru: { discord_placeholder_server:"например, State 3475", discord_placeholder_title:"Заголовок объявления", discord_placeholder_message:"Введите текст объявления для Discord…" },
+        fr: { discord_placeholder_server:"ex. State 3475", discord_placeholder_title:"Titre de l’annonce", discord_placeholder_message:"Rédigez votre annonce Discord…" }
+    };
+    Object.keys(discordPlaceholderTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], discordPlaceholderTranslations[language]));
+
     // Expose globally so app modules / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
