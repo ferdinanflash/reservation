@@ -18,6 +18,7 @@
     "lang.js",
     "js/app-core.js",
     "js/app-auth.js",
+    "js/app-discord.js",
     "js/app-notes.js",
     "js/app-schedule.js",
     "js/app-applications.js",
@@ -54,6 +55,7 @@
     "js/app-auth.js",
     "js/app-bulk.js",
     "js/app-core.js",
+    "js/app-discord.js",
     "js/app-extras.js",
     "js/app-notes.js",
     "js/app-notifications.js",
@@ -196,9 +198,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 103,
+    "file_count": 104,
     "digest_algorithm": "sha256",
-    "content_digest": "57bc7e58d9e80df2d160c720da0f3c3e70fb74a2b88b1ea61b5f87646e4ad17d",
+    "content_digest": "114ab4cb589671366e47bc379428a031eacaf7d69b7c35a3743bdff619843031",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -346,7 +348,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "178978dad1e4e3c45936b331e9147d5aba5d7269ac0fff3cf769eaa1eefc8944"
+        "sha256": "60829446ebb9be3481cbb8e5b996b2d8dc53fe3838100de6f9be3eecc7cf4e66"
       },
       {
         "path": "js/app-applications.js",
@@ -363,6 +365,10 @@
       {
         "path": "js/app-core.js",
         "sha256": "57f38601440b7dca659a23ce53a257d1b6cfbf6dbfb8390fed9f5b4dbb496f32"
+      },
+      {
+        "path": "js/app-discord.js",
+        "sha256": "e12a9cd4dcf3153f94ff767f20ae942b2a09bf72b40b2511ae7d0ec3a0b0835d"
       },
       {
         "path": "js/app-extras.js",
