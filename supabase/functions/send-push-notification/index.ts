@@ -211,7 +211,7 @@ async function deleteStaleSubscriptions(ids: string[]) {
 // Get Notification is the guest's explicit opt-in. A push_subscriptions row
 // exists only after that guest enabled notifications for this application.
 // Alliance membership is looked up server-side by the reservation's Player ID.
-async function sendIdnAllianceDiscordNotification(record: any, notification: { title: string; body: string }) {
+async function sendAllianceDiscordNotification(record: any, notification: { title: string; body: string }) {
     if (!DISCORD_BOT_TOKEN) {
         console.warn("Discord reservation notification skipped: DISCORD_BOT_TOKEN is not configured.");
         return { sent: 0, reason: "discord_not_configured" };
@@ -247,9 +247,9 @@ async function sendIdnAllianceDiscordNotification(record: any, notification: { t
     }
 
     const alliance = String(player.alliance ?? "").trim().toUpperCase();
-    if (alliance !== "IDN") {
-        console.info("Discord reservation notification skipped: alliance is not IDN.", { gameId, alliance: alliance || "empty" });
-        return { sent: 0, reason: "not_idn" };
+    if (!/^[a-z0-9_-]{1,100}$/i.test(alliance)) {
+        console.info("Discord reservation notification skipped: missing or invalid alliance.", { gameId });
+        return { sent: 0, reason: "missing_or_invalid_alliance" };
     }
 
     const settingsQuery = new URLSearchParams({
@@ -288,11 +288,19 @@ async function sendIdnAllianceDiscordNotification(record: any, notification: { t
             }
 
             const channels = await channelsResponse.json();
-            const idnChannel = Array.isArray(channels)
-                ? channels.find((channel: any) => channel?.name === "IDN" && [0, 5].includes(Number(channel?.type)))
+            // Discord channel names are lowercase-normalized by Discord.
+            // Match the verified Supabase alliance to a same-named text channel.
+            const allianceChannel = Array.isArray(channels)
+                ? channels.find((channel: any) =>
+                    String(channel?.name ?? "").toLowerCase() === alliance.toLowerCase() &&
+                    [0, 5].includes(Number(channel?.type))
+                )
                 : null;
-            if (!idnChannel) {
-                console.info("Discord reservation notification skipped: no exact IDN text channel in guild.", guild.guild_id);
+            if (!allianceChannel) {
+                console.info("Discord reservation notification skipped: no matching alliance channel in guild.", {
+                    guild_id: guild.guild_id,
+                    alliance,
+                });
                 continue;
             }
 
@@ -306,14 +314,14 @@ async function sendIdnAllianceDiscordNotification(record: any, notification: { t
                 fields: [
                     { name: "Player", value: playerName.slice(0, 256), inline: true },
                     { name: "Player ID", value: gameId, inline: true },
-                    { name: "Alliance", value: "IDN", inline: true },
+                    { name: "Alliance", value: alliance, inline: true },
                     ...(timeSlot ? [{ name: "Reservation Slot", value: timeSlot + " UTC", inline: true }] : []),
                     { name: "Status", value: status.slice(0, 256), inline: true },
                 ],
                 footer: { text: "State of 3475 • Reservation Portal" },
                 timestamp: new Date().toISOString(),
             };
-            const sendResponse = await fetch(DISCORD_API + "/channels/" + idnChannel.id + "/messages", {
+            const sendResponse = await fetch(DISCORD_API + "/channels/" + allianceChannel.id + "/messages", {
                 method: "POST",
                 headers: {
                     Authorization: "Bot " + DISCORD_BOT_TOKEN,
@@ -323,16 +331,16 @@ async function sendIdnAllianceDiscordNotification(record: any, notification: { t
             });
             if (!sendResponse.ok) {
                 const detail = await sendResponse.text().catch(() => "");
-                console.error("Discord IDN reservation notification failed:", sendResponse.status, detail.slice(0, 300));
+                console.error("Discord alliance reservation notification failed:", sendResponse.status, detail.slice(0, 300));
                 continue;
             }
             sent++;
         } catch (error) {
-            console.error("Discord IDN reservation notification failed for guild:", guild.guild_id, error);
+            console.error("Discord alliance reservation notification failed for guild:", guild.guild_id, error);
         }
     }
 
-    return { sent, reason: sent ? "sent" : "no_matching_idn_channel" };
+    return { sent, reason: sent ? "sent" : "no_matching_alliance_channel", alliance };
 }
 
 Deno.serve(async (req: Request) => {
@@ -392,7 +400,7 @@ Deno.serve(async (req: Request) => {
     // Discord routing is independent of Get Notification. Every qualifying
     // reservation update is checked against troops_power; only confirmed IDN
     // players are sent to the configured guilds' exact "IDN" channels.
-    const discordDelivery = await sendIdnAllianceDiscordNotification(record, notification)
+    const discordDelivery = await sendAllianceDiscordNotification(record, notification)
         .catch((error) => {
             console.error("Discord reservation notification unexpectedly failed:", error);
             return { sent: 0, reason: "unexpected_error" };
