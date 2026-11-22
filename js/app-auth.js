@@ -61,6 +61,23 @@ function closePresidentPanelModal() {
     document.getElementById('president-panel-modal').classList.add('hidden');
 }
 
+ // Return from a President Panel submenu to the original menu without closing the panel.
+function returnToPresidentPanel(modalId) {
+    if (!isAdmin) return;
+    const modal = modalId && document.getElementById(modalId);
+    if (modal) modal.classList.add('hidden');
+    openPresidentPanelModal();
+}
+
+// The SvS Record manager is a full-page view rather than a modal.
+function presidentPanelReturnFromView(viewId) {
+    if (!isAdmin) return;
+    const view = viewId && document.getElementById(viewId);
+    if (view) view.classList.add('hidden');
+    if (typeof showMainMenu === 'function') showMainMenu();
+    openPresidentPanelModal();
+}
+
 // Each wrapper closes the panel first, then opens the existing modal for
 // that action — the underlying modals/logic are unchanged.
 function presidentPanelOpenEditFooter() {
