@@ -483,7 +483,7 @@
 				</div>
 
 				<div id="svs-record-view" class="hidden">
-					<button type="button" class="btn-back action-no-bottom" onclick="showMainMenu()" data-i18n="svsr_back_menu">‹ Back to menu</button>
+					<button type="button" class="btn-back action-no-bottom" onclick="presidentPanelReturnFromView('svs-record-view')" data-i18n="btn_back_president_panel">‹ Back to President Panel</button>
 					<div class="svsr-wrap">
 						<section class="svs-en-record-panel svsr-official-history"><div class="svs-en-record-panel-head"><h3 class="svs-en-h" data-i18n="svsr_official_title">STATE 3475 — OFFICIAL SvS HISTORY</h3><span class="svs-en-h-meta" data-i18n="svsr_state_only">State 3475 only</span></div><div id="svs-record-state-history"><p class="svs-en-status" data-i18n="svsr_history_loading">History will load when this page opens.</p></div></section>
 						<div class="svsr-heading"><h3 data-i18n="svsr_timeline_title">3475 MATCHUP TIMELINE</h3><div class="svsr-tools"><button type="button" id="svs-record-add" class="btn-apply hidden" onclick="openSvSRecordForm()" data-i18n="svsr_add_record">+ Add Record</button><button type="button" id="svs-record-refresh" class="btn-back" data-i18n="svsr_refresh">Refresh</button></div></div>
@@ -1067,6 +1067,7 @@
 					<p class="redeem-hint" data-i18n="svs_enemies_menu_label_hint">Only changes the main-menu button text. Feature stays the same.</p>
 				</div>
 				<div class="form-actions">
+					<button type="button" class="btn-back modal-action-btn" onclick="returnToPresidentPanel('svs-enemies-settings-modal')" data-i18n="btn_back_president_panel">‹ Back to President Panel</button>
 					<button type="button" class="btn-back modal-action-btn" onclick="closeSvSEnemiesSettingsModal()" data-i18n="btn_close">Close</button>
 					<button type="button" id="svs-enemies-settings-save-btn" class="btn-apply modal-action-btn" onclick="saveSvSEnemiesSettings()" data-i18n="btn_save">Save</button>
 				</div>
@@ -1149,6 +1150,7 @@
 					<input type="text" id="edit-footer-guild" maxlength="60" placeholder="Enter guild name" data-i18n-placeholder="placeholder_guild_name">
 				</div>
 				<div class="form-actions">
+					<button class="btn-back modal-action-btn" onclick="returnToPresidentPanel('edit-footer-modal')" data-i18n="btn_back_president_panel">‹ Back to President Panel</button>
 					<button class="btn-back modal-action-btn" onclick="closeEditFooterModal()" data-i18n="btn_cancel">Cancel</button>
 					<button id="edit-footer-save-btn" class="btn-apply modal-action-btn" onclick="saveEditFooter()" data-i18n="btn_save">Save</button>
 				</div>
@@ -1246,6 +1248,7 @@
 					</button>
 				</div>
 				<div class="form-actions">
+					<button class="btn-back modal-action-btn" onclick="returnToPresidentPanel('theme-switcher-modal')" data-i18n="btn_back_president_panel">‹ Back to President Panel</button>
 					<button class="btn-back modal-action-btn" onclick="closeThemeSwitcherModal()" data-i18n="btn_close">Close</button>
 				</div>
 			</div>
@@ -1269,6 +1272,7 @@
 					<textarea id="announcement-message-input" maxlength="500" rows="5" spellcheck="true" placeholder="Type your announcement to all players..." data-i18n-placeholder="placeholder_announcement_message"></textarea>
 				</div>
 				<div class="form-actions">
+					<button class="btn-back modal-action-btn" onclick="returnToPresidentPanel('announcement-modal')" data-i18n="btn_back_president_panel">‹ Back to President Panel</button>
 					<button class="btn-back modal-action-btn" onclick="closeAnnouncementModal()" data-i18n="btn_cancel">Cancel</button>
 					<button id="announcement-send-btn" class="btn-apply modal-action-btn" onclick="sendAnnouncement()" data-i18n="btn_send_announcement">Send Announcement</button>
 				</div>
@@ -1296,7 +1300,10 @@
 					</div>
 				</form>
 				<div id="discord-history" class="discord-history hidden"></div>
-				<div class="form-actions"><button class="btn-back modal-action-btn" onclick="closeDiscordSettingsModal()" data-i18n="btn_close">Close</button></div>
+				<div class="form-actions">
+					<button class="btn-back modal-action-btn" onclick="returnToPresidentPanel('discord-settings-modal')" data-i18n="btn_back_president_panel">‹ Back to President Panel</button>
+					<button class="btn-back modal-action-btn" onclick="closeDiscordSettingsModal()" data-i18n="btn_close">Close</button>
+				</div>
 			</div>
 		</div>
 
@@ -1311,6 +1318,7 @@
 				<label class="discord-toggle-row discord-everyone-toggle"><input id="discord-mention-everyone" type="checkbox"><span data-i18n="discord_mention_everyone">Mention @everyone</span></label>
 				<p class="redeem-hint" data-i18n="discord_everyone_hint">This option is available only when @everyone is enabled in that server's settings.</p>
 				<div class="form-actions">
+					<button class="btn-back modal-action-btn" onclick="returnToPresidentPanel('discord-composer-modal')" data-i18n="btn_back_president_panel">‹ Back to President Panel</button>
 					<button class="btn-back modal-action-btn" onclick="closeDiscordComposerModal()" data-i18n="btn_cancel">Cancel</button>
 					<button id="discord-announcement-send-btn" class="btn-apply modal-action-btn" onclick="sendDiscordAnnouncement()" data-i18n="discord_send">Send to Discord</button>
 				</div>
