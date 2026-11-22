@@ -34,7 +34,7 @@
         $("discord-announcement-title").value = "";
         $("discord-announcement-message").value = "";
         $("discord-mention-everyone").checked = false;
-        renderGuildSelect();
+        loadGuilds();
     }
 
     async function loadGuilds() {
@@ -57,7 +57,7 @@
         const list = $("discord-guild-list");
         if (!list) return;
         if (!guilds.length) {
-            list.innerHTML = '<p class="redeem-hint" data-i18n="discord_no_servers">No Discord servers configured yet.</p>';
+            list.innerHTML = `<p class="redeem-hint">${t("discord_no_servers")}</p>`;
             return;
         }
         list.innerHTML = guilds.map((g) => `
@@ -132,7 +132,7 @@
                 <article class="discord-history-item">
                     <strong>${escapeHtml(row.title)}</strong>
                     <p>${escapeHtml(row.message)}</p>
-                    <small>${new Date(row.created_at).toLocaleString()} · ${escapeHtml(row.status)} · ${row.mentioned_everyone ? "@everyone" : "no mention"}${row.error_code ? " · " + escapeHtml(row.error_code) : ""}</small>
+                    <small>${new Date(row.created_at).toLocaleString()} · ${row.status === "sent" ? t("discord_status_sent") : t("discord_status_failed")} · ${row.mentioned_everyone ? "@everyone" : t("discord_no_mention")}${row.error_code ? " · " + escapeHtml(row.error_code) : ""}</small>
                 </article>`).join("") : `<p class="redeem-hint">${t("discord_no_history")}</p>`;
         } catch (error) {
             console.error(error);
