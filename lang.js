@@ -5032,6 +5032,19 @@
     };
     Object.keys(discordStatusTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], discordStatusTranslations[language]));
 
+
+    const discordHistoryTranslations = {
+        en: { discord_no_mention:"no mention", discord_status_sent:"sent", discord_status_failed:"failed" },
+        id: { discord_no_mention:"tanpa mention", discord_status_sent:"terkirim", discord_status_failed:"gagal" },
+        cn: { discord_no_mention:"未提及", discord_status_sent:"已发送", discord_status_failed:"发送失败" },
+        ph: { discord_no_mention:"walang mention", discord_status_sent:"naipadala", discord_status_failed:"nabigo" },
+        th: { discord_no_mention:"ไม่มีการ mention", discord_status_sent:"ส่งแล้ว", discord_status_failed:"ส่งไม่สำเร็จ" },
+        it: { discord_no_mention:"nessuna menzione", discord_status_sent:"inviato", discord_status_failed:"non riuscito" },
+        ru: { discord_no_mention:"без упоминания", discord_status_sent:"отправлено", discord_status_failed:"ошибка отправки" },
+        fr: { discord_no_mention:"sans mention", discord_status_sent:"envoyé", discord_status_failed:"échec" }
+    };
+    Object.keys(discordHistoryTranslations).forEach((language) => Object.assign(TRANSLATIONS[language], discordHistoryTranslations[language]));
+
     // Expose globally so app modules / common.js / inline HTML can use them.
     window.t = t;
     window.getLang = getLang;
