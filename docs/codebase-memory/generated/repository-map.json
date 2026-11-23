@@ -200,7 +200,7 @@
     "generator_version": 1,
     "file_count": 106,
     "digest_algorithm": "sha256",
-    "content_digest": "d1963cb5329badb1f6566de96110c0f690d7100172f5aa017512d6b034969f05",
+    "content_digest": "3989eeed800ad5110389af414ffe68ac2f73bd4f5c02d164d27784fc57a62c60",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -420,7 +420,7 @@
       },
       {
         "path": "scripts/register-discord-commands.mjs",
-        "sha256": "e0eb9ede33ffa022e0163e6f0b75ca22e51f792614bdee2678e1a78d7635c364"
+        "sha256": "9ed50675cf5e8a5894c12231148f9846fd6daaf321e5b51da4c813ea2da4c59f"
       },
       {
         "path": "scripts/source_protection_monitor.py",
@@ -464,7 +464,7 @@
       },
       {
         "path": "supabase/functions/send-push-notification/index.ts",
-        "sha256": "e59bf6d86abbf933948a3f0f92f2eca52dd5b96d1ad9c51629fc2ab15bda140c"
+        "sha256": "4828c9df550eb8275ec85e59e282a3430ed8b5b6aacc2ad83d3af65d42b7edc5"
       },
       {
         "path": "supabase/functions/wosatlas-states/index.ts",

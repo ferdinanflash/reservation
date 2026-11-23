@@ -8444,7 +8444,7 @@
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#statusText",
       "kind": "call",
-      "line": 175,
+      "line": 188,
       "confidence": "static-name-match"
     },
     {
@@ -12156,7 +12156,7 @@
       "id": "supabase/functions/send-push-notification/index.ts#deleteStaleSubscriptions",
       "name": "deleteStaleSubscriptions",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 198,
+      "line": 211,
       "kind": "function"
     },
     {
@@ -12177,7 +12177,7 @@
       "id": "supabase/functions/send-push-notification/index.ts#fetchSubscriptions",
       "name": "fetchSubscriptions",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 179,
+      "line": 192,
       "kind": "function"
     },
     {
@@ -12212,7 +12212,7 @@
       "id": "supabase/functions/send-push-notification/index.ts#sendAllianceDiscordNotification",
       "name": "sendAllianceDiscordNotification",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 214,
+      "line": 227,
       "kind": "function"
     },
     {
@@ -12604,21 +12604,6 @@
   ],
   "parse_diagnostics": [
     {
-      "file": "scripts/register-discord-commands.mjs",
-      "line": 96,
-      "message": "Invalid character."
-    },
-    {
-      "file": "scripts/register-discord-commands.mjs",
-      "line": 96,
-      "message": "Invalid character."
-    },
-    {
-      "file": "scripts/register-discord-commands.mjs",
-      "line": 96,
-      "message": "Unknown keyword or identifier. Did you mean 'const'?"
-    },
-    {
       "file": "supabase/functions/discord-interactions/index.ts",
       "line": 320,
       "message": "Unterminated regular expression literal."
@@ -12824,5 +12809,5 @@
       "message": "Unexpected keyword or identifier."
     }
   ],
-  "source_digest": "1e4876853b38ab6f3d7bfbfd4f4943a3b9e04f1ece78b16b6dac479f88e61f73"
+  "source_digest": "53f9c49698fea2f2b6496ea0812daea9b4dc5bd1b0ff5e47d8962a20a7cc4ca1"
 }
