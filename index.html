@@ -1295,7 +1295,7 @@
 		<div id="discord-settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="discord-settings-title">
 			<div class="modal-content custom-form-modal discord-modal-content">
 				<button type="button" class="close-modal" onclick="closeDiscordSettingsModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 id="discord-settings-title" class="modal-title" data-i18n="discord_manage_servers">🤖 Discord Servers</h2>
+				<h2 id="discord-settings-title" class="modal-title"><span aria-hidden="true">🤖</span> <span data-i18n="discord_manage_servers">Discord Servers</span></h2>
 				<p class="theme-switcher-hint" data-i18n="discord_setup_hint">Add each Discord server separately. Copy the Server ID and announcement channel ID from Discord Developer Mode. The bot must already be in the server and able to view the channel.</p>
 				<section class="discord-subscriptions-section discord-global-notification-setting" aria-labelledby="discord-global-notification-title">
 					<h3 id="discord-global-notification-title" class="discord-form-title">🔔 Global Reservation Notifications</h3>
@@ -1337,7 +1337,7 @@
 		<div id="discord-composer-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="discord-composer-title">
 			<div class="modal-content custom-form-modal discord-modal-content">
 				<button type="button" class="close-modal" onclick="closeDiscordComposerModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
-				<h2 id="discord-composer-title" class="modal-title" data-i18n="discord_send_announcement">📣 Discord Announcement</h2>
+				<h2 id="discord-composer-title" class="modal-title"><span aria-hidden="true">📣</span> <span data-i18n="discord_send_announcement">Discord Announcement</span></h2>
 				<p class="theme-switcher-hint">Send an announcement directly to a channel subscribed with /subscribe. Only active subscribed channels are listed here.</p>
 				<label class="discord-toggle-row"><input id="discord-send-all" type="checkbox" onchange="updateAnnouncementSendAll()"><span>🌐 Send to All Discord (all subscribed channels across every server)</span></label>
 				<div class="form-group"><label for="discord-announcement-guild">Target subscribed channel</label><select id="discord-announcement-guild" required><option value="">Select a subscribed channel</option></select></div>
