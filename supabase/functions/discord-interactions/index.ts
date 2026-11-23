@@ -569,6 +569,100 @@ async function processClear(interaction: any) {
     }
 }
 
+
+function hasManageChannelsPermission(interaction: any): boolean {
+    try {
+        const permissions = BigInt(String(interaction?.member?.permissions ?? "0"));
+        return (permissions & (0x8n | 0x10n)) !== 0n; // Administrator or Manage Channels
+    } catch {
+        return false;
+    }
+}
+
+async function subscriptionDb(path: string, init: RequestInit = {}) {
+    const url = Deno.env.get("SUPABASE_URL");
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!url || !serviceKey) throw new Error("subscription_storage_not_configured");
+    const baseUrl = url.endsWith("/") ? url.slice(0, -1) : url;
+    const response = await fetch(`${baseUrl}/rest/v1/${path}`, {
+        ...init,
+        headers: {
+            apikey: serviceKey,
+            Authorization: `Bearer ${serviceKey}`,
+            "Content-Type": "application/json",
+            ...(init.headers ?? {}),
+        },
+    });
+    const raw = await response.text();
+    if (!response.ok) {
+        console.error("Discord subscription database request failed:", response.status, raw.slice(0, 250));
+        throw new Error("subscription_database_error");
+    }
+    try { return raw ? JSON.parse(raw) : null; } catch { return raw; }
+}
+
+async function processSubscription(interaction: any, action: "subscribe" | "unsubscribe") {
+    const guildId = String(interaction?.guild_id ?? "");
+    const channelId = String(interaction?.channel_id ?? "");
+    const options = Array.isArray(interaction?.data?.options) ? interaction.data.options : [];
+    const alliance = String(options.find((option: any) => option?.name === "alliance")?.value ?? "").trim().toUpperCase();
+    if (!/^[0-9]{17,20}$/.test(guildId) || !/^[0-9]{17,20}$/.test(channelId)) {
+        await editOriginal(interaction.application_id, interaction.token, "❌ This command can only be used inside a Discord server channel.");
+        return;
+    }
+    if (!ALLIANCES.has(alliance)) {
+        await editOriginal(interaction.application_id, interaction.token, "❌ Choose a supported alliance: ARX, IDN, ZXC, VNX, or CAT.");
+        return;
+    }
+
+    const channelResponse = await discordBotFetch(`/channels/${channelId}`);
+    if (!channelResponse.ok) throw new Error("bot_cannot_access_channel");
+    const channel = await channelResponse.json();
+    if (String(channel?.guild_id ?? "") !== guildId || ![0, 5].includes(Number(channel?.type))) {
+        await editOriginal(interaction.application_id, interaction.token, "❌ The bot cannot verify this as a text or announcement channel in this server.");
+        return;
+    }
+
+    const query = new URLSearchParams({
+        guild_id: `eq.${guildId}`,
+        channel_id: `eq.${channelId}`,
+        alliance: `eq.${alliance}`,
+    });
+    if (action === "subscribe") {
+        await subscriptionDb("discord_reservation_subscriptions?on_conflict=guild_id,channel_id,alliance", {
+            method: "POST",
+            headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+            body: JSON.stringify({
+                guild_id: guildId,
+                channel_id: channelId,
+                channel_name: String(channel?.name ?? "").slice(0, 100),
+                alliance,
+                subscribed_by: String(interaction?.member?.user?.id ?? interaction?.user?.id ?? ""),
+                updated_at: new Date().toISOString(),
+            }),
+        });
+        await editOriginal(
+            interaction.application_id,
+            interaction.token,
+            `✅ **Subscription active!**\nThis channel will now receive Reservation notifications for **${alliance}**.\nUse `/unsubscribe alliance:${alliance}` to stop them.`,
+        );
+        return;
+    }
+
+    const removed = await subscriptionDb(`discord_reservation_subscriptions?${query.toString()}`, {
+        method: "DELETE",
+        headers: { Prefer: "return=representation" },
+    });
+    const count = Array.isArray(removed) ? removed.length : 0;
+    await editOriginal(
+        interaction.application_id,
+        interaction.token,
+        count
+            ? `✅ **Unsubscribed.** This channel will no longer receive Reservation notifications for **${alliance}**.`
+            : `ℹ️ This channel was not subscribed to **${alliance}**.`,
+    );
+}
+
 Deno.serve(async (req) => {
     // Public health check: confirms the deployed function is reachable.
     if (req.method === "GET") {
@@ -593,7 +687,7 @@ Deno.serve(async (req) => {
     }
 
     if (interaction.type === 1) return json({ type: 1 });
-    if (interaction.type !== 2 || !["redeem", "clear"].includes(String(interaction.data?.name ?? ""))) {
+    if (interaction.type !== 2 || !["redeem", "clear", "subscribe", "unsubscribe"].includes(String(interaction.data?.name ?? ""))) {
         return json(publicMessage("Unknown command."));
     }
     if (!interaction.application_id || !interaction.token) {
@@ -608,6 +702,20 @@ Deno.serve(async (req) => {
         EdgeRuntime.waitUntil(processClear(interaction).catch(async (error) => {
             console.error("Discord /clear processing failed:", error);
             await editOriginal(interaction.application_id, interaction.token, "⚠️ The 3475 bot could not complete /clear. Check its channel permissions.");
+        }));
+        return json({ type: 5, data: { flags: 64 } });
+    }
+
+    if (interaction.data.name === "subscribe" || interaction.data.name === "unsubscribe") {
+        if (!hasManageChannelsPermission(interaction)) {
+            return json({ type: 4, data: { content: "❌ You need **Manage Channels** permission to manage Reservation subscriptions.", flags: 64 } });
+        }
+        EdgeRuntime.waitUntil(processSubscription(interaction, interaction.data.name).catch(async (error) => {
+            console.error("Discord reservation subscription command failed:", error);
+            const message = error instanceof Error && error.message === "bot_cannot_access_channel"
+                ? "⚠️ The bot cannot access this channel. Grant it View Channel and Read Message History, then try again."
+                : "⚠️ Unable to update this subscription. Please try again or contact the bot administrator.";
+            await editOriginal(interaction.application_id, interaction.token, message);
         }));
         return json({ type: 5, data: { flags: 64 } });
     }
