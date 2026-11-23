@@ -235,10 +235,29 @@ async function deleteStaleSubscriptions(ids: string[]) {
 // Get Notification is the guest's explicit opt-in. A push_subscriptions row
 // exists only after that guest enabled notifications for this application.
 // Alliance membership is looked up server-side by the reservation's Player ID.
-async function sendAllianceDiscordNotification(record: any, notification: { title: string; body: string }) {
+async function sendAllianceDiscordNotification(record: any, notification: { title: string; body: string }, isNewReservation = false) {
     if (!DISCORD_BOT_TOKEN) {
         console.warn("Discord reservation notification skipped: DISCORD_BOT_TOKEN is not configured.");
         return { sent: 0, reason: "discord_not_configured" };
+    }
+
+    if (isNewReservation) {
+        const settingQuery = new URLSearchParams({
+            select: "enabled",
+            setting_key: "eq.new_reservation_request",
+            limit: "1",
+        });
+        const settingResponse = await fetch(SUPABASE_URL + "/rest/v1/discord_notification_settings?" + settingQuery, {
+            headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: "Bearer " + SUPABASE_SERVICE_ROLE_KEY },
+        });
+        if (!settingResponse.ok) {
+            console.error("Discord notification: failed to load global New Reservation Request setting:", settingResponse.status);
+            return { sent: 0, reason: "global_notification_setting_unavailable" };
+        }
+        const settingRows = await settingResponse.json();
+        if (Array.isArray(settingRows) && settingRows[0]?.enabled === false) {
+            return { sent: 0, reason: "new_reservation_notifications_disabled" };
+        }
     }
 
     const gameId = String(record?.game_id ?? "").trim();
@@ -427,7 +446,7 @@ Deno.serve(async (req: Request) => {
     // Discord routing is independent of Get Notification. New reservations
     // and qualifying updates are routed by the verified alliance to its
     // same-named channel in every configured Discord guild.
-    const discordDelivery = await sendAllianceDiscordNotification(record, notification)
+    const discordDelivery = await sendAllianceDiscordNotification(record, notification, isInsert)
         .catch((error) => {
             console.error("Discord reservation notification unexpectedly failed:", error);
             return { sent: 0, reason: "unexpected_error" };
