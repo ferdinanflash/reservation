@@ -18,7 +18,7 @@
 
 ## Discord redeem bot
 
-- Slash-command endpoint: `supabase/functions/discord-interactions/index.ts`.
+- Slash-command endpoint: `supabase/functions/discord-interactions/index.ts`. It handles `/redeem single`, `/redeem alliance`, and admin-gated `/clear`; `/clear` requires the invoker's Manage Messages permission and deletes only messages authored by the bot in the invoking channel, including older-than-14-day messages individually.
 - Setup/runbook: `docs/DISCORD_BOT_REDEEM.md`.
 - `/redeem single` handles one player ID; `/redeem alliance` loads alliance members from `public.troops_power` and processes them sequentially.
 - The Discord endpoint verifies Ed25519 signatures itself and is deployed with `--no-verify-jwt`; the `redeem-giftcode` endpoint retains its normal JWT gateway verification.
