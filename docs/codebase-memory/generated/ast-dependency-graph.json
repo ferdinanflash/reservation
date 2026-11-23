@@ -12553,22 +12553,6 @@
       "line": 126
     }
   ],
-  "parse_diagnostics": [
-    {
-      "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 647,
-      "message": "',' expected."
-    },
-    {
-      "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 647,
-      "message": "',' expected."
-    },
-    {
-      "file": "supabase/functions/discord-interactions/index.ts",
-      "line": 647,
-      "message": "',' expected."
-    }
-  ],
-  "source_digest": "5e13d028f6eec98b4c0287b2d289b2eb5a357055f5dc291176cd7374f776443b"
+  "parse_diagnostics": [],
+  "source_digest": "c49bd94b156b15643e0a1c3a5367b329f5bf3f56321628dc34e01ac7cbdb2aab"
 }
