@@ -148,7 +148,7 @@ function buildNotification(record: any, oldRecord: any) {
         const reasonLine = moveReason ? ` Reason: ${moveReason}` : "";
         return {
             title: `🕒 ${player} — Accepted Reservation Time Changed`,
-            body: `Your accepted reservation time has been changed.\\nPrevious slot: ${oldTime} UTC.\\nNew confirmed slot: ${newTime} UTC.${reasonLine}`
+            body: `Your accepted reservation time has been changed.\nPrevious slot: ${oldTime} UTC.\nNew confirmed slot: ${newTime} UTC.${reasonLine}`
         };
     }
 
