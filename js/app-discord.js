@@ -10,6 +10,7 @@
     const $ = (id) => document.getElementById(id);
     let guilds = [];
     let subscriptions = [];
+    let newReservationNotificationsEnabled = true;
 
     function api(action, extra = {}) {
         const client = getSupabase();
@@ -49,6 +50,9 @@
             if (error) throw error;
             guilds = Array.isArray(data?.guilds) ? data.guilds : [];
             subscriptions = Array.isArray(data?.subscriptions) ? data.subscriptions : [];
+            newReservationNotificationsEnabled = data?.new_reservation_notifications_enabled !== false;
+            const newReservationToggle = $("discord-new-reservation-toggle");
+            if (newReservationToggle) newReservationToggle.checked = newReservationNotificationsEnabled;
             renderGuildList();
             renderSubscriptionList();
             renderGuildSelect();
@@ -56,6 +60,33 @@
             console.error("Unable to load Discord guild settings:", error);
             list.innerHTML = `<p class="redeem-hint">${t("discord_load_failed")}</p>`;
             if (subscriptionList) subscriptionList.innerHTML = `<p class="redeem-hint">Unable to load subscriptions.</p>`;
+        }
+    }
+
+    async function updateNewReservationNotifications() {
+        if (!isAdmin) return;
+        const toggle = $("discord-new-reservation-toggle");
+        if (!toggle) return;
+        const requestedValue = toggle.checked;
+        toggle.disabled = true;
+        try {
+            const { data, error } = await api("set_new_reservation_notifications", { enabled: requestedValue });
+            if (error) {
+                let message = "";
+                try { message = (await error.context?.clone?.().json())?.error || ""; } catch (_) {}
+                throw new Error(message || error.message || "Save failed");
+            }
+            newReservationNotificationsEnabled = data?.enabled === true;
+            toggle.checked = newReservationNotificationsEnabled;
+            showToast(newReservationNotificationsEnabled
+                ? "New Reservation Request notifications enabled in all Discord channels."
+                : "New Reservation Request notifications disabled in all Discord channels.", "success");
+        } catch (error) {
+            console.error("Unable to update global Discord reservation notification setting:", error);
+            toggle.checked = newReservationNotificationsEnabled;
+            showToast("Unable to update notification setting. Please try again.", "error");
+        } finally {
+            toggle.disabled = false;
         }
     }
 
@@ -248,6 +279,7 @@
     window.openDiscordComposerModal = openDiscordComposerModal;
     window.closeDiscordComposerModal = () => closeModal("discord-composer-modal");
     window.saveDiscordGuild = saveGuild;
+    window.updateNewReservationNotifications = updateNewReservationNotifications;
     window.sendDiscordAnnouncement = sendDiscordAnnouncement;
     window.resetDiscordGuildForm = resetGuildForm;
 })();
