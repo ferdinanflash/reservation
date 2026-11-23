@@ -167,7 +167,7 @@ Hak administratif harus diperiksa melalui mekanisme autentikasi/otorisasi aplika
 ### 5.6 Discord Redeem Bot
 
 **FR-DIS-01 — Slash commands**
-- Bot menyediakan `/redeem single` untuk memproses satu Player ID dan `/redeem alliance` untuk memproses anggota aliansi yang didukung.
+- Bot menyediakan `/redeem single` untuk memproses satu Player ID, `/redeem alliance` untuk memproses anggota aliansi yang didukung, dan `/clear` untuk menghapus pesan yang dibuat bot pada channel aktif (hanya pengguna dengan izin Manage Messages).
 - Command alliance membaca roster dari `public.troops_power` melalui kolom alliance dan `game_id`; nickname ditampilkan bila tersedia.
 - Pemrosesan anggota dilakukan berurutan dengan jeda antar-request dan retry terbatas untuk timeout.
 - Batas maksimum satu batch adalah 100 Player ID untuk menjaga waktu hidup Discord interaction token.

@@ -418,6 +418,157 @@ async function processRedeem(interaction: any) {
     await publishResults(interaction, heading, results, note, code);
 }
 
+
+function hasManageMessagesPermission(interaction: any): boolean {
+    try {
+        const permissions = BigInt(String(interaction?.member?.permissions ?? "0"));
+        const administrator = 0x8n;
+        const manageMessages = 0x2000n;
+        return (permissions & (administrator | manageMessages)) !== 0n;
+    } catch {
+        return false;
+    }
+}
+
+async function discordBotFetch(path: string, init: RequestInit = {}): Promise<Response> {
+    const token = Deno.env.get("DISCORD_BOT_TOKEN");
+    if (!token) throw new Error("DISCORD_BOT_TOKEN is not configured for the Discord interactions function");
+
+    for (let attempt = 0; attempt < 6; attempt++) {
+        const response = await fetch(`${DISCORD_API}${path}`, {
+            ...init,
+            headers: {
+                Authorization: `Bot ${token}`,
+                "Content-Type": "application/json",
+                ...(init.headers ?? {}),
+            },
+        });
+        if (response.status !== 429) return response;
+
+        const body = await response.json().catch(() => ({}));
+        const retryAfter = Number(body?.retry_after);
+        const delay = Number.isFinite(retryAfter)
+            ? Math.min(15_000, Math.max(250, retryAfter * 1000))
+            : 1500;
+        await sleep(delay);
+    }
+    throw new Error("Discord rate limit persisted after repeated retries");
+}
+
+async function deleteBotAuthoredMessages(channelId: string, botIds: string[]) {
+    const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
+    let before = "";
+    let scanned = 0;
+    let deleted = 0;
+    let pages = 0;
+
+    while (true) {
+        const query = new URLSearchParams({ limit: "100" });
+        if (before) query.set("before", before);
+        const response = await discordBotFetch(`/channels/${channelId}/messages?${query.toString()}`);
+        if (!response.ok) {
+            const detail = (await response.text().catch(() => "")).slice(0, 180);
+            throw new Error(`Unable to read channel history (HTTP ${response.status}): ${detail}`);
+        }
+        const messages = await response.json();
+        if (!Array.isArray(messages) || messages.length === 0) break;
+
+        pages++;
+        scanned += messages.length;
+        const oldestId = String(messages[messages.length - 1]?.id ?? "");
+        if (!oldestId || oldestId === before) throw new Error("Discord message pagination did not advance");
+        before = oldestId;
+
+        const owned = messages.filter((message: any) =>
+            botIds.includes(String(message?.author?.id ?? ""))
+        );
+        const recent: string[] = [];
+        const old: string[] = [];
+        for (const message of owned) {
+            const timestamp = Date.parse(String(message?.timestamp ?? ""));
+            const id = String(message?.id ?? "");
+            if (!id) continue;
+            if (Number.isFinite(timestamp) && Date.now() - timestamp < fourteenDaysMs) recent.push(id);
+            else old.push(id);
+        }
+
+        // Discord bulk deletion only accepts 2–100 messages younger than 14 days.
+        for (let offset = 0; offset < recent.length; offset += 100) {
+            const batch = recent.slice(offset, offset + 100);
+            if (batch.length === 1) {
+                const single = await discordBotFetch(`/channels/${channelId}/messages/${batch[0]}`, { method: "DELETE" });
+                if (single.status !== 204 && single.status !== 404) {
+                    throw new Error(`Unable to delete bot message ${batch[0]} (HTTP ${single.status})`);
+                }
+                if (single.status === 204) deleted++;
+                continue;
+            }
+            if (batch.length >= 2) {
+                const bulk = await discordBotFetch(`/channels/${channelId}/messages/bulk-delete`, {
+                    method: "POST",
+                    body: JSON.stringify({ messages: batch }),
+                });
+                if (bulk.status === 204) {
+                    deleted += batch.length;
+                    continue;
+                }
+                // A race or age-boundary rejection should not prevent cleanup.
+                const detail = (await bulk.text().catch(() => "")).slice(0, 120);
+                console.warn("Discord bulk delete failed; falling back to individual deletes:", bulk.status, detail);
+                for (const id of batch) {
+                    const single = await discordBotFetch(`/channels/${channelId}/messages/${id}`, { method: "DELETE" });
+                    if (single.status !== 204 && single.status !== 404) {
+                        throw new Error(`Unable to delete bot message ${id} (HTTP ${single.status})`);
+                    }
+                    if (single.status === 204) deleted++;
+                }
+            }
+        }
+
+        // Messages older than 14 days must be deleted individually.
+        for (const id of old) {
+            const single = await discordBotFetch(`/channels/${channelId}/messages/${id}`, { method: "DELETE" });
+            if (single.status !== 204 && single.status !== 404) {
+                throw new Error(`Unable to delete old bot message ${id} (HTTP ${single.status})`);
+            }
+            if (single.status === 204) deleted++;
+        }
+
+        if (messages.length < 100) break;
+    }
+
+    return { scanned, deleted, pages };
+}
+
+async function processClear(interaction: any) {
+    const channelId = String(interaction?.channel_id ?? "");
+    const applicationId = String(interaction?.application_id ?? "");
+    if (!interaction?.guild_id || !/^\d{17,20}$/.test(channelId) || !/^\d{17,20}$/.test(applicationId)) {
+        await editOriginal(interaction.application_id, interaction.token, "❌ /clear hanya dapat digunakan di channel server Discord.");
+        return;
+    }
+
+    try {
+        const botResponse = await discordBotFetch("/users/@me");
+        if (!botResponse.ok) throw new Error(`Unable to identify bot account (HTTP ${botResponse.status})`);
+        const botUser = await botResponse.json();
+        const botIds = [...new Set([applicationId, String(botUser?.id ?? "")].filter(Boolean))];
+        const result = await deleteBotAuthoredMessages(channelId, botIds);
+        await editOriginal(
+            interaction.application_id,
+            interaction.token,
+            `✅ **Clear selesai.** Menghapus **${result.deleted}** pesan milik bot di channel ini. Total pesan yang diperiksa: ${result.scanned}.`,
+        );
+    } catch (error) {
+        console.error("Discord /clear failed:", error instanceof Error ? error.message : String(error));
+        await editOriginal(
+            interaction.application_id,
+            interaction.token,
+            "⚠️ /clear tidak dapat menyelesaikan seluruh penghapusan. Periksa izin **Manage Messages** bot dan **Read Message History**, lalu coba lagi. Pesan yang sudah terhapus tidak akan dipulihkan.",
+        );
+    }
+}
+
 Deno.serve(async (req) => {
     // Public health check: confirms the deployed function is reachable.
     if (req.method === "GET") {
@@ -442,11 +593,23 @@ Deno.serve(async (req) => {
     }
 
     if (interaction.type === 1) return json({ type: 1 });
-    if (interaction.type !== 2 || interaction.data?.name !== "redeem") {
+    if (interaction.type !== 2 || !["redeem", "clear"].includes(String(interaction.data?.name ?? ""))) {
         return json(publicMessage("Unknown command."));
     }
     if (!interaction.application_id || !interaction.token) {
         return json(publicMessage("❌ Incomplete Discord interaction."));
+    }
+
+    if (interaction.data.name === "clear") {
+        if (!hasManageMessagesPermission(interaction)) {
+            return json({ type: 4, data: { content: "❌ You need **Manage Messages** permission to use /clear.", flags: 64 } });
+        }
+        // The bot also needs Manage Messages and Read Message History in this channel.
+        EdgeRuntime.waitUntil(processClear(interaction).catch(async (error) => {
+            console.error("Discord /clear processing failed:", error);
+            await editOriginal(interaction.application_id, interaction.token, "⚠️ The 3475 bot could not complete /clear. Check its channel permissions.");
+        }));
+        return json({ type: 5, data: { flags: 64 } });
     }
 
     // Public deferred response: intentionally no EPHEMERAL flag.

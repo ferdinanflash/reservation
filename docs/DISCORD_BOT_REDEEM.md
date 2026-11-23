@@ -1,12 +1,21 @@
 # 3475 Discord Bot — Redeem integration
 
-This integration adds public `/redeem single` and `/redeem alliance` commands to the existing 3475 Supabase project. Both reuse the existing `redeem-giftcode` Edge Function and Century Games redemption flow used by the website.
+This integration adds public `/redeem single` and `/redeem alliance` commands plus an administrator-only `/clear` command to the existing 3475 Supabase project. The two redeem commands reuse the existing `redeem-giftcode` Edge Function and Century Games redemption flow used by the website.
 
 ## Public response policy
 
 Every outcome is public in the channel where the command is used: success, invalid FID, invalid/expired/already-used code, and service errors. The interaction is deferred without Discord's EPHEMERAL flag, then its original response is edited. Long alliance results are split into additional public messages. FIDs and gift codes are included in public output as requested.
 
 ## Commands
+
+### Clear bot messages in the current channel
+
+```
+/clear
+```
+
+Only members with Discord **Manage Messages** permission can run this command. It scans the full history of the channel where it is invoked and deletes messages authored by this 3475 bot/application only. Messages written by members, other bots, and messages in other channels are untouched. The bot itself needs **View Channel**, **Read Message History**, and **Manage Messages** in the target channel. Messages younger than 14 days are bulk-deleted when possible; older messages are deleted individually because Discord does not permit bulk deletion of messages older than 14 days. The confirmation is ephemeral and will not remain in the channel.
+
 
 ### One player
 
@@ -93,7 +102,7 @@ For quicker testing, optionally set `DISCORD_GUILD_ID` to your server ID. Otherw
 
 For a mobile-friendly setup, add a repository Actions secret named `DISCORD_BOT_TOKEN` containing the bot token. Never paste it into a commit, issue, or chat. Optionally add a repository Actions variable named `DISCORD_GUILD_ID` containing your Discord server ID for immediate server-only registration.
 
-Then open **GitHub → Actions → Register 3475 Discord Commands → Run workflow**. The workflow registers `/redeem single` and `/redeem alliance`.
+Then open **GitHub → Actions → Register 3475 Discord Commands → Run workflow**. The workflow registers `/redeem single`, `/redeem alliance`, and `/clear`.
 
 If `DISCORD_GUILD_ID` is omitted, commands are registered globally and may take longer to appear.
 
@@ -121,7 +130,7 @@ Alliance names are normalized to uppercase. Supported alliances are ARX, IDN, ZX
 
 1. In Discord Developer Portal, open the application → **Bot** → **Privileged Gateway Intents**.
 2. Enable **Message Content Intent** and save. Discord also applies this intent to message content returned by the HTTP API.
-3. For every channel you configure, ensure the bot has **View Channel**, **Read Message History**, and **Send Messages** permissions.
+3. For every channel you configure, ensure the bot has **View Channel**, **Read Message History**, **Send Messages**, and **Manage Messages** permissions if you want to use `/clear`.
 4. Copy each channel ID (Developer Mode → right-click channel → Copy Channel ID).
 
 ### Supabase secrets
