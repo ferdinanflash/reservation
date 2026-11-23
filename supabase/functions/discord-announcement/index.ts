@@ -82,7 +82,7 @@ Deno.serve(async (req: Request) => {
     const message = String(body?.message ?? "").trim();
     const wantsEveryone = body?.mention_everyone === true;
 
-    if (!/^\d{17,20}$/.test(guildId)) return json({ error: "Invalid Discord server ID" }, 400);
+    if (!/^\d{17,20}$/.test(guildId) || !/^\d{17,20}$/.test(channelId)) return json({ error: "Invalid Discord server or channel ID" }, 400);
     if (!message || message.length > 1800) return json({ error: "Message is required (maximum 1,800 characters)" }, 400);
     if (title.length > 100) return json({ error: "Title must be 100 characters or fewer" }, 400);
 
@@ -96,9 +96,8 @@ Deno.serve(async (req: Request) => {
         return json({ error: "Unable to load Discord server configuration" }, 500);
     }
 
-    const config = settings?.[0];
-    if (!config) return json({ error: "This Discord server has not been configured" }, 404);
-    if (!config.announcements_enabled) return json({ error: "Announcements are disabled for this server" }, 403);
+    const config = settings?.[0] ?? null;
+    if (config && !config.announcements_enabled) return json({ error: "Announcements are disabled for this server" }, 403);
 
     // Only channels with an active /subscribe entry can receive President announcements.
     let activeSubscription: any[];
@@ -114,7 +113,7 @@ Deno.serve(async (req: Request) => {
         return json({ error: "This channel is not actively subscribed to Reservation notifications" }, 403);
     }
 
-    if (wantsEveryone && !config.allow_everyone) {
+    if (wantsEveryone && !config?.allow_everyone) {
         return json({ error: "@everyone is disabled by this server's configuration" }, 403);
     }
 
@@ -187,7 +186,7 @@ Deno.serve(async (req: Request) => {
     return json({
         sent: true,
         guild_id: guildId,
-        guild_name: config.guild_name,
+        guild_name: config?.guild_name ?? guildId,
         channel_id: channelId,
         mentioned_everyone: wantsEveryone,
         message_id: discordMessage.id,
