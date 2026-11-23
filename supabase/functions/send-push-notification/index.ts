@@ -91,6 +91,17 @@ function displayPlayerName(record: any) {
     return nickname || "Player";
 }
 
+function getPositionDay(position: unknown) {
+    const normalized = String(position ?? "").trim().toLowerCase();
+    const positions: Record<string, string> = {
+        "vice president d1": "VP D1 (Monday)",
+        "vice president d2": "VP D2 (Tuesday)",
+        "minister of education d4": "EDU D4 (Thursday)",
+        "vice president d5": "VP D5 (Friday)",
+    };
+    return positions[normalized] || String(position ?? "").trim();
+}
+
 function cleanDetail(value: unknown) {
     return String(value ?? "").trim();
 }
@@ -315,6 +326,7 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
             { name: "Player", value: playerName.slice(0, 256), inline: true },
             { name: "Player ID", value: gameId, inline: true },
             { name: "Alliance", value: alliance, inline: true },
+            ...(getPositionDay(record.position) ? [{ name: "Position / Day", value: getPositionDay(record.position).slice(0, 256), inline: true }] : []),
             ...(timeSlot ? [{ name: "Reservation Slot", value: timeSlot + " UTC", inline: true }] : []),
             { name: "Status", value: status.slice(0, 256), inline: true },
         ],
