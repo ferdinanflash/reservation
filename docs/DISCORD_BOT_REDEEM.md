@@ -1,6 +1,6 @@
 # 3475 Discord Bot — Redeem integration
 
-This integration adds public `/redeem single` and `/redeem alliance` commands to the existing 3475 Supabase project. Both reuse the existing `redeem-giftcode` Edge Function and Century Games redemption flow used by the website.
+This integration adds public `/redeem single` and `/redeem alliance` commands plus an administrator-only `/clear` command to the existing 3475 Supabase project. Both reuse the existing `redeem-giftcode` Edge Function and Century Games redemption flow used by the website.
 
 ## Public response policy
 
@@ -93,7 +93,7 @@ For quicker testing, optionally set `DISCORD_GUILD_ID` to your server ID. Otherw
 
 For a mobile-friendly setup, add a repository Actions secret named `DISCORD_BOT_TOKEN` containing the bot token. Never paste it into a commit, issue, or chat. Optionally add a repository Actions variable named `DISCORD_GUILD_ID` containing your Discord server ID for immediate server-only registration.
 
-Then open **GitHub → Actions → Register 3475 Discord Commands → Run workflow**. The workflow registers `/redeem single` and `/redeem alliance`.
+Then open **GitHub → Actions → Register 3475 Discord Commands → Run workflow**. The workflow registers `/redeem single`, `/redeem alliance`, and `/clear`.
 
 If `DISCORD_GUILD_ID` is omitted, commands are registered globally and may take longer to appear.
 
@@ -121,7 +121,7 @@ Alliance names are normalized to uppercase. Supported alliances are ARX, IDN, ZX
 
 1. In Discord Developer Portal, open the application → **Bot** → **Privileged Gateway Intents**.
 2. Enable **Message Content Intent** and save. Discord also applies this intent to message content returned by the HTTP API.
-3. For every channel you configure, ensure the bot has **View Channel**, **Read Message History**, and **Send Messages** permissions.
+3. For every channel you configure, ensure the bot has **View Channel**, **Read Message History**, **Send Messages**, and **Manage Messages** permissions if you want to use `/clear`.
 4. Copy each channel ID (Developer Mode → right-click channel → Copy Channel ID).
 
 ### Supabase secrets
