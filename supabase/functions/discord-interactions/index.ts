@@ -713,7 +713,7 @@ Deno.serve(async (req) => {
         EdgeRuntime.waitUntil(processSubscription(interaction, interaction.data.name).catch(async (error) => {
             console.error("Discord reservation subscription command failed:", error);
             const message = error instanceof Error && error.message === "bot_cannot_access_channel"
-                ? "⚠️ The bot cannot access this channel. Grant it View Channel and Read Message History, then try again."
+                ? "⚠️ The bot cannot access this channel. Grant it View Channel and Send Messages, then try again."
                 : "⚠️ Unable to update this subscription. Please try again or contact the bot administrator.";
             await editOriginal(interaction.application_id, interaction.token, message);
         }));
