@@ -162,18 +162,36 @@
         const select = $("discord-announcement-guild");
         if (!select) return;
         const previous = select.value;
-        select.innerHTML = `<option value="">${t("discord_select_server")}</option>` + guilds
-            .filter((g) => g.announcements_enabled)
-            .map((g) => `<option value="${escapeHtml(g.guild_id)}">${escapeHtml(g.guild_name)}</option>`).join("");
-        if (guilds.some((g) => g.guild_id === previous && g.announcements_enabled)) select.value = previous;
-        const selected = guilds.find((g) => g.guild_id === select.value);
-        $("discord-mention-everyone")?.toggleAttribute("disabled", !selected?.allow_everyone);
-        if (!selected?.allow_everyone && $("discord-mention-everyone")) $("discord-mention-everyone").checked = false;
-        select.onchange = () => {
-            const g = guilds.find((item) => item.guild_id === select.value);
-            $("discord-mention-everyone").disabled = !g?.allow_everyone;
-            if (!g?.allow_everyone) $("discord-mention-everyone").checked = false;
+        const destinations = new Map();
+        subscriptions.forEach((item) => {
+            const guildId = String(item.guild_id || "");
+            const channelId = String(item.channel_id || "");
+            const guild = guilds.find((entry) => entry.guild_id === guildId);
+            if (!guildId || !channelId || !guild?.announcements_enabled) return;
+            const key = `${guildId}:${channelId}`;
+            if (!destinations.has(key)) destinations.set(key, {
+                key, guild_id: guildId, channel_id: channelId,
+                guild_name: item.guild_name || guild.guild_name,
+                channel_name: item.channel_name || channelId,
+                alliances: [],
+                allow_everyone: !!guild.allow_everyone,
+            });
+            const destination = destinations.get(key);
+            if (item.alliance && !destination.alliances.includes(item.alliance)) destination.alliances.push(item.alliance);
+        });
+        const options = [...destinations.values()];
+        select.innerHTML = `<option value="">Select a subscribed channel</option>` + options
+            .map((item) => `<option value="${escapeHtml(item.key)}">${escapeHtml(item.guild_name)} · #${escapeHtml(item.channel_name)} (${escapeHtml(item.alliances.join(", "))})</option>`).join("");
+        if (options.some((item) => item.key === previous)) select.value = previous;
+        const updateMentionPermission = () => {
+            const selected = options.find((item) => item.key === select.value);
+            const mention = $("discord-mention-everyone");
+            if (!mention) return;
+            mention.disabled = !selected?.allow_everyone;
+            if (!selected?.allow_everyone) mention.checked = false;
         };
+        updateMentionPermission();
+        select.onchange = updateMentionPermission;
     }
 
     async function loadHistory(guildId) {
@@ -238,11 +256,13 @@
 
     async function sendDiscordAnnouncement() {
         if (!isAdmin) return;
-        const guildId = $("discord-announcement-guild").value;
+        const destination = $("discord-announcement-guild").value.split(":");
+        const guildId = destination[0] || "";
+        const channelId = destination[1] || "";
         const title = $("discord-announcement-title").value.trim();
         const message = $("discord-announcement-message").value.trim();
         const mentionEveryone = $("discord-mention-everyone").checked;
-        if (!guildId || !message) {
+        if (!guildId || !channelId || !message) {
             showToast(t("discord_announcement_required"), "warning");
             return;
         }
@@ -251,7 +271,7 @@
         try {
             const client = getSupabase();
             const { data, error } = await client.functions.invoke("discord-announcement", {
-                body: { guild_id: guildId, title, message, mention_everyone: mentionEveryone }
+                body: { guild_id: guildId, channel_id: channelId, title, message, mention_everyone: mentionEveryone }
             });
             if (error) {
                 let detail = "";
