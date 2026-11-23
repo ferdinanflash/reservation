@@ -77,6 +77,7 @@ Deno.serve(async (req: Request) => {
     try { body = await req.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
 
     const guildId = String(body?.guild_id ?? "").trim();
+    const channelId = String(body?.channel_id ?? "").trim();
     const title = String(body?.title ?? "📢 Announcement").trim();
     const message = String(body?.message ?? "").trim();
     const wantsEveryone = body?.mention_everyone === true;
@@ -98,11 +99,25 @@ Deno.serve(async (req: Request) => {
     const config = settings?.[0];
     if (!config) return json({ error: "This Discord server has not been configured" }, 404);
     if (!config.announcements_enabled) return json({ error: "Announcements are disabled for this server" }, 403);
+
+    // Only channels with an active /subscribe entry can receive President announcements.
+    let activeSubscription: any[];
+    try {
+        activeSubscription = await serviceRest(
+            `discord_reservation_subscriptions?select=channel_id&guild_id=eq.${guildId}&channel_id=eq.${channelId}&limit=1`,
+        );
+    } catch (error) {
+        console.error("Discord subscription lookup failed:", error);
+        return json({ error: "Unable to verify the subscribed channel" }, 500);
+    }
+    if (!Array.isArray(activeSubscription) || activeSubscription.length === 0) {
+        return json({ error: "This channel is not actively subscribed to Reservation notifications" }, 403);
+    }
+
     if (wantsEveryone && !config.allow_everyone) {
         return json({ error: "@everyone is disabled by this server's configuration" }, 403);
     }
 
-    const channelId = String(config.announcement_channel_id);
     const payload = {
         // Discord only reliably generates notifications for mentions in message content.
         // Keep the actual announcement in the embed, and place @everyone in content.
