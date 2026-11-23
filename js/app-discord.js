@@ -167,14 +167,14 @@
             const guildId = String(item.guild_id || "");
             const channelId = String(item.channel_id || "");
             const guild = guilds.find((entry) => entry.guild_id === guildId);
-            if (!guildId || !channelId || !guild?.announcements_enabled) return;
+            if (!guildId || !channelId) return;
             const key = `${guildId}:${channelId}`;
             if (!destinations.has(key)) destinations.set(key, {
                 key, guild_id: guildId, channel_id: channelId,
-                guild_name: item.guild_name || guild.guild_name,
+                guild_name: item.guild_name || guild?.guild_name || guildId,
                 channel_name: item.channel_name || channelId,
                 alliances: [],
-                allow_everyone: !!guild.allow_everyone,
+                allow_everyone: !!guild?.allow_everyone,
             });
             const destination = destinations.get(key);
             if (item.alliance && !destination.alliances.includes(item.alliance)) destination.alliances.push(item.alliance);
