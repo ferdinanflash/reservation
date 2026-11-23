@@ -9,7 +9,7 @@ The President Panel contains two Discord actions:
 - **Discord Servers** — add, edit, disable, remove, and review announcement history for each configured server.
 - **Discord Announcement** — choose one configured server, compose a message, and optionally mention @everyone when that server explicitly permits it.
 
-The setup UI currently uses manually copied Discord Server IDs and Channel IDs. This avoids requiring an OAuth client secret or asking Presidents to authorize their personal Discord accounts. A future OAuth-based server picker can replace the manual ID fields without changing the bot's per-guild storage model.
+The President-managed announcement setup continues to use manually copied Discord Server IDs and Channel IDs. Reservation notification subscriptions can additionally be managed by server admins directly with Discord slash commands, without changing the President's announcement configuration. This avoids requiring an OAuth client secret or asking Presidents to authorize their personal Discord accounts. A future OAuth-based server picker can replace the manual ID fields without changing the bot's per-guild storage model.
 
 ## Security model
 
@@ -27,6 +27,8 @@ Run supabase_migration_discord_multi_server_announcements.sql once in the Supaba
 
 - public.discord_guild_settings
 - public.discord_announcement_log
+
+Reservation notification subscriptions use the separate `public.discord_reservation_subscriptions` table, created by `supabase/migrations/20261123000000_discord_reservation_subscriptions.sql`. This table has RLS enabled and no browser-facing policies.
 
 Do not add public or authenticated RLS policies to these tables.
 
