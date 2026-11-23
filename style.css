@@ -9190,3 +9190,75 @@ body.christmas-theme {
     .discord-guild-card-actions { justify-content: flex-start; width: 100%; }
     .discord-guild-card-actions button { flex: 1 1 auto; }
 }
+
+
+/* President panel: self-service Reservation Discord subscriptions */
+.discord-subscriptions-section { margin: 4px 0 18px; }
+.discord-subscriptions-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+.discord-subscriptions-heading .discord-form-title { margin: 0; }
+.discord-subscription-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 8px;
+    border: 1px solid rgba(88, 101, 242, .4);
+    border-radius: 999px;
+    background: rgba(88, 101, 242, .14);
+    color: var(--t-primary, #e2e8f0);
+    font-size: .78rem;
+    font-weight: 800;
+}
+.discord-subscription-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 10px;
+}
+.discord-subscription-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border-color, rgba(148, 163, 184, .25));
+    border-radius: 12px;
+    background: rgba(88, 101, 242, .055);
+}
+.discord-subscription-main {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+    overflow-wrap: anywhere;
+}
+.discord-subscription-main strong { color: var(--t-primary, #f1f5f9); }
+.discord-subscription-channel { color: var(--t-link, #93c5fd); font-weight: 700; }
+.discord-subscription-main small { color: var(--t-muted, #94a3b8); font-size: .7rem; }
+.discord-subscription-alliance {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    padding: 6px 9px;
+    border: 1px solid rgba(34, 197, 94, .35);
+    border-radius: 8px;
+    background: rgba(34, 197, 94, .1);
+    color: #4ade80;
+    font-size: .75rem;
+    font-weight: 850;
+    letter-spacing: .04em;
+}
+@media (max-width: 560px) {
+    .discord-subscription-card { gap: 8px; padding: 10px; }
+    .discord-subscription-main small { font-size: .66rem; }
+}
