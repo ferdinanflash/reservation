@@ -2926,7 +2926,7 @@ body.thanksgiving-theme .footer-current-president {
 /* ==================== FOOTER COMPONENT ==================== */
 .site-footer {
     margin-top: 24px; /* was auto: it pushed the footer to the screen bottom and left a big gap on tall phones */
-    padding-top: 35px;
+    padding-top: 20px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 15px;
