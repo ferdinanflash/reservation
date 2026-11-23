@@ -218,10 +218,7 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
     }
 
     const gameId = String(record?.game_id ?? "").trim();
-    if (!/^\d{4,20}$/.test(gameId)) {
-        console.info("Discord reservation notification skipped: missing or invalid Player ID.");
-        return { sent: 0, reason: "missing_player_id" };
-    }
+    if (!/^[0-9]{4,20}$/.test(gameId)) return { sent: 0, reason: "missing_player_id" };
 
     const playerQuery = new URLSearchParams({
         select: "game_id,nickname,alliance",
@@ -229,116 +226,111 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
         limit: "1",
     });
     const playerResponse = await fetch(SUPABASE_URL + "/rest/v1/troops_power?" + playerQuery, {
-        headers: {
-            apikey: SUPABASE_SERVICE_ROLE_KEY,
-            Authorization: "Bearer " + SUPABASE_SERVICE_ROLE_KEY,
-        },
+        headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: "Bearer " + SUPABASE_SERVICE_ROLE_KEY },
     });
     if (!playerResponse.ok) {
         console.error("Discord notification: failed to verify Player ID in troops_power:", playerResponse.status);
         return { sent: 0, reason: "player_lookup_failed" };
     }
-
     const players = await playerResponse.json();
     const player = Array.isArray(players) ? players[0] : null;
-    if (!player || String(player.game_id ?? "").trim() !== gameId) {
-        console.info("Discord reservation notification skipped: Player ID not found in troops_power.");
-        return { sent: 0, reason: "player_not_found" };
-    }
+    if (!player || String(player.game_id ?? "").trim() !== gameId) return { sent: 0, reason: "player_not_found" };
 
     const alliance = String(player.alliance ?? "").trim().toUpperCase();
-    if (!/^[a-z0-9_-]{1,100}$/i.test(alliance)) {
-        console.info("Discord reservation notification skipped: missing or invalid alliance.", { gameId });
-        return { sent: 0, reason: "missing_or_invalid_alliance" };
-    }
+    if (!/^[A-Z0-9_-]{1,100}$/.test(alliance)) return { sent: 0, reason: "missing_or_invalid_alliance" };
 
-    // Route by configured Discord SERVER name (guild_name), then use its
-    // saved announcement_channel_id. The alliance name is not a channel name.
+    // Preserve President-managed guild destinations and add self-service channel subscriptions.
     const settingsQuery = new URLSearchParams({
         select: "guild_id,guild_name,announcement_channel_id,announcements_enabled",
         order: "created_at.asc",
     });
-    const settingsResponse = await fetch(SUPABASE_URL + "/rest/v1/discord_guild_settings?" + settingsQuery, {
-        headers: {
-            apikey: SUPABASE_SERVICE_ROLE_KEY,
-            Authorization: "Bearer " + SUPABASE_SERVICE_ROLE_KEY,
-        },
+    const subscriptionsQuery = new URLSearchParams({
+        select: "guild_id,channel_id,alliance",
+        alliance: "eq." + alliance,
     });
+    const [settingsResponse, subscriptionsResponse] = await Promise.all([
+        fetch(SUPABASE_URL + "/rest/v1/discord_guild_settings?" + settingsQuery, {
+            headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: "Bearer " + SUPABASE_SERVICE_ROLE_KEY },
+        }),
+        fetch(SUPABASE_URL + "/rest/v1/discord_reservation_subscriptions?" + subscriptionsQuery, {
+            headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: "Bearer " + SUPABASE_SERVICE_ROLE_KEY },
+        }),
+    ]);
     if (!settingsResponse.ok) {
-        console.error("Discord reservation notification: failed to load configured guilds:", settingsResponse.status);
+        console.error("Discord notification: failed to load configured guilds:", settingsResponse.status);
         return { sent: 0, reason: "guild_settings_failed", alliance };
+    }
+    if (!subscriptionsResponse.ok) {
+        console.error("Discord notification: failed to load channel subscriptions:", subscriptionsResponse.status);
+        return { sent: 0, reason: "subscription_lookup_failed", alliance };
     }
 
     const configuredGuilds = await settingsResponse.json();
-    const matchingGuilds = Array.isArray(configuredGuilds)
-        ? configuredGuilds.filter((guild: any) =>
-            String(guild?.guild_name ?? "").trim().toUpperCase() === alliance &&
-            guild?.announcements_enabled !== false &&
-            /^\d{17,20}$/.test(String(guild?.announcement_channel_id ?? "").trim())
-        )
-        : [];
+    const subscriptions = await subscriptionsResponse.json();
+    const destinations = new Map<string, { guild_id: string; channel_id: string }>();
 
-    if (!matchingGuilds.length) {
-        console.info("Discord reservation notification skipped: no enabled server configured for alliance.", {
-            alliance,
-        });
-        return { sent: 0, reason: "no_matching_configured_server", alliance };
+    if (Array.isArray(configuredGuilds)) {
+        for (const guild of configuredGuilds) {
+            const channelId = String(guild?.announcement_channel_id ?? "").trim();
+            if (String(guild?.guild_name ?? "").trim().toUpperCase() === alliance &&
+                guild?.announcements_enabled !== false && /^[0-9]{17,20}$/.test(channelId)) {
+                destinations.set(channelId, { guild_id: String(guild.guild_id), channel_id: channelId });
+            }
+        }
+    }
+    if (Array.isArray(subscriptions)) {
+        for (const subscription of subscriptions) {
+            const guildId = String(subscription?.guild_id ?? "").trim();
+            const channelId = String(subscription?.channel_id ?? "").trim();
+            if (String(subscription?.alliance ?? "").toUpperCase() === alliance &&
+                /^[0-9]{17,20}$/.test(guildId) && /^[0-9]{17,20}$/.test(channelId)) {
+                destinations.set(channelId, { guild_id: guildId, channel_id: channelId });
+            }
+        }
     }
 
-    let sent = 0;
-    let attempted = 0;
-    for (const guild of matchingGuilds) {
-        const channelId = String(guild.announcement_channel_id).trim();
-        const playerName = String(player.nickname ?? record.nickname ?? "Player").trim() || "Player";
-        const timeSlot = String(record.time_slot ?? "").trim();
-        const status = String(record.status ?? "Updated").trim();
-        const embed = {
-            title: notification.title,
-            description: notification.body,
-            color: 0x5865F2,
-            fields: [
-                { name: "Player", value: playerName.slice(0, 256), inline: true },
-                { name: "Player ID", value: gameId, inline: true },
-                { name: "Alliance", value: alliance, inline: true },
-                ...(timeSlot ? [{ name: "Reservation Slot", value: timeSlot + " UTC", inline: true }] : []),
-                { name: "Status", value: status.slice(0, 256), inline: true },
-            ],
-            footer: { text: "State of 3475 • Reservation Portal" },
-            timestamp: new Date().toISOString(),
-        };
+    if (!destinations.size) return { sent: 0, reason: "no_matching_configured_channel", alliance };
 
-        attempted++;
+    const playerName = String(player.nickname ?? record.nickname ?? "Player").trim() || "Player";
+    const timeSlot = String(record.time_slot ?? "").trim();
+    const status = String(record.status ?? "Updated").trim();
+    const embed = {
+        title: notification.title,
+        description: notification.body,
+        color: 0x5865F2,
+        fields: [
+            { name: "Player", value: playerName.slice(0, 256), inline: true },
+            { name: "Player ID", value: gameId, inline: true },
+            { name: "Alliance", value: alliance, inline: true },
+            ...(timeSlot ? [{ name: "Reservation Slot", value: timeSlot + " UTC", inline: true }] : []),
+            { name: "Status", value: status.slice(0, 256), inline: true },
+        ],
+        footer: { text: "State of 3475 • Reservation Portal" },
+        timestamp: new Date().toISOString(),
+    };
+
+    let sent = 0;
+    for (const destination of destinations.values()) {
         try {
-            const sendResponse = await fetch(DISCORD_API + "/channels/" + channelId + "/messages", {
+            const sendResponse = await fetch(DISCORD_API + "/channels/" + destination.channel_id + "/messages", {
                 method: "POST",
-                headers: {
-                    Authorization: "Bot " + DISCORD_BOT_TOKEN,
-                    "Content-Type": "application/json",
-                },
+                headers: { Authorization: "Bot " + DISCORD_BOT_TOKEN, "Content-Type": "application/json" },
                 body: JSON.stringify({ embeds: [embed], allowed_mentions: { parse: [] } }),
             });
             if (!sendResponse.ok) {
                 const detail = await sendResponse.text().catch(() => "");
-                console.error("Discord alliance reservation notification failed:", {
-                    guild_id: guild.guild_id,
-                    guild_name: guild.guild_name,
-                    channel_id: channelId,
-                    status: sendResponse.status,
-                    detail: detail.slice(0, 300),
+                console.error("Discord reservation notification failed:", {
+                    guild_id: destination.guild_id, channel_id: destination.channel_id,
+                    status: sendResponse.status, detail: detail.slice(0, 300),
                 });
                 continue;
             }
             sent++;
         } catch (error) {
-            console.error("Discord alliance reservation notification failed for configured server:", guild.guild_id, error);
+            console.error("Discord reservation notification failed:", destination.guild_id, error);
         }
     }
-
-    return {
-        sent,
-        reason: sent ? "sent" : (attempted ? "discord_send_failed" : "no_matching_configured_server"),
-        alliance,
-    };
+    return { sent, reason: sent ? "sent" : "discord_send_failed", alliance };
 }
 
 Deno.serve(async (req: Request) => {

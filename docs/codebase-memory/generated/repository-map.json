@@ -198,9 +198,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 105,
+    "file_count": 106,
     "digest_algorithm": "sha256",
-    "content_digest": "d7f52f8b819cee7723c16b35ac3d30014c19dbe95e1b227705de8cfb36420a25",
+    "content_digest": "3f1b37fa968b13cf908284dd208f376b345deb5da510d0755d6dd9b995bda317",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -268,11 +268,11 @@
       },
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
-        "sha256": "2ee02147d1c585120ee23a4e7da4e31e525847cc430682a1e73a169bd2d925f9"
+        "sha256": "ea5a9cfd290655ec8fa73de0f48b0636671ff01a54e79d3c19ae954473101600"
       },
       {
         "path": "docs/DISCORD_MULTI_SERVER_ANNOUNCEMENTS.md",
-        "sha256": "4694386f6d0b42a7990d69669a8eaabf88a1675b7918c40f00aca62faae6ff22"
+        "sha256": "25cfa857eb947308fa7fa6080134066e4b560685e509ea1370dd6aecf5dcfbd5"
       },
       {
         "path": "docs/SOURCE_PROTECTION_MONITOR.md",
@@ -308,7 +308,7 @@
       },
       {
         "path": "docs/codebase-memory/features/redeem-and-extras.md",
-        "sha256": "e007f4b85ac9d0f8c391509d0ed7b654efe34c33ab79d90dfb7d54c7582ccd06"
+        "sha256": "6c41161d4e13d4e7760e24f500318b33f9ffac47b531d6829c15ff96cdc685e5"
       },
       {
         "path": "docs/codebase-memory/features/reservation.md",
@@ -420,7 +420,7 @@
       },
       {
         "path": "scripts/register-discord-commands.mjs",
-        "sha256": "780a2835918bf11d16366072a852389a398ba186ff3cb19a7a80a3082eec7d6f"
+        "sha256": "92a6eae5a1282ddfd2ed774a86ca0ec9ebe769ab49481a91b81b1afe70fc3944"
       },
       {
         "path": "scripts/source_protection_monitor.py",
@@ -444,7 +444,7 @@
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
-        "sha256": "9075516809ae79633215c3a51d612a77de009caf86db1db01efddc90220e11ab"
+        "sha256": "abe2b3ac28798badf6c50691c97ff7aa56fbe50d918f184a92d6580ebebe1202"
       },
       {
         "path": "supabase/functions/discord-message-poller/index.ts",
@@ -464,7 +464,7 @@
       },
       {
         "path": "supabase/functions/send-push-notification/index.ts",
-        "sha256": "547b2795a55cfe5dd86d70560cfe85df6a04c336e05677b45ac7ae7c1da6cf9a"
+        "sha256": "e59bf6d86abbf933948a3f0f92f2eca52dd5b96d1ad9c51629fc2ab15bda140c"
       },
       {
         "path": "supabase/functions/wosatlas-states/index.ts",
@@ -481,6 +481,10 @@
       {
         "path": "supabase/migrations/20261116020000_discord_message_cleanup_queue.sql",
         "sha256": "452245bbea8c44e1756fb78c73def90621246f92e22dd24d31973f70fad3136c"
+      },
+      {
+        "path": "supabase/migrations/20261123000000_discord_reservation_subscriptions.sql",
+        "sha256": "535e99146aeb4cb119ca73b048e5e2a3384e3cf3320a491ae3caeb83fa21de5f"
       },
       {
         "path": "supabase_migration_additional_time_slots.sql",
