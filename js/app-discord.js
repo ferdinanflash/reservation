@@ -36,6 +36,9 @@
         $("discord-announcement-title").value = "";
         $("discord-announcement-message").value = "";
         $("discord-mention-everyone").checked = false;
+        $("discord-send-all").checked = false;
+        $("discord-announcement-guild").disabled = false;
+        $("discord-mention-everyone").disabled = false;
         loadGuilds();
     }
 
@@ -192,6 +195,7 @@
         };
         updateMentionPermission();
         select.onchange = updateMentionPermission;
+        updateAnnouncementSendAll();
     }
 
     async function loadHistory(guildId) {
@@ -254,15 +258,27 @@
         }
     }
 
+    function updateAnnouncementSendAll() {
+        const sendAll = $("discord-send-all")?.checked === true;
+        const select = $("discord-announcement-guild");
+        const mention = $("discord-mention-everyone");
+        if (select) select.disabled = sendAll;
+        if (mention) {
+            mention.disabled = sendAll || select?.disabled === false && !guilds.find((g) => g.guild_id === select.value.split(":")[0])?.allow_everyone;
+            if (sendAll) mention.checked = false;
+        }
+    }
+
     async function sendDiscordAnnouncement() {
         if (!isAdmin) return;
-        const destination = $("discord-announcement-guild").value.split(":");
+        const sendToAll = $("discord-send-all")?.checked === true;
+        const destination = ($("discord-announcement-guild").value || "").split(":");
         const guildId = destination[0] || "";
         const channelId = destination[1] || "";
         const title = $("discord-announcement-title").value.trim();
         const message = $("discord-announcement-message").value.trim();
         const mentionEveryone = $("discord-mention-everyone").checked;
-        if (!guildId || !channelId || !message) {
+        if ((!sendToAll && (!guildId || !channelId)) || !message) {
             showToast(t("discord_announcement_required"), "warning");
             return;
         }
@@ -271,18 +287,24 @@
         try {
             const client = getSupabase();
             const { data, error } = await client.functions.invoke("discord-announcement", {
-                body: { guild_id: guildId, channel_id: channelId, title, message, mention_everyone: mentionEveryone }
+                body: { send_to_all: sendToAll, guild_id: guildId, channel_id: channelId, title, message, mention_everyone: mentionEveryone }
             });
             if (error) {
                 let detail = "";
                 try { detail = (await error.context?.clone?.().json())?.error || ""; } catch (_) {}
                 throw new Error(detail || error.message || "Send failed");
             }
-            showToast(t("discord_announcement_sent"), "success");
+            if (sendToAll) {
+                const sent = Number(data?.sent_count || 0);
+                const failed = Number(data?.failed_count || 0);
+                showToast(`Announcement sent to ${sent} subscribed channel(s)${failed ? `; ${failed} failed` : ""}.`, failed ? "warning" : "success");
+            } else {
+                showToast(t("discord_announcement_sent"), "success");
+            }
             closeModal("discord-composer-modal");
         } catch (error) {
             console.error("Discord announcement failed:", error);
-            showToast(error.message === "president_only" ? t("discord_president_only") : t("discord_announcement_failed"), "error");
+            showToast(error.message === "president_only" ? t("discord_president_only") : error.message || t("discord_announcement_failed"), "error");
         } finally {
             setButtonBusy(button, false);
         }
@@ -301,5 +323,6 @@
     window.saveDiscordGuild = saveGuild;
     window.updateNewReservationNotifications = updateNewReservationNotifications;
     window.sendDiscordAnnouncement = sendDiscordAnnouncement;
+    window.updateAnnouncementSendAll = updateAnnouncementSendAll;
     window.resetDiscordGuildForm = resetGuildForm;
 })();
