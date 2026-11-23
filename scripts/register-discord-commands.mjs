@@ -93,7 +93,9 @@ const subscriptionCommands = ["subscribe", "unsubscribe"].map((name) => ({
   ],
 }));
 
-const helpCommand = { name: "help", description: "Show bot usage and all available commands" };\n\nconst endpoint = guildId
+const helpCommand = { name: "help", description: "Show bot usage and all available commands" };
+
+const endpoint = guildId
   ? `https://discord.com/api/v10/applications/${applicationId}/guilds/${guildId}/commands`
   : `https://discord.com/api/v10/applications/${applicationId}/commands`;
 
