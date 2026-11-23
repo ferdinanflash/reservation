@@ -5,7 +5,7 @@
   "source_files": 27,
   "function_count": 457,
   "import_count": 5,
-  "call_edge_count": 1292,
+  "call_edge_count": 1293,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -7781,6 +7781,13 @@
       "from": "supabase/functions/discord-interactions/index.ts#processClear",
       "to": "supabase/functions/discord-interactions/index.ts#deleteBotAuthoredMessages",
       "kind": "call",
+      "line": 556,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processClear",
+      "to": "supabase/functions/discord-interactions/index.ts#discordBotFetch",
+      "kind": "call",
       "line": 552,
       "confidence": "static-name-match"
     },
@@ -7795,14 +7802,14 @@
       "from": "supabase/functions/discord-interactions/index.ts#processClear",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 553,
+      "line": 557,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-interactions/index.ts#processClear",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
-      "line": 560,
+      "line": 564,
       "confidence": "static-name-match"
     },
     {
@@ -12470,5 +12477,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "e5eb28e7de2fa45bde0c6abfe5c083b62796170b0d941c6b3df4f198d263d56d"
+  "source_digest": "1a40164af5a1bcbdb91064fffe5b6e41e72e3277947bf73532d559b8c1c4f579"
 }
