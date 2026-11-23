@@ -565,7 +565,7 @@ async function processClear(interaction: any) {
     const channelId = String(interaction?.channel_id ?? "");
     const applicationId = String(interaction?.application_id ?? "");
     if (!interaction?.guild_id || !/^\d{17,20}$/.test(channelId) || !/^\d{17,20}$/.test(applicationId)) {
-        await editOriginal(interaction.application_id, interaction.token, "❌ /clear hanya dapat digunakan di channel server Discord.");
+        await editOriginal(interaction.application_id, interaction.token, "❌ /clear can only be used in a Discord server channel.");
         return;
     }
 
@@ -578,14 +578,14 @@ async function processClear(interaction: any) {
         await editOriginal(
             interaction.application_id,
             interaction.token,
-            `✅ **Clear selesai.** Menghapus **${result.deleted}** pesan milik bot di channel ini. Total pesan yang diperiksa: ${result.scanned}.`,
+            `✅ **Clear completed.** Deleted **${result.deleted}** bot message(s) in this channel. Total messages checked: ${result.scanned}.`,
         );
     } catch (error) {
         console.error("Discord /clear failed:", error instanceof Error ? error.message : String(error));
         await editOriginal(
             interaction.application_id,
             interaction.token,
-            "⚠️ /clear tidak dapat menyelesaikan seluruh penghapusan. Periksa izin **Manage Messages** bot dan **Read Message History**, lalu coba lagi. Pesan yang sudah terhapus tidak akan dipulihkan.",
+            "⚠️ /clear could not complete the deletion. Check that the bot has **Manage Messages** and **Read Message History** permissions, then try again. Messages already deleted cannot be restored.",
         );
     }
 }
