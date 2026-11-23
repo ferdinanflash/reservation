@@ -9,6 +9,7 @@
 (() => {
     const $ = (id) => document.getElementById(id);
     let guilds = [];
+    let subscriptions = [];
 
     function api(action, extra = {}) {
         const client = getSupabase();
@@ -41,15 +42,20 @@
         const list = $("discord-guild-list");
         if (!list) return;
         list.innerHTML = `<p class="redeem-hint">${t("discord_loading_servers")}</p>`;
+        const subscriptionList = $("discord-subscription-list");
+        if (subscriptionList) subscriptionList.innerHTML = `<p class="redeem-hint">Loading subscriptions…</p>`;
         try {
             const { data, error } = await api("list");
             if (error) throw error;
             guilds = Array.isArray(data?.guilds) ? data.guilds : [];
+            subscriptions = Array.isArray(data?.subscriptions) ? data.subscriptions : [];
             renderGuildList();
+            renderSubscriptionList();
             renderGuildSelect();
         } catch (error) {
             console.error("Unable to load Discord guild settings:", error);
             list.innerHTML = `<p class="redeem-hint">${t("discord_load_failed")}</p>`;
+            if (subscriptionList) subscriptionList.innerHTML = `<p class="redeem-hint">Unable to load subscriptions.</p>`;
         }
     }
 
@@ -101,6 +107,26 @@
         list.querySelectorAll(".discord-history-btn").forEach((btn) => btn.addEventListener("click", () => loadHistory(btn.dataset.guild)));
     }
 
+    function renderSubscriptionList() {
+        const list = $("discord-subscription-list");
+        const count = $("discord-subscription-count");
+        if (!list) return;
+        if (count) count.textContent = String(subscriptions.length);
+        if (!subscriptions.length) {
+            list.innerHTML = `<p class="redeem-hint">No active Reservation subscriptions yet. Use /subscribe in a Discord channel to add one.</p>`;
+            return;
+        }
+        list.innerHTML = subscriptions.map((item) => `
+            <article class="discord-subscription-card">
+                <div class="discord-subscription-main">
+                    <strong><span aria-hidden="true">🛡️</span> ${escapeHtml(item.guild_name || item.guild_id)}</strong>
+                    <span class="discord-subscription-channel"># ${escapeHtml(item.channel_name || item.channel_id)}</span>
+                    <small>Server ID: ${escapeHtml(item.guild_id)} · Channel ID: ${escapeHtml(item.channel_id)}</small>
+                    <small>Subscribed ${item.created_at ? new Date(item.created_at).toLocaleString() : ""}</small>
+                </div>
+                <span class="discord-subscription-alliance">${escapeHtml(item.alliance)}</span>
+            </article>`).join("");
+    }
     function renderGuildSelect() {
         const select = $("discord-announcement-guild");
         if (!select) return;
