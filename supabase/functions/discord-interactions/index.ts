@@ -687,14 +687,14 @@ Deno.serve(async (req) => {
     }
 
     if (interaction.type === 1) return json({ type: 1 });
-    if (interaction.type !== 2 || !["redeem", "clear", "subscribe", "unsubscribe"].includes(String(interaction.data?.name ?? ""))) {
+    if (interaction.type !== 2 || !["redeem", "clear", "subscribe", "unsubscribe", "help"].includes(String(interaction.data?.name ?? ""))) {
         return json(publicMessage("Unknown command."));
     }
     if (!interaction.application_id || !interaction.token) {
         return json(publicMessage("❌ Incomplete Discord interaction."));
     }
 
-    if (interaction.data.name === "clear") {
+    if (interaction.data.name === "help") {\n        return json({ type: 4, data: { content: helpMessage(), flags: 64, allowed_mentions: { parse: [] } } });\n    }\n\n    if (interaction.data.name === "clear") {
         if (!hasManageMessagesPermission(interaction)) {
             return json({ type: 4, data: { content: "❌ You need **Manage Messages** permission to use /clear.", flags: 64 } });
         }
