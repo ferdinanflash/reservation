@@ -1,6 +1,6 @@
 # 3475 Discord Bot — Redeem integration
 
-This integration adds public `/redeem single` and `/redeem alliance` commands plus an administrator-only `/clear` command to the existing 3475 Supabase project. The two redeem commands reuse the existing `redeem-giftcode` Edge Function and Century Games redemption flow used by the website.
+This integration adds public `/redeem single` and `/redeem alliance`, an administrator-only `/clear`, and Manage Channels-gated `/subscribe` and `/unsubscribe` commands to the existing 3475 Supabase project. The two redeem commands reuse the existing `redeem-giftcode` Edge Function and Century Games redemption flow used by the website.
 
 ## Public response policy
 
@@ -15,6 +15,21 @@ Every outcome is public in the channel where the command is used: success, inval
 ```
 
 Only members with Discord **Manage Messages** permission can run this command. It scans the full history of the channel where it is invoked and deletes messages authored by this 3475 bot/application only. Messages written by members, other bots, and messages in other channels are untouched. The bot itself needs **View Channel**, **Read Message History**, and **Manage Messages** in the target channel. Messages younger than 14 days are bulk-deleted when possible; older messages are deleted individually because Discord does not permit bulk deletion of messages older than 14 days. The confirmation is ephemeral and will not remain in the channel.
+
+
+### Reservation notification subscriptions
+
+```
+/subscribe alliance:<ARX|IDN|ZXC|VNX|CAT>
+/unsubscribe alliance:<ARX|IDN|ZXC|VNX|CAT>
+```
+
+Run either command in the text or announcement channel that should receive Reservation notifications. Only a server Administrator or member with **Manage Channels** permission can manage subscriptions. The bot must have **View Channel**, **Send Messages**, and **Embed Links** in the selected channel. Each subscription is scoped to the exact Discord server, channel, and alliance; the same alliance can be subscribed in multiple channels and servers. Repeating `/subscribe` does not create duplicates. `/unsubscribe` removes only the selected alliance subscription from the current channel.
+
+The webhook continues to verify the reservation's Player ID against `public.troops_power` and routes notifications using the player's current alliance. Self-service subscriptions are stored separately from President-managed `discord_guild_settings`. Existing President-configured destinations remain active, and duplicate channel destinations are deduplicated.
+
+Apply `supabase/migrations/20261123000000_discord_reservation_subscriptions.sql` once in Supabase SQL Editor before deploying. Then deploy the updated `discord-interactions` and `send-push-notification` Edge Functions and register the slash commands.
+
 
 
 ### One player
@@ -102,7 +117,7 @@ For quicker testing, optionally set `DISCORD_GUILD_ID` to your server ID. Otherw
 
 For a mobile-friendly setup, add a repository Actions secret named `DISCORD_BOT_TOKEN` containing the bot token. Never paste it into a commit, issue, or chat. Optionally add a repository Actions variable named `DISCORD_GUILD_ID` containing your Discord server ID for immediate server-only registration.
 
-Then open **GitHub → Actions → Register 3475 Discord Commands → Run workflow**. The workflow registers `/redeem single`, `/redeem alliance`, and `/clear`.
+Then open **GitHub → Actions → Register 3475 Discord Commands → Run workflow**. The workflow registers `/redeem single`, `/redeem alliance`, `/clear`, `/subscribe`, and `/unsubscribe`.
 
 If `DISCORD_GUILD_ID` is omitted, commands are registered globally and may take longer to appear.
 
