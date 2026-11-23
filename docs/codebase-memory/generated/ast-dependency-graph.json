@@ -2,8 +2,8 @@
   "schema_version": 1,
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
-  "source_files": 27,
-  "function_count": 466,
+  "source_files": 28,
+  "function_count": 467,
   "import_count": 5,
   "call_edge_count": 1319,
   "edges": [
@@ -11642,6 +11642,13 @@
       "kind": "function"
     },
     {
+      "id": "js/home-scrollcraft.js#init",
+      "name": "init",
+      "file": "js/home-scrollcraft.js",
+      "line": 5,
+      "kind": "function-expression"
+    },
+    {
       "id": "lang.js#applyStaticTranslations",
       "name": "applyStaticTranslations",
       "file": "lang.js",
@@ -12722,5 +12729,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "d3cafc0f8f8c0e3edd52cdd90ad9dd15dc30097fab2d6778edf71db066ead31d"
+  "source_digest": "de1bf21cd812b9edaa3025e3ca9fef214dfefb37db69b706b0a604425f37721f"
 }

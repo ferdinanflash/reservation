@@ -29,6 +29,7 @@
     "js/app-svs-enemies.js",
     "js/app-svs-record.js",
     "fire-banner.js",
+    "js/home-scrollcraft.js",
     "opening-animation.js"
   ],
   "feature_maps": [
@@ -62,7 +63,8 @@
     "js/app-schedule.js",
     "js/app-svs-enemies.js",
     "js/app-svs-record.js",
-    "js/app-waiting.js"
+    "js/app-waiting.js",
+    "js/home-scrollcraft.js"
   ],
   "edge_functions": [
     "supabase/functions/discord-announcement/index.ts",
@@ -198,9 +200,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 107,
+    "file_count": 108,
     "digest_algorithm": "sha256",
-    "content_digest": "927c9ffbb3269a7d4ebb8729319a036a1b82387b6dfcc9fe2fad0cdc28cd6d9a",
+    "content_digest": "b3dd1ccb62b618e39316ec4ad8340d2662cbd5268e080159d9d52c52e376754a",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -352,7 +354,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "4d85d3a910b70867428fce48fbcf9743479a7cdb7e59726ddc8864c2c3ffb262"
+        "sha256": "21a9bca97ccd7057fade5111672bd61c42c2fa6949af0288d2addf2608929ed0"
       },
       {
         "path": "js/app-applications.js",
@@ -403,6 +405,10 @@
         "sha256": "9f78b45b38a887f4a39498e1de96963828fe84c153f92f2628a896a9389a9aad"
       },
       {
+        "path": "js/home-scrollcraft.js",
+        "sha256": "991c08dd67d6cee9f09c1076fc97ebbd0dff80d65faf63abfe375a9e997ccba9"
+      },
+      {
         "path": "lang.js",
         "sha256": "d2e41e8df2446bce4a3b4a5e67e67335699c632a6f87543c8ad3adeee9f284a6"
       },
@@ -432,7 +438,7 @@
       },
       {
         "path": "style.css",
-        "sha256": "2dbd0f922a28af6e7ae7945d01acee39079fd918e42154ade90a9572f72a35ff"
+        "sha256": "142730ad4640bac68ac1ef3e91fc8b4b61df8ad05be61f7ee3f01973e889f7cd"
       },
       {
         "path": "supabase/functions/discord-announcement/index.ts",
