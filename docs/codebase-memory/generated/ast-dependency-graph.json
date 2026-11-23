@@ -3,9 +3,9 @@
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
   "source_files": 27,
-  "function_count": 464,
+  "function_count": 465,
   "import_count": 5,
-  "call_edge_count": 1312,
+  "call_edge_count": 1310,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -2601,35 +2601,35 @@
       "from": "js/app-discord.js#loadHistory",
       "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 180,
+      "line": 198,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#loadHistory",
       "to": "js/app-discord.js#api",
       "kind": "call",
-      "line": 185,
+      "line": 203,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#loadHistory",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 183,
+      "line": 201,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#loadHistory",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 193,
+      "line": 211,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#loadHistory",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 196,
+      "line": 214,
       "confidence": "static-name-match"
     },
     {
@@ -2718,30 +2718,9 @@
     },
     {
       "from": "js/app-discord.js#renderGuildSelect",
-      "to": "js/app-discord.js#$",
+      "to": "js/app-discord.js#updateMentionPermission",
       "kind": "call",
-      "line": 170,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#renderGuildSelect",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 171,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#renderGuildSelect",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 171,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#renderGuildSelect",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 165,
+      "line": 193,
       "confidence": "static-name-match"
     },
     {
@@ -2762,105 +2741,70 @@
       "from": "js/app-discord.js#resetGuildForm",
       "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 272,
+      "line": 292,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#resetGuildForm",
       "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 273,
+      "line": 293,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#resetGuildForm",
       "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 274,
+      "line": 294,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#resetGuildForm",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 274,
+      "line": 294,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#saveGuild",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 214,
+      "line": 232,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#saveGuild",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 235,
+      "line": 253,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#saveGuild",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 210,
+      "line": 228,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#saveGuild",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 227,
+      "line": 245,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#saveGuild",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 233,
+      "line": 251,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#saveGuild",
       "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 203,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 204,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 205,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 206,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 207,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 213,
+      "line": 221,
       "confidence": "static-name-match"
     },
     {
@@ -2881,63 +2825,63 @@
       "from": "js/app-discord.js#saveGuild",
       "to": "js/app-discord.js#$",
       "kind": "call",
+      "line": 224,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#saveGuild",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
       "line": 225,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#saveGuild",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 231,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#saveGuild",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 240,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#saveGuild",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 241,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#saveGuild",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 243,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#saveGuild",
       "to": "js/app-discord.js#api",
       "kind": "call",
-      "line": 216,
+      "line": 234,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#saveGuild",
       "to": "js/app-discord.js#loadGuilds",
       "kind": "call",
-      "line": 226,
+      "line": 244,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#saveGuild",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 210,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 214,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 224,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 227,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 230,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#saveGuild",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 231,
+      "line": 228,
       "confidence": "static-name-match"
     },
     {
@@ -2948,122 +2892,164 @@
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "common.js#getSupabase",
+      "from": "js/app-discord.js#saveGuild",
+      "to": "lang.js#t",
       "kind": "call",
-      "line": 252,
+      "line": 242,
       "confidence": "static-name-match"
     },
     {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-core.js#setButtonBusy",
+      "from": "js/app-discord.js#saveGuild",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 245,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#saveGuild",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 248,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#saveGuild",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 249,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#saveGuild",
+      "to": "lang.js#t",
       "kind": "call",
       "line": 250,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "common.js#getSupabase",
+      "kind": "call",
+      "line": 272,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 267,
+      "line": 270,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "js/app-core.js#setButtonBusy",
+      "kind": "call",
+      "line": 287,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 246,
+      "line": 266,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 261,
+      "line": 281,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 265,
+      "line": 285,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 241,
+      "line": 259,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 242,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 243,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 244,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 249,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#closeModal",
       "kind": "call",
       "line": 262,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "lang.js#t",
+      "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 246,
+      "line": 263,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 264,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 269,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "js/app-discord.js#closeModal",
+      "kind": "call",
+      "line": 282,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 250,
+      "line": 266,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 261,
+      "line": 270,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 265,
+      "line": 281,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 265,
+      "line": 285,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 285,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#updateMentionPermission",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 188,
       "confidence": "static-name-match"
     },
     {
@@ -10154,7 +10140,7 @@
       "id": "js/app-discord.js#loadHistory",
       "name": "loadHistory",
       "file": "js/app-discord.js",
-      "line": 179,
+      "line": 197,
       "kind": "function"
     },
     {
@@ -10196,22 +10182,29 @@
       "id": "js/app-discord.js#resetGuildForm",
       "name": "resetGuildForm",
       "file": "js/app-discord.js",
-      "line": 271,
+      "line": 291,
       "kind": "function"
     },
     {
       "id": "js/app-discord.js#saveGuild",
       "name": "saveGuild",
       "file": "js/app-discord.js",
-      "line": 200,
+      "line": 218,
       "kind": "function"
     },
     {
       "id": "js/app-discord.js#sendDiscordAnnouncement",
       "name": "sendDiscordAnnouncement",
       "file": "js/app-discord.js",
-      "line": 239,
+      "line": 257,
       "kind": "function"
+    },
+    {
+      "id": "js/app-discord.js#updateMentionPermission",
+      "name": "updateMentionPermission",
+      "file": "js/app-discord.js",
+      "line": 186,
+      "kind": "function-expression"
     },
     {
       "id": "js/app-discord.js#updateNewReservationNotifications",
@@ -12487,7 +12480,7 @@
       "kind": "edge-function",
       "value": "discord-announcement",
       "function": "js/app-discord.js#sendDiscordAnnouncement",
-      "line": 253
+      "line": 273
     },
     {
       "kind": "edge-function",
@@ -12659,5 +12652,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "6559b24434dac845f4176a501dbd68d6cdb6372755b7c8e581af32e8dce13441"
+  "source_digest": "1728255864d37f7bc49cced031f9d519cd520d880f11a6f204b3a49141c566e2"
 }
