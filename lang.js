@@ -57,6 +57,8 @@
             whatsnew_date: "Last Update: 8 Nov 2026",
             whatsnew_badge_new: "New",
             whatsnew_badge_fix: "Fix",
+            whatsnew_24_title: "Discord Bot Help & Reservation Subscriptions",
+            whatsnew_24_desc: "Added /help with an English guide to every bot command. Server administrators can subscribe channels to alliance-specific Reservation notifications with /subscribe and /unsubscribe. The President Panel now shows subscribed servers, channels, and alliances. Notifications are routed by the player's current alliance, including changes to an already Accepted reservation time. Reservation messages are not auto-deleted after 8 hours.",
             whatsnew_8_title: "Added New ASCII Styles & Redesign UI on WoS Tool",
             whatsnew_8_desc: "Many Improvement on Battle Events, Foundry Battle still in Beta Test for upcoming TAL",
             whatsnew_3_title: "Russian & French",
