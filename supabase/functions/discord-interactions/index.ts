@@ -455,7 +455,7 @@ async function discordBotFetch(path: string, init: RequestInit = {}): Promise<Re
     throw new Error("Discord rate limit persisted after repeated retries");
 }
 
-async function deleteBotAuthoredMessages(channelId: string, botId: string) {
+async function deleteBotAuthoredMessages(channelId: string, botIds: string[]) {
     const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
     let before = "";
     let scanned = 0;
@@ -480,7 +480,7 @@ async function deleteBotAuthoredMessages(channelId: string, botId: string) {
         before = oldestId;
 
         const owned = messages.filter((message: any) =>
-            String(message?.author?.id ?? "") === botId
+            botIds.includes(String(message?.author?.id ?? ""))
         );
         const recent: string[] = [];
         const old: string[] = [];
@@ -542,14 +542,18 @@ async function deleteBotAuthoredMessages(channelId: string, botId: string) {
 
 async function processClear(interaction: any) {
     const channelId = String(interaction?.channel_id ?? "");
-    const botId = String(interaction?.application_id ?? "");
-    if (!interaction?.guild_id || !/^\\d{17,20}$/.test(channelId) || !/^\\d{17,20}$/.test(botId)) {
+    const applicationId = String(interaction?.application_id ?? "");
+    if (!interaction?.guild_id || !/^\d{17,20}$/.test(channelId) || !/^\d{17,20}$/.test(applicationId)) {
         await editOriginal(interaction.application_id, interaction.token, "❌ /clear hanya dapat digunakan di channel server Discord.");
         return;
     }
 
     try {
-        const result = await deleteBotAuthoredMessages(channelId, botId);
+        const botResponse = await discordBotFetch("/users/@me");
+        if (!botResponse.ok) throw new Error(`Unable to identify bot account (HTTP ${botResponse.status})`);
+        const botUser = await botResponse.json();
+        const botIds = [...new Set([applicationId, String(botUser?.id ?? "")].filter(Boolean))];
+        const result = await deleteBotAuthoredMessages(channelId, botIds);
         await editOriginal(
             interaction.application_id,
             interaction.token,
