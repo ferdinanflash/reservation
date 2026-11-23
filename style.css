@@ -9383,3 +9383,69 @@ body.christmas-theme {
     }
     .home-sc-reveal { opacity: 1 !important; }
 }
+
+
+/* ==================== PRESIDENT GUILD NAME — DISTINCT IDENTITY ====================
+   Give the alliance name its own cool-metallic treatment, separate from
+   the President name's existing fire-text styling. */
+.site-footer .footer-section .guild-name.fire-text {
+    display: inline-block;
+    max-width: 100%;
+    padding: 2px 8px 4px;
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    font-size: 1.12rem;
+    font-weight: 900;
+    letter-spacing: .13em;
+    line-height: 1.35;
+    background-image: linear-gradient(
+        105deg,
+        #62eaff 0%,
+        #d9fbff 22%,
+        #4ab8e8 42%,
+        #ffffff 50%,
+        #4ab8e8 58%,
+        #d9fbff 78%,
+        #62eaff 100%
+    );
+    background-size: 240% 100%;
+    background-position: 0% center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 4px rgba(40, 205, 255, .42))
+            drop-shadow(0 0 12px rgba(20, 145, 220, .28));
+    animation: guildNameAurora 5.5s ease-in-out infinite,
+               guildNameGlow 3.2s ease-in-out infinite;
+}
+
+@keyframes guildNameAurora {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+}
+
+@keyframes guildNameGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 4px rgba(40, 205, 255, .35))
+                drop-shadow(0 0 10px rgba(20, 145, 220, .2));
+        transform: translateY(0);
+    }
+    50% {
+        filter: drop-shadow(0 0 7px rgba(95, 230, 255, .7))
+                drop-shadow(0 0 17px rgba(20, 170, 240, .38));
+        transform: translateY(-1px);
+    }
+}
+
+@media (max-width: 600px) {
+    .site-footer .footer-section .guild-name.fire-text {
+        font-size: 1rem;
+        letter-spacing: .09em;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-footer .footer-section .guild-name.fire-text {
+        animation: none !important;
+        background-position: 50% center;
+    }
+}
