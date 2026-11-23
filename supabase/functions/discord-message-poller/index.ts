@@ -264,9 +264,26 @@ async function loadAllianceMembers(alliance: string): Promise<Member[]> {
   return members.slice(0, MAX_MEMBERS);
 }
 
+function retryDelayMs(retryAfter: string | null, attempt: number): number {
+  if (retryAfter) {
+    const seconds = Number(retryAfter);
+    const retryAt = Number.isFinite(seconds)
+      ? Date.now() + Math.max(0, seconds) * 1000
+      : Date.parse(retryAfter);
+    if (Number.isFinite(retryAt)) {
+      // Respect Discord/upstream Retry-After, but cap one wait to avoid
+      // keeping a Cron invocation alive indefinitely.
+      return Math.min(15_000, Math.max(500, retryAt - Date.now()));
+    }
+  }
+  return attempt === 0 ? 1500 : 3000;
+}
+
 async function redeemOne(fid: string, code: string): Promise<Outcome["kind"]> {
   const anonKey = env("SUPABASE_ANON_KEY");
-  for (let attempt = 0; attempt <= 2; attempt++) {
+  const maxAttempts = 3;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
     let response: Response;
     try {
       response = await fetch(`${supabaseUrl()}/functions/v1/redeem-giftcode`, {
@@ -277,36 +294,69 @@ async function redeemOne(fid: string, code: string): Promise<Outcome["kind"]> {
           Authorization: `Bearer ${anonKey}`,
         },
         body: JSON.stringify({ action: "redeem", fid, cdk: code }),
+        signal: AbortSignal.timeout(20_000),
       });
-    } catch {
+    } catch (error) {
+      // Network failures and request timeouts are transient. A retry may
+      // report "Already claimed" if the upstream redeemed before the
+      // connection failed; that is a safe, understood final outcome.
+      if (attempt < maxAttempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs(null, attempt)));
+        continue;
+      }
+      return error instanceof Error && error.name === "TimeoutError" ? "timeout" : "error";
+    }
+
+    if (response.status === 429 || response.status >= 500) {
+      const retryAfter = response.headers.get("Retry-After");
+      if (attempt < maxAttempts - 1) {
+        await response.text().catch(() => "");
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs(retryAfter, attempt)));
+        continue;
+      }
+      return response.status === 429 ? "limit" : "error";
+    }
+
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      // Non-retryable 4xx responses (for example, configuration/auth errors)
+      // are recorded for this player, but do not stop the alliance batch.
       return "error";
     }
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) return "error";
-    let data = result?.data && typeof result.data === "object" ? result.data : {};
+    if (!result || typeof result !== "object") {
+      if (attempt < maxAttempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs(null, attempt)));
+        continue;
+      }
+      return "error";
+    }
+
+    let data = result.data && typeof result.data === "object" ? result.data : {};
     // Some upstream responses wrap the actual result one level deeper.
-    // Upstream payloads may contain a `data` array (often empty).
+    // Upstream payloads may contain a data array (often empty).
     // Only unwrap an object payload; never mistake that array for the result envelope.
     if (data.data && typeof data.data === "object" && !Array.isArray(data.data)) data = data.data;
-    const message = String(data.msg ?? data.message ?? result?.error ?? "").trim().toUpperCase().replace(/[.]+$/, "");
+    const message = String(data.msg ?? data.message ?? result.error ?? "").trim().toUpperCase().replace(/[.]+$/, "");
     const errCode = Number(data.err_code);
-    if (result?.ok === true && message === "SUCCESS") return "success";
+
+    if (result.ok === true && message === "SUCCESS") return "success";
     if (errCode === 40011 || message === "RECEIVED" || message === "SAME TYPE EXCHANGE") return "already";
     if (message.startsWith("CDK NOT FOUND") || message === "NOT FOUND") return "invalid";
     // Century Games identifies expired/not-yet-valid codes with err_code 40007.
     if (errCode === 40007 || message.startsWith("TIME ERROR")) return "expired";
     if (message === "USAGE LIMIT" || message === "USED") return "limit";
-    if (message.startsWith("TIMEOUT")) {
-      if (attempt < 2) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        continue;
-      }
-      return "timeout";
-    }
     if (message.startsWith("USER INFO ERROR")) return "bad_fid";
-    return "error";
+
+    // TIMEOUT and unknown/transient upstream responses are retried. If all
+    // attempts fail, the caller records the player as failed and continues.
+    if (attempt < maxAttempts - 1) {
+      await new Promise((resolve) => setTimeout(resolve, retryDelayMs(null, attempt)));
+      continue;
+    }
+    return message.startsWith("TIMEOUT") ? "timeout" : "error";
   }
-  return "timeout";
+
+  return "error";
 }
 
 function resultLabel(kind: string) {
@@ -350,7 +400,10 @@ async function processCommand(channelId: string, allianceInput: string, code: st
     const kind = await redeemOne(member.fid, code);
     results.push({ fid: member.fid, nickname: member.nickname, kind });
 
-    if (kind === "invalid" || kind === "expired" || kind === "timeout" || kind === "error") {
+    // Only a confirmed invalid/expired gift code is batch-wide: retrying
+    // the same code for every remaining player cannot succeed. Player-level
+    // failures, timeouts after retries, and usage limits must not stop others.
+    if (kind === "invalid" || kind === "expired") {
       const skipped = members.slice(i + 1);
       for (const item of skipped) {
         results.push({
