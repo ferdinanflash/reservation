@@ -139,7 +139,20 @@ function buildNotification(record: any, oldRecord: any) {
         };
     }
 
-    // 2) Accepted with a slot different from the original submission.
+    // 2) Accepted -> Accepted with a changed slot.
+    if (
+        (status === "accepted" || status === "approved") &&
+        (oldStatus === "accepted" || oldStatus === "approved") &&
+        oldTime && newTime && oldTime !== newTime
+    ) {
+        const reasonLine = moveReason ? ` Reason: ${moveReason}` : "";
+        return {
+            title: `🕒 ${player} — Accepted Reservation Time Changed`,
+            body: `Your accepted reservation time has been changed.\\nPrevious slot: ${oldTime} UTC.\\nNew confirmed slot: ${newTime} UTC.${reasonLine}`
+        };
+    }
+
+    // 3) Accepted with a slot different from the original submission.
     if (
         (status === "accepted" || status === "approved") &&
         newTime && originalTime && newTime !== originalTime
@@ -375,12 +388,17 @@ Deno.serve(async (req: Request) => {
         WAITING_STATUSES.includes(newStatus) &&
         WAITING_STATUSES.includes(oldStatus) &&
         timeChanged;
+    const acceptedTimeMoved =
+        (newStatus === "accepted" || newStatus === "approved") &&
+        (oldStatus === "accepted" || oldStatus === "approved") &&
+        timeChanged;
 
-    // Notify on final status changes OR a slot move while still Waiting.
+    // Notify on final status changes OR slot moves while Waiting or Accepted.
     // This intentionally does not notify unrelated field edits.
     const shouldNotify = isInsert ||
         (statusChanged && FINAL_STATUSES.includes(newStatus)) ||
-        waitingTimeMoved;
+        waitingTimeMoved ||
+        acceptedTimeMoved;
 
     if (!shouldNotify) {
         return new Response("Ignored (no notifiable reservation change)", { status: 200 });
