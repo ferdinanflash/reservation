@@ -3,9 +3,9 @@
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
   "source_files": 27,
-  "function_count": 462,
+  "function_count": 463,
   "import_count": 5,
-  "call_edge_count": 1305,
+  "call_edge_count": 1307,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -8374,91 +8374,91 @@
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#displayPlayerName",
       "kind": "call",
-      "line": 120,
+      "line": 131,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#extractReason",
       "kind": "call",
-      "line": 125,
+      "line": 136,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#extractReason",
       "kind": "call",
-      "line": 127,
+      "line": 138,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#getLatestLogEntry",
       "kind": "call",
-      "line": 124,
+      "line": 135,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#getLatestLogEntry",
       "kind": "call",
-      "line": 126,
+      "line": 137,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#getOriginalTimeSlot",
       "kind": "call",
-      "line": 123,
+      "line": 134,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#getOriginalTimeSlot",
       "kind": "call",
-      "line": 123,
+      "line": 134,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#normalizeStatus",
       "kind": "call",
-      "line": 118,
+      "line": 129,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#normalizeStatus",
       "kind": "call",
-      "line": 119,
+      "line": 130,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "to": "supabase/functions/send-push-notification/index.ts#statusText",
       "kind": "call",
-      "line": 188,
+      "line": 199,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#extractReason",
       "to": "supabase/functions/send-push-notification/index.ts#cleanDetail",
       "kind": "call",
-      "line": 110,
+      "line": 121,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#extractReason",
       "to": "supabase/functions/send-push-notification/index.ts#cleanDetail",
       "kind": "call",
-      "line": 112,
+      "line": 123,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/send-push-notification/index.ts#getLatestLogEntry",
       "to": "supabase/functions/send-push-notification/index.ts#getTimeLog",
       "kind": "call",
-      "line": 100,
+      "line": 111,
       "confidence": "static-name-match"
     },
     {
@@ -8466,6 +8466,20 @@
       "to": "supabase/functions/send-push-notification/index.ts#getTimeLog",
       "kind": "call",
       "line": 83,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/send-push-notification/index.ts#sendAllianceDiscordNotification",
+      "to": "supabase/functions/send-push-notification/index.ts#getPositionDay",
+      "kind": "call",
+      "line": 329,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/send-push-notification/index.ts#sendAllianceDiscordNotification",
+      "to": "supabase/functions/send-push-notification/index.ts#getPositionDay",
+      "kind": "call",
+      "line": 329,
       "confidence": "static-name-match"
     },
     {
@@ -12135,21 +12149,21 @@
       "id": "supabase/functions/send-push-notification/index.ts#buildNotification",
       "name": "buildNotification",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 117,
+      "line": 128,
       "kind": "function"
     },
     {
       "id": "supabase/functions/send-push-notification/index.ts#cleanDetail",
       "name": "cleanDetail",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 94,
+      "line": 105,
       "kind": "function"
     },
     {
       "id": "supabase/functions/send-push-notification/index.ts#deleteStaleSubscriptions",
       "name": "deleteStaleSubscriptions",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 211,
+      "line": 222,
       "kind": "function"
     },
     {
@@ -12163,21 +12177,21 @@
       "id": "supabase/functions/send-push-notification/index.ts#extractReason",
       "name": "extractReason",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 108,
+      "line": 119,
       "kind": "function"
     },
     {
       "id": "supabase/functions/send-push-notification/index.ts#fetchSubscriptions",
       "name": "fetchSubscriptions",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 192,
+      "line": 203,
       "kind": "function"
     },
     {
       "id": "supabase/functions/send-push-notification/index.ts#getLatestLogEntry",
       "name": "getLatestLogEntry",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 98,
+      "line": 109,
       "kind": "function"
     },
     {
@@ -12185,6 +12199,13 @@
       "name": "getOriginalTimeSlot",
       "file": "supabase/functions/send-push-notification/index.ts",
       "line": 82,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/send-push-notification/index.ts#getPositionDay",
+      "name": "getPositionDay",
+      "file": "supabase/functions/send-push-notification/index.ts",
+      "line": 94,
       "kind": "function"
     },
     {
@@ -12205,7 +12226,7 @@
       "id": "supabase/functions/send-push-notification/index.ts#sendAllianceDiscordNotification",
       "name": "sendAllianceDiscordNotification",
       "file": "supabase/functions/send-push-notification/index.ts",
-      "line": 227,
+      "line": 238,
       "kind": "function"
     },
     {
@@ -12596,5 +12617,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "e682540bf5b24124962df9879c75e6c7d2febcd017410dff130046fb495f0d7a"
+  "source_digest": "79a5fbcc39aae0d6d7619ddc39e906e8116f879e4b86ee86426525dec19195d9"
 }
