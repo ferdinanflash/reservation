@@ -7634,105 +7634,105 @@
       "from": "lang.js#applyStaticTranslations",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 4298,
+      "line": 4300,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "js/app-applications.js#openDetailsModal",
       "kind": "call",
-      "line": 4379,
+      "line": 4381,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "js/app-applications.js#openWaitingModal",
       "kind": "call",
-      "line": 4356,
+      "line": 4358,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "js/app-core.js#resetAdminUI",
       "kind": "call",
-      "line": 4334,
+      "line": 4336,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "js/app-core.js#updateAdminUI",
       "kind": "call",
-      "line": 4333,
+      "line": 4335,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "js/app-core.js#updateReservationButtonUI",
       "kind": "call",
-      "line": 4339,
+      "line": 4341,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "js/app-extras.js#loadRecentAccepts",
       "kind": "call",
-      "line": 4384,
+      "line": 4386,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "js/app-notes.js#openHowToUseModal",
       "kind": "call",
-      "line": 4371,
+      "line": 4373,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "js/app-schedule.js#renderTimeSlots",
       "kind": "call",
-      "line": 4349,
+      "line": 4351,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "js/app-waiting.js#openReassignModal",
       "kind": "call",
-      "line": 4363,
+      "line": 4365,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#refreshDynamicUI",
       "to": "lang.js#translatePositionName",
       "kind": "call",
-      "line": 4347,
+      "line": 4349,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#setLanguage",
       "to": "lang.js#applyStaticTranslations",
       "kind": "call",
-      "line": 4392,
+      "line": 4394,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#setLanguage",
       "to": "lang.js#closeLangDropdown",
       "kind": "call",
-      "line": 4394,
+      "line": 4396,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#setLanguage",
       "to": "lang.js#refreshDynamicUI",
       "kind": "call",
-      "line": 4393,
+      "line": 4395,
       "confidence": "static-name-match"
     },
     {
       "from": "lang.js#toggleLanguage",
       "to": "lang.js#setLanguage",
       "kind": "call",
-      "line": 4400,
+      "line": 4402,
       "confidence": "static-name-match"
     },
     {
@@ -11533,70 +11533,70 @@
       "id": "lang.js#applyStaticTranslations",
       "name": "applyStaticTranslations",
       "file": "lang.js",
-      "line": 4296,
+      "line": 4298,
       "kind": "function"
     },
     {
       "id": "lang.js#closeLangDropdown",
       "name": "closeLangDropdown",
       "file": "lang.js",
-      "line": 4413,
+      "line": 4415,
       "kind": "function"
     },
     {
       "id": "lang.js#getLang",
       "name": "getLang",
       "file": "lang.js",
-      "line": 4294,
+      "line": 4296,
       "kind": "function"
     },
     {
       "id": "lang.js#refreshDynamicUI",
       "name": "refreshDynamicUI",
       "file": "lang.js",
-      "line": 4330,
+      "line": 4332,
       "kind": "function"
     },
     {
       "id": "lang.js#setLanguage",
       "name": "setLanguage",
       "file": "lang.js",
-      "line": 4388,
+      "line": 4390,
       "kind": "function"
     },
     {
       "id": "lang.js#t",
       "name": "t",
       "file": "lang.js",
-      "line": 4270,
+      "line": 4272,
       "kind": "function"
     },
     {
       "id": "lang.js#toggleLangDropdown",
       "name": "toggleLangDropdown",
       "file": "lang.js",
-      "line": 4404,
+      "line": 4406,
       "kind": "function"
     },
     {
       "id": "lang.js#toggleLanguage",
       "name": "toggleLanguage",
       "file": "lang.js",
-      "line": 4397,
+      "line": 4399,
       "kind": "function"
     },
     {
       "id": "lang.js#translatePositionName",
       "name": "translatePositionName",
       "file": "lang.js",
-      "line": 4282,
+      "line": 4284,
       "kind": "function"
     },
     {
       "id": "lang.js#translatePositionShort",
       "name": "translatePositionShort",
       "file": "lang.js",
-      "line": 4288,
+      "line": 4290,
       "kind": "function"
     },
     {
@@ -12809,5 +12809,5 @@
       "message": "Unexpected keyword or identifier."
     }
   ],
-  "source_digest": "53f9c49698fea2f2b6496ea0812daea9b4dc5bd1b0ff5e47d8962a20a7cc4ca1"
+  "source_digest": "f829d87bf2c2c123e08b47a4de97143918698c7c29834cb47118c8f387aeb499"
 }

@@ -200,7 +200,7 @@
     "generator_version": 1,
     "file_count": 106,
     "digest_algorithm": "sha256",
-    "content_digest": "3989eeed800ad5110389af414ffe68ac2f73bd4f5c02d164d27784fc57a62c60",
+    "content_digest": "f08a3b5a14c57bd3bbdfda136c4c7f83352d31ed068fb9c84e915d01a923b71a",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -352,7 +352,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "c488cb9e6f5d94188b3aaf520bf0b3d721e6cecbe1848c46d67620c33ab0b069"
+        "sha256": "bac5e4151777489650ab3d6181fe9e54e474a63b40a6b52d8bdb6d9b0a57da1b"
       },
       {
         "path": "js/app-applications.js",
@@ -404,7 +404,7 @@
       },
       {
         "path": "lang.js",
-        "sha256": "42d61203abcdb2472c58fe41fa0cd9f69fa3719570efe99d21bc129d3d0bae5f"
+        "sha256": "d2e41e8df2446bce4a3b4a5e67e67335699c632a6f87543c8ad3adeee9f284a6"
       },
       {
         "path": "live/index.html",
