@@ -198,9 +198,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 106,
+    "file_count": 107,
     "digest_algorithm": "sha256",
-    "content_digest": "8004608c3d3e5a47daad58af1e2342d1dad0609969bfe4976be57dfcb6148da9",
+    "content_digest": "5fbf4e272e5996e8d0d3b59d42880244459d73d5f41b0b8687783593d81d3573",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -352,7 +352,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "bac5e4151777489650ab3d6181fe9e54e474a63b40a6b52d8bdb6d9b0a57da1b"
+        "sha256": "cc8cde5910333650ff0e904bff90da9ac7a63fab329111505ee7d7510a9a17f9"
       },
       {
         "path": "js/app-applications.js",
@@ -372,7 +372,7 @@
       },
       {
         "path": "js/app-discord.js",
-        "sha256": "f661a08145e0ef737f1efceb83f686cee747fd9e2100d65b56df5d6f529aed52"
+        "sha256": "e0d6db6bd6651965443a2c520c03b6999b9d65073538a303cdcb18af7557c61b"
       },
       {
         "path": "js/app-extras.js",
@@ -440,7 +440,7 @@
       },
       {
         "path": "supabase/functions/discord-guild-settings/index.ts",
-        "sha256": "cef9c0294da57ba3b23176707a0f3e8a0600250c24f639c6c5e347ed02b1fc3e"
+        "sha256": "2cc85c33a42ff87b5c24eb60702babf5628c9cfe955f9760169221c5e11e39d1"
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
@@ -464,7 +464,7 @@
       },
       {
         "path": "supabase/functions/send-push-notification/index.ts",
-        "sha256": "237ab283cf27e366da0e12ee6906181ac07b3e6e2f8c1142caf168bd5cbdbefe"
+        "sha256": "14acdc0ef11527df1c2417f59b3d0bb04d988ff40c8a79df6a560e5fa9ddf414"
       },
       {
         "path": "supabase/functions/wosatlas-states/index.ts",
@@ -485,6 +485,10 @@
       {
         "path": "supabase/migrations/20261123000000_discord_reservation_subscriptions.sql",
         "sha256": "535e99146aeb4cb119ca73b048e5e2a3384e3cf3320a491ae3caeb83fa21de5f"
+      },
+      {
+        "path": "supabase/migrations/20261123010000_discord_global_new_reservation_notifications.sql",
+        "sha256": "ee8e33742e0c78579553cb33f1ecde2fb5d5889710ddb7b66a7337dae2247761"
       },
       {
         "path": "supabase_migration_additional_time_slots.sql",
