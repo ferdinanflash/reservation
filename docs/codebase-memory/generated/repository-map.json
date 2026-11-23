@@ -202,7 +202,7 @@
     "generator_version": 1,
     "file_count": 108,
     "digest_algorithm": "sha256",
-    "content_digest": "0345f78d288570b6bdc4469caa0c7602bda2fd581f0a0e525bd73a360d6a8d12",
+    "content_digest": "9b645ed2e4ce3e8f4c85713fe68bb637d55e15a967e42f0d5cedcadd8f22009c",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -354,7 +354,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "21a9bca97ccd7057fade5111672bd61c42c2fa6949af0288d2addf2608929ed0"
+        "sha256": "ef43e831e70f730522f1f1d1f3ebe8bfb49e15194e3513e4ae91b5cec8535cbd"
       },
       {
         "path": "js/app-applications.js",
@@ -390,7 +390,7 @@
       },
       {
         "path": "js/app-schedule.js",
-        "sha256": "9126339697ce027f6ee42fa18fb85d60120367f040e49b7e1ce654071eeed04d"
+        "sha256": "32ec1bc48b38e7b4c90f513382a2e0fa8227105fe4a9600295b658ea0f399878"
       },
       {
         "path": "js/app-svs-enemies.js",
@@ -438,7 +438,7 @@
       },
       {
         "path": "style.css",
-        "sha256": "142730ad4640bac68ac1ef3e91fc8b4b61df8ad05be61f7ee3f01973e889f7cd"
+        "sha256": "b798fe0dd7f5458fbc9706fddc2599fc2bdf28d2a08c05bea1f1fbc469b79705"
       },
       {
         "path": "supabase/functions/discord-announcement/index.ts",
