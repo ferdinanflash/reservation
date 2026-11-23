@@ -200,7 +200,7 @@
     "generator_version": 1,
     "file_count": 107,
     "digest_algorithm": "sha256",
-    "content_digest": "a9ddef84d837e3d65c22969f4611b00f6108deb75aed7cad5bc3e40730ad07a3",
+    "content_digest": "23a2344ba34acd53564051a641eaf154e4b08b626331a8ba468c4e3c522a07e3",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -372,7 +372,7 @@
       },
       {
         "path": "js/app-discord.js",
-        "sha256": "d19405e93f9884187e4de5eeebb193d6e2997f68fa2f3191ea23885153b3e50d"
+        "sha256": "9f63a9810feca0fb0fb7705737235509616b147d3dc6187489e5edbb518f6d8c"
       },
       {
         "path": "js/app-extras.js",
@@ -436,7 +436,7 @@
       },
       {
         "path": "supabase/functions/discord-announcement/index.ts",
-        "sha256": "4b879ae606c2c6e6cd069e269e9ae74177705592f20eea02c72910f093b82752"
+        "sha256": "8b0c8f4880142481980352492e607c00fbe2fd39fdbf332bfb0c0c614c7a14e4"
       },
       {
         "path": "supabase/functions/discord-guild-settings/index.ts",
