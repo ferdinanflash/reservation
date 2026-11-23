@@ -4875,7 +4875,7 @@
     // Discord multi-server administration and announcement UI.
     const discordTranslations = {
         en: {
-            discord_manage_servers: "🤖 Discord Servers", discord_send_announcement: "📣 Discord Announcement",
+            discord_manage_servers: "Discord Servers", discord_send_announcement: "Discord Announcement",
             discord_setup_hint: "Add each Discord server separately. Copy the Server ID and announcement channel ID from Discord Developer Mode. The bot must already be in the server and able to view the channel.",
             discord_no_servers: "No Discord servers configured yet.", discord_add_edit_server: "Add / Edit Server",
             discord_server_name: "Server Name", discord_server_id: "Discord Server ID", discord_channel_id: "Announcement Channel ID",
@@ -4893,7 +4893,7 @@
             discord_president_only: "President access is required."
         },
         id: {
-            discord_manage_servers: "🤖 Server Discord", discord_send_announcement: "📣 Pengumuman Discord",
+            discord_manage_servers: "Server Discord", discord_send_announcement: "Pengumuman Discord",
             discord_setup_hint: "Tambahkan setiap server Discord secara terpisah. Salin Server ID dan ID channel pengumuman melalui Developer Mode Discord. Bot harus sudah bergabung dan dapat melihat channel tersebut.",
             discord_no_servers: "Belum ada server Discord yang dikonfigurasi.", discord_add_edit_server: "Tambah / Edit Server",
             discord_server_name: "Nama Server", discord_server_id: "ID Server Discord", discord_channel_id: "ID Channel Pengumuman",
@@ -4911,7 +4911,7 @@
             discord_president_only: "Akses President diperlukan."
         },
         cn: {
-            discord_manage_servers: "🤖 Discord 服务器", discord_send_announcement: "📣 Discord 公告",
+            discord_manage_servers: "Discord 服务器", discord_send_announcement: "Discord 公告",
             discord_setup_hint: "分别添加每个 Discord 服务器。请在 Discord 开发者模式中复制服务器 ID 和公告频道 ID。机器人必须已加入服务器并能查看该频道。",
             discord_no_servers: "尚未配置 Discord 服务器。", discord_add_edit_server: "添加 / 编辑服务器",
             discord_server_name: "服务器名称", discord_server_id: "Discord 服务器 ID", discord_channel_id: "公告频道 ID",
@@ -4929,7 +4929,7 @@
             discord_president_only: "需要 President 权限。"
         },
         ph: {
-            discord_manage_servers: "🤖 Mga Discord Server", discord_send_announcement: "📣 Discord Announcement",
+            discord_manage_servers: "Mga Discord Server", discord_send_announcement: "Discord Announcement",
             discord_setup_hint: "Idagdag ang bawat Discord server nang hiwalay. Kopyahin ang Server ID at announcement channel ID gamit ang Developer Mode. Dapat kasali na ang bot at may pahintulot na makita ang channel.",
             discord_no_servers: "Wala pang naka-configure na Discord server.", discord_add_edit_server: "Magdagdag / Mag-edit ng Server",
             discord_server_name: "Pangalan ng Server", discord_server_id: "Discord Server ID", discord_channel_id: "Announcement Channel ID",
@@ -4947,7 +4947,7 @@
             discord_president_only: "Kailangan ang President access."
         },
         th: {
-            discord_manage_servers: "🤖 เซิร์ฟเวอร์ Discord", discord_send_announcement: "📣 ประกาศ Discord",
+            discord_manage_servers: "เซิร์ฟเวอร์ Discord", discord_send_announcement: "ประกาศ Discord",
             discord_setup_hint: "เพิ่มเซิร์ฟเวอร์ Discord แยกกันแต่ละเซิร์ฟเวอร์ คัดลอก Server ID และ Channel ID จาก Developer Mode ของ Discord บอทต้องเข้าร่วมเซิร์ฟเวอร์และมีสิทธิ์ดูช่องแล้ว",
             discord_no_servers: "ยังไม่ได้ตั้งค่าเซิร์ฟเวอร์ Discord", discord_add_edit_server: "เพิ่ม / แก้ไขเซิร์ฟเวอร์",
             discord_server_name: "ชื่อเซิร์ฟเวอร์", discord_server_id: "Discord Server ID", discord_channel_id: "Announcement Channel ID",
@@ -4965,7 +4965,7 @@
             discord_president_only: "ต้องใช้สิทธิ์ President"
         },
         it: {
-            discord_manage_servers: "🤖 Server Discord", discord_send_announcement: "📣 Annuncio Discord",
+            discord_manage_servers: "Server Discord", discord_send_announcement: "Annuncio Discord",
             discord_setup_hint: "Aggiungi ogni server Discord separatamente. Copia l'ID del server e del canale annunci dalla Modalità sviluppatore di Discord. Il bot deve già essere nel server e poter visualizzare il canale.",
             discord_no_servers: "Nessun server Discord configurato.", discord_add_edit_server: "Aggiungi / Modifica server",
             discord_server_name: "Nome server", discord_server_id: "ID server Discord", discord_channel_id: "ID canale annunci",
@@ -4983,7 +4983,7 @@
             discord_president_only: "È richiesto l'accesso President."
         },
         ru: {
-            discord_manage_servers: "🤖 Серверы Discord", discord_send_announcement: "📣 Объявление Discord",
+            discord_manage_servers: "Серверы Discord", discord_send_announcement: "Объявление Discord",
             discord_setup_hint: "Добавляйте каждый сервер Discord отдельно. Скопируйте ID сервера и канала объявлений в режиме разработчика Discord. Бот уже должен состоять на сервере и иметь доступ к каналу.",
             discord_no_servers: "Серверы Discord ещё не настроены.", discord_add_edit_server: "Добавить / изменить сервер",
             discord_server_name: "Название сервера", discord_server_id: "ID сервера Discord", discord_channel_id: "ID канала объявлений",
@@ -5001,7 +5001,7 @@
             discord_president_only: "Требуется доступ President."
         },
         fr: {
-            discord_manage_servers: "🤖 Serveurs Discord", discord_send_announcement: "📣 Annonce Discord",
+            discord_manage_servers: "Serveurs Discord", discord_send_announcement: "Annonce Discord",
             discord_setup_hint: "Ajoutez chaque serveur Discord séparément. Copiez l’ID du serveur et du salon d’annonce via le mode développeur Discord. Le bot doit déjà être présent sur le serveur et pouvoir voir le salon.",
             discord_no_servers: "Aucun serveur Discord configuré.", discord_add_edit_server: "Ajouter / modifier un serveur",
             discord_server_name: "Nom du serveur", discord_server_id: "ID du serveur Discord", discord_channel_id: "ID du salon d’annonce",
