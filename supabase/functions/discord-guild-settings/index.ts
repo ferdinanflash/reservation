@@ -59,8 +59,30 @@ Deno.serve(async (req) => {
   const action = String(input?.action ?? "");
   try {
     if (action === "list") {
-      const rows = await db("discord_guild_settings?select=guild_id,guild_name,announcement_channel_id,announcements_enabled,allow_everyone,updated_at&order=created_at.desc");
-      return reply({ guilds: rows ?? [] });
+      const [rows, subscriptionRows] = await Promise.all([
+        db("discord_guild_settings?select=guild_id,guild_name,announcement_channel_id,announcements_enabled,allow_everyone,updated_at&order=created_at.desc"),
+        db("discord_reservation_subscriptions?select=id,guild_id,channel_id,channel_name,alliance,subscribed_by,created_at,updated_at&order=created_at.desc"),
+      ]);
+      const guilds = Array.isArray(rows) ? rows : [];
+      const subscriptions = Array.isArray(subscriptionRows) ? subscriptionRows : [];
+      const knownNames = new Map(guilds.map((guild: any) => [String(guild.guild_id), String(guild.guild_name ?? "")]));
+      const unknownGuildIds = [...new Set(subscriptions
+        .map((item: any) => String(item.guild_id ?? ""))
+        .filter((id: string) => id && !knownNames.has(id)))];
+      await Promise.all(unknownGuildIds.map(async (guildId) => {
+        try {
+          const guild = await discord(`/guilds/${guildId}?with_counts=false`);
+          knownNames.set(guildId, String(guild?.name ?? ""));
+        } catch (error) {
+          console.warn("Unable to resolve subscribed Discord server name:", guildId, error);
+        }
+      }));
+      const enrichedSubscriptions = subscriptions.map((item: any) => ({
+        ...item,
+        guild_name: knownNames.get(String(item.guild_id)) || String(item.guild_id),
+        channel_name: String(item.channel_name ?? "").trim() || String(item.channel_id),
+      }));
+      return reply({ guilds, subscriptions: enrichedSubscriptions });
     }
     if (action === "save") {
       const guildId = String(input?.guild_id ?? "").trim();
