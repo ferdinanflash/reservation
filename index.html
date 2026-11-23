@@ -22,7 +22,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-23-02';
+			var APP_BUILD = '2026-11-23-03';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -1299,6 +1299,12 @@
 				<button type="button" class="close-modal" onclick="closeDiscordSettingsModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
 				<h2 id="discord-settings-title" class="modal-title" data-i18n="discord_manage_servers">🤖 Discord Servers</h2>
 				<p class="theme-switcher-hint" data-i18n="discord_setup_hint">Add each Discord server separately. Copy the Server ID and announcement channel ID from Discord Developer Mode. The bot must already be in the server and able to view the channel.</p>
+				<section class="discord-subscriptions-section discord-global-notification-setting" aria-labelledby="discord-global-notification-title">
+					<h3 id="discord-global-notification-title" class="discord-form-title">🔔 Global Reservation Notifications</h3>
+					<p class="theme-switcher-hint">Control the <strong>New Reservation Request</strong> notification across every configured Discord server and every channel subscribed with /subscribe. Other reservation notifications are not affected.</p>
+					<label class="discord-toggle-row"><input id="discord-new-reservation-toggle" type="checkbox" checked onchange="updateNewReservationNotifications()"><span><strong>New Reservation Request</strong> — Send to all Discord channels</span></label>
+				</section>
+				<div class="discord-form-divider"></div>
 				<div id="discord-guild-list" class="discord-guild-list"></div>
 				<div class="discord-form-divider"></div>
 				<section class="discord-subscriptions-section" aria-labelledby="discord-subscriptions-title">
