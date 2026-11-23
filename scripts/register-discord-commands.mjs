@@ -4,7 +4,7 @@
  * Copyright (c) 2026 Ferdinan | https://3475.web.id
  * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
  *
- * Register the 3475 /redeem and /clear slash commands.
+ * Register the 3475 /redeem, /clear, /subscribe and /unsubscribe slash commands.
  * Required: DISCORD_BOT_TOKEN
  * Optional: DISCORD_APPLICATION_ID, DISCORD_GUILD_ID
  */
@@ -76,6 +76,23 @@ const clearCommand = {
   default_member_permissions: "8192",
 };
 
+const subscriptionCommands = ["subscribe", "unsubscribe"].map((name) => ({
+  name,
+  description: name === "subscribe"
+    ? "Subscribe this channel to Reservation notifications for an alliance"
+    : "Unsubscribe this channel from an alliance's Reservation notifications",
+  default_member_permissions: "16",
+  options: [
+    {
+      type: 3,
+      name: "alliance",
+      description: "Choose the alliance",
+      required: true,
+      choices: ["ARX", "IDN", "ZXC", "VNX", "CAT"].map((code) => ({ name: code, value: code })),
+    },
+  ],
+}));
+
 const endpoint = guildId
   ? `https://discord.com/api/v10/applications/${applicationId}/guilds/${guildId}/commands`
   : `https://discord.com/api/v10/applications/${applicationId}/commands`;
@@ -86,7 +103,7 @@ const response = await fetch(endpoint, {
     Authorization: `Bot ${token}`,
     "Content-Type": "application/json",
   },
-  body: JSON.stringify([command, clearCommand]),
+  body: JSON.stringify([command, clearCommand, ...subscriptionCommands]),
 });
 
 const body = await response.json().catch(() => ({}));
@@ -94,5 +111,5 @@ if (!response.ok) {
   console.error("Discord command registration failed:", response.status, body);
   process.exit(1);
 }
-console.log(`Registered /redeem (single/alliance) and /clear for application ${applicationId}.`);
+console.log(`Registered /redeem (single/alliance), /clear, /subscribe and /unsubscribe for application ${applicationId}.`);
 console.log(guildId ? `Guild scope: ${guildId}` : "Global scope: command propagation can take some time.");
