@@ -22,7 +22,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-23-04';
+			var APP_BUILD = '2026-11-23-05';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -179,7 +179,7 @@
 		<script src="lang.js?v=74" defer=""></script>
 					<script src="js/app-core.js?v=57" defer=""></script>
 					<script src="js/app-auth.js?v=56" defer=""></script>
-					<script src="js/app-discord.js?v=4" defer=""></script>
+					<script src="js/app-discord.js?v=5" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
 					<script src="js/app-schedule.js?v=58" defer=""></script>
 					<script src="js/app-applications.js?v=57" defer=""></script>
@@ -1341,7 +1341,9 @@
 				<button type="button" class="close-modal" onclick="closeDiscordComposerModal()" aria-label="Close" data-i18n-aria-label="btn_close">&times;</button>
 				<h2 id="discord-composer-title" class="modal-title" data-i18n="discord_send_announcement">📣 Discord Announcement</h2>
 				<p class="theme-switcher-hint">Send an announcement directly to a channel subscribed with /subscribe. Only active subscribed channels are listed here.</p>
+				<label class="discord-toggle-row"><input id="discord-send-all" type="checkbox" onchange="updateAnnouncementSendAll()"><span>🌐 Send to All Discord (all subscribed channels across every server)</span></label>
 				<div class="form-group"><label for="discord-announcement-guild">Target subscribed channel</label><select id="discord-announcement-guild" required><option value="">Select a subscribed channel</option></select></div>
+				<p class="redeem-hint">When enabled, the announcement is sent to every active /subscribe channel in all connected Discord servers.</p>
 				<div class="form-group"><label for="discord-announcement-title" data-i18n="discord_announcement_title">Title (optional)</label><input id="discord-announcement-title" maxlength="100" placeholder="Announcement title" data-i18n-placeholder="discord_placeholder_title"></div>
 				<div class="form-group"><label for="discord-announcement-message" data-i18n="discord_announcement_message">Message</label><textarea id="discord-announcement-message" maxlength="1800" rows="5" required placeholder="Write your Discord announcement…" data-i18n-placeholder="discord_placeholder_message"></textarea></div>
 				<label class="discord-toggle-row discord-everyone-toggle"><input id="discord-mention-everyone" type="checkbox"><span data-i18n="discord_mention_everyone">Mention @everyone</span></label>
