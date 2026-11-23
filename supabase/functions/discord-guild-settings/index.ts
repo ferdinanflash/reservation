@@ -59,9 +59,10 @@ Deno.serve(async (req) => {
   const action = String(input?.action ?? "");
   try {
     if (action === "list") {
-      const [rows, subscriptionRows] = await Promise.all([
+      const [rows, subscriptionRows, notificationSettings] = await Promise.all([
         db("discord_guild_settings?select=guild_id,guild_name,announcement_channel_id,announcements_enabled,allow_everyone,updated_at&order=created_at.desc"),
         db("discord_reservation_subscriptions?select=id,guild_id,channel_id,channel_name,alliance,subscribed_by,created_at,updated_at&order=created_at.desc"),
+        db("discord_notification_settings?select=enabled&setting_key=eq.new_reservation_request&limit=1"),
       ]);
       const guilds = Array.isArray(rows) ? rows : [];
       const subscriptions = Array.isArray(subscriptionRows) ? subscriptionRows : [];
@@ -82,7 +83,24 @@ Deno.serve(async (req) => {
         guild_name: knownNames.get(String(item.guild_id)) || String(item.guild_id),
         channel_name: String(item.channel_name ?? "").trim() || String(item.channel_id),
       }));
-      return reply({ guilds, subscriptions: enrichedSubscriptions });
+      const newReservationNotificationsEnabled = Array.isArray(notificationSettings)
+        ? notificationSettings[0]?.enabled !== false
+        : true;
+      return reply({ guilds, subscriptions: enrichedSubscriptions, new_reservation_notifications_enabled: newReservationNotificationsEnabled });
+    }
+    if (action === "set_new_reservation_notifications") {
+      if (typeof input?.enabled !== "boolean") return reply({ error: "invalid_enabled_value" }, 400);
+      await db("discord_notification_settings?on_conflict=setting_key", {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+        body: JSON.stringify({
+          setting_key: "new_reservation_request",
+          enabled: input.enabled,
+          updated_by: userId,
+          updated_at: new Date().toISOString(),
+        }),
+      });
+      return reply({ saved: true, enabled: input.enabled });
     }
     if (action === "save") {
       const guildId = String(input?.guild_id ?? "").trim();
