@@ -200,7 +200,7 @@
     "generator_version": 1,
     "file_count": 106,
     "digest_algorithm": "sha256",
-    "content_digest": "c1f496de5098f2aff59b4a04ceed5ca798e878c779d42c96b2237a1502945d7d",
+    "content_digest": "9b4b2727fd5dfd7b5b0ad78e986ee3db4c3061070008807ed6f63c60571ce96b",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -432,7 +432,7 @@
       },
       {
         "path": "style.css",
-        "sha256": "b0cc634f438ac74dc68121ef6264d2fc27d3cf2aea5c302f2f9e8e5713eb80f1"
+        "sha256": "2dbd0f922a28af6e7ae7945d01acee39079fd918e42154ade90a9572f72a35ff"
       },
       {
         "path": "supabase/functions/discord-announcement/index.ts",
