@@ -4,6 +4,9 @@
  * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
  */
 
+/* Guild President display font (Cinzel 600). */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap');
+
 /* ==================== LANGUAGE TOGGLE ==================== */
 .navbar-actions {
     display: flex;
@@ -9396,10 +9399,10 @@ body.christmas-theme {
     display: inline-block;
     max-width: 100%;
     padding: 2px 8px 4px;
-    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    font-family: "Cinzel", "Times New Roman", serif;
     font-size: 1.12rem;
-    font-weight: 900;
-    letter-spacing: .13em;
+    font-weight: 600;
+    letter-spacing: .16em;
     line-height: 1.35;
     background-image: var(--guild-name-gradient);
     background-size: 240% 100%;
@@ -9482,8 +9485,8 @@ body.thanksgiving-theme .site-footer .footer-section .guild-name.fire-text {
 }
 @media (max-width: 600px) {
     .site-footer .footer-section .guild-name.fire-text {
-        font-size: 1rem;
-        letter-spacing: .09em;
+        font-size: .96rem;
+        letter-spacing: .11em;
     }
 }
 @media (prefers-reduced-motion: reduce) {
