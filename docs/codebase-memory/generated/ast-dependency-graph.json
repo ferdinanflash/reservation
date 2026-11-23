@@ -3,9 +3,9 @@
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
   "source_files": 27,
-  "function_count": 457,
+  "function_count": 460,
   "import_count": 5,
-  "call_edge_count": 1293,
+  "call_edge_count": 1301,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -7904,6 +7904,62 @@
       "confidence": "static-name-match"
     },
     {
+      "from": "supabase/functions/discord-interactions/index.ts#processSubscription",
+      "to": "supabase/functions/discord-interactions/index.ts#discordBotFetch",
+      "kind": "call",
+      "line": 618,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processSubscription",
+      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
+      "kind": "call",
+      "line": 610,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processSubscription",
+      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
+      "kind": "call",
+      "line": 614,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processSubscription",
+      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
+      "kind": "call",
+      "line": 622,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processSubscription",
+      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
+      "kind": "call",
+      "line": 644,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processSubscription",
+      "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
+      "kind": "call",
+      "line": 657,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processSubscription",
+      "to": "supabase/functions/discord-interactions/index.ts#subscriptionDb",
+      "kind": "call",
+      "line": 632,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-interactions/index.ts#processSubscription",
+      "to": "supabase/functions/discord-interactions/index.ts#subscriptionDb",
+      "kind": "call",
+      "line": 652,
+      "confidence": "static-name-match"
+    },
+    {
       "from": "supabase/functions/discord-interactions/index.ts#publishProgress",
       "to": "supabase/functions/discord-interactions/index.ts#editOriginal",
       "kind": "call",
@@ -11593,6 +11649,13 @@
       "kind": "function"
     },
     {
+      "id": "supabase/functions/discord-interactions/index.ts#hasManageChannelsPermission",
+      "name": "hasManageChannelsPermission",
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 573,
+      "kind": "function"
+    },
+    {
       "id": "supabase/functions/discord-interactions/index.ts#hasManageMessagesPermission",
       "name": "hasManageMessagesPermission",
       "file": "supabase/functions/discord-interactions/index.ts",
@@ -11646,6 +11709,13 @@
       "name": "processRedeem",
       "file": "supabase/functions/discord-interactions/index.ts",
       "line": 334,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-interactions/index.ts#processSubscription",
+      "name": "processSubscription",
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 604,
       "kind": "function"
     },
     {
@@ -11709,6 +11779,13 @@
       "name": "splitPublicLines",
       "file": "supabase/functions/discord-interactions/index.ts",
       "line": 271,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-interactions/index.ts#subscriptionDb",
+      "name": "subscriptionDb",
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 582,
       "kind": "function"
     },
     {
@@ -12476,6 +12553,22 @@
       "line": 126
     }
   ],
-  "parse_diagnostics": [],
-  "source_digest": "1a40164af5a1bcbdb91064fffe5b6e41e72e3277947bf73532d559b8c1c4f579"
+  "parse_diagnostics": [
+    {
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 647,
+      "message": "',' expected."
+    },
+    {
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 647,
+      "message": "',' expected."
+    },
+    {
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 647,
+      "message": "',' expected."
+    }
+  ],
+  "source_digest": "5e13d028f6eec98b4c0287b2d289b2eb5a357055f5dc291176cd7374f776443b"
 }
