@@ -644,7 +644,7 @@ async function processSubscription(interaction: any, action: "subscribe" | "unsu
         await editOriginal(
             interaction.application_id,
             interaction.token,
-            `✅ **Subscription active!**\nThis channel will now receive Reservation notifications for **${alliance}**.\nUse `/unsubscribe alliance:${alliance}` to stop them.`,
+            `✅ **Subscription active!**\nThis channel will now receive Reservation notifications for **${alliance}**.\nUse /unsubscribe alliance:${alliance} to stop them.`,
         );
         return;
     }
