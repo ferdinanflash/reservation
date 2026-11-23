@@ -4,8 +4,8 @@
  * Proprietary source code. All rights reserved. Unauthorized reuse is prohibited.
  */
 
-/* Guild President display font (Cinzel 600). */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap');
+/* Guild President display font (Cinzel 700 bold). */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap');
 
 /* ==================== LANGUAGE TOGGLE ==================== */
 .navbar-actions {
@@ -9401,7 +9401,7 @@ body.christmas-theme {
     padding: 2px 8px 4px;
     font-family: "Cinzel", "Times New Roman", serif;
     font-size: 1.12rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: .16em;
     line-height: 1.35;
     background-image: var(--guild-name-gradient);
