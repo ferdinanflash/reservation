@@ -317,8 +317,7 @@ async function publishProgress(
     const already = completed.filter((row) => row.kind === "already").length;
     const failed = completed.length - success - already;
     const lines = completed.map((row) => {
-        const name = row.nickname ? `**${row.nickname.replace(/[\\r
-]/g, " ").slice(0, 50)}**` : `FID ${row.fid}`;
+        const name = row.nickname ? `**${row.nickname.replace(/[\r\n]/g, " ").slice(0, 50)}**` : `FID ${row.fid}`;
         return `• ${name} (${row.fid}) — ${resultLabel(row.kind as any, row.result)}`;
     });
     const header = [
@@ -326,8 +325,7 @@ async function publishProgress(
         `Redeem Code: **${code}**`,
         `Progress: **${completed.length}/${total}** | Successful: **${success}** | Already Claimed: **${already}** | Failed: **${failed}**`,
         "",
-    ].join("
-");
+    ].join("\n");
     const visibleLines = splitPublicLines(lines, 1500);
     const content = header + (visibleLines[0] ?? "Processing...");
     await editOriginal(interaction.application_id, interaction.token, content);
@@ -715,7 +713,11 @@ Deno.serve(async (req) => {
         return json(publicMessage("❌ Incomplete Discord interaction."));
     }
 
-    if (interaction.data.name === "help") {\n        return json({ type: 4, data: { content: helpMessage(), flags: 64, allowed_mentions: { parse: [] } } });\n    }\n\n    if (interaction.data.name === "clear") {
+    if (interaction.data.name === "help") {
+        return json({ type: 4, data: { content: helpMessage(), flags: 64, allowed_mentions: { parse: [] } } });
+    }
+
+    if (interaction.data.name === "clear") {
         if (!hasManageMessagesPermission(interaction)) {
             return json({ type: 4, data: { content: "❌ You need **Manage Messages** permission to use /clear.", flags: 64 } });
         }
