@@ -12588,6 +12588,52 @@
       "line": 126
     }
   ],
-  "parse_diagnostics": [],
-  "source_digest": "e6f28e491014c95897c1e623f6740865fa042fc8618fb990cb7529bbca5c9be2"
+  "parse_diagnostics": [
+    {
+      "file": "scripts/register-discord-commands.mjs",
+      "line": 96,
+      "message": "Invalid character."
+    },
+    {
+      "file": "scripts/register-discord-commands.mjs",
+      "line": 96,
+      "message": "Invalid character."
+    },
+    {
+      "file": "scripts/register-discord-commands.mjs",
+      "line": 96,
+      "message": "Unknown keyword or identifier. Did you mean 'const'?"
+    },
+    {
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 697,
+      "message": "Invalid character."
+    },
+    {
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 697,
+      "message": "Invalid character."
+    },
+    {
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 697,
+      "message": "Invalid character."
+    },
+    {
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 697,
+      "message": "Invalid character."
+    },
+    {
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 697,
+      "message": "Unexpected keyword or identifier."
+    },
+    {
+      "file": "supabase/functions/discord-interactions/index.ts",
+      "line": 697,
+      "message": "Unexpected keyword or identifier."
+    }
+  ],
+  "source_digest": "b1b4bbf6e0bcd20c051b3e1ba3ebd7c2845d6356bcbf4b808a14e0e39fd6f264"
 }
