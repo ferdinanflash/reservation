@@ -76,119 +76,113 @@ Deno.serve(async (req: Request) => {
     let body: any;
     try { body = await req.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
 
+    const sendToAll = body?.send_to_all === true;
     const guildId = String(body?.guild_id ?? "").trim();
     const channelId = String(body?.channel_id ?? "").trim();
     const title = String(body?.title ?? "📢 Announcement").trim();
     const message = String(body?.message ?? "").trim();
     const wantsEveryone = body?.mention_everyone === true;
 
-    if (!/^\d{17,20}$/.test(guildId) || !/^\d{17,20}$/.test(channelId)) return json({ error: "Invalid Discord server or channel ID" }, 400);
+    if (!sendToAll && (!/^\d{17,20}$/.test(guildId) || !/^\d{17,20}$/.test(channelId))) {
+        return json({ error: "Invalid Discord server or channel ID" }, 400);
+    }
     if (!message || message.length > 1800) return json({ error: "Message is required (maximum 1,800 characters)" }, 400);
     if (title.length > 100) return json({ error: "Title must be 100 characters or fewer" }, 400);
 
-    let settings: any[];
+    let subscriptions: any[] = [];
     try {
-        settings = await serviceRest(
-            `discord_guild_settings?select=guild_id,guild_name,announcement_channel_id,announcements_enabled,allow_everyone&guild_id=eq.${guildId}&limit=1`,
-        );
-    } catch (error) {
-        console.error("Discord settings lookup failed:", error);
-        return json({ error: "Unable to load Discord server configuration" }, 500);
-    }
-
-    const config = settings?.[0] ?? null;
-    if (config && !config.announcements_enabled) return json({ error: "Announcements are disabled for this server" }, 403);
-
-    // Only channels with an active /subscribe entry can receive President announcements.
-    let activeSubscription: any[];
-    try {
-        activeSubscription = await serviceRest(
-            `discord_reservation_subscriptions?select=channel_id&guild_id=eq.${guildId}&channel_id=eq.${channelId}&limit=1`,
+        subscriptions = await serviceRest(
+            sendToAll
+                ? "discord_reservation_subscriptions?select=guild_id,channel_id,channel_name&order=guild_id.asc,channel_id.asc"
+                : `discord_reservation_subscriptions?select=guild_id,channel_id,channel_name&guild_id=eq.${guildId}&channel_id=eq.${channelId}&limit=1`,
         );
     } catch (error) {
         console.error("Discord subscription lookup failed:", error);
-        return json({ error: "Unable to verify the subscribed channel" }, 500);
-    }
-    if (!Array.isArray(activeSubscription) || activeSubscription.length === 0) {
-        return json({ error: "This channel is not actively subscribed to Reservation notifications" }, 403);
+        return json({ error: "Unable to load subscribed Discord channels" }, 500);
     }
 
-    if (wantsEveryone && !config?.allow_everyone) {
-        return json({ error: "@everyone is disabled by this server's configuration" }, 403);
-    }
-
-    const payload = {
-        // Discord only reliably generates notifications for mentions in message content.
-        // Keep the actual announcement in the embed, and place @everyone in content.
-        content: wantsEveryone ? "@everyone" : undefined,
-        embeds: [{
-            title: title || "📢 Announcement",
-            description: message,
-            color: 0x5865F2,
-            footer: { text: "State of 3475 • Reservation Portal" },
-            timestamp: new Date().toISOString(),
-        }],
-        allowed_mentions: { parse: wantsEveryone ? ["everyone"] : [] },
-    };
-
-    let discordMessage: any;
-    let status: "sent" | "failed" = "failed";
-    let errorCode: string | null = null;
-    try {
-        const response = await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
-            method: "POST",
-            headers: {
-                Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-        });
-        discordMessage = await response.json().catch(() => ({}));
-        if (!response.ok) {
-            errorCode = String(discordMessage?.code ?? response.status);
-            console.error("Discord announcement send failed:", response.status, errorCode);
-        } else {
-            status = "sent";
+    // One delivery per unique channel, even when it subscribes to several alliances.
+    const uniqueTargets = new Map<string, any>();
+    for (const item of Array.isArray(subscriptions) ? subscriptions : []) {
+        const targetGuildId = String(item.guild_id ?? "");
+        const targetChannelId = String(item.channel_id ?? "");
+        if (/^\d{17,20}$/.test(targetGuildId) && /^\d{17,20}$/.test(targetChannelId)) {
+            uniqueTargets.set(`${targetGuildId}:${targetChannelId}`, {
+                guild_id: targetGuildId, channel_id: targetChannelId, channel_name: item.channel_name ?? "",
+            });
         }
-    } catch (error) {
-        errorCode = "network_error";
-        console.error("Discord announcement network error:", error);
     }
+    const targets = [...uniqueTargets.values()];
+    if (!targets.length) return json({ error: sendToAll ? "There are no active subscribed Discord channels" : "This channel is not actively subscribed to Reservation notifications" }, 404);
 
+    let guildSettings: any[] = [];
     try {
-        await serviceRest("discord_announcement_log", {
-            method: "POST",
-            headers: { Prefer: "return=minimal" },
-            body: JSON.stringify({
-                guild_id: guildId,
-                channel_id: channelId,
-                title: title || "📢 Announcement",
-                message,
-                mentioned_everyone: wantsEveryone,
-                discord_message_id: discordMessage?.id ?? null,
-                status,
-                error_code: errorCode,
-                sent_by: userId,
-            }),
-        });
+        guildSettings = await serviceRest("discord_guild_settings?select=guild_id,guild_name,announcements_enabled,allow_everyone");
     } catch (error) {
-        // Do not misreport a Discord delivery as failed if only the audit write failed.
-        console.error("Discord announcement audit write failed:", error);
+        console.error("Discord server settings lookup failed:", error);
+        return json({ error: "Unable to load Discord server configuration" }, 500);
     }
-
-    if (status !== "sent") {
-        return json({
-            error: "Discord could not send the announcement. Check the bot's channel permissions.",
-            discord_code: errorCode,
-        }, 502);
-    }
-
-    return json({
-        sent: true,
-        guild_id: guildId,
-        guild_name: config?.guild_name ?? guildId,
-        channel_id: channelId,
-        mentioned_everyone: wantsEveryone,
-        message_id: discordMessage.id,
+    const settingsByGuild = new Map(guildSettings.map((item) => [String(item.guild_id), item]));
+    const eligibleTargets = targets.filter((target) => {
+        const config = settingsByGuild.get(target.guild_id);
+        return !config || config.announcements_enabled === true;
     });
+    if (!eligibleTargets.length) return json({ error: "Announcements are disabled for all subscribed Discord servers" }, 403);
+    if (wantsEveryone && eligibleTargets.some((target) => !settingsByGuild.get(target.guild_id)?.allow_everyone)) {
+        return json({ error: "@everyone is not enabled in every selected Discord server" }, 403);
+    }
+
+    const results: any[] = [];
+    for (const target of eligibleTargets) {
+        const payload = {
+            content: wantsEveryone ? "@everyone" : undefined,
+            embeds: [{
+                title: title || "📢 Announcement",
+                description: message,
+                color: 0x5865F2,
+                footer: { text: "State of 3475 • Reservation Portal" },
+                timestamp: new Date().toISOString(),
+            }],
+            allowed_mentions: { parse: wantsEveryone ? ["everyone"] : [] },
+        };
+        let discordMessage: any = null;
+        let status: "sent" | "failed" = "failed";
+        let errorCode: string | null = null;
+        try {
+            const response = await fetch(`${DISCORD_API}/channels/${target.channel_id}/messages`, {
+                method: "POST",
+                headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}`, "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            discordMessage = await response.json().catch(() => ({}));
+            if (response.ok) status = "sent";
+            else errorCode = String(discordMessage?.code ?? response.status);
+        } catch (error) {
+            errorCode = "network_error";
+            console.error("Discord announcement network error:", error);
+        }
+
+        results.push({ guild_id: target.guild_id, channel_id: target.channel_id, status, error_code: errorCode });
+        try {
+            await serviceRest("discord_announcement_log", {
+                method: "POST",
+                headers: { Prefer: "return=minimal" },
+                body: JSON.stringify({
+                    guild_id: target.guild_id, channel_id: target.channel_id,
+                    title: title || "📢 Announcement", message, mentioned_everyone: wantsEveryone,
+                    discord_message_id: discordMessage?.id ?? null, status, error_code: errorCode, sent_by: userId,
+                }),
+            });
+        } catch (error) {
+            console.error("Discord announcement audit write failed:", error);
+        }
+    }
+
+    const sentCount = results.filter((item) => item.status === "sent").length;
+    const failedCount = results.length - sentCount;
+    return json({
+        sent: sentCount > 0, sent_count: sentCount, failed_count: failedCount,
+        total_targets: targets.length, skipped_count: targets.length - eligibleTargets.length,
+        results,
+    }, sentCount > 0 ? 200 : 502);
 });
