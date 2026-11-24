@@ -193,3 +193,22 @@ select cron.unschedule('3475-discord-message-poller');
 ```
 
 The existing `/redeem single` and `/redeem alliance` slash commands remain available independently.
+
+
+## Stage 1 reliability hardening
+
+Apply the additional migration below before deploying the updated poller:
+
+- `supabase/migrations/20261125000000_discord_message_poll_lock_owner.sql`
+
+The poller now acquires a 10-minute lease with a unique owner token and renews it every minute. It stops processing if it cannot renew or no longer owns the lease, and its cleanup only releases the lock when the stored owner token still matches. This prevents an older invocation from clearing a newer invocation's lock.
+
+The slash-command redeem handler now applies a 20-second request timeout and up to three attempts for network/timeouts, HTTP 408/429/5xx, and upstream TIMEOUT responses. After retries are exhausted, only that player's result is marked failed/timed out; the batch continues. Only a confirmed invalid or expired gift code stops the remaining batch and marks later members as skipped.
+
+Reservation Discord notification delivery now retries transient network errors, HTTP 429 (honoring Discord's Retry-After header/body), and HTTP 5xx up to four total attempts per channel. Permanent 4xx errors are logged and the next subscribed channel is still processed.
+
+### Deployment order
+
+1. Apply `20261125000000_discord_message_poll_lock_owner.sql` in Supabase SQL Editor.
+2. Deploy `discord-message-poller`, `discord-interactions`, and `send-push-notification`.
+3. Test a small slash-command redeem, a text-channel `.redeem` test, and a reservation notification in a subscribed test channel.
