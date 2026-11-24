@@ -470,6 +470,7 @@ Deno.serve(async (req) => {
   let locked = false;
   let lockLost = false;
   let heartbeat: ReturnType<typeof setInterval> | null = null;
+  let heartbeatInFlight: Promise<void> | null = null;
   const lockOwner = crypto.randomUUID();
   const lockLeaseMs = 10 * 60_000;
   const renewLock = async () => {
@@ -508,7 +509,11 @@ Deno.serve(async (req) => {
       return json({ ok: true, skipped: "already_running" });
     }
     locked = true;
-    heartbeat = setInterval(() => { void renewLock(); }, 60_000);
+    heartbeat = setInterval(() => {
+      if (!heartbeatInFlight) {
+        heartbeatInFlight = renewLock().finally(() => { heartbeatInFlight = null; });
+      }
+    }, 60_000);
 
     // Run due deletions on the same five-minute poll schedule.
     await cleanupDueMessages(assertLockOwned);
@@ -589,6 +594,8 @@ Deno.serve(async (req) => {
     return json({ ok: false, error: "poll_failed", detail: error instanceof Error ? error.message : String(error) }, 500);
   } finally {
     if (heartbeat !== null) clearInterval(heartbeat);
+    // Do not let an in-flight renewal recreate the lease after it is released.
+    if (heartbeatInFlight) await heartbeatInFlight;
     if (locked) {
       try {
         // Release only the lease acquired by this invocation. Never clear a
