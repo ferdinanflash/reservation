@@ -9514,3 +9514,42 @@ body.thanksgiving-theme .site-footer .footer-section .guild-name.fire-text {
 .discord-queue-status.status-pending { color:#fbbf24; }
 .discord-queue-status.status-processing { color:#60a5fa; }
 @media(max-width:560px) { .discord-queue-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+
+ 
+/* ================= DESKTOP MAIN MENU — FULL-WIDTH DASHBOARD =================
+   Expand only the home dashboard to use the desktop viewport. The reservation
+   position list and schedule views retain the shared 800px content width. */
+@media screen and (min-width: 769px) {
+    .container:has(#main-menu-view:not(.hidden)) {
+        width: calc(100% - 48px);
+        max-width: 1440px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #main-menu-view .dashboard-welcome,
+    #main-menu-view .dashboard-section-heading,
+    #main-menu-view .dashboard-menu-grid {
+        width: 100%;
+    }
+
+    #main-menu-view .dashboard-menu-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    #main-menu-view .dashboard-menu-grid > .menu-card {
+        min-height: 92px;
+    }
+}
+
+@media screen and (min-width: 1100px) {
+    #main-menu-view .dashboard-menu-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    #main-menu-view .dashboard-menu-grid > .menu-card-primary {
+        grid-column: 1 / -1;
+    }
+}
