@@ -4,8 +4,8 @@
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
   "source_files": 31,
   "function_count": 486,
-  "import_count": 8,
-  "call_edge_count": 1351,
+  "import_count": 9,
+  "call_edge_count": 1353,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -7898,24 +7898,39 @@
       "confidence": "static-name-match"
     },
     {
+      "from": "supabase/functions/discord-announcement-retry/index.ts",
+      "to": "supabase/functions/_shared/discord-permissions.ts",
+      "kind": "import",
+      "specifier": "../_shared/discord-permissions.ts",
+      "line": 1,
+      "confidence": "static"
+    },
+    {
       "from": "supabase/functions/discord-announcement-retry/index.ts#authHeaders",
       "to": "supabase/functions/discord-announcement-retry/index.ts#env",
       "kind": "call",
-      "line": 19,
+      "line": 20,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-announcement-retry/index.ts#checkSettings",
       "to": "supabase/functions/discord-announcement-retry/index.ts#rest",
       "kind": "call",
-      "line": 35,
+      "line": 36,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-announcement-retry/index.ts#deliver",
+      "to": "supabase/functions/_shared/discord-permissions.ts#checkDiscordChannelPermissions",
+      "kind": "call",
+      "line": 43,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-announcement-retry/index.ts#deliver",
       "to": "supabase/functions/discord-announcement-retry/index.ts#checkSettings",
       "kind": "call",
-      "line": 41,
+      "line": 42,
       "confidence": "static-name-match"
     },
     {
@@ -7926,24 +7941,31 @@
       "confidence": "static-name-match"
     },
     {
+      "from": "supabase/functions/discord-announcement-retry/index.ts#deliver",
+      "to": "supabase/functions/discord-announcement-retry/index.ts#env",
+      "kind": "call",
+      "line": 49,
+      "confidence": "static-name-match"
+    },
+    {
       "from": "supabase/functions/discord-announcement-retry/index.ts#rest",
       "to": "supabase/functions/discord-announcement-retry/index.ts#authHeaders",
       "kind": "call",
-      "line": 24,
+      "line": 25,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-announcement-retry/index.ts#rest",
       "to": "supabase/functions/discord-announcement-retry/index.ts#env",
       "kind": "call",
-      "line": 23,
+      "line": 24,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-announcement-retry/index.ts#update",
       "to": "supabase/functions/discord-announcement-retry/index.ts#rest",
       "kind": "call",
-      "line": 64,
+      "line": 69,
       "confidence": "static-name-match"
     },
     {
@@ -12005,56 +12027,56 @@
       "id": "supabase/functions/discord-announcement-retry/index.ts#authHeaders",
       "name": "authHeaders",
       "file": "supabase/functions/discord-announcement-retry/index.ts",
-      "line": 18,
+      "line": 19,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement-retry/index.ts#checkSettings",
       "name": "checkSettings",
       "file": "supabase/functions/discord-announcement-retry/index.ts",
-      "line": 34,
+      "line": 35,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement-retry/index.ts#deliver",
       "name": "deliver",
       "file": "supabase/functions/discord-announcement-retry/index.ts",
-      "line": 40,
+      "line": 41,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement-retry/index.ts#env",
       "name": "env",
       "file": "supabase/functions/discord-announcement-retry/index.ts",
-      "line": 10,
+      "line": 11,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement-retry/index.ts#json",
       "name": "json",
       "file": "supabase/functions/discord-announcement-retry/index.ts",
-      "line": 15,
+      "line": 16,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement-retry/index.ts#rest",
       "name": "rest",
       "file": "supabase/functions/discord-announcement-retry/index.ts",
-      "line": 22,
+      "line": 23,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement-retry/index.ts#retryDelay",
       "name": "retryDelay",
       "file": "supabase/functions/discord-announcement-retry/index.ts",
-      "line": 31,
+      "line": 32,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement-retry/index.ts#update",
       "name": "update",
       "file": "supabase/functions/discord-announcement-retry/index.ts",
-      "line": 63,
+      "line": 68,
       "kind": "function"
     },
     {
@@ -13110,5 +13132,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "0cc36bc8756ff475984360f1c9a7b7812b02e12bb4ea647c55ae336b545c7bbd"
+  "source_digest": "2bf73a5458f65ba6bb60dbfa985fcb039543bb932539e0234baf06535c073143"
 }
