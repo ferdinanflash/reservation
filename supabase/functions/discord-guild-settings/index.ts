@@ -1,3 +1,4 @@
+import { checkDiscordChannelPermissions } from "../_shared/discord-permissions.ts";
 /*
  * 3475 SOURCE OWNERSHIP
  * Copyright (c) 2026 Ferdinan | https://3475.web.id
@@ -109,10 +110,14 @@ Deno.serve(async (req) => {
       if (!/^\d{17,20}$/.test(guildId) || !/^\d{17,20}$/.test(channelId) || !guildName) {
         return reply({ error: "invalid_guild_or_channel" }, 400);
       }
-      // Verify the bot can see the destination channel and that it belongs to this guild.
+      // Verify channel ownership/type and effective bot permissions before saving.
       const channel = await discord(`/channels/${channelId}`);
       if (String(channel?.guild_id ?? "") !== guildId || ![0, 5].includes(Number(channel?.type))) {
         return reply({ error: "channel_mismatch_or_unsupported" }, 400);
+      }
+      const permissionCheck = await checkDiscordChannelPermissions(BOT_TOKEN, guildId, channelId, input?.allow_everyone === true);
+      if (!permissionCheck.allowed) {
+        return reply({ error: "bot_channel_permissions_missing", missing_permissions: permissionCheck.missing }, 400);
       }
       await db("discord_guild_settings?on_conflict=guild_id", {
         method: "POST",

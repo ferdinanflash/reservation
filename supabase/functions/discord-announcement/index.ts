@@ -1,3 +1,4 @@
+import { checkDiscordChannelPermissions } from "../_shared/discord-permissions.ts";
 /*
  * 3475 SOURCE OWNERSHIP
  * Copyright (c) 2026 Ferdinan | https://3475.web.id
@@ -15,6 +16,8 @@ const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const DISCORD_BOT_TOKEN = Deno.env.get("DISCORD_BOT_TOKEN") ?? "";
 const DISCORD_API = "https://discord.com/api/v10";
+const DISCORD_MAX_ATTEMPTS = 4;
+const DISCORD_TIMEOUT_MS = 15_000;
 const ADMIN_EMAILS = new Set(["president", "demon", "phoenix"].map((name) => name + "@3475-staff.internal"));
 
 const CORS_HEADERS = {
@@ -60,6 +63,49 @@ async function serviceRest(path: string, init: RequestInit = {}) {
     try { data = text ? JSON.parse(text) : null; } catch { data = text; }
     if (!response.ok) throw new Error(`Database request failed (${response.status})`);
     return data;
+}
+
+
+function retryDelay(response: Response | null, attempt: number) {
+    const raw = response?.headers.get("Retry-After");
+    if (raw) {
+        const seconds = Number(raw);
+        const retryAt = Number.isFinite(seconds) ? Date.now() + Math.max(0, seconds) * 1000 : Date.parse(raw);
+        if (Number.isFinite(retryAt)) return Math.min(15_000, Math.max(500, retryAt - Date.now()));
+    }
+    return Math.min(8_000, 1000 * (2 ** attempt));
+}
+async function sendAnnouncementWithRetry(channelId: string, payload: unknown) {
+    const safePayload = { ...(payload as Record<string, unknown>), nonce: crypto.randomUUID().replace(/-/g, "").slice(0, 25), enforce_nonce: true };
+    for (let attempt = 0; attempt < DISCORD_MAX_ATTEMPTS; attempt++) {
+        let response: Response;
+        try {
+            response = await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
+                method: "POST", headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}`, "Content-Type": "application/json" },
+                body: JSON.stringify(safePayload), signal: AbortSignal.timeout(DISCORD_TIMEOUT_MS),
+            });
+        } catch (error) {
+            if (attempt === DISCORD_MAX_ATTEMPTS - 1) throw error;
+            const waitMs = retryDelay(null, attempt);
+            console.warn("[discord-announcement] retry", { attempt: attempt + 1, nextAttempt: attempt + 2, maxAttempts: DISCORD_MAX_ATTEMPTS, reason: "network_error", waitMs });
+            await new Promise((resolve) => setTimeout(resolve, waitMs));
+            continue;
+        }
+        if (response.status !== 429 && response.status < 500) return { response, attempts: attempt + 1 };
+        if (attempt === DISCORD_MAX_ATTEMPTS - 1) {
+            console.error("[discord-announcement] retries exhausted", { attempts: DISCORD_MAX_ATTEMPTS, httpStatus: response.status });
+            return { response, attempts: attempt + 1 };
+        }
+        let retryAfter = response.headers.get("Retry-After");
+        if (response.status === 429) {
+            const body = await response.clone().json().catch(() => ({}));
+            if (!retryAfter && Number.isFinite(Number(body?.retry_after))) retryAfter = String(body.retry_after);
+        }
+        const waitMs = retryDelay(retryAfter ? new Response(null, { headers: { "Retry-After": retryAfter } }) : response, attempt);
+        console.warn("[discord-announcement] retry", { attempt: attempt + 1, nextAttempt: attempt + 2, maxAttempts: DISCORD_MAX_ATTEMPTS, reason: `http_${response.status}`, httpStatus: response.status, waitMs });
+        await new Promise((resolve) => setTimeout(resolve, waitMs));
+    }
+    throw new Error("announcement_retries_exhausted");
 }
 
 Deno.serve(async (req: Request) => {
@@ -148,21 +194,29 @@ Deno.serve(async (req: Request) => {
         let discordMessage: any = null;
         let status: "sent" | "failed" = "failed";
         let errorCode: string | null = null;
+        let attempts = 0;
         try {
-            const response = await fetch(`${DISCORD_API}/channels/${target.channel_id}/messages`, {
-                method: "POST",
-                headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}`, "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-            discordMessage = await response.json().catch(() => ({}));
-            if (response.ok) status = "sent";
-            else errorCode = String(discordMessage?.code ?? response.status);
+            const permissionCheck = await checkDiscordChannelPermissions(DISCORD_BOT_TOKEN, target.guild_id, target.channel_id, wantsEveryone);
+            if (!permissionCheck.allowed) {
+                errorCode = "missing_permissions";
+                console.warn("[discord-announcement] missing channel permissions", {
+                    guild_id: target.guild_id, channel_id: target.channel_id, missing_permissions: permissionCheck.missing,
+                });
+            } else {
+                const delivery = await sendAnnouncementWithRetry(target.channel_id, payload);
+                attempts = delivery.attempts;
+                discordMessage = await delivery.response.json().catch(() => ({}));
+                if (delivery.response.ok) status = "sent";
+                else errorCode = String(discordMessage?.code ?? delivery.response.status);
+            }
         } catch (error) {
-            errorCode = "network_error";
-            console.error("Discord announcement network error:", error);
+            errorCode = error instanceof Error && /^discord_/.test(error.message) ? error.message : "network_error";
+            console.error("[discord-announcement] target delivery failed", {
+                guild_id: target.guild_id, channel_id: target.channel_id, error_code: errorCode,
+            });
         }
 
-        results.push({ guild_id: target.guild_id, channel_id: target.channel_id, status, error_code: errorCode });
+        results.push({ guild_id: target.guild_id, channel_id: target.channel_id, status, error_code: errorCode, attempts });
         try {
             await serviceRest("discord_announcement_log", {
                 method: "POST",
