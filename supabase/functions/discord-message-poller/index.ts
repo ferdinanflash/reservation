@@ -16,9 +16,6 @@ const BATCH_DELAY_MS = 1200;
 type Member = { fid: string; nickname: string };
 type Outcome = { fid: string; nickname: string; kind: string; detail?: string };
 
-// Set only while this invocation owns the database-backed poller lease.
-let assertActivePollLease: (() => void) | null = null;
-
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -140,7 +137,7 @@ async function removeCleanupQueueItem(messageId: string) {
   }
 }
 
-async function cleanupDueMessages() {
+async function cleanupDueMessages(assertLease: () => void = () => {}) {
   const now = new Date().toISOString();
   const query = new URLSearchParams({
     select: "channel_id,message_id",
@@ -159,6 +156,7 @@ async function cleanupDueMessages() {
   if (!Array.isArray(due)) return;
 
   for (const item of due) {
+    assertLease();
     const channelId = String(item.channel_id ?? "");
     const messageId = String(item.message_id ?? "");
     if (!channelId || !messageId) continue;
@@ -376,7 +374,7 @@ function resultLabel(kind: string) {
   }
 }
 
-async function processCommand(channelId: string, allianceInput: string, code: string) {
+async function processCommand(channelId: string, allianceInput: string, code: string, assertLease: () => void = () => {}) {
   const alliance = allianceInput.trim().toUpperCase();
   if (!ALLIANCES.has(alliance)) {
     await sendChannelMessage(channelId, "❌ Alliance tidak valid. Gunakan ARX, IDN, ZXC, VNX, atau CAT.");
@@ -399,7 +397,7 @@ async function processCommand(channelId: string, allianceInput: string, code: st
   const results: Outcome[] = [];
 
   for (let i = 0; i < members.length; i++) {
-    assertActivePollLease?.();
+    assertLease();
     const member = members[i];
     const kind = await redeemOne(member.fid, code);
     results.push({ fid: member.fid, nickname: member.nickname, kind });
@@ -421,6 +419,7 @@ async function processCommand(channelId: string, allianceInput: string, code: st
     if (i < members.length - 1) await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY_MS));
   }
 
+  assertLease();
   const successful = results.filter((item) => item.kind === "success").length;
   const already = results.filter((item) => item.kind === "already").length;
   const expired = results.filter((item) => item.kind === "expired").length;
@@ -509,11 +508,10 @@ Deno.serve(async (req) => {
       return json({ ok: true, skipped: "already_running" });
     }
     locked = true;
-    assertActivePollLease = assertLockOwned;
     heartbeat = setInterval(() => { void renewLock(); }, 60_000);
 
     // Run due deletions on the same five-minute poll schedule.
-    await cleanupDueMessages();
+    await cleanupDueMessages(assertLockOwned);
 
     const channelIds = configuredChannelIds();
     let scanned = 0;
@@ -555,7 +553,7 @@ Deno.serve(async (req) => {
 
         if (command) {
           try {
-            await processCommand(channelId, command[1], command[2]);
+            await processCommand(channelId, command[1], command[2], assertLockOwned);
           } catch (error) {
             // If the lease was lost, leave the message cursor untouched so a
             // later invocation can safely retry the command instead of consuming it.
@@ -590,7 +588,6 @@ Deno.serve(async (req) => {
     console.error("[discord-message-poller]", error instanceof Error ? error.message : String(error));
     return json({ ok: false, error: "poll_failed", detail: error instanceof Error ? error.message : String(error) }, 500);
   } finally {
-    assertActivePollLease = null;
     if (heartbeat !== null) clearInterval(heartbeat);
     if (locked) {
       try {
