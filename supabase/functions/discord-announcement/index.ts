@@ -1,3 +1,4 @@
+import { checkDiscordChannelPermissions } from "../_shared/discord-permissions.ts";
 /*
  * 3475 SOURCE OWNERSHIP
  * Copyright (c) 2026 Ferdinan | https://3475.web.id
@@ -15,7 +16,6 @@ const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const DISCORD_BOT_TOKEN = Deno.env.get("DISCORD_BOT_TOKEN") ?? "";
 const DISCORD_API = "https://discord.com/api/v10";
-import { checkDiscordChannelPermissions } from "../_shared/discord-permissions.ts";
 const DISCORD_MAX_ATTEMPTS = 4;
 const DISCORD_TIMEOUT_MS = 15_000;
 const ADMIN_EMAILS = new Set(["president", "demon", "phoenix"].map((name) => name + "@3475-staff.internal"));
