@@ -380,7 +380,8 @@
         $("discord-save-btn").textContent = t("discord_save_server");
     }
 
-    window.loadDiscordQueueDashboard = loadQueueDashboard;\n    window.openDiscordSettingsModal = openDiscordSettingsModal;
+    window.loadDiscordQueueDashboard = loadQueueDashboard;
+    window.openDiscordSettingsModal = openDiscordSettingsModal;
     window.closeDiscordSettingsModal = () => closeModal("discord-settings-modal");
     window.openDiscordComposerModal = openDiscordComposerModal;
     window.closeDiscordComposerModal = () => closeModal("discord-composer-modal");
