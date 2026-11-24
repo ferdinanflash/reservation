@@ -76,7 +76,7 @@ function retryDelay(response: Response | null, attempt: number) {
     return Math.min(8_000, 1000 * (2 ** attempt));
 }
 async function sendAnnouncementWithRetry(channelId: string, payload: unknown) {
-    const safePayload = { ...(payload as Record<string, unknown>), nonce: crypto.randomUUID().replace(/-/g, "").slice(0, 25), enforce_nonce: true };
+    const safePayload = { ...(payload as Record<string, unknown>), nonce: deliveryNonce, enforce_nonce: true };
     for (let attempt = 0; attempt < DISCORD_MAX_ATTEMPTS; attempt++) {
         let response: Response;
         try {
@@ -203,7 +203,7 @@ Deno.serve(async (req: Request) => {
                     guild_id: target.guild_id, channel_id: target.channel_id, missing_permissions: permissionCheck.missing,
                 });
             } else {
-                const delivery = await sendAnnouncementWithRetry(target.channel_id, payload);
+                const delivery = await sendAnnouncementWithRetry(target.channel_id, payload, deliveryNonce);
                 attempts = delivery.attempts;
                 discordMessage = await delivery.response.json().catch(() => ({}));
                 if (delivery.response.ok) status = "sent";
