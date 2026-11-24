@@ -12,6 +12,7 @@ const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const BOT_TOKEN = Deno.env.get("DISCORD_BOT_TOKEN") ?? "";
 const DISCORD_API = "https://discord.com/api/v10";
+import { checkDiscordChannelPermissions } from "../_shared/discord-permissions.ts";
 const ADMIN_EMAILS = new Set(["president", "demon", "phoenix"].map((name) => name + "@3475-staff.internal"));
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -109,10 +110,14 @@ Deno.serve(async (req) => {
       if (!/^\d{17,20}$/.test(guildId) || !/^\d{17,20}$/.test(channelId) || !guildName) {
         return reply({ error: "invalid_guild_or_channel" }, 400);
       }
-      // Verify the bot can see the destination channel and that it belongs to this guild.
+      // Verify channel ownership/type and effective bot permissions before saving.
       const channel = await discord(`/channels/${channelId}`);
       if (String(channel?.guild_id ?? "") !== guildId || ![0, 5].includes(Number(channel?.type))) {
         return reply({ error: "channel_mismatch_or_unsupported" }, 400);
+      }
+      const permissionCheck = await checkDiscordChannelPermissions(BOT_TOKEN, guildId, channelId, input?.allow_everyone === true);
+      if (!permissionCheck.allowed) {
+        return reply({ error: "bot_channel_permissions_missing", missing_permissions: permissionCheck.missing }, 400);
       }
       await db("discord_guild_settings?on_conflict=guild_id", {
         method: "POST",
