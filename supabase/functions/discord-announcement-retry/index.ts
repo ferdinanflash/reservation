@@ -1,4 +1,4 @@
-import { checkDiscordChannelPermissions } from "../../_shared/discord-permissions.ts";
+import { checkDiscordChannelPermissions } from "../_shared/discord-permissions.ts";
 /*
  * 3475 SOURCE OWNERSHIP
  * Durable retry worker for transient Discord Announcement failures.
