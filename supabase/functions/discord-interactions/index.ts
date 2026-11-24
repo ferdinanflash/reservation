@@ -12,6 +12,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 const DISCORD_PUBLIC_KEY = "f78d1415e1c63c50cfc2595b21a35b2740d50fae3f06ec73241898145b883518";
 const DISCORD_API = "https://discord.com/api/v10";
 const ALLIANCES = new Set(["ARX", "IDN", "ZXC", "VNX", "CAT"]);
+const BATCH_DELAY_MS = 1200;
 const MAX_ALLIANCE_FIDS = 100;
 const MAX_TIMEOUT_RETRIES = 2;
 const REDEEM_REQUEST_TIMEOUT_MS = 20_000;
@@ -663,6 +664,7 @@ async function processRedeemJob(jobId: string) {
                     locked_until: null,
                     interaction_token: complete ? null : interactionToken,
                     completed_at: complete ? new Date().toISOString() : null,
+                    last_error: null,
                     updated_at: new Date().toISOString(),
                 }),
             },
@@ -681,6 +683,7 @@ async function processRedeemJob(jobId: string) {
                     errorName: error instanceof Error ? error.name : "UnknownError",
                 });
             }
+            await sleep(BATCH_DELAY_MS);
             await scheduleRedeemWorker(jobId);
         }
     } catch (error) {
