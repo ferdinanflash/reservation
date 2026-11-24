@@ -220,6 +220,16 @@
     }
 
 
+    async function openQueueDashboard() {
+        await loadQueueDashboard();
+        const panel = document.querySelector(".discord-queue-panel");
+        const dashboard = $("discord-queue-dashboard");
+        if (panel) {
+            panel.scrollIntoView({ behavior: "smooth", block: "start" });
+            dashboard?.focus?.({ preventScroll: true });
+        }
+    }
+
     async function loadQueueDashboard() {
         const target = $("discord-queue-dashboard");
         if (!target || !isAdmin) return;
@@ -381,6 +391,7 @@
     }
 
     window.loadDiscordQueueDashboard = loadQueueDashboard;
+    window.openDiscordQueueDashboard = openQueueDashboard;
     window.openDiscordSettingsModal = openDiscordSettingsModal;
     window.closeDiscordSettingsModal = () => closeModal("discord-settings-modal");
     window.openDiscordComposerModal = openDiscordComposerModal;
