@@ -7980,14 +7980,14 @@
       "from": "supabase/functions/discord-announcement/index.ts#sendAnnouncementWithRetry",
       "to": "supabase/functions/discord-announcement/index.ts#retryDelay",
       "kind": "call",
-      "line": 104,
+      "line": 105,
       "confidence": "static-name-match"
     },
     {
       "from": "supabase/functions/discord-announcement/index.ts#sendAnnouncementWithRetry",
       "to": "supabase/functions/discord-announcement/index.ts#retryDelay",
       "kind": "call",
-      "line": 89,
+      "line": 90,
       "confidence": "static-name-match"
     },
     {
@@ -12083,35 +12083,35 @@
       "id": "supabase/functions/discord-announcement/index.ts#authenticatedUserId",
       "name": "authenticatedUserId",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 36,
+      "line": 37,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement/index.ts#json",
       "name": "json",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 29,
+      "line": 30,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement/index.ts#retryDelay",
       "name": "retryDelay",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 69,
+      "line": 70,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement/index.ts#sendAnnouncementWithRetry",
       "name": "sendAnnouncementWithRetry",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 78,
+      "line": 79,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement/index.ts#serviceRest",
       "name": "serviceRest",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 51,
+      "line": 52,
       "kind": "function"
     },
     {
@@ -13132,5 +13132,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "2bf73a5458f65ba6bb60dbfa985fcb039543bb932539e0234baf06535c073143"
+  "source_digest": "ebb7c1c8b9378a47e4bee0397b1111c13757fb01c3b711a88c7b77473f76e9fb"
 }
