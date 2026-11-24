@@ -1,5 +1,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
+// Supabase Edge Runtime provides this global at runtime; declare it for plain Deno type-checks.
+declare const EdgeRuntime: {
+    waitUntil(promise: Promise<unknown>): void;
+};
+
 /*
  * 3475 SOURCE OWNERSHIP
  * Copyright (c) 2026 Ferdinan | https://3475.web.id
@@ -48,9 +53,13 @@ async function verifyDiscordRequest(req: Request, rawBody: string): Promise<bool
     }
 
     try {
+        // Copy into a newly allocated ArrayBuffer so current Deno TypeScript
+        // BufferSource definitions do not infer the wider ArrayBufferLike type.
+        const publicKeyBytes = new Uint8Array(32);
+        publicKeyBytes.set(hexToBytes(DISCORD_PUBLIC_KEY));
         const key = await crypto.subtle.importKey(
             "raw",
-            hexToBytes(DISCORD_PUBLIC_KEY),
+            publicKeyBytes.buffer,
             { name: "Ed25519" },
             false,
             ["verify"],
