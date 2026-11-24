@@ -205,7 +205,7 @@
     "generator_version": 1,
     "file_count": 118,
     "digest_algorithm": "sha256",
-    "content_digest": "dce11bbfb14f00802b4977eabe140549d5790b9db27a85a02ab72bf4d0820f07",
+    "content_digest": "e5e527853629b7ec6df62af04ae41a32d60e92c923a8f1458dee108a4fb98517",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -477,7 +477,7 @@
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
-        "sha256": "2fa959b54e5dcf478ebf438c56c70b5bd6fc2d19f2d74e4a17b2c44071fe906c"
+        "sha256": "f958eca45a40771471bfabc38489fe97c1cd684a651c70480ee3dd1facd5a75b"
       },
       {
         "path": "supabase/functions/discord-message-poller/index.ts",
@@ -537,7 +537,7 @@
       },
       {
         "path": "supabase/migrations/20261125030000_discord_redeem_jobs.sql",
-        "sha256": "732af71075e045e8caf1d7a881509150cfd118006f726900657190805804b7c5"
+        "sha256": "acb76491f86ff3e3397c4062f3455717dfa0cec2be2768b16c668b09002c62b2"
       },
       {
         "path": "supabase_migration_additional_time_slots.sql",
