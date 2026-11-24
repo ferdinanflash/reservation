@@ -18,6 +18,9 @@ const DISCORD_PUBLIC_KEY = "f78d1415e1c63c50cfc2595b21a35b2740d50fae3f06ec732418
 const DISCORD_API = "https://discord.com/api/v10";
 const ALLIANCES = new Set(["ARX", "IDN", "ZXC", "VNX", "CAT"]);
 const BATCH_DELAY_MS = 1200;
+const REDEEM_JOB_BATCH_SIZE = 5;
+const REDEEM_JOB_TIME_BUDGET_MS = 75_000;
+const REDEEM_WORKER_DISPATCH_ATTEMPTS = 5;
 const MAX_ALLIANCE_FIDS = 100;
 const MAX_TIMEOUT_RETRIES = 2;
 const REDEEM_REQUEST_TIMEOUT_MS = 20_000;
@@ -475,36 +478,65 @@ async function redeemJobDb(path: string, init: RequestInit = {}) {
     try { return raw ? JSON.parse(raw) : null; } catch { return raw; }
 }
 
+function workerDispatchRetryDelay(retryAfter: string | null, attempt: number): number {
+    if (retryAfter) {
+        const seconds = Number(retryAfter);
+        const retryAt = Number.isFinite(seconds)
+            ? Date.now() + Math.max(0, seconds) * 1000
+            : Date.parse(retryAfter);
+        if (Number.isFinite(retryAt)) return Math.min(30_000, Math.max(1_000, retryAt - Date.now()));
+    }
+    return Math.min(20_000, 1_500 * (2 ** attempt));
+}
+
 async function scheduleRedeemWorker(jobId: string) {
     const url = Deno.env.get("SUPABASE_URL")?.replace(/\/$/, "");
     const workerSecret = Deno.env.get("DISCORD_ANNOUNCEMENT_QUEUE_SECRET");
     if (!url || !workerSecret) throw new Error("redeem_worker_configuration_missing");
 
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < REDEEM_WORKER_DISPATCH_ATTEMPTS; attempt++) {
+        let retryAfter: string | null = null;
         try {
-            const response = await fetch(`${url}/functions/v1/discord-interactions`, {
+            const response = await fetch(url + "/functions/v1/discord-interactions", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${workerSecret}`,
+                    Authorization: "Bearer " + workerSecret,
                 },
                 body: JSON.stringify({ internal_action: "process_redeem_job", job_id: jobId }),
                 signal: AbortSignal.timeout(10_000),
             });
             if (response.ok) return;
+            retryAfter = response.headers.get("Retry-After");
             const detail = (await response.text().catch(() => "")).slice(0, 120);
+            const retryable = response.status === 408 || response.status === 429 || response.status >= 500;
             console.warn("[discord-interactions] redeem worker dispatch failed", {
                 attempt: attempt + 1,
                 status: response.status,
+                retryable,
                 detail,
             });
+            if (!retryable) throw new Error("redeem_worker_dispatch_http_" + response.status);
         } catch (error) {
+            const message = error instanceof Error ? error.message : "unknown";
+            const isHttpFailure = message.startsWith("redeem_worker_dispatch_http_");
             console.warn("[discord-interactions] redeem worker dispatch error", {
                 attempt: attempt + 1,
                 errorName: error instanceof Error ? error.name : "UnknownError",
+                error: message.slice(0, 100),
             });
+            if (isHttpFailure) throw error;
         }
-        if (attempt < 2) await sleep(500 * (attempt + 1));
+
+        if (attempt < REDEEM_WORKER_DISPATCH_ATTEMPTS - 1) {
+            const waitMs = workerDispatchRetryDelay(retryAfter, attempt);
+            console.info("[discord-interactions] redeem worker dispatch retry scheduled", {
+                attempt: attempt + 1,
+                nextAttempt: attempt + 2,
+                waitMs,
+            });
+            await sleep(waitMs);
+        }
     }
     throw new Error("redeem_worker_dispatch_exhausted");
 }
