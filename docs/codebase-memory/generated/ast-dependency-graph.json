@@ -2,10 +2,10 @@
   "schema_version": 1,
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
-  "source_files": 28,
-  "function_count": 472,
-  "import_count": 5,
-  "call_edge_count": 1332,
+  "source_files": 29,
+  "function_count": 476,
+  "import_count": 6,
+  "call_edge_count": 1342,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -7820,6 +7820,84 @@
       "confidence": "static-name-match"
     },
     {
+      "from": "supabase/functions/_shared/discord-permissions.ts#checkDiscordChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#effectiveChannelPermissions",
+      "kind": "call",
+      "line": 73,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/_shared/discord-permissions.ts#checkDiscordChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#get",
+      "kind": "call",
+      "line": 65,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/_shared/discord-permissions.ts#checkDiscordChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#get",
+      "kind": "call",
+      "line": 66,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/_shared/discord-permissions.ts#checkDiscordChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#get",
+      "kind": "call",
+      "line": 67,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/_shared/discord-permissions.ts#checkDiscordChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#get",
+      "kind": "call",
+      "line": 72,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/_shared/discord-permissions.ts#checkDiscordChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#has",
+      "kind": "call",
+      "line": 77,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/_shared/discord-permissions.ts#effectiveChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#has",
+      "kind": "call",
+      "line": 25,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/_shared/discord-permissions.ts#effectiveChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#has",
+      "kind": "call",
+      "line": 45,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/_shared/discord-permissions.ts#effectiveChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#has",
+      "kind": "call",
+      "line": 46,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/_shared/discord-permissions.ts#effectiveChannelPermissions",
+      "to": "supabase/functions/_shared/discord-permissions.ts#has",
+      "kind": "call",
+      "line": 47,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-guild-settings/index.ts",
+      "to": "supabase/functions/_shared/discord-permissions.ts",
+      "kind": "import",
+      "specifier": "../_shared/discord-permissions.ts",
+      "line": 15,
+      "confidence": "static"
+    },
+    {
       "from": "supabase/functions/discord-interactions/index.ts#callRedeemFunction",
       "to": "supabase/functions/discord-interactions/index.ts#supabaseConfig",
       "kind": "call",
@@ -11817,6 +11895,34 @@
       "kind": "function"
     },
     {
+      "id": "supabase/functions/_shared/discord-permissions.ts#checkDiscordChannelPermissions",
+      "name": "checkDiscordChannelPermissions",
+      "file": "supabase/functions/_shared/discord-permissions.ts",
+      "line": 51,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/_shared/discord-permissions.ts#effectiveChannelPermissions",
+      "name": "effectiveChannelPermissions",
+      "file": "supabase/functions/_shared/discord-permissions.ts",
+      "line": 12,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/_shared/discord-permissions.ts#get",
+      "name": "get",
+      "file": "supabase/functions/_shared/discord-permissions.ts",
+      "line": 58,
+      "kind": "function-expression"
+    },
+    {
+      "id": "supabase/functions/_shared/discord-permissions.ts#has",
+      "name": "has",
+      "file": "supabase/functions/_shared/discord-permissions.ts",
+      "line": 10,
+      "kind": "function"
+    },
+    {
       "id": "supabase/functions/discord-announcement/index.ts#authenticatedUserId",
       "name": "authenticatedUserId",
       "file": "supabase/functions/discord-announcement/index.ts",
@@ -11841,28 +11947,28 @@
       "id": "supabase/functions/discord-guild-settings/index.ts#db",
       "name": "db",
       "file": "supabase/functions/discord-guild-settings/index.ts",
-      "line": 34,
+      "line": 35,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-guild-settings/index.ts#discord",
       "name": "discord",
       "file": "supabase/functions/discord-guild-settings/index.ts",
-      "line": 45,
+      "line": 46,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-guild-settings/index.ts#presidentId",
       "name": "presidentId",
       "file": "supabase/functions/discord-guild-settings/index.ts",
-      "line": 24,
+      "line": 25,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-guild-settings/index.ts#reply",
       "name": "reply",
       "file": "supabase/functions/discord-guild-settings/index.ts",
-      "line": 21,
+      "line": 22,
       "kind": "function"
     },
     {
@@ -12855,5 +12961,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "84512c42baff8e9c54c80b3a6600026eb098d68cd22de0729884d5e552c94d91"
+  "source_digest": "9832f53114a19f99c344827d4a52f510e6b9374d93373a1d842ed5e30259dbaa"
 }
