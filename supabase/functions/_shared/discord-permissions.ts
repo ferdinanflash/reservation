@@ -23,7 +23,7 @@ export function effectiveChannelPermissions(
   }
   const missing: string[] = [];
   if (has(permissions, ADMINISTRATOR)) {
-    return { allowed: true, missing, permissions: permissions.toString() };
+    return { allowed: true, missing, permissions: permissions.toString(), administrator: true };
   }
 
   const everyone = overwrites.find((item) => item.type === 0 && item.id === guildId);
@@ -45,7 +45,7 @@ export function effectiveChannelPermissions(
   if (!has(permissions, VIEW_CHANNEL)) missing.push("View Channel");
   if (!has(permissions, SEND_MESSAGES)) missing.push("Send Messages");
   if (!has(permissions, EMBED_LINKS)) missing.push("Embed Links");
-  return { allowed: missing.length === 0, missing, permissions: permissions.toString() };
+  return { allowed: missing.length === 0, missing, permissions: permissions.toString(), administrator: false };
 }
 
 export async function checkDiscordChannelPermissions(
@@ -74,7 +74,7 @@ export async function checkDiscordChannelPermissions(
     guildId, String(bot.id), Array.isArray(guild) ? guild : [], member,
     Array.isArray(channel.permission_overwrites) ? channel.permission_overwrites : [],
   );
-  if (requireMentionEveryone && !has(BigInt(result.permissions ?? "0"), MENTION_EVERYONE)) {
+  if (requireMentionEveryone && !result.administrator && !has(BigInt(result.permissions ?? "0"), MENTION_EVERYONE)) {
     result.missing.push("Mention @everyone, @here, and All Roles");
     result.allowed = false;
   }
