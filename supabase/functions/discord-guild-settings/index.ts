@@ -163,7 +163,7 @@ Deno.serve(async (req) => {
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
         return reply({ error: "invalid_queue_id" }, 400);
       }
-      const rows = await db(`discord_announcement_retry_queue?select=id,guild_id,channel_id,mentioned_everyone,status,attempts,max_attempts& id=eq.${id}&limit=1`.replace("& id=", "&id="));
+      const rows = await db(`discord_announcement_retry_queue?select=id,guild_id,channel_id,mentioned_everyone,status,attempts,max_attempts&id=eq.${id}&limit=1`);
       const item = Array.isArray(rows) ? rows[0] : null;
       if (!item || item.status !== "failed") return reply({ error: "queue_item_not_retryable" }, 409);
       const settingsRows = await db(`discord_guild_settings?select=announcements_enabled,allow_everyone&guild_id=eq.${item.guild_id}&limit=1`);
@@ -174,7 +174,7 @@ Deno.serve(async (req) => {
       if (!permissions.allowed) return reply({ error: "bot_channel_permissions_missing", missing_permissions: permissions.missing }, 409);
       await db(`discord_announcement_retry_queue?id=eq.${id}&status=eq.failed`, {
         method: "PATCH",
-        headers: { Prefer: "return=minimal" },
+        headers: { Prefer: "return=representation" },
         body: JSON.stringify({
           status: "pending", attempts: 0, next_attempt_at: new Date().toISOString(),
           locked_until: null, lock_token: null, last_error: null, updated_at: new Date().toISOString(),

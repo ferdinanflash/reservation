@@ -35,7 +35,7 @@ function retryDelay(attempt: number) {
 async function checkSettings(item: any) {
   const rows = await rest("discord_guild_settings?select=announcements_enabled,allow_everyone&guild_id=eq." + item.guild_id + "&limit=1");
   const setting = Array.isArray(rows) ? rows[0] : null;
-  if (setting && setting.announcements_enabled !== true) throw new Error("announcements_disabled");
+  if (!setting || setting.announcements_enabled !== true) throw new Error("announcements_disabled");
   if (item.mentioned_everyone && !setting?.allow_everyone) throw new Error("mention_everyone_disabled");
 }
 async function deliver(item: any) {
@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
   // A worker crash on the final allowed attempt must not leave an item
   // permanently locked in "processing". Mark exhausted stale leases terminal.
   try {
-    const stale = await rest("discord_announcement_retry_queue?select=id,attempts,max_attempts&status=eq.processing&locked_until=lt." + encodeURIComponent(new Date().toISOString()));
+    const stale = await rest("discord_announcement_retry_queue?select=id,attempts,max_attempts&status=eq.processing&locked_until=lt." + encodeURIComponent(new Date().toISOString()) + "&limit=100");
     for (const item of Array.isArray(stale) ? stale : []) {
       if (Number(item.attempts) < Number(item.max_attempts)) continue;
       await rest("discord_announcement_retry_queue?id=eq." + item.id + "&status=eq.processing", {
