@@ -69,6 +69,7 @@
   "edge_functions": [
     "supabase/functions/_shared/discord-permissions.test.ts",
     "supabase/functions/_shared/discord-permissions.ts",
+    "supabase/functions/discord-announcement-retry/index.ts",
     "supabase/functions/discord-announcement/index.ts",
     "supabase/functions/discord-guild-settings/index.ts",
     "supabase/functions/discord-interactions/index.ts",
@@ -202,9 +203,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 111,
+    "file_count": 114,
     "digest_algorithm": "sha256",
-    "content_digest": "e34f029ffd576d91f7f41a72b6c783da1de308d09b7e4bf79f902343e596cbef",
+    "content_digest": "8d4bdade0041eccf3a28f7bc7b8e35bfbeff28039c6daf1827fd408ec2309adc",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -269,6 +270,10 @@
       {
         "path": "docs/CODEBASE_MEMORY_MCP.md",
         "sha256": "b72b6fbff46de385c3522d6e1084cf903d8332e83f69eed9dec537fc8096f6bf"
+      },
+      {
+        "path": "docs/DISCORD_ANNOUNCEMENT_RETRY_QUEUE.md",
+        "sha256": "9ef75bbb84441151977bebb0bb9ecd884a9f44c33a36b8d72b5cdd8f0521b55c"
       },
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
@@ -451,8 +456,12 @@
         "sha256": "c14b7361c45e712fd518966411bac6f3ab8d7e1342093226b950e2bc690a07d5"
       },
       {
+        "path": "supabase/functions/discord-announcement-retry/index.ts",
+        "sha256": "b2fb9227a691c91beb364bd772007f31da398db51d34cc50f8d8874b23d3b0f9"
+      },
+      {
         "path": "supabase/functions/discord-announcement/index.ts",
-        "sha256": "052cd5bd3f7cf3660ae1034eff9828d269839c3adcfbd0781ffb37ddfe063c74"
+        "sha256": "720737dec0045a14af7bf3873729aef1277f319f432591911b4e6f86fd0a8403"
       },
       {
         "path": "supabase/functions/discord-guild-settings/index.ts",
@@ -509,6 +518,10 @@
       {
         "path": "supabase/migrations/20261125000000_discord_message_poll_lock_owner.sql",
         "sha256": "f162fb141a11d0ae40d7d1d9d0216fc8bf0402c722ac6d044e01c1b917987c5d"
+      },
+      {
+        "path": "supabase/migrations/20261125010000_discord_announcement_retry_queue.sql",
+        "sha256": "6593f443dc7dc354cb265a2f34d7b1b16a93f7142611cc7052de24a14339006c"
       },
       {
         "path": "supabase_migration_additional_time_slots.sql",
