@@ -1,3 +1,4 @@
+import { checkDiscordChannelPermissions } from "../../_shared/discord-permissions.ts";
 /*
  * 3475 SOURCE OWNERSHIP
  * Durable retry worker for transient Discord Announcement failures.
@@ -39,6 +40,10 @@ async function checkSettings(item: any) {
 }
 async function deliver(item: any) {
   await checkSettings(item);
+  const permissions = await checkDiscordChannelPermissions(
+    env("DISCORD_BOT_TOKEN"), item.guild_id, item.channel_id, item.mentioned_everyone === true,
+  );
+  if (!permissions.allowed) throw new Error("missing_permissions");
   const response = await fetch(API + "/channels/" + item.channel_id + "/messages", {
     method: "POST",
     headers: { Authorization: "Bot " + env("DISCORD_BOT_TOKEN"), "Content-Type": "application/json" },
@@ -87,9 +92,10 @@ Deno.serve(async (req) => {
       await update(item, { status: "sent", discord_message_id: result.messageId, sent_at: new Date().toISOString(), last_error: null });
       outcomes.push({ id: item.id, status: "sent", attempt: item.attempts });
     } catch (error) {
-      const reason = error instanceof Error ? error.message : "delivery_failed";
-      const retryable = reason.startsWith("transient_http_") || reason.startsWith("database_") ||
-        reason === "network_error" || (error instanceof Error && error.name === "TimeoutError");
+      const reason = error instanceof Error
+        ? (error.name === "TimeoutError" || error instanceof TypeError ? "network_error" : error.message)
+        : "delivery_failed";
+      const retryable = reason.startsWith("transient_http_") || reason.startsWith("database_") || reason === "network_error";
       const terminal = !retryable || Number(item.attempts) >= Math.min(MAX_ATTEMPTS, Number(item.max_attempts));
       await update(item, terminal
         ? { status: "failed", last_error: reason }
