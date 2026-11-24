@@ -13,6 +13,7 @@ const ALLIANCES = new Set(["ARX", "IDN", "ZXC", "VNX", "CAT"]);
 const BATCH_DELAY_MS = 1200;
 const MAX_ALLIANCE_FIDS = 100;
 const MAX_TIMEOUT_RETRIES = 2;
+const REDEEM_REQUEST_TIMEOUT_MS = 20_000;
 
 function json(body: unknown, status = 200) {
     return new Response(JSON.stringify(body), {
@@ -111,9 +112,10 @@ async function callRedeemFunction(action: "redeem", fid: string, cdk: string) {
             "Authorization": `Bearer ${anonKey}`,
         },
         body: JSON.stringify({ action, fid, cdk }),
+        signal: AbortSignal.timeout(REDEEM_REQUEST_TIMEOUT_MS),
     });
-    const result = await response.json().catch(() => ({}));
-    return { httpOk: response.ok, httpStatus: response.status, result };
+    const result = await response.json().catch(() => null);
+    return { httpOk: response.ok, httpStatus: response.status, retryAfter: response.headers.get("Retry-After"), result };
 }
 
 async function loadPlayerNickname(fid: string): Promise<string> {
@@ -222,7 +224,8 @@ function resultLabel(kind: ReturnType<typeof resultKind>, result: any): string {
         case "expired": return "⌛ Gift code expired";
         case "limit": return "⚠️ Usage limit reached";
         case "bad_fid": return "❌ Player ID not found";
-        case "timeout": return "⚠️ Timed out; result not confirmed";
+        case "timeout": return "⚠️ Timed out after retries; result not confirmed";
+        case "skipped": return "⏭️ Skipped because the gift code was invalid or expired";
         default: {
             const detail = upstreamMessage(result).replace(/[\r\n]+/g, " ").slice(0, 100);
             const status = result?.__httpStatus ? ` (HTTP ${result.__httpStatus})` : "";
@@ -235,19 +238,56 @@ function resultLabel(kind: ReturnType<typeof resultKind>, result: any): string {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function redeemOne(fid: string, code: string) {
-    for (let attempt = 0; attempt <= MAX_TIMEOUT_RETRIES; attempt++) {
-        const response = await callRedeemFunction("redeem", fid, code);
-        const result = {
-            ...response.result,
-            __httpOk: response.httpOk,
-            __httpStatus: response.httpStatus,
-        };
-        const kind = resultKind(result);
-        if (kind !== "timeout") return { kind, result };
-        if (attempt < MAX_TIMEOUT_RETRIES) await sleep(2000);
+function redeemRetryDelay(retryAfter: string | null, attempt: number): number {
+    if (retryAfter) {
+        const seconds = Number(retryAfter);
+        const retryAt = Number.isFinite(seconds)
+            ? Date.now() + Math.max(0, seconds) * 1000
+            : Date.parse(retryAfter);
+        if (Number.isFinite(retryAt)) return Math.min(15_000, Math.max(500, retryAt - Date.now()));
     }
-    return { kind: "timeout" as const, result: {} };
+    return attempt === 0 ? 1500 : 3000;
+}
+
+async function redeemOne(fid: string, code: string) {
+    let lastResult: any = {};
+    for (let attempt = 0; attempt <= MAX_TIMEOUT_RETRIES; attempt++) {
+        try {
+            const response = await callRedeemFunction("redeem", fid, code);
+            lastResult = {
+                ...(response.result && typeof response.result === "object" ? response.result : {}),
+                __httpOk: response.httpOk,
+                __httpStatus: response.httpStatus,
+            };
+
+            // Retry transient HTTP failures, but do not repeat permanent 4xx errors.
+            const retryableHttp = response.httpStatus === 408 || response.httpStatus === 429 || response.httpStatus >= 500;
+            if (retryableHttp) {
+                if (attempt < MAX_TIMEOUT_RETRIES) {
+                    await sleep(redeemRetryDelay(response.retryAfter, attempt));
+                    continue;
+                }
+                return { kind: response.httpStatus === 429 ? "limit" as const : "error" as const, result: lastResult };
+            }
+
+            const kind = resultKind(lastResult);
+            if (kind === "timeout" && attempt < MAX_TIMEOUT_RETRIES) {
+                await sleep(redeemRetryDelay(null, attempt));
+                continue;
+            }
+            return { kind, result: lastResult };
+        } catch (error) {
+            // Network errors and AbortSignal timeouts are transient. A retry can
+            // safely resolve to "already claimed" if the upstream completed it.
+            if (attempt < MAX_TIMEOUT_RETRIES) {
+                await sleep(redeemRetryDelay(null, attempt));
+                continue;
+            }
+            const timedOut = error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
+            return { kind: timedOut ? "timeout" as const : "error" as const, result: {} };
+        }
+    }
+    return { kind: "error" as const, result: lastResult };
 }
 
 async function editOriginal(applicationId: string, token: string, content: string) {
@@ -389,16 +429,11 @@ Starting redeem for **${members.length}** player(s)...`,
             const outcome = await redeemOne(member.fid, code);
             results.push({ fid: member.fid, nickname: member.nickname, kind: outcome.kind, result: outcome.result });
 
-            // Invalid/expired codes stop the remaining batch, matching website behavior.
+            // Only confirmed invalid/expired codes stop the batch. A timeout,
+            // rate limit, or player-level failure affects this player only.
             if (outcome.kind === "invalid" || outcome.kind === "expired") {
                 for (const skipped of members.slice(i + 1)) {
-                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "error", result: { msg: "Skipped: gift code is invalid or expired." } });
-                }
-                break;
-            }
-            if (outcome.kind === "timeout") {
-                for (const skipped of members.slice(i + 1)) {
-                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "error", result: { msg: "Skipped because the redeem service timed out." } });
+                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "skipped" });
                 }
                 break;
             }
