@@ -265,7 +265,13 @@ async function sendDiscordMessageWithRetry(channelId: string, payload: unknown):
                 signal: AbortSignal.timeout(DISCORD_SEND_TIMEOUT_MS),
             });
             if (response.status !== 429 && response.status < 500) return response;
-            if (attempt === DISCORD_SEND_MAX_ATTEMPTS - 1) return response;
+            if (attempt === DISCORD_SEND_MAX_ATTEMPTS - 1) {
+                console.error("[send-push-notification] Discord send retries exhausted", {
+                    attempts: DISCORD_SEND_MAX_ATTEMPTS,
+                    httpStatus: response.status,
+                });
+                return response;
+            }
 
             let retryAfter = response.headers.get("Retry-After");
             if (response.status === 429) {
@@ -273,14 +279,39 @@ async function sendDiscordMessageWithRetry(channelId: string, payload: unknown):
                 const seconds = Number(body?.retry_after);
                 if (!retryAfter && Number.isFinite(seconds)) retryAfter = String(seconds);
             }
-            await new Promise((resolve) => setTimeout(resolve, discordRetryDelay(
+            const waitMs = discordRetryDelay(
                 retryAfter ? new Response(null, { headers: { "Retry-After": retryAfter } }) : response,
                 attempt,
-            )));
+            );
+            console.warn("[send-push-notification] Discord send retry", {
+                attempt: attempt + 1,
+                nextAttempt: attempt + 2,
+                maxAttempts: DISCORD_SEND_MAX_ATTEMPTS,
+                reason: `http_${response.status}`,
+                httpStatus: response.status,
+                waitMs,
+            });
+            await new Promise((resolve) => setTimeout(resolve, waitMs));
         } catch (error) {
             lastError = error;
-            if (attempt === DISCORD_SEND_MAX_ATTEMPTS - 1) break;
-            await new Promise((resolve) => setTimeout(resolve, discordRetryDelay(null, attempt)));
+            if (attempt === DISCORD_SEND_MAX_ATTEMPTS - 1) {
+                console.error("[send-push-notification] Discord send retries exhausted", {
+                    attempts: DISCORD_SEND_MAX_ATTEMPTS,
+                    reason: "network_error",
+                    errorName: error instanceof Error ? error.name : "UnknownError",
+                });
+                break;
+            }
+            const waitMs = discordRetryDelay(null, attempt);
+            console.warn("[send-push-notification] Discord send retry", {
+                attempt: attempt + 1,
+                nextAttempt: attempt + 2,
+                maxAttempts: DISCORD_SEND_MAX_ATTEMPTS,
+                reason: "network_error",
+                errorName: error instanceof Error ? error.name : "UnknownError",
+                waitMs,
+            });
+            await new Promise((resolve) => setTimeout(resolve, waitMs));
         }
     }
     throw lastError instanceof Error ? lastError : new Error("Discord message delivery failed after retries");

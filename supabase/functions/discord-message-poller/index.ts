@@ -302,19 +302,48 @@ async function redeemOne(fid: string, code: string): Promise<Outcome["kind"]> {
       // report "Already claimed" if the upstream redeemed before the
       // connection failed; that is a safe, understood final outcome.
       if (attempt < maxAttempts - 1) {
-        await new Promise((resolve) => setTimeout(resolve, retryDelayMs(null, attempt)));
+        const waitMs = retryDelayMs(null, attempt);
+        console.warn("[discord-message-poller] redeem retry", {
+          attempt: attempt + 1,
+          nextAttempt: attempt + 2,
+          maxAttempts,
+          reason: error instanceof Error && error.name === "TimeoutError" ? "request_timeout" : "network_error",
+          errorName: error instanceof Error ? error.name : "UnknownError",
+          waitMs,
+        });
+        await new Promise((resolve) => setTimeout(resolve, waitMs));
         continue;
       }
-      return error instanceof Error && error.name === "TimeoutError" ? "timeout" : "error";
+      const timedOut = error instanceof Error && error.name === "TimeoutError";
+      console.error("[discord-message-poller] redeem retries exhausted", {
+        attempts: maxAttempts,
+        reason: timedOut ? "request_timeout" : "network_error",
+        errorName: error instanceof Error ? error.name : "UnknownError",
+      });
+      return timedOut ? "timeout" : "error";
     }
 
     if (response.status === 429 || response.status >= 500) {
       const retryAfter = response.headers.get("Retry-After");
       if (attempt < maxAttempts - 1) {
         await response.text().catch(() => "");
-        await new Promise((resolve) => setTimeout(resolve, retryDelayMs(retryAfter, attempt)));
+        const waitMs = retryDelayMs(retryAfter, attempt);
+        console.warn("[discord-message-poller] redeem retry", {
+          attempt: attempt + 1,
+          nextAttempt: attempt + 2,
+          maxAttempts,
+          reason: `http_${response.status}`,
+          httpStatus: response.status,
+          waitMs,
+        });
+        await new Promise((resolve) => setTimeout(resolve, waitMs));
         continue;
       }
+      console.error("[discord-message-poller] redeem retries exhausted", {
+        attempts: maxAttempts,
+        reason: `http_${response.status}`,
+        httpStatus: response.status,
+      });
       return response.status === 429 ? "limit" : "error";
     }
 
@@ -326,9 +355,21 @@ async function redeemOne(fid: string, code: string): Promise<Outcome["kind"]> {
     }
     if (!result || typeof result !== "object") {
       if (attempt < maxAttempts - 1) {
-        await new Promise((resolve) => setTimeout(resolve, retryDelayMs(null, attempt)));
+        const waitMs = retryDelayMs(null, attempt);
+        console.warn("[discord-message-poller] redeem retry", {
+          attempt: attempt + 1,
+          nextAttempt: attempt + 2,
+          maxAttempts,
+          reason: "invalid_response",
+          waitMs,
+        });
+        await new Promise((resolve) => setTimeout(resolve, waitMs));
         continue;
       }
+      console.error("[discord-message-poller] redeem retries exhausted", {
+        attempts: maxAttempts,
+        reason: "invalid_response",
+      });
       return "error";
     }
 
@@ -351,10 +392,23 @@ async function redeemOne(fid: string, code: string): Promise<Outcome["kind"]> {
     // TIMEOUT and unknown/transient upstream responses are retried. If all
     // attempts fail, the caller records the player as failed and continues.
     if (attempt < maxAttempts - 1) {
-      await new Promise((resolve) => setTimeout(resolve, retryDelayMs(null, attempt)));
+      const waitMs = retryDelayMs(null, attempt);
+      console.warn("[discord-message-poller] redeem retry", {
+        attempt: attempt + 1,
+        nextAttempt: attempt + 2,
+        maxAttempts,
+        reason: message.startsWith("TIMEOUT") ? "upstream_timeout" : "unrecognized_upstream_result",
+        waitMs,
+      });
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
       continue;
     }
-    return message.startsWith("TIMEOUT") ? "timeout" : "error";
+    const timedOut = message.startsWith("TIMEOUT");
+    console.error("[discord-message-poller] redeem retries exhausted", {
+      attempts: maxAttempts,
+      reason: timedOut ? "upstream_timeout" : "unrecognized_upstream_result",
+    });
+    return timedOut ? "timeout" : "error";
   }
 
   return "error";
