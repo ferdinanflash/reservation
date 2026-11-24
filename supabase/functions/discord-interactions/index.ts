@@ -415,7 +415,6 @@ async function publishResults(interaction: any, heading: string, rows: Array<{ f
         );
     }
 }
-}
 
 async function publishProgress(
     interaction: any,
