@@ -465,15 +465,47 @@ Deno.serve(async (req) => {
   if (!supplied || supplied !== expected) return json({ error: "unauthorized" }, 401);
 
   let locked = false;
+  let lockLost = false;
+  let heartbeat: ReturnType<typeof setInterval> | null = null;
+  const lockOwner = crypto.randomUUID();
+  const lockLeaseMs = 10 * 60_000;
+  const renewLock = async () => {
+    if (lockLost) return;
+    try {
+      const expiry = new Date(Date.now() + lockLeaseMs).toISOString();
+      const rows = await stateRequest(
+        "PATCH",
+        `id=eq.1&lock_owner=eq.${encodeURIComponent(lockOwner)}`,
+        { lock_until: expiry, updated_at: new Date().toISOString() },
+      );
+      if (!Array.isArray(rows) || rows.length === 0) {
+        lockLost = true;
+        console.error("[discord-message-poller] execution lock ownership was lost");
+      }
+    } catch (error) {
+      // Fail closed: do not continue processing if ownership cannot be renewed.
+      lockLost = true;
+      console.error("[discord-message-poller] execution lock heartbeat failed:", error instanceof Error ? error.message : String(error));
+    }
+  };
+  const assertLockOwned = () => {
+    if (lockLost) throw new Error("Discord poller execution lock was lost; stopping to prevent overlapping runs");
+  };
+
   try {
     const now = new Date();
-    const lockExpiry = new Date(now.getTime() + 5 * 60_000).toISOString();
+    const lockExpiry = new Date(now.getTime() + lockLeaseMs).toISOString();
     const lockFilter = `id=eq.1&or=(lock_until.is.null,lock_until.lt.${encodeURIComponent(now.toISOString())})`;
-    const lockRows = await stateRequest("PATCH", lockFilter, { lock_until: lockExpiry });
+    const lockRows = await stateRequest("PATCH", lockFilter, {
+      lock_owner: lockOwner,
+      lock_until: lockExpiry,
+      updated_at: now.toISOString(),
+    });
     if (!Array.isArray(lockRows) || lockRows.length === 0) {
       return json({ ok: true, skipped: "already_running" });
     }
     locked = true;
+    heartbeat = setInterval(() => { void renewLock(); }, 60_000);
 
     // Run due deletions on the same five-minute poll schedule.
     await cleanupDueMessages();
@@ -484,6 +516,7 @@ Deno.serve(async (req) => {
     const initializedChannels: string[] = [];
 
     for (const channelId of channelIds) {
+      assertLockOwned();
       const lastMessageId = await getChannelCursor(channelId);
 
       // Each newly configured channel gets its own baseline; older history is ignored.
@@ -504,6 +537,7 @@ Deno.serve(async (req) => {
       });
 
       for (const message of ordered) {
+        assertLockOwned();
         scanned++;
         if (message.author?.bot || message.webhook_id) {
           await updateCursor(channelId, String(message.id));
@@ -548,9 +582,16 @@ Deno.serve(async (req) => {
     console.error("[discord-message-poller]", error instanceof Error ? error.message : String(error));
     return json({ ok: false, error: "poll_failed", detail: error instanceof Error ? error.message : String(error) }, 500);
   } finally {
+    if (heartbeat !== null) clearInterval(heartbeat);
     if (locked) {
       try {
-        await stateRequest("PATCH", "id=eq.1", { lock_until: null });
+        // Release only the lease acquired by this invocation. Never clear a
+        // newer invocation's lock if this lease expired and was reclaimed.
+        await stateRequest(
+          "PATCH",
+          `id=eq.1&lock_owner=eq.${encodeURIComponent(lockOwner)}`,
+          { lock_owner: null, lock_until: null, updated_at: new Date().toISOString() },
+        );
       } catch (error) {
         console.error("Unable to release Discord poll lock:", error);
       }
