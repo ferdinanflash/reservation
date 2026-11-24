@@ -95,7 +95,8 @@ Deno.serve(async (req) => {
       const reason = error instanceof Error
         ? (error.name === "TimeoutError" || error instanceof TypeError ? "network_error" : error.message)
         : "delivery_failed";
-      const retryable = reason.startsWith("transient_http_") || reason.startsWith("database_") || reason === "network_error";
+      const retryable = reason.startsWith("transient_http_") || reason === "network_error" ||
+        /^discord_(408|429|5[0-9][0-9])$/.test(reason) || /^database_(429|5[0-9][0-9])$/.test(reason);
       const terminal = !retryable || Number(item.attempts) >= Math.min(MAX_ATTEMPTS, Number(item.max_attempts));
       await update(item, terminal
         ? { status: "failed", last_error: reason }
