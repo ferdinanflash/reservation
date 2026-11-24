@@ -18,6 +18,7 @@ const DISCORD_BOT_TOKEN = Deno.env.get("DISCORD_BOT_TOKEN") ?? "";
 const DISCORD_API = "https://discord.com/api/v10";
 const DISCORD_MAX_ATTEMPTS = 4;
 const DISCORD_TIMEOUT_MS = 15_000;
+const ANNOUNCEMENT_QUEUE_MAX_ATTEMPTS = 10;
 const ADMIN_EMAILS = new Set(["president", "demon", "phoenix"].map((name) => name + "@3475-staff.internal"));
 
 const CORS_HEADERS = {
@@ -216,7 +217,7 @@ Deno.serve(async (req: Request) => {
             }
         } catch (error) {
             errorCode = error instanceof Error && /^discord_/.test(error.message) ? error.message : "network_error";
-            retryableFailure = errorCode === "network_error" || /discord_(408|429|5\\d\\d)/.test(errorCode);
+            retryableFailure = errorCode === "network_error" || /discord_(408|429|5[0-9][0-9])/.test(errorCode);
             console.error("[discord-announcement] target delivery failed", {
                 guild_id: target.guild_id, channel_id: target.channel_id, error_code: errorCode,
             });
