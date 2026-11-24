@@ -1304,6 +1304,7 @@
 				</section>
 				<div class="discord-form-divider"></div>
 				<div id="discord-guild-list" class="discord-guild-list"></div>
+				<div class="form-actions"><button type="button" class="btn-back modal-action-btn" onclick="loadDiscordQueueDashboard()" data-i18n="discord_queue_open">📊 Queue & Activity</button></div>
 				<div class="discord-form-divider"></div>
 				<section class="discord-subscriptions-section" aria-labelledby="discord-subscriptions-title">
 					<div class="discord-subscriptions-heading">
@@ -1326,6 +1327,14 @@
 						<button id="discord-save-btn" type="submit" class="btn-apply modal-action-btn" data-i18n="discord_save_server">Save Server</button>
 					</div>
 				</form>
+				<section class="discord-queue-panel" aria-labelledby="discord-queue-title">
+					<div class="discord-queue-heading">
+						<h3 id="discord-queue-title" class="discord-form-title">📊 <span data-i18n="discord_queue_title">Discord Bot Activity & Queue</span></h3>
+						<button type="button" class="btn-back" onclick="loadDiscordQueueDashboard()" data-i18n="discord_queue_refresh">Refresh</button>
+					</div>
+					<p class="theme-switcher-hint" data-i18n="discord_queue_hint">Monitor announcement retries, delivery status, and recent activity. Failed items can be retried after settings and permissions are checked.</p>
+					<div id="discord-queue-dashboard" class="discord-queue-dashboard hidden"></div>
+				</section>
 				<div id="discord-history" class="discord-history hidden"></div>
 				<div class="form-actions">
 					<button class="btn-back modal-action-btn" onclick="returnToPresidentPanel('discord-settings-modal')" data-i18n="btn_back_president_panel">‹ Back to President Panel</button>
