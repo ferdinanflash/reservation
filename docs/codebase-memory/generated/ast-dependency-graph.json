@@ -13222,17 +13222,6 @@
       "line": 126
     }
   ],
-  "parse_diagnostics": [
-    {
-      "file": "js/app-discord.js",
-      "line": 383,
-      "message": "Invalid character."
-    },
-    {
-      "file": "js/app-discord.js",
-      "line": 383,
-      "message": "Unexpected keyword or identifier."
-    }
-  ],
-  "source_digest": "74e740afb48b80c33c459e85577956b28f38f3c831d6a0073999b933132d21d6"
+  "parse_diagnostics": [],
+  "source_digest": "0c02ba7f4ccb1ab168e0d0eeca80ca490b4886aa7a74c001de9e6e0c8c2d9d9d"
 }
