@@ -201,7 +201,7 @@ function isUpstreamSuccess(result: any): boolean {
     return result?.ok === true && (msg === "SUCCESS" || msg === "SUCCESS.");
 }
 
-function resultKind(result: any): "success" | "already" | "invalid" | "expired" | "limit" | "bad_fid" | "error" | "timeout" {
+function resultKind(result: any): "success" | "already" | "invalid" | "expired" | "limit" | "bad_fid" | "error" | "timeout" | "skipped" {
     if (result?.__httpOk === false) return "error";
     const data = upstreamData(result);
     const msg = upstreamMessage(result).toUpperCase().replace(/[.]+$/, "");
