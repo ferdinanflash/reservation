@@ -1,3 +1,5 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+
 /*
  * 3475 SOURCE OWNERSHIP
  * Copyright (c) 2026 Ferdinan | https://3475.web.id
