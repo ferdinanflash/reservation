@@ -69,6 +69,8 @@
   "edge_functions": [
     "supabase/functions/_shared/discord-permissions.test.ts",
     "supabase/functions/_shared/discord-permissions.ts",
+    "supabase/functions/_shared/discord-redeem-dispatch.test.ts",
+    "supabase/functions/_shared/discord-redeem-dispatch.ts",
     "supabase/functions/discord-announcement-retry/index.ts",
     "supabase/functions/discord-announcement/index.ts",
     "supabase/functions/discord-guild-settings/index.ts",
@@ -203,9 +205,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 118,
+    "file_count": 120,
     "digest_algorithm": "sha256",
-    "content_digest": "618171ab2bec315b60f135b1df7baed4755e805b2568d5e7e04e3fff8c465986",
+    "content_digest": "9e7924a86c25cbe7ed9e21cfecad126937d837b91d9acce7068d5c5720adeafa",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -229,7 +231,7 @@
       },
       {
         "path": ".github/workflows/discord-edge-tests.yml",
-        "sha256": "d4330967d3b52352afbf5102549f6c70f7720b227c73dcacae14d41e7d1e2732"
+        "sha256": "8e7ebdeaf45ad66f8cc1f8af0fb667340ac5a37bfa93e6d29c86f10047f82e6a"
       },
       {
         "path": ".github/workflows/register-discord-commands.yml",
@@ -464,6 +466,14 @@
         "sha256": "c14b7361c45e712fd518966411bac6f3ab8d7e1342093226b950e2bc690a07d5"
       },
       {
+        "path": "supabase/functions/_shared/discord-redeem-dispatch.test.ts",
+        "sha256": "dc2923cdbcd32b1b7fabf74d9266392ca647dd44d894e41c2a75d0f85399c12d"
+      },
+      {
+        "path": "supabase/functions/_shared/discord-redeem-dispatch.ts",
+        "sha256": "5cbb4eb752ed1a71c0dc41c4288f72e12b2e7225c568ff314665408f50c2c2a5"
+      },
+      {
         "path": "supabase/functions/discord-announcement-retry/index.ts",
         "sha256": "a6c741a258d19349c542afa5530427f41eb5483d7e401697c7d7210c08091810"
       },
@@ -477,7 +487,7 @@
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
-        "sha256": "734947de277be50dc5da22f8170097236392f6dacf6e92e640be8ca346e2b001"
+        "sha256": "0e205952b4855c7a9bf7efa259846458269cae83296e0351e93bdc350a31f0d8"
       },
       {
         "path": "supabase/functions/discord-message-poller/index.ts",
