@@ -9495,3 +9495,22 @@ body.thanksgiving-theme .site-footer .footer-section .guild-name.fire-text {
         background-position: 50% center;
     }
 }
+
+/* Discord queue monitoring and recovery */
+.discord-queue-panel { margin: 18px 0; padding: 14px; border: 1px solid var(--border-color, rgba(148,163,184,.25)); border-radius: 14px; background: rgba(148,163,184,.045); }
+.discord-queue-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.discord-queue-heading .discord-form-title { margin:0; }
+.discord-queue-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:12px 0; }
+.discord-queue-stat { display:flex; flex-direction:column; gap:3px; min-width:0; padding:10px 8px; border:1px solid var(--border-color,rgba(148,163,184,.2)); border-radius:10px; text-align:center; background:rgba(148,163,184,.06); }
+.discord-queue-stat strong { font-size:1.25rem; color:var(--t-primary,#f1f5f9); }
+.discord-queue-stat span,.discord-queue-item small,.discord-queue-activity small { color:var(--t-muted,#94a3b8); font-size:.72rem; overflow-wrap:anywhere; }
+.discord-queue-section { margin-top:16px; }
+.discord-queue-section h4 { margin:0 0 8px; font-size:.9rem; }
+.discord-queue-item,.discord-queue-activity { display:flex; flex-direction:column; gap:5px; padding:10px 0; border-top:1px solid var(--border-color,rgba(148,163,184,.18)); overflow-wrap:anywhere; }
+.discord-queue-item button { align-self:flex-start; margin:2px 0 0; padding:6px 10px; min-height:32px; font-size:.75rem; }
+.discord-queue-status { font-size:.75rem; font-weight:700; text-transform:capitalize; }
+.discord-queue-status.status-failed,.discord-queue-error { color:#f87171 !important; }
+.discord-queue-status.status-sent { color:#4ade80; }
+.discord-queue-status.status-pending { color:#fbbf24; }
+.discord-queue-status.status-processing { color:#60a5fa; }
+@media(max-width:560px) { .discord-queue-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }

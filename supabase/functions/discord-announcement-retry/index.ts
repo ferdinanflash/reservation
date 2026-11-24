@@ -76,6 +76,19 @@ Deno.serve(async (req) => {
   const expected = env("DISCORD_ANNOUNCEMENT_QUEUE_SECRET");
   if (req.headers.get("Authorization") !== "Bearer " + expected) return json({ error: "unauthorized" }, 401);
   if (!Deno.env.get("DISCORD_BOT_TOKEN")) return json({ error: "missing_bot_token" }, 503);
+  // A worker crash on the final allowed attempt must not leave an item
+  // permanently locked in "processing". Mark exhausted stale leases terminal.
+  try {
+    await rest("discord_announcement_retry_queue?status=eq.processing&attempts=gte.max_attempts&locked_until=lt." + encodeURIComponent(new Date().toISOString()), {
+      method: "PATCH", headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({
+        status: "failed", lock_token: null, locked_until: null,
+        last_error: "retry_lease_expired_max_attempts", updated_at: new Date().toISOString(),
+      }),
+    });
+  } catch (error) {
+    console.warn("[discord-announcement-retry] stale_lease_recovery_failed", error instanceof Error ? error.message : "unknown");
+  }
   let items: any[];
   try {
     items = await rest("rpc/claim_discord_announcement_retries", {
@@ -107,5 +120,10 @@ Deno.serve(async (req) => {
       outcomes.push({ id: item.id, status: terminal ? "failed" : "retry_scheduled", attempt: item.attempts });
     }
   }
-  return json({ processed: outcomes.length, outcomes });
+  const summary = outcomes.reduce((acc: Record<string, number>, item: any) => {
+    acc[item.status] = (acc[item.status] || 0) + 1;
+    return acc;
+  }, {});
+  console.info("[discord-announcement-retry] batch_complete", { processed: outcomes.length, summary });
+  return json({ processed: outcomes.length, summary, outcomes });
 });
