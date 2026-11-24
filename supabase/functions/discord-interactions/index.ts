@@ -465,8 +465,8 @@ async function redeemJobDb(path: string, init: RequestInit = {}) {
 
 async function scheduleRedeemWorker(jobId: string) {
     const url = Deno.env.get("SUPABASE_URL")?.replace(/\/$/, "");
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    if (!url || !serviceKey) throw new Error("redeem_worker_configuration_missing");
+    const workerSecret = Deno.env.get("DISCORD_ANNOUNCEMENT_QUEUE_SECRET");
+    if (!url || !workerSecret) throw new Error("redeem_worker_configuration_missing");
 
     for (let attempt = 0; attempt < 3; attempt++) {
         try {
@@ -474,7 +474,7 @@ async function scheduleRedeemWorker(jobId: string) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${serviceKey}`,
+                    Authorization: `Bearer ${workerSecret}`,
                 },
                 body: JSON.stringify({ internal_action: "process_redeem_job", job_id: jobId }),
                 signal: AbortSignal.timeout(10_000),
@@ -495,6 +495,26 @@ async function scheduleRedeemWorker(jobId: string) {
         if (attempt < 2) await sleep(500 * (attempt + 1));
     }
     throw new Error("redeem_worker_dispatch_exhausted");
+}
+
+async function dispatchDueRedeemJobs() {
+    const due = await redeemJobDb("rpc/list_due_discord_redeem_jobs", {
+        method: "POST",
+        body: "{}",
+    });
+    const jobs = Array.isArray(due) ? due : [];
+    for (const item of jobs.slice(0, 20)) {
+        const jobId = String(item?.job_id ?? "");
+        if (!/^[0-9a-f-]{36}$/i.test(jobId)) continue;
+        try {
+            await scheduleRedeemWorker(jobId);
+        } catch (error) {
+            console.error("[discord-interactions] redeem recovery dispatch failed", {
+                jobId,
+                errorName: error instanceof Error ? error.name : "UnknownError",
+            });
+        }
+    }
 }
 
 async function startRedeem(interaction: any) {
@@ -953,11 +973,10 @@ Deno.serve(async (req) => {
         return json({ ok: true, service: "3475-discord-interactions" });
     }
     if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-    // Internal continuation calls are authenticated with the project service-role key.
-    // Each redeem step runs in a separate Edge Function execution.
+    // Internal queue calls use the already configured queue-worker secret.
     if (req.method === "POST") {
-        const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-        if (serviceKey && req.headers.get("authorization") === `Bearer ${serviceKey}`) {
+        const workerSecret = Deno.env.get("DISCORD_ANNOUNCEMENT_QUEUE_SECRET");
+        if (workerSecret && req.headers.get("authorization") === `Bearer ${workerSecret}`) {
             let internalBody: any;
             try { internalBody = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
             if (internalBody?.internal_action === "process_redeem_job" && /^[0-9a-f-]{36}$/i.test(String(internalBody?.job_id ?? ""))) {
@@ -965,6 +984,14 @@ Deno.serve(async (req) => {
                 EdgeRuntime.waitUntil(processRedeemJob(jobId).catch((error) => {
                     console.error("[discord-interactions] internal redeem worker failed", {
                         jobId,
+                        errorName: error instanceof Error ? error.name : "UnknownError",
+                    });
+                }));
+                return json({ ok: true, accepted: true }, 202);
+            }
+            if (internalBody?.internal_action === "resume_due_redeem_jobs") {
+                EdgeRuntime.waitUntil(dispatchDueRedeemJobs().catch((error) => {
+                    console.error("[discord-interactions] redeem recovery scan failed", {
                         errorName: error instanceof Error ? error.name : "UnknownError",
                     });
                 }));
