@@ -200,9 +200,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 108,
+    "file_count": 109,
     "digest_algorithm": "sha256",
-    "content_digest": "4c8dac6a4dc89939262062617a47c39933e77478df5eb8cbba33e8642c707a4f",
+    "content_digest": "0a08580c98ecd800ddbc382a8fbd48c081d5c50b46e6631febd5c0a7b7fd0443",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -270,7 +270,7 @@
       },
       {
         "path": "docs/DISCORD_BOT_REDEEM.md",
-        "sha256": "ea5a9cfd290655ec8fa73de0f48b0636671ff01a54e79d3c19ae954473101600"
+        "sha256": "92b744c83c51dfd44ec2264b9aacdebed549814d2768f5162132cb4ea2a4bdfd"
       },
       {
         "path": "docs/DISCORD_MULTI_SERVER_ANNOUNCEMENTS.md",
@@ -450,11 +450,11 @@
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
-        "sha256": "e0c797a5d2a99e1d2661a35969bfffeb11a69859a4b40750c8b30acdc7537ad5"
+        "sha256": "aa1ce3824be9cca168d7b77362a58bee8cc6f60498e149a91aecb24a43aaf38c"
       },
       {
         "path": "supabase/functions/discord-message-poller/index.ts",
-        "sha256": "ffda3eda06305293eb19700289d36f910045c17dab1ff7a0bccf67d7b56665dc"
+        "sha256": "1ec03e35f64a2373a766ee0038b41ee3ddc4093bca47a5aefb13f72f4ff1d8fa"
       },
       {
         "path": "supabase/functions/index.ts",
@@ -470,7 +470,7 @@
       },
       {
         "path": "supabase/functions/send-push-notification/index.ts",
-        "sha256": "14acdc0ef11527df1c2417f59b3d0bb04d988ff40c8a79df6a560e5fa9ddf414"
+        "sha256": "31426f738bae0fafb10b1f9b815f61fa79fa2c6dfabde2b3d15eb81d46625db8"
       },
       {
         "path": "supabase/functions/wosatlas-states/index.ts",
@@ -495,6 +495,10 @@
       {
         "path": "supabase/migrations/20261123010000_discord_global_new_reservation_notifications.sql",
         "sha256": "ee8e33742e0c78579553cb33f1ecde2fb5d5889710ddb7b66a7337dae2247761"
+      },
+      {
+        "path": "supabase/migrations/20261125000000_discord_message_poll_lock_owner.sql",
+        "sha256": "f162fb141a11d0ae40d7d1d9d0216fc8bf0402c722ac6d044e01c1b917987c5d"
       },
       {
         "path": "supabase_migration_additional_time_slots.sql",
