@@ -6,8 +6,8 @@ export function workerDispatchRetryDelay(
     random = Math.random,
 ): number {
     let serverDelayMs: number | null = null;
-    const millisecondsMatch = errorMessage.match(/retry\\s+after\\s+(\\d+(?:\\.\\d+)?)\\s*ms/i);
-    const secondsMatch = errorMessage.match(/retry\\s+after\\s+(\\d+(?:\\.\\d+)?)\\s*(?:s|sec|seconds?)\\b/i);
+    const millisecondsMatch = errorMessage.match(/retry\s+after\s+(\d+(?:\.\d+)?)\s*ms/i);
+    const secondsMatch = errorMessage.match(/retry\s+after\s+(\d+(?:\.\d+)?)\s*(?:s|sec|seconds?)\b/i);
     if (millisecondsMatch) {
         serverDelayMs = Number(millisecondsMatch[1]);
     } else if (secondsMatch) {
