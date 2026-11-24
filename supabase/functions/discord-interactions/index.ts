@@ -264,26 +264,62 @@ async function redeemOne(fid: string, code: string) {
             const retryableHttp = response.httpStatus === 408 || response.httpStatus === 429 || response.httpStatus >= 500;
             if (retryableHttp) {
                 if (attempt < MAX_TIMEOUT_RETRIES) {
-                    await sleep(redeemRetryDelay(response.retryAfter, attempt));
+                    const waitMs = redeemRetryDelay(response.retryAfter, attempt);
+                    console.warn("[discord-interactions] redeem retry", {
+                        attempt: attempt + 1,
+                        nextAttempt: attempt + 2,
+                        maxAttempts: MAX_TIMEOUT_RETRIES + 1,
+                        reason: `http_${response.httpStatus}`,
+                        httpStatus: response.httpStatus,
+                        waitMs,
+                    });
+                    await sleep(waitMs);
                     continue;
                 }
+                console.error("[discord-interactions] redeem retries exhausted", {
+                    attempts: MAX_TIMEOUT_RETRIES + 1,
+                    reason: `http_${response.httpStatus}`,
+                    httpStatus: response.httpStatus,
+                });
                 return { kind: response.httpStatus === 429 ? "limit" as const : "error" as const, result: lastResult };
             }
 
             const kind = resultKind(lastResult);
             if (kind === "timeout" && attempt < MAX_TIMEOUT_RETRIES) {
-                await sleep(redeemRetryDelay(null, attempt));
+                const waitMs = redeemRetryDelay(null, attempt);
+                console.warn("[discord-interactions] redeem retry", {
+                    attempt: attempt + 1,
+                    nextAttempt: attempt + 2,
+                    maxAttempts: MAX_TIMEOUT_RETRIES + 1,
+                    reason: "upstream_timeout",
+                    waitMs,
+                });
+                await sleep(waitMs);
                 continue;
             }
             return { kind, result: lastResult };
         } catch (error) {
             // Network errors and AbortSignal timeouts are transient. A retry can
             // safely resolve to "already claimed" if the upstream completed it.
+            const timedOut = error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
             if (attempt < MAX_TIMEOUT_RETRIES) {
-                await sleep(redeemRetryDelay(null, attempt));
+                const waitMs = redeemRetryDelay(null, attempt);
+                console.warn("[discord-interactions] redeem retry", {
+                    attempt: attempt + 1,
+                    nextAttempt: attempt + 2,
+                    maxAttempts: MAX_TIMEOUT_RETRIES + 1,
+                    reason: timedOut ? "request_timeout" : "network_error",
+                    errorName: error instanceof Error ? error.name : "UnknownError",
+                    waitMs,
+                });
+                await sleep(waitMs);
                 continue;
             }
-            const timedOut = error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
+            console.error("[discord-interactions] redeem retries exhausted", {
+                attempts: MAX_TIMEOUT_RETRIES + 1,
+                reason: timedOut ? "request_timeout" : "network_error",
+                errorName: error instanceof Error ? error.name : "UnknownError",
+            });
             return { kind: timedOut ? "timeout" as const : "error" as const, result: {} };
         }
     }
