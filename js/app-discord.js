@@ -219,6 +219,70 @@
         }
     }
 
+
+    async function loadQueueDashboard() {
+        const target = $("discord-queue-dashboard");
+        if (!target || !isAdmin) return;
+        target.classList.remove("hidden");
+        target.innerHTML = `<p class="redeem-hint">${t("discord_queue_loading")}</p>`;
+        try {
+            const { data, error } = await api("queue_dashboard");
+            if (error) throw error;
+            const counts = Object.fromEntries((data?.counts || []).map((item) => [item.status, Number(item.count || 0)]));
+            const labels = [
+                ["pending", t("discord_queue_pending")],
+                ["processing", t("discord_queue_processing")],
+                ["sent", t("discord_queue_sent")],
+                ["failed", t("discord_queue_failed")],
+            ];
+            const cards = labels.map(([key, label]) => `
+                <div class="discord-queue-stat"><strong>${counts[key] || 0}</strong><span>${label}</span></div>`).join("");
+            const queueRows = (data?.queue || []).map((item) => {
+                const retry = item.status === "failed" ? `<button type="button" class="btn-back discord-queue-retry" data-id="${escapeHtml(item.id)}">${t("discord_queue_retry")}</button>` : "";
+                return `
+                    <article class="discord-queue-item">
+                        <div><strong>${escapeHtml(item.title || t("discord_untitled_announcement"))}</strong>
+                        <small>${escapeHtml(item.guild_id)} · #${escapeHtml(item.channel_id)}</small></div>
+                        <span class="discord-queue-status status-${escapeHtml(item.status)}">${escapeHtml(item.status)} · ${Number(item.attempts || 0)}/${Number(item.max_attempts || 0)}</span>
+                        ${item.last_error ? `<small class="discord-queue-error">${escapeHtml(item.last_error)}</small>` : ""}
+                        <small>${item.created_at ? new Date(item.created_at).toLocaleString() : ""}</small>
+                        ${retry}
+                    </article>`;
+            }).join("");
+            const activityRows = (data?.activity || []).map((item) => `
+                <article class="discord-queue-activity">
+                    <strong>${escapeHtml(item.title || t("discord_untitled_announcement"))}</strong>
+                    <small>${escapeHtml(item.guild_id)} · #${escapeHtml(item.channel_id)} · ${escapeHtml(item.status)}${item.error_code ? " · " + escapeHtml(item.error_code) : ""}</small>
+                    <small>${item.created_at ? new Date(item.created_at).toLocaleString() : ""}</small>
+                </article>`).join("");
+            target.innerHTML = `
+                <div class="discord-queue-stats">${cards}</div>
+                <div class="discord-queue-section"><h4>${t("discord_queue_recent")}</h4>${queueRows || `<p class="redeem-hint">${t("discord_queue_empty")}</p>`}</div>
+                <div class="discord-queue-section"><h4>${t("discord_queue_activity")}</h4>${activityRows || `<p class="redeem-hint">${t("discord_queue_empty")}</p>`}</div>`;
+            target.querySelectorAll(".discord-queue-retry").forEach((button) => button.addEventListener("click", async () => {
+                if (!confirm(t("discord_queue_retry_confirm"))) return;
+                button.disabled = true;
+                try {
+                    const { error } = await api("retry_queue_item", { id: button.dataset.id });
+                    if (error) {
+                        let detail = "";
+                        try { detail = (await error.context?.clone?.().json())?.error || ""; } catch (_) {}
+                        throw new Error(detail || error.message || "Retry failed");
+                    }
+                    showToast(t("discord_queue_retry_queued"), "success");
+                    await loadQueueDashboard();
+                } catch (error) {
+                    console.error("Discord queue retry failed:", error);
+                    showToast(error.message || t("discord_queue_retry_failed"), "error");
+                    button.disabled = false;
+                }
+            }));
+        } catch (error) {
+            console.error("Unable to load Discord queue dashboard:", error);
+            target.innerHTML = `<p class="redeem-hint">${t("discord_queue_load_failed")}</p>`;
+        }
+    }
+
     async function saveGuild() {
         if (!isAdmin) return;
         const payload = {
@@ -316,6 +380,7 @@
         $("discord-save-btn").textContent = t("discord_save_server");
     }
 
+    window.loadDiscordQueueDashboard = loadQueueDashboard;
     window.openDiscordSettingsModal = openDiscordSettingsModal;
     window.closeDiscordSettingsModal = () => closeModal("discord-settings-modal");
     window.openDiscordComposerModal = openDiscordComposerModal;

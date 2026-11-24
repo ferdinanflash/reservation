@@ -22,7 +22,7 @@
 			//
 			// >>> Bump APP_BUILD every time you deploy a fix. <<<
 			// ============================================================
-			var APP_BUILD = '2026-11-24-01';
+			var APP_BUILD = '2026-11-25-01';
 
 			var isAppleSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
 			if (!isAppleSafari) return; // Chrome/Android already pick up ?v= fine
@@ -172,14 +172,14 @@
 		}
 		</script>
 
-		<link rel="stylesheet" href="style.css?v=165">
+		<link rel="stylesheet" href="style.css?v=166">
 
 					<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0" defer=""></script>
 		<script src="common.js?v=16" defer=""></script>
-		<script src="lang.js?v=75" defer=""></script>
+		<script src="lang.js?v=76" defer=""></script>
 					<script src="js/app-core.js?v=57" defer=""></script>
 					<script src="js/app-auth.js?v=56" defer=""></script>
-					<script src="js/app-discord.js?v=5" defer=""></script>
+					<script src="js/app-discord.js?v=6" defer=""></script>
 					<script src="js/app-notes.js?v=45" defer=""></script>
 					<script src="js/app-schedule.js?v=60" defer=""></script>
 					<script src="js/app-applications.js?v=57" defer=""></script>
@@ -1304,6 +1304,7 @@
 				</section>
 				<div class="discord-form-divider"></div>
 				<div id="discord-guild-list" class="discord-guild-list"></div>
+				<div class="form-actions"><button type="button" class="btn-back modal-action-btn" onclick="loadDiscordQueueDashboard()" data-i18n="discord_queue_open">📊 Queue & Activity</button></div>
 				<div class="discord-form-divider"></div>
 				<section class="discord-subscriptions-section" aria-labelledby="discord-subscriptions-title">
 					<div class="discord-subscriptions-heading">
@@ -1326,6 +1327,14 @@
 						<button id="discord-save-btn" type="submit" class="btn-apply modal-action-btn" data-i18n="discord_save_server">Save Server</button>
 					</div>
 				</form>
+				<section class="discord-queue-panel" aria-labelledby="discord-queue-title">
+					<div class="discord-queue-heading">
+						<h3 id="discord-queue-title" class="discord-form-title">📊 <span data-i18n="discord_queue_title">Discord Bot Activity & Queue</span></h3>
+						<button type="button" class="btn-back" onclick="loadDiscordQueueDashboard()" data-i18n="discord_queue_refresh">Refresh</button>
+					</div>
+					<p class="theme-switcher-hint" data-i18n="discord_queue_hint">Monitor announcement retries, delivery status, and recent activity. Failed items can be retried after settings and permissions are checked.</p>
+					<div id="discord-queue-dashboard" class="discord-queue-dashboard hidden"></div>
+				</section>
 				<div id="discord-history" class="discord-history hidden"></div>
 				<div class="form-actions">
 					<button class="btn-back modal-action-btn" onclick="returnToPresidentPanel('discord-settings-modal')" data-i18n="btn_back_president_panel">‹ Back to President Panel</button>

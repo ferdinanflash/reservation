@@ -35,7 +35,7 @@ function retryDelay(attempt: number) {
 async function checkSettings(item: any) {
   const rows = await rest("discord_guild_settings?select=announcements_enabled,allow_everyone&guild_id=eq." + item.guild_id + "&limit=1");
   const setting = Array.isArray(rows) ? rows[0] : null;
-  if (setting && setting.announcements_enabled !== true) throw new Error("announcements_disabled");
+  if (!setting || setting.announcements_enabled !== true) throw new Error("announcements_disabled");
   if (item.mentioned_everyone && !setting?.allow_everyone) throw new Error("mention_everyone_disabled");
 }
 async function deliver(item: any) {
@@ -76,6 +76,23 @@ Deno.serve(async (req) => {
   const expected = env("DISCORD_ANNOUNCEMENT_QUEUE_SECRET");
   if (req.headers.get("Authorization") !== "Bearer " + expected) return json({ error: "unauthorized" }, 401);
   if (!Deno.env.get("DISCORD_BOT_TOKEN")) return json({ error: "missing_bot_token" }, 503);
+  // A worker crash on the final allowed attempt must not leave an item
+  // permanently locked in "processing". Mark exhausted stale leases terminal.
+  try {
+    const stale = await rest("discord_announcement_retry_queue?select=id,attempts,max_attempts&status=eq.processing&locked_until=lt." + encodeURIComponent(new Date().toISOString()) + "&limit=100");
+    for (const item of Array.isArray(stale) ? stale : []) {
+      if (Number(item.attempts) < Number(item.max_attempts)) continue;
+      await rest("discord_announcement_retry_queue?id=eq." + item.id + "&status=eq.processing", {
+        method: "PATCH", headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({
+          status: "failed", lock_token: null, locked_until: null,
+          last_error: "retry_lease_expired_max_attempts", updated_at: new Date().toISOString(),
+        }),
+      });
+    }
+  } catch (error) {
+    console.warn("[discord-announcement-retry] stale_lease_recovery_failed", error instanceof Error ? error.message : "unknown");
+  }
   let items: any[];
   try {
     items = await rest("rpc/claim_discord_announcement_retries", {
@@ -107,5 +124,10 @@ Deno.serve(async (req) => {
       outcomes.push({ id: item.id, status: terminal ? "failed" : "retry_scheduled", attempt: item.attempts });
     }
   }
-  return json({ processed: outcomes.length, outcomes });
+  const summary = outcomes.reduce((acc: Record<string, number>, item: any) => {
+    acc[item.status] = (acc[item.status] || 0) + 1;
+    return acc;
+  }, {});
+  console.info("[discord-announcement-retry] batch_complete", { processed: outcomes.length, summary });
+  return json({ processed: outcomes.length, summary, outcomes });
 });

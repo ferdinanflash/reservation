@@ -140,6 +140,48 @@ Deno.serve(async (req) => {
       await db(`discord_guild_settings?guild_id=eq.${guildId}`, { method: "DELETE" });
       return reply({ deleted: true });
     }
+    if (action === "queue_dashboard") {
+      const statuses = ["pending", "processing", "sent", "failed"];
+      const [counts, queue, activity] = await Promise.all([
+        Promise.all(statuses.map(async (status) => {
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/discord_announcement_retry_queue?select=id&status=eq.${status}`, {
+            method: "HEAD",
+            headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, Prefer: "count=exact" },
+          });
+          if (!response.ok) throw new Error(`database_${response.status}`);
+          const range = response.headers.get("content-range") || "";
+          const total = Number(range.split("/").pop());
+          return { status, count: Number.isFinite(total) ? total : 0 };
+        })),
+        db("discord_announcement_retry_queue?select=id,guild_id,channel_id,title,status,attempts,max_attempts,next_attempt_at,locked_until,last_error,created_at,updated_at&order=created_at.desc&limit=30"),
+        db("discord_announcement_log?select=id,guild_id,channel_id,title,status,error_code,created_at,discord_message_id&order=created_at.desc&limit=20"),
+      ]);
+      return reply({ counts, queue: queue ?? [], activity: activity ?? [] });
+    }
+    if (action === "retry_queue_item") {
+      const id = String(input?.id ?? "").trim();
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+        return reply({ error: "invalid_queue_id" }, 400);
+      }
+      const rows = await db(`discord_announcement_retry_queue?select=id,guild_id,channel_id,mentioned_everyone,status,attempts,max_attempts&id=eq.${id}&limit=1`);
+      const item = Array.isArray(rows) ? rows[0] : null;
+      if (!item || item.status !== "failed") return reply({ error: "queue_item_not_retryable" }, 409);
+      const settingsRows = await db(`discord_guild_settings?select=announcements_enabled,allow_everyone&guild_id=eq.${item.guild_id}&limit=1`);
+      const settings = Array.isArray(settingsRows) ? settingsRows[0] : null;
+      if (!settings || settings.announcements_enabled !== true) return reply({ error: "announcements_disabled" }, 409);
+      if (item.mentioned_everyone && settings.allow_everyone !== true) return reply({ error: "mention_everyone_disabled" }, 409);
+      const permissions = await checkDiscordChannelPermissions(BOT_TOKEN, item.guild_id, item.channel_id, item.mentioned_everyone === true);
+      if (!permissions.allowed) return reply({ error: "bot_channel_permissions_missing", missing_permissions: permissions.missing }, 409);
+      await db(`discord_announcement_retry_queue?id=eq.${id}&status=eq.failed`, {
+        method: "PATCH",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({
+          status: "pending", attempts: 0, next_attempt_at: new Date().toISOString(),
+          locked_until: null, lock_token: null, last_error: null, updated_at: new Date().toISOString(),
+        }),
+      });
+      return reply({ retried: true, id });
+    }
     if (action === "history") {
       const guildId = String(input?.guild_id ?? "").trim();
       if (!/^\d{17,20}$/.test(guildId)) return reply({ error: "invalid_guild_id" }, 400);

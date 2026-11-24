@@ -18,7 +18,7 @@ on:
       - "docs/CODEBASE_MEMORY_MCP.md"
       - "docs/codebase-memory/**"
       - "tools/codebase-memory-mcp/**"
-      - ".github/workflows/codebase-memory-mcp.yml"
+      - ".github/workflows/**"
   pull_request:
     paths:
       - "index.html"
@@ -36,7 +36,7 @@ on:
       - "docs/CODEBASE_MEMORY_MCP.md"
       - "docs/codebase-memory/**"
       - "tools/codebase-memory-mcp/**"
-      - ".github/workflows/codebase-memory-mcp.yml"
+      - ".github/workflows/**"
   workflow_dispatch:
 
 permissions:
