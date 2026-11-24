@@ -40,6 +40,8 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const DISCORD_BOT_TOKEN = Deno.env.get("DISCORD_BOT_TOKEN") ?? "";
 const DISCORD_API = "https://discord.com/api/v10";
+const DISCORD_SEND_MAX_ATTEMPTS = 4;
+const DISCORD_SEND_TIMEOUT_MS = 15_000;
 
 // IMPORTANT: web-push must be initialized with the VAPID identity before
 // sendNotification() is called. Without this, every push send can fail even
@@ -232,6 +234,58 @@ async function deleteStaleSubscriptions(ids: string[]) {
 }
 
 
+function discordRetryDelay(response: Response | null, attempt: number): number {
+    const retryAfterHeader = response?.headers.get("Retry-After");
+    if (retryAfterHeader) {
+        const seconds = Number(retryAfterHeader);
+        const retryAt = Number.isFinite(seconds)
+            ? Date.now() + Math.max(0, seconds) * 1000
+            : Date.parse(retryAfterHeader);
+        if (Number.isFinite(retryAt)) return Math.min(15_000, Math.max(500, retryAt - Date.now()));
+    }
+    return Math.min(8_000, 1000 * (2 ** attempt));
+}
+
+async function sendDiscordMessageWithRetry(channelId: string, payload: unknown): Promise<Response> {
+    // Reuse one nonce across retries so Discord can deduplicate a message
+    // whose first response was lost after the API accepted it.
+    const idempotentPayload = {
+        ...(payload as Record<string, unknown>),
+        nonce: crypto.randomUUID().replace(/-/g, "").slice(0, 25),
+        enforce_nonce: true,
+    };
+    let lastError: unknown = null;
+    for (let attempt = 0; attempt < DISCORD_SEND_MAX_ATTEMPTS; attempt++) {
+        let response: Response | null = null;
+        try {
+            response = await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
+                method: "POST",
+                headers: { Authorization: "Bot " + DISCORD_BOT_TOKEN, "Content-Type": "application/json" },
+                body: JSON.stringify(idempotentPayload),
+                signal: AbortSignal.timeout(DISCORD_SEND_TIMEOUT_MS),
+            });
+            if (response.status !== 429 && response.status < 500) return response;
+            if (attempt === DISCORD_SEND_MAX_ATTEMPTS - 1) return response;
+
+            let retryAfter = response.headers.get("Retry-After");
+            if (response.status === 429) {
+                const body = await response.clone().json().catch(() => ({}));
+                const seconds = Number(body?.retry_after);
+                if (!retryAfter && Number.isFinite(seconds)) retryAfter = String(seconds);
+            }
+            await new Promise((resolve) => setTimeout(resolve, discordRetryDelay(
+                retryAfter ? new Response(null, { headers: { "Retry-After": retryAfter } }) : response,
+                attempt,
+            )));
+        } catch (error) {
+            lastError = error;
+            if (attempt === DISCORD_SEND_MAX_ATTEMPTS - 1) break;
+            await new Promise((resolve) => setTimeout(resolve, discordRetryDelay(null, attempt)));
+        }
+    }
+    throw lastError instanceof Error ? lastError : new Error("Discord message delivery failed after retries");
+}
+
 // Get Notification is the guest's explicit opt-in. A push_subscriptions row
 // exists only after that guest enabled notifications for this application.
 // Alliance membership is looked up server-side by the reservation's Player ID.
@@ -356,10 +410,9 @@ async function sendAllianceDiscordNotification(record: any, notification: { titl
     let sent = 0;
     for (const destination of destinations.values()) {
         try {
-            const sendResponse = await fetch(DISCORD_API + "/channels/" + destination.channel_id + "/messages", {
-                method: "POST",
-                headers: { Authorization: "Bot " + DISCORD_BOT_TOKEN, "Content-Type": "application/json" },
-                body: JSON.stringify({ embeds: [embed], allowed_mentions: { parse: [] } }),
+            const sendResponse = await sendDiscordMessageWithRetry(destination.channel_id, {
+                embeds: [embed],
+                allowed_mentions: { parse: [] },
             });
             if (!sendResponse.ok) {
                 const detail = await sendResponse.text().catch(() => "");

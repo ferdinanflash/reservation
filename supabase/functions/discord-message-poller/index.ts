@@ -137,7 +137,7 @@ async function removeCleanupQueueItem(messageId: string) {
   }
 }
 
-async function cleanupDueMessages() {
+async function cleanupDueMessages(assertLease: () => void = () => {}) {
   const now = new Date().toISOString();
   const query = new URLSearchParams({
     select: "channel_id,message_id",
@@ -156,6 +156,7 @@ async function cleanupDueMessages() {
   if (!Array.isArray(due)) return;
 
   for (const item of due) {
+    assertLease();
     const channelId = String(item.channel_id ?? "");
     const messageId = String(item.message_id ?? "");
     if (!channelId || !messageId) continue;
@@ -373,7 +374,7 @@ function resultLabel(kind: string) {
   }
 }
 
-async function processCommand(channelId: string, allianceInput: string, code: string) {
+async function processCommand(channelId: string, allianceInput: string, code: string, assertLease: () => void = () => {}) {
   const alliance = allianceInput.trim().toUpperCase();
   if (!ALLIANCES.has(alliance)) {
     await sendChannelMessage(channelId, "❌ Alliance tidak valid. Gunakan ARX, IDN, ZXC, VNX, atau CAT.");
@@ -396,6 +397,7 @@ async function processCommand(channelId: string, allianceInput: string, code: st
   const results: Outcome[] = [];
 
   for (let i = 0; i < members.length; i++) {
+    assertLease();
     const member = members[i];
     const kind = await redeemOne(member.fid, code);
     results.push({ fid: member.fid, nickname: member.nickname, kind });
@@ -417,6 +419,7 @@ async function processCommand(channelId: string, allianceInput: string, code: st
     if (i < members.length - 1) await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY_MS));
   }
 
+  assertLease();
   const successful = results.filter((item) => item.kind === "success").length;
   const already = results.filter((item) => item.kind === "already").length;
   const expired = results.filter((item) => item.kind === "expired").length;
@@ -465,18 +468,55 @@ Deno.serve(async (req) => {
   if (!supplied || supplied !== expected) return json({ error: "unauthorized" }, 401);
 
   let locked = false;
+  let lockLost = false;
+  let heartbeat: ReturnType<typeof setInterval> | null = null;
+  let heartbeatInFlight: Promise<void> | null = null;
+  const lockOwner = crypto.randomUUID();
+  const lockLeaseMs = 10 * 60_000;
+  const renewLock = async () => {
+    if (lockLost) return;
+    try {
+      const expiry = new Date(Date.now() + lockLeaseMs).toISOString();
+      const rows = await stateRequest(
+        "PATCH",
+        `id=eq.1&lock_owner=eq.${encodeURIComponent(lockOwner)}`,
+        { lock_until: expiry, updated_at: new Date().toISOString() },
+      );
+      if (!Array.isArray(rows) || rows.length === 0) {
+        lockLost = true;
+        console.error("[discord-message-poller] execution lock ownership was lost");
+      }
+    } catch (error) {
+      // Fail closed: do not continue processing if ownership cannot be renewed.
+      lockLost = true;
+      console.error("[discord-message-poller] execution lock heartbeat failed:", error instanceof Error ? error.message : String(error));
+    }
+  };
+  const assertLockOwned = () => {
+    if (lockLost) throw new Error("Discord poller execution lock was lost; stopping to prevent overlapping runs");
+  };
+
   try {
     const now = new Date();
-    const lockExpiry = new Date(now.getTime() + 5 * 60_000).toISOString();
+    const lockExpiry = new Date(now.getTime() + lockLeaseMs).toISOString();
     const lockFilter = `id=eq.1&or=(lock_until.is.null,lock_until.lt.${encodeURIComponent(now.toISOString())})`;
-    const lockRows = await stateRequest("PATCH", lockFilter, { lock_until: lockExpiry });
+    const lockRows = await stateRequest("PATCH", lockFilter, {
+      lock_owner: lockOwner,
+      lock_until: lockExpiry,
+      updated_at: now.toISOString(),
+    });
     if (!Array.isArray(lockRows) || lockRows.length === 0) {
       return json({ ok: true, skipped: "already_running" });
     }
     locked = true;
+    heartbeat = setInterval(() => {
+      if (!heartbeatInFlight) {
+        heartbeatInFlight = renewLock().finally(() => { heartbeatInFlight = null; });
+      }
+    }, 60_000);
 
     // Run due deletions on the same five-minute poll schedule.
-    await cleanupDueMessages();
+    await cleanupDueMessages(assertLockOwned);
 
     const channelIds = configuredChannelIds();
     let scanned = 0;
@@ -484,6 +524,7 @@ Deno.serve(async (req) => {
     const initializedChannels: string[] = [];
 
     for (const channelId of channelIds) {
+      assertLockOwned();
       const lastMessageId = await getChannelCursor(channelId);
 
       // Each newly configured channel gets its own baseline; older history is ignored.
@@ -504,6 +545,7 @@ Deno.serve(async (req) => {
       });
 
       for (const message of ordered) {
+        assertLockOwned();
         scanned++;
         if (message.author?.bot || message.webhook_id) {
           await updateCursor(channelId, String(message.id));
@@ -516,8 +558,11 @@ Deno.serve(async (req) => {
 
         if (command) {
           try {
-            await processCommand(channelId, command[1], command[2]);
+            await processCommand(channelId, command[1], command[2], assertLockOwned);
           } catch (error) {
+            // If the lease was lost, leave the message cursor untouched so a
+            // later invocation can safely retry the command instead of consuming it.
+            assertLockOwned();
             console.error(`Redeem command failed in channel ${channelId}:`, error instanceof Error ? error.message : String(error));
             await sendChannelMessage(channelId, "❌ Proses redeem mengalami gangguan. Periksa log Supabase sebelum mengirim ulang perintah agar tidak terjadi redeem ganda.");
           }
@@ -548,9 +593,18 @@ Deno.serve(async (req) => {
     console.error("[discord-message-poller]", error instanceof Error ? error.message : String(error));
     return json({ ok: false, error: "poll_failed", detail: error instanceof Error ? error.message : String(error) }, 500);
   } finally {
+    if (heartbeat !== null) clearInterval(heartbeat);
+    // Do not let an in-flight renewal recreate the lease after it is released.
+    if (heartbeatInFlight) await heartbeatInFlight;
     if (locked) {
       try {
-        await stateRequest("PATCH", "id=eq.1", { lock_until: null });
+        // Release only the lease acquired by this invocation. Never clear a
+        // newer invocation's lock if this lease expired and was reclaimed.
+        await stateRequest(
+          "PATCH",
+          `id=eq.1&lock_owner=eq.${encodeURIComponent(lockOwner)}`,
+          { lock_owner: null, lock_until: null, updated_at: new Date().toISOString() },
+        );
       } catch (error) {
         console.error("Unable to release Discord poll lock:", error);
       }
