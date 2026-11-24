@@ -247,6 +247,13 @@ function discordRetryDelay(response: Response | null, attempt: number): number {
 }
 
 async function sendDiscordMessageWithRetry(channelId: string, payload: unknown): Promise<Response> {
+    // Reuse one nonce across retries so Discord can deduplicate a message
+    // whose first response was lost after the API accepted it.
+    const idempotentPayload = {
+        ...(payload as Record<string, unknown>),
+        nonce: crypto.randomUUID().replace(/-/g, "").slice(0, 25),
+        enforce_nonce: true,
+    };
     let lastError: unknown = null;
     for (let attempt = 0; attempt < DISCORD_SEND_MAX_ATTEMPTS; attempt++) {
         let response: Response | null = null;
@@ -254,7 +261,7 @@ async function sendDiscordMessageWithRetry(channelId: string, payload: unknown):
             response = await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
                 method: "POST",
                 headers: { Authorization: "Bot " + DISCORD_BOT_TOKEN, "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
+                body: JSON.stringify(idempotentPayload),
                 signal: AbortSignal.timeout(DISCORD_SEND_TIMEOUT_MS),
             });
             if (response.status !== 429 && response.status < 500) return response;
