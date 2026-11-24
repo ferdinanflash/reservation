@@ -75,8 +75,8 @@ function retryDelay(response: Response | null, attempt: number) {
     }
     return Math.min(8_000, 1000 * (2 ** attempt));
 }
-async function sendAnnouncementWithRetry(channelId: string, payload: unknown) {
-    const safePayload = { ...(payload as Record<string, unknown>), nonce: deliveryNonce, enforce_nonce: true };
+async function sendAnnouncementWithRetry(channelId: string, payload: unknown, nonce: string) {
+    const safePayload = { ...(payload as Record<string, unknown>), nonce, enforce_nonce: true };
     for (let attempt = 0; attempt < DISCORD_MAX_ATTEMPTS; attempt++) {
         let response: Response;
         try {
@@ -195,6 +195,8 @@ Deno.serve(async (req: Request) => {
         let status: "sent" | "failed" = "failed";
         let errorCode: string | null = null;
         let attempts = 0;
+        let retryableFailure = false;
+        const deliveryNonce = crypto.randomUUID().replace(/-/g, "").slice(0, 25);
         try {
             const permissionCheck = await checkDiscordChannelPermissions(DISCORD_BOT_TOKEN, target.guild_id, target.channel_id, wantsEveryone);
             if (!permissionCheck.allowed) {
@@ -207,16 +209,40 @@ Deno.serve(async (req: Request) => {
                 attempts = delivery.attempts;
                 discordMessage = await delivery.response.json().catch(() => ({}));
                 if (delivery.response.ok) status = "sent";
-                else errorCode = String(discordMessage?.code ?? delivery.response.status);
+                else {
+                    errorCode = String(discordMessage?.code ?? delivery.response.status);
+                    retryableFailure = delivery.response.status === 408 || delivery.response.status === 429 || delivery.response.status >= 500;
+                }
             }
         } catch (error) {
             errorCode = error instanceof Error && /^discord_/.test(error.message) ? error.message : "network_error";
+            retryableFailure = errorCode === "network_error" || /discord_(408|429|5\\d\\d)/.test(errorCode);
             console.error("[discord-announcement] target delivery failed", {
                 guild_id: target.guild_id, channel_id: target.channel_id, error_code: errorCode,
             });
         }
 
-        results.push({ guild_id: target.guild_id, channel_id: target.channel_id, status, error_code: errorCode, attempts });
+        let queued = false;
+        if (status === "failed" && retryableFailure) {
+            try {
+                await serviceRest("discord_announcement_retry_queue", {
+                    method: "POST", headers: { Prefer: "return=minimal" },
+                    body: JSON.stringify({
+                        guild_id: target.guild_id, channel_id: target.channel_id,
+                        title: title || "📢 Announcement", message, mentioned_everyone: wantsEveryone,
+                        sent_by: userId, nonce: deliveryNonce, max_attempts: ANNOUNCEMENT_QUEUE_MAX_ATTEMPTS,
+                        last_error: errorCode,
+                    }),
+                });
+                queued = true;
+            } catch (queueError) {
+                console.error("[discord-announcement] unable to enqueue retry", {
+                    guild_id: target.guild_id, channel_id: target.channel_id,
+                    error_code: queueError instanceof Error ? queueError.message : "queue_insert_failed",
+                });
+            }
+        }
+        results.push({ guild_id: target.guild_id, channel_id: target.channel_id, status, error_code: errorCode, attempts, retry_queued: queued });
         try {
             await serviceRest("discord_announcement_log", {
                 method: "POST",
