@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { workerDispatchRetryDelay } from "../_shared/discord-redeem-dispatch.ts";
 
 // Supabase Edge Runtime provides this global at runtime; declare it for plain Deno type-checks.
 declare const EdgeRuntime: {
@@ -478,17 +479,6 @@ async function redeemJobDb(path: string, init: RequestInit = {}) {
     try { return raw ? JSON.parse(raw) : null; } catch { return raw; }
 }
 
-function workerDispatchRetryDelay(retryAfter: string | null, attempt: number): number {
-    if (retryAfter) {
-        const seconds = Number(retryAfter);
-        const retryAt = Number.isFinite(seconds)
-            ? Date.now() + Math.max(0, seconds) * 1000
-            : Date.parse(retryAfter);
-        if (Number.isFinite(retryAt)) return Math.min(30_000, Math.max(1_000, retryAt - Date.now()));
-    }
-    return Math.min(20_000, 1_500 * (2 ** attempt));
-}
-
 async function scheduleRedeemWorker(jobId: string) {
     const url = Deno.env.get("SUPABASE_URL")?.replace(/\/$/, "");
     const workerSecret = Deno.env.get("DISCORD_ANNOUNCEMENT_QUEUE_SECRET");
@@ -496,6 +486,7 @@ async function scheduleRedeemWorker(jobId: string) {
 
     for (let attempt = 0; attempt < REDEEM_WORKER_DISPATCH_ATTEMPTS; attempt++) {
         let retryAfter: string | null = null;
+        let retryHint = "";
         try {
             const response = await fetch(url + "/functions/v1/discord-interactions", {
                 method: "POST",
@@ -509,6 +500,7 @@ async function scheduleRedeemWorker(jobId: string) {
             if (response.ok) return;
             retryAfter = response.headers.get("Retry-After");
             const detail = (await response.text().catch(() => "")).slice(0, 120);
+            retryHint = detail;
             const retryable = response.status === 408 || response.status === 429 || response.status >= 500;
             console.warn("[discord-interactions] redeem worker dispatch failed", {
                 attempt: attempt + 1,
@@ -519,6 +511,7 @@ async function scheduleRedeemWorker(jobId: string) {
             if (!retryable) throw new Error("redeem_worker_dispatch_http_" + response.status);
         } catch (error) {
             const message = error instanceof Error ? error.message : "unknown";
+            if (message) retryHint = message;
             const isHttpFailure = message.startsWith("redeem_worker_dispatch_http_");
             console.warn("[discord-interactions] redeem worker dispatch error", {
                 attempt: attempt + 1,
@@ -529,7 +522,7 @@ async function scheduleRedeemWorker(jobId: string) {
         }
 
         if (attempt < REDEEM_WORKER_DISPATCH_ATTEMPTS - 1) {
-            const waitMs = workerDispatchRetryDelay(retryAfter, attempt);
+            const waitMs = workerDispatchRetryDelay(retryAfter, retryHint, attempt);
             console.info("[discord-interactions] redeem worker dispatch retry scheduled", {
                 attempt: attempt + 1,
                 nextAttempt: attempt + 2,
