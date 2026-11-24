@@ -8,7 +8,13 @@ Set `DISCORD_ANNOUNCEMENT_QUEUE_SECRET` in Supabase Edge Function secrets to a n
 
 ## Schedule the worker
 
-Store the same worker secret in Supabase Vault as `discord_announcement_queue_secret`. Confirm pg_cron, pg_net, and Vault are enabled, then schedule every minute:
+Store the same worker secret in Supabase Vault as `discord_announcement_queue_secret` (replace the placeholder locally; do not commit a real secret):
+
+```sql
+select vault.create_secret('REPLACE_WITH_THE_SAME_SECRET', 'discord_announcement_queue_secret');
+```
+
+Confirm pg_cron, pg_net, and Vault are enabled, then schedule every minute:
 
 ```sql
 select cron.schedule(
@@ -27,7 +33,7 @@ select cron.schedule(
 );
 ```
 
-The migration deliberately does not schedule production delivery automatically. The operator must configure Vault first.
+Deploy `discord-announcement-retry` with JWT verification disabled because it authenticates the request using `DISCORD_ANNOUNCEMENT_QUEUE_SECRET` itself. The migration deliberately does not schedule production delivery automatically. The operator must configure the Edge Function secret and Vault first.
 
 ## Behavior
 
