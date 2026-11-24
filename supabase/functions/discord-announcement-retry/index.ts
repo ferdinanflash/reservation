@@ -79,13 +79,17 @@ Deno.serve(async (req) => {
   // A worker crash on the final allowed attempt must not leave an item
   // permanently locked in "processing". Mark exhausted stale leases terminal.
   try {
-    await rest("discord_announcement_retry_queue?status=eq.processing&attempts=gte.max_attempts&locked_until=lt." + encodeURIComponent(new Date().toISOString()), {
-      method: "PATCH", headers: { Prefer: "return=minimal" },
-      body: JSON.stringify({
-        status: "failed", lock_token: null, locked_until: null,
-        last_error: "retry_lease_expired_max_attempts", updated_at: new Date().toISOString(),
-      }),
-    });
+    const stale = await rest("discord_announcement_retry_queue?select=id,attempts,max_attempts&status=eq.processing&locked_until=lt." + encodeURIComponent(new Date().toISOString()));
+    for (const item of Array.isArray(stale) ? stale : []) {
+      if (Number(item.attempts) < Number(item.max_attempts)) continue;
+      await rest("discord_announcement_retry_queue?id=eq." + item.id + "&status=eq.processing", {
+        method: "PATCH", headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({
+          status: "failed", lock_token: null, locked_until: null,
+          last_error: "retry_lease_expired_max_attempts", updated_at: new Date().toISOString(),
+        }),
+      });
+    }
   } catch (error) {
     console.warn("[discord-announcement-retry] stale_lease_recovery_failed", error instanceof Error ? error.message : "unknown");
   }
