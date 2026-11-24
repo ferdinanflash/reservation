@@ -57,3 +57,50 @@ $$;
 
 REVOKE ALL ON FUNCTION public.claim_discord_redeem_job(uuid, text) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.claim_discord_redeem_job(uuid, text) TO service_role;
+
+-- Recovery scanner: finds queued jobs and processing jobs whose lease expired.
+CREATE OR REPLACE FUNCTION public.list_due_discord_redeem_jobs()
+RETURNS TABLE(job_id uuid)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = pg_catalog, public
+AS $$
+    SELECT job.id
+    FROM public.discord_redeem_jobs AS job
+    WHERE job.expires_at > pg_catalog.now()
+      AND (
+          job.status = 'queued'
+          OR (
+              job.status = 'processing'
+              AND (job.locked_until IS NULL OR job.locked_until < pg_catalog.now())
+          )
+      )
+    ORDER BY job.created_at
+    LIMIT 20;
+$$;
+
+REVOKE ALL ON FUNCTION public.list_due_discord_redeem_jobs() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.list_due_discord_redeem_jobs() TO service_role;
+
+-- Reuse the already-configured queue-worker secret from Vault. The Edge Function
+-- validates it before accepting this internal recovery action.
+SELECT cron.schedule(
+    'discord-redeem-job-recovery-every-minute',
+    '* * * * *',
+    $job$
+        SELECT net.http_post(
+            url := 'https://pwqkpeykjyujhnreleax.supabase.co/functions/v1/discord-interactions',
+            headers := jsonb_build_object(
+                'Content-Type', 'application/json',
+                'Authorization', 'Bearer ' || (
+                    SELECT decrypted_secret
+                    FROM vault.decrypted_secrets
+                    WHERE name = 'discord_announcement_queue_secret'
+                    LIMIT 1
+                )
+            ),
+            body := '{"internal_action":"resume_due_redeem_jobs"}'::jsonb,
+            timeout_milliseconds := 10000
+        );
+    $job$
+);
