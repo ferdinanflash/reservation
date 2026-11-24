@@ -6,6 +6,7 @@ on:
       - "supabase/functions/_shared/**"
       - "supabase/functions/discord-announcement-retry/**"
       - "supabase/functions/discord-guild-settings/**"
+      - "supabase/functions/discord-interactions/**"
       - ".github/workflows/discord-edge-tests.yml"
   push:
     branches: ["main"]
@@ -32,3 +33,5 @@ jobs:
           deno-version: v2.x
       - name: Run Discord permission tests
         run: deno test supabase/functions/_shared/discord-permissions.test.ts
+      - name: Type-check Discord interactions
+        run: deno check supabase/functions/discord-interactions/index.ts
