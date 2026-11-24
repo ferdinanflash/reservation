@@ -392,25 +392,81 @@ async function publishProgress(
     const success = completed.filter((row) => row.kind === "success").length;
     const already = completed.filter((row) => row.kind === "already").length;
     const failed = completed.length - success - already;
-    const lines = completed.map((row) => {
-        const name = row.nickname ? `**${row.nickname.replace(/[\r\n]/g, " ").slice(0, 50)}**` : `FID ${row.fid}`;
-        return `• ${name} (${row.fid}) — ${resultLabel(row.kind as any, row.result)}`;
-    });
-    const header = [
+    const content = [
         `🎁 **3475 REDEEM — ${heading}**`,
         `Redeem Code: **${code}**`,
         `Progress: **${completed.length}/${total}** | Successful: **${success}** | Already Claimed: **${already}** | Failed: **${failed}**`,
-        "",
+        completed.length < total ? "⏳ Processing next player..." : "Preparing final results...",
     ].join("\n");
-    const visibleLines = splitPublicLines(lines, 1500);
-    const content = header + (visibleLines[0] ?? "Processing...");
     await editOriginal(interaction.application_id, interaction.token, content);
 }
 
-async function processRedeem(interaction: any) {
+type RedeemMember = { fid: string; nickname: string };
+type RedeemRow = { fid: string; nickname?: string; kind: string; result?: any };
+
+async function redeemJobDb(path: string, init: RequestInit = {}) {
+    const url = Deno.env.get("SUPABASE_URL");
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!url || !serviceKey) throw new Error("redeem_job_storage_not_configured");
+    const response = await fetch(`${url.replace(/\/$/, "")}/rest/v1/${path}`, {
+        ...init,
+        headers: {
+            apikey: serviceKey,
+            Authorization: `Bearer ${serviceKey}`,
+            "Content-Type": "application/json",
+            ...(init.headers ?? {}),
+        },
+    });
+    const raw = await response.text();
+    if (!response.ok) {
+        console.error("[discord-interactions] redeem job database request failed", {
+            status: response.status,
+            path: path.split("?")[0],
+            detail: raw.slice(0, 180),
+        });
+        throw new Error(`redeem_job_database_http_${response.status}`);
+    }
+    try { return raw ? JSON.parse(raw) : null; } catch { return raw; }
+}
+
+async function scheduleRedeemWorker(jobId: string) {
+    const url = Deno.env.get("SUPABASE_URL")?.replace(/\/$/, "");
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!url || !serviceKey) throw new Error("redeem_worker_configuration_missing");
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+            const response = await fetch(`${url}/functions/v1/discord-interactions`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${serviceKey}`,
+                },
+                body: JSON.stringify({ internal_action: "process_redeem_job", job_id: jobId }),
+                signal: AbortSignal.timeout(10_000),
+            });
+            if (response.ok) return;
+            const detail = (await response.text().catch(() => "")).slice(0, 120);
+            console.warn("[discord-interactions] redeem worker dispatch failed", {
+                attempt: attempt + 1,
+                status: response.status,
+                detail,
+            });
+        } catch (error) {
+            console.warn("[discord-interactions] redeem worker dispatch error", {
+                attempt: attempt + 1,
+                errorName: error instanceof Error ? error.name : "UnknownError",
+            });
+        }
+        if (attempt < 2) await sleep(500 * (attempt + 1));
+    }
+    throw new Error("redeem_worker_dispatch_exhausted");
+}
+
+async function startRedeem(interaction: any) {
     const { subcommand, values } = getCommandOptions(interaction);
     const code = String(values.code ?? "").trim();
-    let members: Array<{ fid: string; nickname: string }> = [];
+    let members: RedeemMember[] = [];
     let heading = "";
 
     if (!code || code.length > 40) {
@@ -428,7 +484,6 @@ async function processRedeem(interaction: any) {
         try {
             nickname = await loadPlayerNickname(fid);
         } catch (error) {
-            // A nickname lookup must never block an otherwise valid redeem.
             console.error("Unable to resolve single-player nickname:", error);
         }
         members = [{ fid, nickname }];
@@ -451,46 +506,143 @@ async function processRedeem(interaction: any) {
     }
 
     const truncated = subcommand === "alliance" && members.length >= MAX_ALLIANCE_FIDS;
-    const results: Array<{ fid: string; nickname?: string; kind: string; result?: any }> = [];
+    const note = truncated ? `⚠️ The roster is limited to ${MAX_ALLIANCE_FIDS} members per run.` : "";
+    const jobs = await redeemJobDb("discord_redeem_jobs", {
+        method: "POST",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({
+            application_id: String(interaction.application_id),
+            interaction_token: String(interaction.token),
+            heading,
+            code,
+            members,
+            results: [],
+            next_index: 0,
+            total: members.length,
+            note,
+            status: "queued",
+            expires_at: new Date(Date.now() + 14 * 60 * 1000).toISOString(),
+        }),
+    });
+    const job = Array.isArray(jobs) ? jobs[0] : null;
+    if (!job?.id) throw new Error("redeem_job_creation_failed");
+
     await editOriginal(
         interaction.application_id,
         interaction.token,
-        `🎁 **3475 REDEEM — ${heading}**
-Redeem Code: **${code}**
-Starting redeem for **${members.length}** player(s)...`,
+        `🎁 **3475 REDEEM — ${heading}**\nRedeem Code: **${code}**\nStarting resumable redeem for **${members.length}** player(s)...`,
     );
-    for (let i = 0; i < members.length; i++) {
-        const member = members[i];
-        try {
-            const outcome = await redeemOne(member.fid, code);
-            results.push({ fid: member.fid, nickname: member.nickname, kind: outcome.kind, result: outcome.result });
+    await scheduleRedeemWorker(String(job.id));
+}
 
-            // Only confirmed invalid/expired codes stop the batch. A timeout,
-            // rate limit, or player-level failure affects this player only.
-            if (outcome.kind === "invalid" || outcome.kind === "expired") {
-                for (const skipped of members.slice(i + 1)) {
-                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "skipped" });
-                }
-                break;
-            }
-        } catch (error) {
-            console.error("Redeem failed for one FID:", error);
+async function processRedeemJob(jobId: string) {
+    const lockToken = crypto.randomUUID();
+    const claimed = await redeemJobDb("rpc/claim_discord_redeem_job", {
+        method: "POST",
+        body: JSON.stringify({ p_job_id: jobId, p_lock_token: lockToken }),
+    });
+    const job = Array.isArray(claimed) ? claimed[0] : null;
+    if (!job) return;
+
+    const applicationId = String(job.application_id ?? "");
+    const interactionToken = String(job.interaction_token ?? "");
+    const members = Array.isArray(job.members) ? job.members as RedeemMember[] : [];
+    const results = Array.isArray(job.results) ? job.results as RedeemRow[] : [];
+    let nextIndex = Number(job.next_index ?? 0);
+
+    if (!applicationId || !interactionToken || !members.length) {
+        await redeemJobDb(`discord_redeem_jobs?id=eq.${encodeURIComponent(jobId)}&lock_token=eq.${encodeURIComponent(lockToken)}`, {
+            method: "PATCH",
+            headers: { Prefer: "return=minimal" },
+            body: JSON.stringify({
+                status: "failed",
+                last_error: "invalid_job_payload",
+                interaction_token: null,
+                lock_token: null,
+                locked_until: null,
+                completed_at: new Date().toISOString(),
+            }),
+        });
+        return;
+    }
+
+    try {
+        if (nextIndex < members.length) {
+            const member = members[nextIndex];
+            const outcome = await redeemOne(member.fid, String(job.code ?? ""));
             results.push({
                 fid: member.fid,
                 nickname: member.nickname,
-                kind: "error",
-                result: { msg: "Could not connect to the redeem service. The request did not complete." },
+                kind: outcome.kind,
+                result: {
+                    data: {
+                        msg: upstreamMessage(outcome.result),
+                        err_code: upstreamData(outcome.result).err_code,
+                    },
+                    __httpOk: outcome.result?.__httpOk,
+                    __httpStatus: outcome.result?.__httpStatus,
+                },
             });
+            nextIndex++;
+
+            if (outcome.kind === "invalid" || outcome.kind === "expired") {
+                for (const skipped of members.slice(nextIndex)) {
+                    results.push({ fid: skipped.fid, nickname: skipped.nickname, kind: "skipped" });
+                }
+                nextIndex = members.length;
+            }
         }
-        // Update the same public Discord message after every player is processed.
-        await publishProgress(interaction, heading, code, results, members.length);
-        if (i < members.length - 1) await sleep(BATCH_DELAY_MS);
+
+        const complete = nextIndex >= members.length;
+        await redeemJobDb(
+            `discord_redeem_jobs?id=eq.${encodeURIComponent(jobId)}&lock_token=eq.${encodeURIComponent(lockToken)}`,
+            {
+                method: "PATCH",
+                headers: { Prefer: "return=minimal" },
+                body: JSON.stringify({
+                    results,
+                    next_index: nextIndex,
+                    status: complete ? "completed" : "queued",
+                    lock_token: null,
+                    locked_until: null,
+                    interaction_token: complete ? null : interactionToken,
+                    completed_at: complete ? new Date().toISOString() : null,
+                    updated_at: new Date().toISOString(),
+                }),
+            },
+        );
+
+        const interaction = { application_id: applicationId, token: interactionToken };
+        if (complete) {
+            await publishResults(interaction, String(job.heading ?? "REDEEM"), results, String(job.note ?? ""), String(job.code ?? ""));
+        } else {
+            await publishProgress(interaction, String(job.heading ?? "REDEEM"), String(job.code ?? ""), results, members.length);
+            await scheduleRedeemWorker(jobId);
+        }
+    } catch (error) {
+        console.error("[discord-interactions] redeem job step failed", {
+            jobId,
+            nextIndex,
+            errorName: error instanceof Error ? error.name : "UnknownError",
+            error: error instanceof Error ? error.message.slice(0, 160) : "unknown",
+        });
+        await redeemJobDb(
+            `discord_redeem_jobs?id=eq.${encodeURIComponent(jobId)}&lock_token=eq.${encodeURIComponent(lockToken)}`,
+            {
+                method: "PATCH",
+                headers: { Prefer: "return=minimal" },
+                body: JSON.stringify({
+                    status: "queued",
+                    lock_token: null,
+                    locked_until: null,
+                    last_error: error instanceof Error ? error.message.slice(0, 180) : "unknown_error",
+                    updated_at: new Date().toISOString(),
+                }),
+            },
+        ).catch(() => null);
+        throw error;
     }
-
-    const note = truncated ? `⚠️ The roster is limited to ${MAX_ALLIANCE_FIDS} members per run.` : "";
-    await publishResults(interaction, heading, results, note, code);
 }
-
 
 function helpMessage() {
     return [
@@ -759,6 +911,27 @@ Deno.serve(async (req) => {
         return json({ ok: true, service: "3475-discord-interactions" });
     }
     if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+    // Internal continuation calls are authenticated with the project service-role key.
+    // Each redeem step runs in a separate Edge Function execution.
+    if (req.method === "POST") {
+        const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        if (serviceKey && req.headers.get("authorization") === `Bearer ${serviceKey}`) {
+            let internalBody: any;
+            try { internalBody = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
+            if (internalBody?.internal_action === "process_redeem_job" && /^[0-9a-f-]{36}$/i.test(String(internalBody?.job_id ?? ""))) {
+                const jobId = String(internalBody.job_id);
+                EdgeRuntime.waitUntil(processRedeemJob(jobId).catch((error) => {
+                    console.error("[discord-interactions] internal redeem worker failed", {
+                        jobId,
+                        errorName: error instanceof Error ? error.name : "UnknownError",
+                    });
+                }));
+                return json({ ok: true, accepted: true }, 202);
+            }
+            return json({ error: "invalid_internal_action" }, 400);
+        }
+    }
+
     const rawBody = await req.text();
     if (!(await verifyDiscordRequest(req, rawBody))) {
         console.error("Discord request rejected: signature verification failed", {
@@ -814,10 +987,11 @@ Deno.serve(async (req) => {
         return json({ type: 5, data: { flags: 64 } });
     }
 
-    // Public deferred response: intentionally no EPHEMERAL flag.
-    EdgeRuntime.waitUntil(processRedeem(interaction).catch(async (error) => {
-        console.error("Discord redeem processing failed:", error);
-        await editOriginal(interaction.application_id, interaction.token, "⚠️ The 3475 redeem service encountered an error.");
+    // Public deferred response: persisted redeem jobs continue one player per
+    // Edge Function execution to avoid wall-clock termination on large alliances.
+    EdgeRuntime.waitUntil(startRedeem(interaction).catch(async (error) => {
+        console.error("Discord redeem job creation failed:", error);
+        await editOriginal(interaction.application_id, interaction.token, "⚠️ The 3475 redeem service could not start this job. Please try again.");
     }));
     return json({ type: 5 });
 });
