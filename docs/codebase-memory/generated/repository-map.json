@@ -205,11 +205,11 @@
     "generator_version": 1,
     "file_count": 114,
     "digest_algorithm": "sha256",
-    "content_digest": "807973b1223a4e4e216ab3ae9c27520876d4d9aef530a4cc936a86f9d999f3b5",
+    "content_digest": "e4f698ddff76bd603694615b1fdc47642b189ce3953d248e5dd39e4cfdadeb7a",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
-        "sha256": "7b085f91dd0949482100ce40d2a7e0669d152bc641238b70345862f9ae93a87b"
+        "sha256": "f066becbd32c769f09af600c75aed62c44fe15142fafd2a28290dc03c1bf8522"
       },
       {
         "path": ".github/workflows/codebase-memory-review.yml",
@@ -217,7 +217,7 @@
       },
       {
         "path": ".github/workflows/deploy-discord-announcements.yml",
-        "sha256": "69faf0a5cca79f48af467e7c659860c15b6a6de547c014632a8754b97e1d7bdc"
+        "sha256": "087ec33c71c5a66c2382bbe177569394a51e7b1bfd8cf9c3f17d743b0c9705d0"
       },
       {
         "path": ".github/workflows/deploy-discord-message-poller.yml",
