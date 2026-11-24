@@ -650,7 +650,15 @@ async function processRedeemJob(jobId: string) {
         if (complete) {
             await publishResults(interaction, String(job.heading ?? "REDEEM"), results, String(job.note ?? ""), String(job.code ?? ""));
         } else {
-            await publishProgress(interaction, String(job.heading ?? "REDEEM"), String(job.code ?? ""), results, members.length);
+            try {
+                await publishProgress(interaction, String(job.heading ?? "REDEEM"), String(job.code ?? ""), results, members.length);
+            } catch (error) {
+                // A Discord progress edit must never prevent the next durable step.
+                console.warn("[discord-interactions] redeem progress update failed", {
+                    jobId,
+                    errorName: error instanceof Error ? error.name : "UnknownError",
+                });
+            }
             await scheduleRedeemWorker(jobId);
         }
     } catch (error) {
