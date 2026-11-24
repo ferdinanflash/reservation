@@ -2,10 +2,10 @@
   "schema_version": 1,
   "generated_mode": "typescript-compiler-ast-static-analysis",
   "note": "Static analysis only. Dynamic dispatch, computed names, runtime injection, framework behavior and indirect API URLs may not be resolved. Cross-file classic-script matches are candidates unless the symbol is unique.",
-  "source_files": 29,
-  "function_count": 476,
-  "import_count": 6,
-  "call_edge_count": 1342,
+  "source_files": 30,
+  "function_count": 478,
+  "import_count": 8,
+  "call_edge_count": 1344,
   "edges": [
     {
       "from": "common.js#<top-level>",
@@ -7820,6 +7820,14 @@
       "confidence": "static-name-match"
     },
     {
+      "from": "supabase/functions/_shared/discord-permissions.test.ts",
+      "to": "supabase/functions/_shared/discord-permissions.ts",
+      "kind": "import",
+      "specifier": "./discord-permissions.ts",
+      "line": 1,
+      "confidence": "static"
+    },
+    {
       "from": "supabase/functions/_shared/discord-permissions.ts#checkDiscordChannelPermissions",
       "to": "supabase/functions/_shared/discord-permissions.ts#effectiveChannelPermissions",
       "kind": "call",
@@ -7887,6 +7895,28 @@
       "to": "supabase/functions/_shared/discord-permissions.ts#has",
       "kind": "call",
       "line": 47,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-announcement/index.ts",
+      "to": "supabase/functions/_shared/discord-permissions.ts",
+      "kind": "import",
+      "specifier": "../_shared/discord-permissions.ts",
+      "line": 18,
+      "confidence": "static"
+    },
+    {
+      "from": "supabase/functions/discord-announcement/index.ts#sendAnnouncementWithRetry",
+      "to": "supabase/functions/discord-announcement/index.ts#retryDelay",
+      "kind": "call",
+      "line": 104,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "supabase/functions/discord-announcement/index.ts#sendAnnouncementWithRetry",
+      "to": "supabase/functions/discord-announcement/index.ts#retryDelay",
+      "kind": "call",
+      "line": 89,
       "confidence": "static-name-match"
     },
     {
@@ -11926,21 +11956,35 @@
       "id": "supabase/functions/discord-announcement/index.ts#authenticatedUserId",
       "name": "authenticatedUserId",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 33,
+      "line": 36,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement/index.ts#json",
       "name": "json",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 26,
+      "line": 29,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-announcement/index.ts#retryDelay",
+      "name": "retryDelay",
+      "file": "supabase/functions/discord-announcement/index.ts",
+      "line": 69,
+      "kind": "function"
+    },
+    {
+      "id": "supabase/functions/discord-announcement/index.ts#sendAnnouncementWithRetry",
+      "name": "sendAnnouncementWithRetry",
+      "file": "supabase/functions/discord-announcement/index.ts",
+      "line": 78,
       "kind": "function"
     },
     {
       "id": "supabase/functions/discord-announcement/index.ts#serviceRest",
       "name": "serviceRest",
       "file": "supabase/functions/discord-announcement/index.ts",
-      "line": 48,
+      "line": 51,
       "kind": "function"
     },
     {
@@ -12961,5 +13005,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "9832f53114a19f99c344827d4a52f510e6b9374d93373a1d842ed5e30259dbaa"
+  "source_digest": "38dd64afee4ca012706612d2ecaa0a22f899dc2555ef3fa3906c60cea9b6fcc3"
 }
