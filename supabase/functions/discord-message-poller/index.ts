@@ -16,6 +16,9 @@ const BATCH_DELAY_MS = 1200;
 type Member = { fid: string; nickname: string };
 type Outcome = { fid: string; nickname: string; kind: string; detail?: string };
 
+// Set only while this invocation owns the database-backed poller lease.
+let assertActivePollLease: (() => void) | null = null;
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -396,6 +399,7 @@ async function processCommand(channelId: string, allianceInput: string, code: st
   const results: Outcome[] = [];
 
   for (let i = 0; i < members.length; i++) {
+    assertActivePollLease?.();
     const member = members[i];
     const kind = await redeemOne(member.fid, code);
     results.push({ fid: member.fid, nickname: member.nickname, kind });
@@ -505,6 +509,7 @@ Deno.serve(async (req) => {
       return json({ ok: true, skipped: "already_running" });
     }
     locked = true;
+    assertActivePollLease = assertLockOwned;
     heartbeat = setInterval(() => { void renewLock(); }, 60_000);
 
     // Run due deletions on the same five-minute poll schedule.
@@ -552,6 +557,9 @@ Deno.serve(async (req) => {
           try {
             await processCommand(channelId, command[1], command[2]);
           } catch (error) {
+            // If the lease was lost, leave the message cursor untouched so a
+            // later invocation can safely retry the command instead of consuming it.
+            assertLockOwned();
             console.error(`Redeem command failed in channel ${channelId}:`, error instanceof Error ? error.message : String(error));
             await sendChannelMessage(channelId, "❌ Proses redeem mengalami gangguan. Periksa log Supabase sebelum mengirim ulang perintah agar tidak terjadi redeem ganda.");
           }
@@ -582,6 +590,7 @@ Deno.serve(async (req) => {
     console.error("[discord-message-poller]", error instanceof Error ? error.message : String(error));
     return json({ ok: false, error: "poll_failed", detail: error instanceof Error ? error.message : String(error) }, 500);
   } finally {
+    assertActivePollLease = null;
     if (heartbeat !== null) clearInterval(heartbeat);
     if (locked) {
       try {
