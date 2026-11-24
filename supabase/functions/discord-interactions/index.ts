@@ -665,7 +665,16 @@ async function processRedeemJob(jobId: string) {
     }
 
     try {
-        if (nextIndex < members.length) {
+        const workerStartedAt = Date.now();
+        let processedThisRun = 0;
+
+        while (
+            nextIndex < members.length &&
+            processedThisRun < REDEEM_JOB_BATCH_SIZE &&
+            Date.now() - workerStartedAt < REDEEM_JOB_TIME_BUDGET_MS
+        ) {
+            if (processedThisRun > 0) await sleep(BATCH_DELAY_MS);
+
             const member = members[nextIndex];
             const outcome = await redeemOne(member.fid, String(job.code ?? ""));
             results.push({
@@ -682,6 +691,7 @@ async function processRedeemJob(jobId: string) {
                 },
             });
             nextIndex++;
+            processedThisRun++;
 
             if (outcome.kind === "invalid" || outcome.kind === "expired") {
                 for (const skipped of members.slice(nextIndex)) {
@@ -689,11 +699,30 @@ async function processRedeemJob(jobId: string) {
                 }
                 nextIndex = members.length;
             }
+
+            // Persist each player before starting the next one. The lease is
+            // extended so a long batch remains protected from recovery claims.
+            const checkpoint = await redeemJobDb(
+                "discord_redeem_jobs?id=eq." + encodeURIComponent(jobId) + "&lock_token=eq." + encodeURIComponent(lockToken),
+                {
+                    method: "PATCH",
+                    headers: { Prefer: "return=representation" },
+                    body: JSON.stringify({
+                        results,
+                        next_index: nextIndex,
+                        locked_until: new Date(Date.now() + 120_000).toISOString(),
+                        updated_at: new Date().toISOString(),
+                    }),
+                },
+            );
+            if (!Array.isArray(checkpoint) || checkpoint.length === 0) {
+                throw new Error("redeem_job_lease_lost");
+            }
         }
 
         const complete = nextIndex >= members.length;
         await redeemJobDb(
-            `discord_redeem_jobs?id=eq.${encodeURIComponent(jobId)}&lock_token=eq.${encodeURIComponent(lockToken)}`,
+            "discord_redeem_jobs?id=eq." + encodeURIComponent(jobId) + "&lock_token=eq." + encodeURIComponent(lockToken),
             {
                 method: "PATCH",
                 headers: { Prefer: "return=minimal" },
@@ -724,7 +753,6 @@ async function processRedeemJob(jobId: string) {
                     errorName: error instanceof Error ? error.name : "UnknownError",
                 });
             }
-            await sleep(BATCH_DELAY_MS);
             await scheduleRedeemWorker(jobId);
         }
     } catch (error) {
