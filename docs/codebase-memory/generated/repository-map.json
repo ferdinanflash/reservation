@@ -67,8 +67,6 @@
     "js/home-scrollcraft.js"
   ],
   "edge_functions": [
-    "supabase/functions/_shared/discord-permissions.test.ts",
-    "supabase/functions/_shared/discord-permissions.ts",
     "supabase/functions/discord-announcement/index.ts",
     "supabase/functions/discord-guild-settings/index.ts",
     "supabase/functions/discord-interactions/index.ts",
@@ -202,9 +200,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 111,
+    "file_count": 109,
     "digest_algorithm": "sha256",
-    "content_digest": "37f5678326df1f899db869865e44a2fe28a1ef49bff1e3d86360549ace4a1425",
+    "content_digest": "4d2ddd6c510a3785c1ff8644ca140f96f777ce8e011219d6aae54bebba0b0b29",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -443,20 +441,12 @@
         "sha256": "f5221b0b321fd1c1c11943529c80303be503d5ffb8e7b3bcfbd605504db48e77"
       },
       {
-        "path": "supabase/functions/_shared/discord-permissions.test.ts",
-        "sha256": "3f407164cc04176ba3028485f5b42681b2f25f183b85ad42a53627b174aeeea5"
-      },
-      {
-        "path": "supabase/functions/_shared/discord-permissions.ts",
-        "sha256": "c14b7361c45e712fd518966411bac6f3ab8d7e1342093226b950e2bc690a07d5"
-      },
-      {
         "path": "supabase/functions/discord-announcement/index.ts",
-        "sha256": "fb6cce43661d1a7206f39bc9468d9f0a4b8cc4703d59be04c8e7e47d8771df82"
+        "sha256": "f692b5d99bd46b6746642c1aeb9b326f3764f42e68ab3eb528102b82e516d44c"
       },
       {
         "path": "supabase/functions/discord-guild-settings/index.ts",
-        "sha256": "8c8feb08c59d29cb7de463d84a6fb07f0777232bbaa8931b0f4c6ff708edfd84"
+        "sha256": "2cc85c33a42ff87b5c24eb60702babf5628c9cfe955f9760169221c5e11e39d1"
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
