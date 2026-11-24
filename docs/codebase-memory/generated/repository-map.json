@@ -205,7 +205,7 @@
     "generator_version": 1,
     "file_count": 114,
     "digest_algorithm": "sha256",
-    "content_digest": "8d4bdade0041eccf3a28f7bc7b8e35bfbeff28039c6daf1827fd408ec2309adc",
+    "content_digest": "94389459929881489dc0a660b3f7339d5b2dcaa580cf860e2a8af54ad64fae20",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -361,7 +361,7 @@
       },
       {
         "path": "index.html",
-        "sha256": "3e598af4d1e95b0287c245d08c9d83acbc6f2361fca5e1012cae853bcd08f1d0"
+        "sha256": "b2bac02dcacaa413e6475022de36db3252e4934bcd41eb471e9d9e0c10187511"
       },
       {
         "path": "js/app-applications.js",
@@ -381,7 +381,7 @@
       },
       {
         "path": "js/app-discord.js",
-        "sha256": "1f75c82b0c6570043d7c113b5f0e3102d519f47553dc9dffee35b0e138d3ed0a"
+        "sha256": "f6bc602a1c2810816cb2d13c17aa525294ff605ca2a2f0dc10d2a2ffeae06c93"
       },
       {
         "path": "js/app-extras.js",
@@ -417,7 +417,7 @@
       },
       {
         "path": "lang.js",
-        "sha256": "339c14ba70e57db45f2018dbc772ec3731155ca1784aec90a8df2622701566dd"
+        "sha256": "f76734030f18b902c7ed3eea99ffc4adc9b13a6c3428055faee352af7daeea2b"
       },
       {
         "path": "live/index.html",
@@ -445,7 +445,7 @@
       },
       {
         "path": "style.css",
-        "sha256": "f5221b0b321fd1c1c11943529c80303be503d5ffb8e7b3bcfbd605504db48e77"
+        "sha256": "1f79772c98b172a73bab2b0935b648492ba26c4f02d70ca77d8fcc1d8ada8208"
       },
       {
         "path": "supabase/functions/_shared/discord-permissions.test.ts",
@@ -457,7 +457,7 @@
       },
       {
         "path": "supabase/functions/discord-announcement-retry/index.ts",
-        "sha256": "b2fb9227a691c91beb364bd772007f31da398db51d34cc50f8d8874b23d3b0f9"
+        "sha256": "4962917a047f6ee621925a42469c72888e8f67aa3ecf2820a720c2ea46c332d4"
       },
       {
         "path": "supabase/functions/discord-announcement/index.ts",
@@ -465,7 +465,7 @@
       },
       {
         "path": "supabase/functions/discord-guild-settings/index.ts",
-        "sha256": "d983df32c447fa2bd036290925edcc61bc35c3c5f366136a4dbcb4981eeefad1"
+        "sha256": "a07b888efe80172ec0f36e882cdf1cb294a9f2cffb18003a1abb939e21ecc737"
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
