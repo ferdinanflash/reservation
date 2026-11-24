@@ -9517,11 +9517,11 @@ body.thanksgiving-theme .site-footer .footer-section .guild-name.fire-text {
 
 
  
-/* ================= DESKTOP MAIN MENU — FULL-WIDTH DASHBOARD =================
-   Expand only the home dashboard to use the desktop viewport. The reservation
-   position list and schedule views retain the shared 800px content width. */
+/* ================= DESKTOP HOME + MINISTER RESERVATION — FULL WIDTH =================
+   Keep the desktop dashboard width when opening Minister Reservation.
+   Schedule/time-slot pages retain their existing content width. */
 @media screen and (min-width: 769px) {
-    .container:has(#main-menu-view:not(.hidden)) {
+    .container:has(#main-menu-view:not(.hidden), #minister-reservation-view:not(.hidden)) {
         width: calc(100% - 48px);
         max-width: 1440px;
         margin-left: auto;
