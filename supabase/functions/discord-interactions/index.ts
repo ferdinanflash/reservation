@@ -10,7 +10,6 @@
 const DISCORD_PUBLIC_KEY = "f78d1415e1c63c50cfc2595b21a35b2740d50fae3f06ec73241898145b883518";
 const DISCORD_API = "https://discord.com/api/v10";
 const ALLIANCES = new Set(["ARX", "IDN", "ZXC", "VNX", "CAT"]);
-const BATCH_DELAY_MS = 1200;
 const MAX_ALLIANCE_FIDS = 100;
 const MAX_TIMEOUT_RETRIES = 2;
 const REDEEM_REQUEST_TIMEOUT_MS = 20_000;
@@ -335,13 +334,35 @@ async function editOriginal(applicationId: string, token: string, content: strin
     if (!response.ok) console.error("Discord original response update failed:", response.status);
 }
 
-async function sendPublicFollowup(applicationId: string, token: string, content: string) {
-    const response = await fetch(`${DISCORD_API}/webhooks/${applicationId}/${token}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: content.slice(0, 1990), allowed_mentions: { parse: [] } }),
-    });
-    if (!response.ok) console.error("Discord public follow-up failed:", response.status);
+async function sendPublicFollowup(applicationId: string, token: string, content: string): Promise<boolean> {
+    for (let attempt = 0; attempt < 4; attempt++) {
+        try {
+            const response = await fetch(`${DISCORD_API}/webhooks/${applicationId}/${token}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: content.slice(0, 1990), allowed_mentions: { parse: [] } }),
+                signal: AbortSignal.timeout(15_000),
+            });
+            if (response.ok) return true;
+            const retryable = response.status === 408 || response.status === 429 || response.status >= 500;
+            const retryAfter = response.headers.get("Retry-After");
+            console.error("[discord-interactions] Discord public follow-up failed", {
+                status: response.status, attempt: attempt + 1, retryable,
+            });
+            if (!retryable || attempt === 3) return false;
+            const seconds = Number(retryAfter);
+            const waitMs = Number.isFinite(seconds) ? Math.min(10_000, Math.max(500, seconds * 1000)) : 1000 * (attempt + 1);
+            await sleep(waitMs);
+        } catch (error) {
+            console.error("[discord-interactions] Discord public follow-up request error", {
+                attempt: attempt + 1,
+                errorName: error instanceof Error ? error.name : "UnknownError",
+            });
+            if (attempt === 3) return false;
+            await sleep(1000 * (attempt + 1));
+        }
+    }
+    return false;
 }
 
 function splitPublicLines(lines: string[], maxLength = 1450): string[] {
@@ -377,9 +398,23 @@ async function publishResults(interaction: any, heading: string, rows: Array<{ f
 
     const chunks = splitPublicLines(lines);
     await editOriginal(interaction.application_id, interaction.token, [header, chunks[0] ?? "No results."].join("\n"));
+    let failedFollowups = 0;
     for (let i = 1; i < chunks.length; i++) {
-        await sendPublicFollowup(interaction.application_id, interaction.token, `**Redeem Results — Continued (${i + 1}/${chunks.length})**\n${chunks[i]}`);
+        const delivered = await sendPublicFollowup(
+            interaction.application_id,
+            interaction.token,
+            `**Redeem Results — Continued (${i + 1}/${chunks.length})**\n${chunks[i]}`,
+        );
+        if (!delivered) failedFollowups++;
     }
+    if (failedFollowups) {
+        await editOriginal(
+            interaction.application_id,
+            interaction.token,
+            [header, chunks[0] ?? "No results.", `⚠️ ${failedFollowups} result message(s) could not be delivered after retries. Check Supabase logs.`].join("\n"),
+        );
+    }
+}
 }
 
 async function publishProgress(
