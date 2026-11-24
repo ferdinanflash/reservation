@@ -12,6 +12,7 @@ on:
     branches: ["main"]
     paths:
       - "supabase/functions/_shared/**"
+      - "supabase/functions/discord-interactions/**"
       - "supabase/functions/discord-announcement-retry/**"
       - "supabase/functions/discord-guild-settings/**"
       - ".github/workflows/discord-edge-tests.yml"
