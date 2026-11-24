@@ -31,7 +31,7 @@ export function effectiveChannelPermissions(
 
   let roleDeny = 0n, roleAllow = 0n;
   for (const overwrite of overwrites) {
-    if (overwrite.type === 0 || !roleIds.has(overwrite.id)) continue;
+    if (overwrite.type !== 0 || overwrite.id === guildId || !roleIds.has(overwrite.id)) continue;
     roleDeny |= BigInt(overwrite.deny || "0");
     roleAllow |= BigInt(overwrite.allow || "0");
   }
