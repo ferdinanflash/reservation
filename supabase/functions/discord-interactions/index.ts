@@ -783,6 +783,8 @@ async function processRedeemJob(jobId: string) {
                 });
             }
             if (!retryAt) {
+                // Keep a small global gap between consecutive five-player batches.
+                await sleep(BATCH_DELAY_MS);
                 await redeemJobDb("rpc/release_discord_redeem_global_lock", {
                     method: "POST",
                     body: JSON.stringify({ p_lock_token: globalLockToken }),
