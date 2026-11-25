@@ -240,6 +240,7 @@ function resultLabel(kind: ReturnType<typeof resultKind>, result: any): string {
         case "limit": return "⚠️ Usage limit reached";
         case "bad_fid": return "❌ Player ID not found";
         case "timeout": return "⚠️ Timed out after retries; result not confirmed";
+        case "retry_pending": return "🔁 Rate limited; retry scheduled";
         case "skipped": return "⏭️ Skipped because the gift code was invalid or expired";
         default: {
             const detail = upstreamMessage(result).replace(/[\r\n]+/g, " ").slice(0, 100);
@@ -300,6 +301,10 @@ async function redeemOne(fid: string, code: string) {
             }
 
             const kind = resultKind(lastResult);
+            if (/TOO MANY ATTEMPTS/i.test(upstreamMessage(lastResult))) {
+                console.warn("[discord-interactions] redeem rate limited by upstream", { httpStatus: response.httpStatus });
+                return { kind: "retry_pending" as const, result: lastResult, retryAfterMs: 60_000 };
+            }
             if (kind === "timeout" && attempt < MAX_TIMEOUT_RETRIES) {
                 const waitMs = redeemRetryDelay(null, attempt);
                 console.warn("[discord-interactions] redeem retry", {
@@ -452,7 +457,7 @@ async function publishProgress(
 }
 
 type RedeemMember = { fid: string; nickname: string };
-type RedeemRow = { fid: string; nickname?: string; kind: string; result?: any };
+type RedeemRow = { fid: string; nickname?: string; kind: string; result?: any; retryAttempts?: number };
 
 async function redeemJobDb(path: string, init: RequestInit = {}) {
     const url = Deno.env.get("SUPABASE_URL");
@@ -627,6 +632,15 @@ async function startRedeem(interaction: any) {
 }
 
 async function processRedeemJob(jobId: string) {
+    const globalLockToken = crypto.randomUUID();
+    const globalLock = await redeemJobDb("rpc/acquire_discord_redeem_global_lock", {
+        method: "POST",
+        body: JSON.stringify({ p_lock_token: globalLockToken }),
+    });
+    if (globalLock !== true) return;
+    let globalLockHeld = true;
+
+    try {
     const lockToken = crypto.randomUUID();
     const claimed = await redeemJobDb("rpc/claim_discord_redeem_job", {
         method: "POST",
@@ -640,6 +654,8 @@ async function processRedeemJob(jobId: string) {
     const members = Array.isArray(job.members) ? job.members as RedeemMember[] : [];
     const results = Array.isArray(job.results) ? job.results as RedeemRow[] : [];
     let nextIndex = Number(job.next_index ?? 0);
+    let retryAt: Date | null = null;
+    let pauseForRateLimit = false;
 
     if (!applicationId || !interactionToken || !members.length) {
         await redeemJobDb(`discord_redeem_jobs?id=eq.${encodeURIComponent(jobId)}&lock_token=eq.${encodeURIComponent(lockToken)}`, {
@@ -670,10 +686,14 @@ async function processRedeemJob(jobId: string) {
 
             const member = members[nextIndex];
             const outcome = await redeemOne(member.fid, String(job.code ?? ""));
-            results.push({
+            const previous = results.find((row) => row.fid === member.fid);
+            const retryAttempts = Number(previous?.retryAttempts ?? 0) + (outcome.kind === "retry_pending" ? 1 : 0);
+            const retryExhausted = outcome.kind === "retry_pending" && retryAttempts >= 5;
+            const row: RedeemRow = {
                 fid: member.fid,
                 nickname: member.nickname,
-                kind: outcome.kind,
+                kind: retryExhausted ? "error" : outcome.kind,
+                retryAttempts: retryAttempts || undefined,
                 result: {
                     data: {
                         msg: upstreamMessage(outcome.result),
@@ -682,8 +702,21 @@ async function processRedeemJob(jobId: string) {
                     __httpOk: outcome.result?.__httpOk,
                     __httpStatus: outcome.result?.__httpStatus,
                 },
-            });
-            nextIndex++;
+            };
+            const existingIndex = results.findIndex((item) => item.fid === member.fid);
+            if (existingIndex >= 0) results[existingIndex] = row;
+            else results.push(row);
+
+            if (outcome.kind === "retry_pending" && !retryExhausted) {
+                const delayMs = Math.min(300_000, 60_000 * retryAttempts);
+                retryAt = new Date(Date.now() + delayMs);
+                pauseForRateLimit = true;
+                console.warn("[discord-interactions] redeem retry deferred", {
+                    jobId, fid: member.fid, retryAttempt: retryAttempts, maxRetryAttempts: 5, delayMs,
+                });
+            } else {
+                nextIndex++;
+            }
             processedThisRun++;
 
             if (outcome.kind === "invalid" || outcome.kind === "expired") {
@@ -704,6 +737,7 @@ async function processRedeemJob(jobId: string) {
                         results,
                         next_index: nextIndex,
                         locked_until: new Date(Date.now() + 120_000).toISOString(),
+                        next_run_at: retryAt?.toISOString() ?? new Date().toISOString(),
                         updated_at: new Date().toISOString(),
                     }),
                 },
@@ -711,6 +745,7 @@ async function processRedeemJob(jobId: string) {
             if (!Array.isArray(checkpoint) || checkpoint.length === 0) {
                 throw new Error("redeem_job_lease_lost");
             }
+            if (pauseForRateLimit) break;
         }
 
         const complete = nextIndex >= members.length;
@@ -728,6 +763,7 @@ async function processRedeemJob(jobId: string) {
                     interaction_token: complete ? null : interactionToken,
                     completed_at: complete ? new Date().toISOString() : null,
                     last_error: null,
+                    next_run_at: retryAt?.toISOString() ?? new Date().toISOString(),
                     updated_at: new Date().toISOString(),
                 }),
             },
@@ -746,7 +782,14 @@ async function processRedeemJob(jobId: string) {
                     errorName: error instanceof Error ? error.name : "UnknownError",
                 });
             }
-            await scheduleRedeemWorker(jobId);
+            if (!retryAt) {
+                await redeemJobDb("rpc/release_discord_redeem_global_lock", {
+                    method: "POST",
+                    body: JSON.stringify({ p_lock_token: globalLockToken }),
+                });
+                globalLockHeld = false;
+                await scheduleRedeemWorker(jobId);
+            }
         }
     } catch (error) {
         console.error("[discord-interactions] redeem job step failed", {
@@ -770,6 +813,16 @@ async function processRedeemJob(jobId: string) {
             },
         ).catch(() => null);
         throw error;
+    }
+    } finally {
+        if (globalLockHeld) {
+            await redeemJobDb("rpc/release_discord_redeem_global_lock", {
+                method: "POST",
+                body: JSON.stringify({ p_lock_token: globalLockToken }),
+            }).catch((error) => console.error("[discord-interactions] global redeem lock release failed", {
+                errorName: error instanceof Error ? error.name : "UnknownError",
+            }));
+        }
     }
 }
 
