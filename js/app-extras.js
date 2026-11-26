@@ -503,6 +503,16 @@ async function submitRedeemCode() {
                 renderRedeemResultList(rows);
             });
             const upstream = (result && result.data) || {};
+            if (!result?.ok || !redeemUpstreamIsSuccess(upstream)) {
+                // Diagnostic only: never log Player IDs, gift codes, tokens, or raw payloads.
+                console.warn('[redeem] non-success response', {
+                    edgeOk: result?.ok === true,
+                    upstreamStatus: Number(result?.status) || null,
+                    upstreamHttpStatus: Number(upstream?.status ?? upstream?.http_status) || null,
+                    errCode: upstream?.err_code ?? upstream?.code ?? null,
+                    message: redeemUpstreamMessage(upstream).slice(0, 120) || null,
+                });
+            }
             if (redeemIsRateLimited(result, upstream)) {
                 const rateLimitMessage = t('redeem_rate_limited');
                 rows[i] = { fid, status: 'error', message: rateLimitMessage };
