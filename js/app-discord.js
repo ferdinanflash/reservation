@@ -333,22 +333,11 @@
         if (select) select.disabled = sendAll;
         if (!mention) return;
 
-        let canMentionEveryone = false;
-        if (sendAll) {
-            // Send-to-all targets every active subscribed channel. Enable the
-            // checkbox only when every eligible destination server allows it.
-            const subscribedGuildIds = [...new Set(subscriptions.map((item) => String(item.guild_id || "")).filter(Boolean))];
-            const eligibleGuildIds = subscribedGuildIds.filter((guildId) => {
-                const config = guilds.find((item) => String(item.guild_id) === guildId);
-                return !config || config.announcements_enabled === true;
-            });
-            canMentionEveryone = eligibleGuildIds.length > 0 && eligibleGuildIds.every((guildId) =>
-                guilds.find((item) => String(item.guild_id) === guildId)?.allow_everyone === true
-            );
-        } else {
-            const selectedGuildId = (select?.value || "").split(":")[0];
-            canMentionEveryone = guilds.find((item) => String(item.guild_id) === selectedGuildId)?.allow_everyone === true;
-        }
+        // Send to All must always allow the President to choose @everyone.
+        // Per-server Discord permissions are validated by the announcement backend.
+        const canMentionEveryone = sendAll
+            ? true
+            : guilds.find((item) => String(item.guild_id) === (select?.value || "").split(":")[0])?.allow_everyone === true;
 
         mention.disabled = !canMentionEveryone;
         if (!canMentionEveryone) mention.checked = false;
