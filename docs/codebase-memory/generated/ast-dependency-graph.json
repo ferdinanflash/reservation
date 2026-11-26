@@ -2867,28 +2867,28 @@
       "from": "js/app-discord.js#resetGuildForm",
       "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 399,
+      "line": 388,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#resetGuildForm",
       "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 400,
+      "line": 389,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#resetGuildForm",
       "to": "js/app-discord.js#$",
       "kind": "call",
-      "line": 401,
+      "line": 390,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#resetGuildForm",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 401,
+      "line": 390,
       "confidence": "static-name-match"
     },
     {
@@ -3056,49 +3056,84 @@
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "common.js#getSupabase",
       "kind": "call",
-      "line": 373,
+      "line": 362,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 371,
+      "line": 360,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#setButtonBusy",
       "kind": "call",
-      "line": 394,
+      "line": 383,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 367,
+      "line": 356,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 385,
+      "line": 374,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 387,
+      "line": 376,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "js/app-core.js#showToast",
       "kind": "call",
-      "line": 392,
+      "line": 381,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 348,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 349,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 352,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 353,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "js/app-discord.js#$",
+      "kind": "call",
+      "line": 354,
       "confidence": "static-name-match"
     },
     {
@@ -3110,79 +3145,44 @@
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#$",
+      "to": "js/app-discord.js#closeModal",
+      "kind": "call",
+      "line": 378,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "lang.js#t",
+      "kind": "call",
+      "line": 356,
+      "confidence": "static-name-match"
+    },
+    {
+      "from": "js/app-discord.js#sendDiscordAnnouncement",
+      "to": "lang.js#t",
       "kind": "call",
       "line": 360,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#$",
+      "to": "lang.js#t",
       "kind": "call",
-      "line": 363,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 364,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 365,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#$",
-      "kind": "call",
-      "line": 370,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "js/app-discord.js#closeModal",
-      "kind": "call",
-      "line": 389,
+      "line": 376,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 367,
+      "line": 381,
       "confidence": "static-name-match"
     },
     {
       "from": "js/app-discord.js#sendDiscordAnnouncement",
       "to": "lang.js#t",
       "kind": "call",
-      "line": 371,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 387,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 392,
-      "confidence": "static-name-match"
-    },
-    {
-      "from": "js/app-discord.js#sendDiscordAnnouncement",
-      "to": "lang.js#t",
-      "kind": "call",
-      "line": 392,
+      "line": 381,
       "confidence": "static-name-match"
     },
     {
@@ -10834,7 +10834,7 @@
       "id": "js/app-discord.js#resetGuildForm",
       "name": "resetGuildForm",
       "file": "js/app-discord.js",
-      "line": 398,
+      "line": 387,
       "kind": "function"
     },
     {
@@ -10848,7 +10848,7 @@
       "id": "js/app-discord.js#sendDiscordAnnouncement",
       "name": "sendDiscordAnnouncement",
       "file": "js/app-discord.js",
-      "line": 357,
+      "line": 346,
       "kind": "function"
     },
     {
@@ -13321,7 +13321,7 @@
       "kind": "edge-function",
       "value": "discord-announcement",
       "function": "js/app-discord.js#sendDiscordAnnouncement",
-      "line": 374
+      "line": 363
     },
     {
       "kind": "edge-function",
@@ -13493,5 +13493,5 @@
     }
   ],
   "parse_diagnostics": [],
-  "source_digest": "1daec8656ebc0ed2c50f08dca515e9f7da36c39d2c4baff758b600f92b98b622"
+  "source_digest": "9448e6eb5969a2de3b7f6c8beb1e63777b110d7631718e1d561f3f3f09eb1dd0"
 }
