@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
       for (const [guildId, item] of subscriptionsByGuild) {
         if (guilds.some((guild: any) => String(guild.guild_id) === guildId)) continue;
         const channelId = String(item.channel_id ?? "");
-        if (!/^\\d{17,20}$/.test(guildId) || !/^\\d{17,20}$/.test(channelId)) continue;
+        if (!/^\d{17,20}$/.test(guildId) || !/^\d{17,20}$/.test(channelId)) continue;
         try {
           const channel = await discord(`/channels/${channelId}`);
           if (String(channel?.guild_id ?? "") !== guildId || ![0, 5].includes(Number(channel?.type))) continue;
