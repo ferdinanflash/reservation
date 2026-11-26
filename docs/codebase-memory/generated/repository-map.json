@@ -207,7 +207,7 @@
     "generator_version": 1,
     "file_count": 121,
     "digest_algorithm": "sha256",
-    "content_digest": "3e76ac2bd2bff9bf7f3f5078fa1c4a206d725f0c395a0eee0a04f3519baa84b2",
+    "content_digest": "9ec68130bda53ce5a1a4e51e976062777ea3abb83b24a0cc2eadd5a90ad8a544",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -467,11 +467,11 @@
       },
       {
         "path": "supabase/functions/_shared/discord-redeem-dispatch.test.ts",
-        "sha256": "dc2923cdbcd32b1b7fabf74d9266392ca647dd44d894e41c2a75d0f85399c12d"
+        "sha256": "eef1a4fa0d6dc13d520f023513f9d4fb714390e57456a730fe4ce37b9c54419c"
       },
       {
         "path": "supabase/functions/_shared/discord-redeem-dispatch.ts",
-        "sha256": "5cbb4eb752ed1a71c0dc41c4288f72e12b2e7225c568ff314665408f50c2c2a5"
+        "sha256": "b523514bbe490967958b2edede943358691927da19f9a15e0fba97daf7067f47"
       },
       {
         "path": "supabase/functions/discord-announcement-retry/index.ts",
@@ -487,7 +487,7 @@
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
-        "sha256": "6adb0b9421574e52da3981c72d49c5a81ccaa61b23134e18c8da4c9d37bc410c"
+        "sha256": "b1c40a1f1713e23928c732e11e9070a9b7a66a749fd1cc3b509503d669930b1b"
       },
       {
         "path": "supabase/functions/discord-message-poller/index.ts",
