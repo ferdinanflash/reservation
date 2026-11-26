@@ -307,10 +307,25 @@ function redeemUpstreamIsSuccess(upstream) {
 // gift_code endpoint upstream call timing out). That's not a real result for
 // the FID either way, so it's handled separately from redeemMessageKeyFor
 // below and retried instead of being shown as an error.
+function redeemUpstreamMessage(upstream) {
+    if (!upstream || typeof upstream !== 'object') return '';
+    const nested = upstream.data && typeof upstream.data === 'object' ? upstream.data : {};
+    return String(upstream.msg ?? upstream.message ?? nested.msg ?? nested.message ?? '').trim();
+}
+
 function redeemUpstreamIsTimeout(upstream) {
-    const msg = String((upstream && upstream.msg) || '').trim().toUpperCase();
+    const msg = redeemUpstreamMessage(upstream).toUpperCase();
     // Real reply is "TIMEOUT RETRY." (err_code 40004); plain "Timeout" also kept.
     return msg.startsWith('TIMEOUT');
+}
+
+// Rate limits may be returned by Century Games while the Edge Function itself returns HTTP 200.
+function redeemIsRateLimited(result, upstream) {
+    const status = Number(result && result.status);
+    const msg = redeemUpstreamMessage(upstream).toUpperCase();
+    return status === 429
+        || Number(upstream && (upstream.status ?? upstream.http_status)) === 429
+        || /TOO MANY ATTEMPTS|TOO MANY REQUESTS|RATE.?LIMIT|HTTP.?429/.test(msg);
 }
 
 // "USER INFO ERROR" = Player ID doesn't exist. The edge function deletes it
@@ -418,8 +433,9 @@ function renderRedeemResultList(rows) {
 // A short pause between requests so a batch of FIDs doesn't hammer Century
 // Games' API (their gift_code endpoint reported a "x-ratelimit-limit: 30"
 // header) or trip an anti-bot rate check.
-const REDEEM_BATCH_DELAY_MS = 1200;
+const REDEEM_BATCH_DELAY_MS = 2200;
 const REDEEM_TIMEOUT_RETRY_DELAY_MS = 2000;
+const REDEEM_RATE_LIMIT_RETRY_DELAYS_MS = [10000, 20000, 30000, 45000];
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Calls invokeGiftCodeApi for a single FID, and if the upstream reply is a
@@ -427,12 +443,20 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // same FID again — indefinitely — until a non-timeout response comes back.
 // `onRetry` lets the caller update the on-screen status row while this waits.
 async function redeemWithTimeoutRetry(fid, cdk, onRetry) {
+    let rateLimitRetries = 0;
     for (;;) {
         const result = await invokeGiftCodeApi({ action: 'redeem', fid, cdk });
         const upstream = (result && result.data) || {};
-        if (!redeemUpstreamIsTimeout(upstream)) return result;
-        if (onRetry) onRetry();
-        await sleep(REDEEM_TIMEOUT_RETRY_DELAY_MS);
+        if (redeemUpstreamIsTimeout(upstream)) {
+            if (onRetry) onRetry('timeout', REDEEM_TIMEOUT_RETRY_DELAY_MS / 1000);
+            await sleep(REDEEM_TIMEOUT_RETRY_DELAY_MS);
+            continue;
+        }
+        if (!redeemIsRateLimited(result, upstream)) return result;
+        if (rateLimitRetries >= REDEEM_RATE_LIMIT_RETRY_DELAYS_MS.length) return result;
+        const delay = REDEEM_RATE_LIMIT_RETRY_DELAYS_MS[rateLimitRetries++];
+        if (onRetry) onRetry('rate_limit', Math.ceil(delay / 1000));
+        await sleep(delay);
     }
 }
 
@@ -468,11 +492,32 @@ async function submitRedeemCode() {
             null,
         );
         try {
-            const result = await redeemWithTimeoutRetry(fid, cdk, () => {
-                rows[i] = { fid, status: 'pending', message: t('redeem_retrying_timeout') };
+            const result = await redeemWithTimeoutRetry(fid, cdk, (retryType, seconds) => {
+                rows[i] = {
+                    fid,
+                    status: 'pending',
+                    message: retryType === 'rate_limit'
+                        ? t('redeem_retrying_rate_limit', { seconds })
+                        : t('redeem_retrying_timeout'),
+                };
                 renderRedeemResultList(rows);
             });
             const upstream = (result && result.data) || {};
+            if (redeemIsRateLimited(result, upstream)) {
+                const rateLimitMessage = t('redeem_rate_limited');
+                rows[i] = { fid, status: 'error', message: rateLimitMessage };
+                for (let j = i + 1; j < fids.length; j++) {
+                    rows[j] = { fid: fids[j], status: 'skipped', message: rateLimitMessage };
+                }
+                renderRedeemResultList(rows);
+                setRedeemStatus('redeem-result-status', t('redeem_batch_stopped', {
+                    message: rateLimitMessage,
+                    checked: i + 1,
+                    total: fids.length,
+                }), 'error');
+                setButtonBusy(submitBtn, false);
+                return;
+            }
             if (result.ok && redeemUpstreamIsSuccess(upstream) && !redeemUpstreamIsUserInfoError(upstream) && !redeemMessageKeyFor(upstream)) {
                 rows[i] = { fid, status: 'success', message: t('redeem_success') };
             } else if (redeemUpstreamIsUserInfoError(upstream)) {
