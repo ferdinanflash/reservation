@@ -79,6 +79,50 @@ Deno.serve(async (req) => {
           console.warn("Unable to resolve subscribed Discord server name:", guildId, error);
         }
       }));
+      // Automatically register subscribed servers for President announcements.
+      // This is safe because every channel is validated against Discord and the bot's
+      // effective permissions (including MENTION_EVERYONE) before settings are saved.
+      const subscriptionsByGuild = new Map<string, any>();
+      for (const item of subscriptions) {
+        const guildId = String(item.guild_id ?? "");
+        if (guildId && !subscriptionsByGuild.has(guildId)) subscriptionsByGuild.set(guildId, item);
+      }
+      for (const [guildId, item] of subscriptionsByGuild) {
+        if (guilds.some((guild: any) => String(guild.guild_id) === guildId)) continue;
+        const channelId = String(item.channel_id ?? "");
+        if (!/^\\d{17,20}$/.test(guildId) || !/^\\d{17,20}$/.test(channelId)) continue;
+        try {
+          const channel = await discord(`/channels/${channelId}`);
+          if (String(channel?.guild_id ?? "") !== guildId || ![0, 5].includes(Number(channel?.type))) continue;
+          const permissionCheck = await checkDiscordChannelPermissions(BOT_TOKEN, guildId, channelId, true);
+          if (!permissionCheck.allowed) {
+            console.warn("Subscribed Discord server not auto-configured; missing permissions:", guildId, permissionCheck.missing);
+            continue;
+          }
+          const guildName = knownNames.get(guildId) || guildId;
+          const saved = await db("discord_guild_settings?on_conflict=guild_id", {
+            method: "POST",
+            headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+            body: JSON.stringify({
+              guild_id: guildId,
+              guild_name: guildName,
+              announcement_channel_id: channelId,
+              announcements_enabled: true,
+              allow_everyone: true,
+              configured_by: userId,
+              updated_at: new Date().toISOString(),
+            }),
+          });
+          const configured = Array.isArray(saved) ? saved[0] : null;
+          if (configured) guilds.push(configured);
+          else guilds.push({
+            guild_id: guildId, guild_name: guildName, announcement_channel_id: channelId,
+            announcements_enabled: true, allow_everyone: true,
+          });
+        } catch (error) {
+          console.warn("Unable to auto-configure subscribed Discord server:", guildId, error);
+        }
+      }
       const enrichedSubscriptions = subscriptions.map((item: any) => ({
         ...item,
         guild_name: knownNames.get(String(item.guild_id)) || String(item.guild_id),
