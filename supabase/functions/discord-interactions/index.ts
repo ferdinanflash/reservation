@@ -231,7 +231,7 @@ function resultKind(result: any): "success" | "already" | "invalid" | "expired" 
     return "error";
 }
 
-function resultLabel(kind: ReturnType<typeof resultKind>, result: any): string {
+function resultLabel(kind: ReturnType<typeof resultKind> | "retry_pending", result: any): string {
     switch (kind) {
         case "success": return "✅ Successful";
         case "already": return "ℹ️ Already claimed";
