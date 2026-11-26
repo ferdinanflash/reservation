@@ -1,5 +1,5 @@
 import { assertEquals } from "jsr:@std/assert@1";
-import { workerDispatchRetryDelay } from "./discord-redeem-dispatch.ts";
+import { isAmbiguousEmptyRedeemResponse, workerDispatchRetryDelay } from "./discord-redeem-dispatch.ts";
 
 Deno.test("parses Supabase RateLimitError millisecond retry hint", () => {
     assertEquals(workerDispatchRetryDelay(null, "Rate limit exceeded. Retry after 13130ms.", 0, 1_000, () => 0.5), 13_630);
@@ -18,7 +18,6 @@ Deno.test("falls back to exponential delay plus jitter when no server hint exist
 });
 
 
-import { isAmbiguousEmptyRedeemResponse } from "./discord-redeem-dispatch.ts";
 
 Deno.test("retries an empty upstream message with no error code", () => {
     assertEquals(isAmbiguousEmptyRedeemResponse({
