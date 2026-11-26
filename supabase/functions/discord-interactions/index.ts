@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { workerDispatchRetryDelay } from "../_shared/discord-redeem-dispatch.ts";
+import { isAmbiguousEmptyRedeemResponse, workerDispatchRetryDelay } from "../_shared/discord-redeem-dispatch.ts";
 
 // Supabase Edge Runtime provides this global at runtime; declare it for plain Deno type-checks.
 declare const EdgeRuntime: {
@@ -231,7 +231,7 @@ function resultKind(result: any): "success" | "already" | "invalid" | "expired" 
     return "error";
 }
 
-function resultLabel(kind: ReturnType<typeof resultKind>, result: any): string {
+function resultLabel(kind: ReturnType<typeof resultKind> | "retry_pending", result: any): string {
     switch (kind) {
         case "success": return "✅ Successful";
         case "already": return "ℹ️ Already claimed";
@@ -298,6 +298,27 @@ async function redeemOne(fid: string, code: string) {
                     httpStatus: response.httpStatus,
                 });
                 return { kind: response.httpStatus === 429 ? "limit" as const : "error" as const, result: lastResult };
+            }
+
+            if (isAmbiguousEmptyRedeemResponse(lastResult) && attempt < MAX_TIMEOUT_RETRIES) {
+                const waitMs = redeemRetryDelay(response.retryAfter, attempt);
+                console.warn("[discord-interactions] redeem retry", {
+                    attempt: attempt + 1,
+                    nextAttempt: attempt + 2,
+                    maxAttempts: MAX_TIMEOUT_RETRIES + 1,
+                    reason: "empty_upstream_response",
+                    httpStatus: response.httpStatus,
+                    waitMs,
+                });
+                await sleep(waitMs);
+                continue;
+            }
+            if (isAmbiguousEmptyRedeemResponse(lastResult)) {
+                console.error("[discord-interactions] redeem retries exhausted", {
+                    attempts: MAX_TIMEOUT_RETRIES + 1,
+                    reason: "empty_upstream_response",
+                    httpStatus: response.httpStatus,
+                });
             }
 
             const kind = resultKind(lastResult);
