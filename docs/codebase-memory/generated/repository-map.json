@@ -207,7 +207,7 @@
     "generator_version": 1,
     "file_count": 121,
     "digest_algorithm": "sha256",
-    "content_digest": "dec5c726b146112fc2dd08d27d34a87ffebc48f323db6d0c5f3c4d629709da33",
+    "content_digest": "08562530f4868b3e7b4237af02e42a1535993c3cbbb6920b42a5f26eba4296ca",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -391,7 +391,7 @@
       },
       {
         "path": "js/app-discord.js",
-        "sha256": "690d6d938ce59b06d767431f5619c0e1a1108822be3eae0e59b6277666b0eed7"
+        "sha256": "fdc8388cda5ffabc95cce524ab947b0839a13270b675d1bec3d4c1ef420449ff"
       },
       {
         "path": "js/app-extras.js",
