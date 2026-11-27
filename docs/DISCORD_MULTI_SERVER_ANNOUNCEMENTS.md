@@ -13,7 +13,7 @@ The President-managed announcement setup continues to use manually copied Discor
 
 ## Security model
 
-- Only Supabase Auth users whose email is one of the portal's configured President accounts (president, demon, or phoenix at the internal staff email domain) can manage servers or send Discord announcements. This is checked inside both Edge Functions; the browser's isAdmin flag is not trusted.
+- Only Supabase Auth users whose email is one of the portal's configured President accounts (president, demon, mie, or phoenix at the internal staff email domain) can manage servers or send Discord announcements. This is checked inside both Edge Functions; the browser's isAdmin flag is not trusted.
 - Guild settings and announcement logs have RLS enabled and no browser-facing policies. Only trusted Edge Functions use the service-role key.
 - The browser never receives the Discord bot token.
 - A server's destination channel is read from server-side configuration; the announcement request cannot supply an arbitrary channel.
