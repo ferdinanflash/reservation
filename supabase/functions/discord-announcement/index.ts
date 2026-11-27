@@ -19,7 +19,7 @@ const DISCORD_API = "https://discord.com/api/v10";
 const DISCORD_MAX_ATTEMPTS = 4;
 const DISCORD_TIMEOUT_MS = 15_000;
 const ANNOUNCEMENT_QUEUE_MAX_ATTEMPTS = 10;
-const ADMIN_EMAILS = new Set(["president", "demon", "phoenix"].map((name) => name + "@3475-staff.internal"));
+const ADMIN_EMAILS = new Set(["president", "demon", "mie", "phoenix"].map((name) => name + "@3475-staff.internal"));
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
