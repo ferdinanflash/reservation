@@ -207,7 +207,7 @@
     "generator_version": 1,
     "file_count": 121,
     "digest_algorithm": "sha256",
-    "content_digest": "18f0ada3793e4add1a9c153aeeab8ccf07926f55059c2e1f1b34e7f261b4f429",
+    "content_digest": "39bddc0fcd8bc277700a19f92e0d65f806dfe24ef3f9e1985c00a68cb05eda27",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -267,7 +267,7 @@
       },
       {
         "path": "common.js",
-        "sha256": "b5a4bd0ed0786634914a99a3d7261320c55c4732d83c40f2992d436d40dacbae"
+        "sha256": "185cc0961119b6f583e31a2a676af41d750a273ea51b05581319a29162f5dacb"
       },
       {
         "path": "config/source-fingerprints.json",
@@ -287,7 +287,7 @@
       },
       {
         "path": "docs/DISCORD_MULTI_SERVER_ANNOUNCEMENTS.md",
-        "sha256": "25cfa857eb947308fa7fa6080134066e4b560685e509ea1370dd6aecf5dcfbd5"
+        "sha256": "3787af50ed9fb0f2232a6098be75c2cbddcd1560d4951535930f1e387ef2ef52"
       },
       {
         "path": "docs/DISCORD_RELIABILITY_STAGE_4_AUDIT.md",
@@ -479,11 +479,11 @@
       },
       {
         "path": "supabase/functions/discord-announcement/index.ts",
-        "sha256": "720737dec0045a14af7bf3873729aef1277f319f432591911b4e6f86fd0a8403"
+        "sha256": "6e64ba8679c201331dd7c8e4be511ae4647e23423e311b167ea889f70569283b"
       },
       {
         "path": "supabase/functions/discord-guild-settings/index.ts",
-        "sha256": "81f9ab14755243988a15c6f3fa6a18e41791de7c3fdcec3366ce4514ff928dc8"
+        "sha256": "ffb91dbc4a2f9589f63533a94dcbd015b50b2afe293a60ef064c36292e3e7277"
       },
       {
         "path": "supabase/functions/discord-interactions/index.ts",
@@ -623,7 +623,7 @@
       },
       {
         "path": "svs_record_migration.sql",
-        "sha256": "dbba00f93db72d50a1357c7ad521d970e538710735db65744e5c23aa5191b39d"
+        "sha256": "a0e198c699ef9f3a579d9c33dee2f8bcd5c29c2b6679b7ec3be24b6cd8cb5051"
       },
       {
         "path": "sw.js",
