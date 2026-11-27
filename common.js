@@ -37,7 +37,7 @@ const PUSH_VAPID_PUBLIC_KEY = 'BOdByEDiZ7bmzBUBUrto18EX8KbFE1R7yQKOCXxLjNVQsQOEt
 // OTHER staff account is simply ignored on a page that doesn't allow it —
 // it stays a valid session, it just doesn't unlock admin controls there.
 const STAFF_EMAIL_DOMAIN = '@3475-staff.internal';
-const ALLOWED_ADMIN_USERNAMES = ['president', 'demon', 'phoenix']; // <-- only these usernames get admin access
+const ALLOWED_ADMIN_USERNAMES = ['president', 'demon', 'mie', 'phoenix']; // <-- only these usernames get admin access
 
 function usernameToStaffEmail(username) {
     return username.trim().toLowerCase().replace(/\s+/g, '') + STAFF_EMAIL_DOMAIN;
