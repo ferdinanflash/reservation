@@ -205,9 +205,9 @@
   ],
   "generated_inventory": {
     "generator_version": 1,
-    "file_count": 121,
+    "file_count": 122,
     "digest_algorithm": "sha256",
-    "content_digest": "39bddc0fcd8bc277700a19f92e0d65f806dfe24ef3f9e1985c00a68cb05eda27",
+    "content_digest": "ca6aa90553cfe07bd3feb69d168e85cfdf83f3d43c8fd590f213fb566b5ae6e7",
     "files": [
       {
         "path": ".github/workflows/codebase-memory-mcp.yml",
@@ -552,6 +552,10 @@
       {
         "path": "supabase/migrations/20261125040000_discord_redeem_global_queue.sql",
         "sha256": "87c36d00d5d3c61834bd4854eab8eeb7ddf5757ce476eff3a449efd0586cddd4"
+      },
+      {
+        "path": "supabase/migrations/20261127000000_add_mie_svs_record_admin_access.sql",
+        "sha256": "578badfc4922ae77db332631df16b2896480bb6660e76e76008475c22db236ae"
       },
       {
         "path": "supabase_migration_additional_time_slots.sql",
