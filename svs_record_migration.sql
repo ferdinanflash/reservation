@@ -22,7 +22,7 @@ create policy "SvS records are visible to everyone" on public.svs_records for se
 drop policy if exists "Authenticated users manage SvS records" on public.svs_records;
 drop policy if exists "President admins manage SvS records" on public.svs_records;
 create policy "President admins manage SvS records" on public.svs_records for all to authenticated
-  using (auth.jwt() ->> 'email' in ('president@3475-staff.internal', 'demon@3475-staff.internal', 'phoenix@3475-staff.internal'))
+  using (auth.jwt() ->> 'email' in ('president@3475-staff.internal', 'demon@3475-staff.internal', 'mie@3475-staff.internal', 'phoenix@3475-staff.internal'))
   with check (auth.jwt() ->> 'email' in ('president@3475-staff.internal', 'demon@3475-staff.internal', 'phoenix@3475-staff.internal'));
 grant select on public.svs_records to anon, authenticated;
 grant insert, update, delete on public.svs_records to authenticated;
